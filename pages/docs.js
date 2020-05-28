@@ -18,5 +18,6 @@ export default function DocsHome() {
         </p>
       </main>
     </div>
+
   );
 }
