@@ -1,22 +1,16 @@
-import Head from 'next/head';
+import React from 'react'
+import Router from 'next/router'
+import redirect from '../core/routing/redirect'
 
-export default function Home() {
-  return (
-    <div className="container">
-      <Head>
-        <title>Unity CI - Documentation</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const redirectPath = "docs"
 
-      <main>
-        <h1>Welcome to Unity CI</h1>
-
-        <p>This site will host documentation for open source Unity CI projects.</p>
-
-        <p>Follow the development on{' '}
-          <a href="https://github.com/webbertakken/unity-ci">GitHub</a>
-        </p>
-      </main>
-    </div>
-  );
+function Index() {
+  Router.push(redirectPath)
 }
+
+Index.getInitialProps = async (ctx) => {
+  redirect(ctx, redirectPath)
+  return {}
+}
+
+export default Index;
