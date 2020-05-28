@@ -1,15 +1,32 @@
-import React from 'react'
+import { readdirSync } from 'fs';
+import { resolve } from 'path';
 
-export default function PostTemplate(props) {
-  return (
-    <div>
-      {props.subject}
-    </div>
-  )
+function PostTemplate({ Content }) {
+  console.log(Content);
+  return <div><Content /></div>;
 }
 
-PostTemplate.getInitialProps = async (context) => {
-  const { subject } = context.query
+// export async function getStaticPaths() {
+//   const paths = await readdirSync(resolve('content/')).map(file => (
+//     { params: { subject: file.replace(/\.mdx?$/, '') }}
+//   ));
+//
+//   return { paths, fallback: false }
+// }
+//
+// export async function getStaticProps({ params }) {
+//   const { subject } = params;
+//   const { default: Content } = await import(`../../content/${subject}.md`);
+//
+//   // Todo - serialize Content in order to make it static
+//   return { props: { Content } }
+// }
 
-  return { subject }
+PostTemplate.getInitialProps = async ({ query }) => {
+  const { subject } = query
+  const { default: Content } = await import(`../../content/${subject}.md`);
+
+  return { Content }
 }
+
+export default PostTemplate;
