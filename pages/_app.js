@@ -1,15 +1,16 @@
 import { MDXProvider } from '@mdx-js/react';
-import { Card, Table, Row, Col } from 'antd';
+import { Typography, Card, Table, Row, Col } from 'antd';
 import 'antd/dist/antd.css';
 import '../styles/vars.css';
 import '../styles/global.css';
+import '../styles/layout.css';
 
-import Layout from '../components/layout';
+import Layout from '../components/layout/layout';
 
 const components = {
-  p: Card,
+  p: Typography.Paragraph,
   // table: Table,
-  // etc.
+  // h1: DesignSystem.H1,
 };
 
 export default function App({ Component, pageProps }) {

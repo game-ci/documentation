@@ -1,10 +1,13 @@
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 
-function PostTemplate({ Content }) {
-  console.log(Content);
-  return <div><Content /></div>;
-}
+import DocumentationPage from '../../components/docs-page';
+
+const PostTemplate = ({ Content }) => (
+  <DocumentationPage style={{ display: 'inline-flex' }}>
+    <div><Content /></div>
+  </DocumentationPage>
+);
 
 // export async function getStaticPaths() {
 //   const paths = await readdirSync(resolve('content/')).map(file => (
