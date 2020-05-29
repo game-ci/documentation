@@ -6,6 +6,8 @@ const redirectPath = "docs"
 
 function Index() {
   Router.push(redirectPath)
+
+  return {}
 }
 
 Index.getInitialProps = async (ctx) => {

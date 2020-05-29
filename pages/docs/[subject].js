@@ -24,7 +24,7 @@ function PostTemplate({ Content }) {
 
 PostTemplate.getInitialProps = async ({ query }) => {
   const { subject } = query
-  const { default: Content } = await import(`../../content/${subject}.md`);
+  const { default: Content } = await import(`../../content/${subject}.mdx`);
 
   return { Content }
 }
