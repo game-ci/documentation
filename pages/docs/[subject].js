@@ -1,13 +1,11 @@
-import { readdirSync } from 'fs';
-import { resolve } from 'path';
-
-// import DocsLayout from '../../components/layout/docs-layout';
+// import { readdirSync } from 'fs';
+// import { resolve } from 'path';
+import DocsLayout from '../../components/layout/docs-layout';
 
 const Page = ({ subject }) => (
-  // <DocsLayout>
+  <DocsLayout>
     <div>Placeholder for {subject}</div>
-    //{/*<div><Content /></div>*/}
-  // /*</DocsLayout>*/}
+  </DocsLayout>
 );
 
 // export async function getStaticPaths() {

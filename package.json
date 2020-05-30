@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "12.2.0"
+    "node": "12.x"
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
