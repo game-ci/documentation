@@ -2,9 +2,12 @@
   "name": "unity-ci",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "12.2.0"
+  },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
-    "build": "cross-env NODE_OPTIONS=\"-r esm\" next build",
+    "build": "node -v && cross-env NODE_OPTIONS=\"-r esm\" next build",
     "analyze": "cross-env-shell NODE_OPTIONS=\"-r esm\" ANALYZE=true next build",
     "start": "next start"
   },
