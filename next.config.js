@@ -1,5 +1,5 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer');
-// const withMDX = require('@next/mdx');
+const withMDX = require('@next/mdx');
 
 const compose = (plugins) => ({
   // experimental: {
@@ -41,5 +41,5 @@ const compose = (plugins) => ({
 
 module.exports = compose([
   [withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }],
-  // [withMDX],
+  [withMDX],
 ]);
