@@ -2,9 +2,13 @@
 // import { resolve } from 'path';
 // import DocsLayout from '../../components/layout/docs-layout';
 
-const Page = ({ subject }) => (
+const Page = ({ subject, Content }) => (
   // <DocsLayout>
+  // Todo - Content can't be rehydrated, probably need to move to react-markdown
+  <div>
     <div>Placeholder for {subject}</div>
+    { Content ? <Content /> : <div>Loading or failed to rehydrate</div> }
+  </div>
   // </DocsLayout>
 );
 
@@ -25,11 +29,11 @@ const Page = ({ subject }) => (
 // }
 
 Page.getInitialProps = async ({ query }) => {
-  const { subject } = query
+  const { subject } = query;
 
-  // const { default: Content } = await import(`../../content/${subject}.mdx`);
+  const { default: Content } = require(`../../content/${subject}.mdx`);
 
-  return { subject }
-}
+  return { subject, Content };
+};
 
 export default Page;

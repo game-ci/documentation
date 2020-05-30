@@ -41,5 +41,5 @@ const compose = (plugins) => ({
 
 module.exports = compose([
   [withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }],
-  [withMDX],
+  [withMDX()],
 ]);
