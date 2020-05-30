@@ -1,7 +1,7 @@
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 
-import DocsLayout from '../../components/layout/docs-layout';
+// import DocsLayout from '../../components/layout/docs-layout';
 
 const Page = ({ subject }) => (
   // <DocsLayout>
