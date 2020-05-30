@@ -1,13 +1,8 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer');
-const withMDX = require('@next/mdx');
+// const withMDX = require('@next/mdx');
 
 const compose = (plugins) => ({
   webpack(config, options) {
-    config.module.rules.push ({
-      test: /\.md$/,
-      use: 'raw-loader',
-    });
-
     return plugins.reduce((config, plugin) => {
       if (plugin instanceof Array) {
         const [_plugin, ...args] = plugin;
@@ -42,5 +37,5 @@ const compose = (plugins) => ({
 
 module.exports = compose([
   [withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }],
-  [withMDX],
+  // [withMDX],
 ]);

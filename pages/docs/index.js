@@ -1,9 +1,9 @@
 import Head from 'next/head';
-import DocumentationPage from '../components/docs-page';
+import DocsLayout from '../../components/layout/docs-layout';
 
-export default function DocsHome() {
+export default function Page() {
   return (
-    <DocumentationPage>
+    <DocsLayout>
       <Head>
         <title>Unity CI - Documentation</title>
         <link rel="icon" href="/favicon.ico" />
@@ -18,6 +18,6 @@ export default function DocsHome() {
           <a href="https://github.com/webbertakken/unity-ci">GitHub</a>
         </p>
       </main>
-    </DocumentationPage>
+    </DocsLayout>
   );
 }

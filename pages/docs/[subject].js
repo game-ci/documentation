@@ -1,12 +1,13 @@
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 
-import DocumentationPage from '../../components/docs-page';
+import DocsLayout from '../../components/layout/docs-layout';
 
-const PostTemplate = ({ Content }) => (
-  <DocumentationPage style={{ display: 'inline-flex' }}>
-    <div><Content /></div>
-  </DocumentationPage>
+const Page = ({ subject }) => (
+  <DocsLayout>
+    <div>Placeholder for {subject}</div>
+    {/*<div><Content /></div>*/}
+  </DocsLayout>
 );
 
 // export async function getStaticPaths() {
@@ -25,11 +26,12 @@ const PostTemplate = ({ Content }) => (
 //   return { props: { Content } }
 // }
 
-PostTemplate.getInitialProps = async ({ query }) => {
+Page.getInitialProps = async ({ query }) => {
   const { subject } = query
-  const { default: Content } = await import(`../../content/${subject}.mdx`);
 
-  return { Content }
+  // const { default: Content } = await import(`../../content/${subject}.mdx`);
+
+  return { subject }
 }
 
-export default PostTemplate;
+export default Page;
