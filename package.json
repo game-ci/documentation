@@ -9,9 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.0.6",
+    "@ant-design/icons": "4.2.1",
     "@mdx-js/loader": "^1.6.4",
-    "@mdx-js/react": "latest",
     "@next/bundle-analyzer": "^9.1.4",
     "@next/mdx": "^9.4.4",
     "antd": "4.1.2",
