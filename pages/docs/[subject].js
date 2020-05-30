@@ -1,11 +1,11 @@
 // import { readdirSync } from 'fs';
 // import { resolve } from 'path';
-import DocsLayout from '../../components/layout/docs-layout';
+// import DocsLayout from '../../components/layout/docs-layout';
 
 const Page = ({ subject }) => (
-  <DocsLayout>
+  // <DocsLayout>
     <div>Placeholder for {subject}</div>
-  </DocsLayout>
+  // </DocsLayout>
 );
 
 // export async function getStaticPaths() {
