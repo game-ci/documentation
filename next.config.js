@@ -2,6 +2,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer');
 // const withMDX = require('@next/mdx');
 
 const compose = (plugins) => ({
+  // experimental: {
+  //   modern: true,
+  // },
+
   webpack(config, options) {
     return plugins.reduce((config, plugin) => {
       if (plugin instanceof Array) {
