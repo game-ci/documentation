@@ -19,6 +19,7 @@
 .DS_Store
 .idea
 .vscode
+.vercel
 
 # debug
 npm-debug.log*
