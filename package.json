@@ -1,6 +1,7 @@
 {
   "name": "unity-ci",
   "version": "0.1.0",
+  "description": "Website for projects within the Unity CI group",
   "private": true,
   "engines": {
     "node": "12.x"
@@ -9,6 +10,7 @@
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
     "build": "node -v && cross-env NODE_OPTIONS=\"-r esm\" next build",
     "analyze": "cross-env-shell NODE_OPTIONS=\"-r esm\" ANALYZE=true next build",
+    "lint": "prettier --check . && eslint .",
     "start": "next start"
   },
   "dependencies": {
@@ -27,8 +29,41 @@
     "react-dom": "^16.13.1",
     "react-markdown": "4.3.1"
   },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.1.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-flowtype": "^5.1.3",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-unicorn": "^20.1.0",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "lint-staged": "^10.2.7",
+    "prettier": "^2.0.5"
+  },
   "browser": {
     "fs": false,
     "path": false
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "prettier --write",
+      "eslint",
+      "git add",
+      "jest --findRelatedTests"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
