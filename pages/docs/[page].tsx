@@ -1,3 +1,4 @@
+import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 
@@ -20,23 +21,23 @@ const Page = ({ content, data }) => {
 };
 
 // Build time: Determines which pages are generated
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
   const paths = await readdirSync(resolve('docs/')).map((file) => ({
     params: { page: file.replace(/\.md$/, '') },
   }));
 
   return { paths, fallback: false };
-}
+};
 
 // Build time: Generate JSON for each generated page
-export async function getStaticProps({ params }) {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { page } = params;
 
   const content = await import(`../../docs/${page}.md`);
   const { orig, ...data } = matter(content.default);
 
   return { props: { ...data } };
-}
+};
 
 // Runtime: Generate props for requested page
 // Page.getInitialProps = async ({ query }) => {
