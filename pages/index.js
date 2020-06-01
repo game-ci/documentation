@@ -6,11 +6,9 @@ const Index = () => {
 
   return (
     <BaseLayout>
-      <div style={{ padding: '0 24px' }}>
-        Loading docs...
-      </div>
+      <div style={{ padding: '0 24px' }}>Loading docs...</div>
     </BaseLayout>
   );
-}
+};
 
 export default Index;

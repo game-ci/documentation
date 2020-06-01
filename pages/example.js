@@ -20,18 +20,16 @@ export default function Page() {
         <div className="text-center mb-5">
           <Link href="#">
             <a href="#">
-              <Title>title <SmileFilled size={48} strokeWidth={1} /></Title>
+              <Title>
+                title <SmileFilled size={48} strokeWidth={1} />
+              </Title>
             </a>
           </Link>
           <Typography.Paragraph>Welcome to the world !</Typography.Paragraph>
         </div>
         <div>
           <Form layout="horizontal">
-            <FormItem
-              label="Input Number"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 8 }}
-            >
+            <FormItem label="Input Number" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
               <InputNumber
                 size="large"
                 min={1}
@@ -42,33 +40,16 @@ export default function Page() {
               />
             </FormItem>
 
-            <FormItem
-              label="Switch"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 8 }}
-            >
+            <FormItem label="Switch" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
               <Switch defaultChecked name="switch" />
             </FormItem>
 
-            <FormItem
-              label="Slider"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 8 }}
-            >
+            <FormItem label="Slider" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
               <Slider defaultValue={70} />
             </FormItem>
 
-            <FormItem
-              label="Select"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 8 }}
-            >
-              <Select
-                size="large"
-                defaultValue="lucy"
-                style={{ width: 192 }}
-                name="select"
-              >
+            <FormItem label="Select" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
+              <Select size="large" defaultValue="lucy" style={{ width: 192 }} name="select">
                 <Option value="jack">jack</Option>
                 <Option value="lucy">lucy</Option>
                 <Option value="disabled" disabled>
@@ -78,17 +59,10 @@ export default function Page() {
               </Select>
             </FormItem>
 
-            <FormItem
-              label="DatePicker"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 8 }}
-            >
+            <FormItem label="DatePicker" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
               <DatePicker name="startDate" />
             </FormItem>
-            <FormItem
-              style={{ marginTop: 48 }}
-              wrapperCol={{ span: 8, offset: 8 }}
-            >
+            <FormItem style={{ marginTop: 48 }} wrapperCol={{ span: 8, offset: 8 }}>
               <Button size="large" type="primary" htmlType="submit">
                 OK
               </Button>

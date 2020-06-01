@@ -9,21 +9,21 @@ const Page = ({ content, data }) => {
   const { title, date } = data;
   return (
     <DocsLayout>
-    <div>
-      <h1>{title}</h1>
-      <sub>{date}</sub>
+      <div>
+        <h1>{title}</h1>
+        <sub>{date}</sub>
 
-      <ReactMarkdown source={content} />
-    </div>
+        <ReactMarkdown source={content} />
+      </div>
     </DocsLayout>
   );
 };
 
 // Build time: Determines which pages are generated
 export async function getStaticPaths() {
-  const paths = await readdirSync(resolve('docs/')).map(file => (
-    { params: { page: file.replace(/\.md$/, '') } }
-  ));
+  const paths = await readdirSync(resolve('docs/')).map((file) => ({
+    params: { page: file.replace(/\.md$/, '') },
+  }));
 
   return { paths, fallback: false };
 }

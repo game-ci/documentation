@@ -23,13 +23,25 @@ const DocsSidebar = () => {
         style={{ height: '100%' }}
       >
         <SubMenu key="main" icon={<CheckOutlined />} title="Unity CI">
-          <Menu.Item key="/docs"><Link href="/docs"><a>Getting started</a></Link></Menu.Item>
-          <Menu.Item key="/example"><Link href="/example"><a>Example</a></Link></Menu.Item>
+          <Menu.Item key="/docs">
+            <Link href="/docs">
+              <a>Getting started</a>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/example">
+            <Link href="/example">
+              <a>Example</a>
+            </Link>
+          </Menu.Item>
           <Menu.Item key="3">option3</Menu.Item>
           <Menu.Item key="4">option4</Menu.Item>
         </SubMenu>
         <SubMenu key="github" icon={<GithubOutlined />} title="GitHub">
-          <Menu.Item key="/docs/unity-actions"><Link href="/docs/[page]" as="/docs/unity-actions"><a>Unity Actions</a></Link></Menu.Item>
+          <Menu.Item key="/docs/unity-actions">
+            <Link href="/docs/[page]" as="/docs/unity-actions">
+              <a>Unity Actions</a>
+            </Link>
+          </Menu.Item>
           <Menu.Item key="6">option6</Menu.Item>
           <Menu.Item key="7">option7</Menu.Item>
           <Menu.Item key="8">option8</Menu.Item>
