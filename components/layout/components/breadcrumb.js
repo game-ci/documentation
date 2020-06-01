@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from 'next/link';
 import { Breadcrumb } from 'antd';
 import { usePathSegments } from '../../../core/hooks/usePathSegments';
 
@@ -8,9 +8,11 @@ const BreadcrumbWrapper = () => {
   const segments = usePathSegments('Unity CI');
   return (
     <Breadcrumb style={{ margin: '16px 0' }}>
-      {segments.map(({url, name}) => (
+      {segments.map(({ url, name }) => (
         <Item key={url} style={{ textTransform: 'capitalize' }}>
-          <Link href={url}><a>{name}</a></Link>
+          <Link href={url}>
+            <a>{name}</a>
+          </Link>
         </Item>
       ))}
     </Breadcrumb>

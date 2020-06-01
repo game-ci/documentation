@@ -5,12 +5,15 @@ import Footer from './components/footer';
 
 const { Content } = Layout;
 
-const BaseLayout = ({children}) => (
+const BaseLayout = ({ children }) => (
   <Layout>
     <NavBar />
     <Content style={{ padding: '0 50px' }}>
       <Breadcrumb />
-      <Layout className="site-layout-background" style={{ padding: '24px 0', flexDirection: 'row' }}>
+      <Layout
+        className="site-layout-background"
+        style={{ padding: '24px 0', flexDirection: 'row' }}
+      >
         {children}
       </Layout>
     </Content>

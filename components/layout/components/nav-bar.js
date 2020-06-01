@@ -9,7 +9,11 @@ const NavBar = () => (
     <div className="logo" />
     <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
       <Item key="2">Home</Item>
-      <Item key="1"><Link href="/docs"><a>Docs</a></Link></Item>
+      <Item key="1">
+        <Link href="/docs">
+          <a>Docs</a>
+        </Link>
+      </Item>
       <Item key="3">nav 3</Item>
     </Menu>
   </Header>
