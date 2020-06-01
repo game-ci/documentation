@@ -10,7 +10,8 @@
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
     "build": "node -v && cross-env NODE_OPTIONS=\"-r esm\" next build",
     "analyze": "cross-env-shell NODE_OPTIONS=\"-r esm\" ANALYZE=true next build",
-    "lint": "prettier --write . --loglevel=warn && eslint .",
+    "lint": "prettier --write . --loglevel=warn && eslint . --quiet --fix",
+    "eslint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "start": "next start"
   },
   "dependencies": {
@@ -31,20 +32,26 @@
     "react-markdown": "4.3.1"
   },
   "devDependencies": {
+    "@types/react": "^16.9.35",
+    "@typescript-eslint/eslint-plugin": "^3.1.0",
+    "@typescript-eslint/parser": "^3.1.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.1.0",
     "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-flowtype": "^5.1.3",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^4.0.4",
     "eslint-plugin-unicorn": "^20.1.0",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "lint-staged": "^10.2.7",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.3"
   },
   "browser": {
     "fs": false,
@@ -56,9 +63,9 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx}": [
+    "*.{js,ts,tsx}": [
       "prettier --write",
-      "eslint",
+      "eslint --fix",
       "git add",
       "jest --findRelatedTests"
     ],

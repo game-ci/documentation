@@ -5,7 +5,7 @@ import Link from 'next/link';
 import DatePicker from '../components/date-picker';
 import DocumentationLayout from '../components/layout/documentation-layout';
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 const FormItem = Form.Item;
 const { Option } = Select;

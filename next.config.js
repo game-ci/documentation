@@ -1,10 +1,7 @@
+/* eslint-disable unicorn/no-reduce,no-shadow,no-param-reassign */
 const withBundleAnalyzer = require('@next/bundle-analyzer');
 
 const compose = (plugins) => ({
-  // experimental: {
-  //   modern: true,
-  // },
-
   webpack(config, options) {
     config.module.rules.push({
       test: /\.md$/,
