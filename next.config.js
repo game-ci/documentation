@@ -9,7 +9,7 @@ const compose = (plugins) => ({
     config.module.rules.push({
       test: /\.md$/,
       use: 'raw-loader',
-    })
+    });
 
     return plugins.reduce((config, plugin) => {
       if (plugin instanceof Array) {
@@ -43,6 +43,4 @@ const compose = (plugins) => ({
   },
 });
 
-module.exports = compose([
-  [withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }],
-]);
+module.exports = compose([[withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }]]);
