@@ -1,11 +1,17 @@
+import { InferProps } from 'prop-types';
 import { Layout } from 'antd';
 import NavBar from './components/nav-bar';
 import Breadcrumb from './components/breadcrumb';
 import Footer from './components/footer';
+import propertyTypes from '../../core/property-types';
 
 const { Content } = Layout;
 
-const BaseLayout = ({ children }) => (
+export const propTypes = {
+  children: propertyTypes.children.isRequired,
+};
+
+const BaseLayout = ({ children }: InferProps<typeof propTypes>) => (
   <Layout>
     <NavBar />
     <Content style={{ padding: '0 50px' }}>
@@ -20,5 +26,7 @@ const BaseLayout = ({ children }) => (
     <Footer />
   </Layout>
 );
+
+BaseLayout.propTypes = propTypes;
 
 export default BaseLayout;

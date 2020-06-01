@@ -1,10 +1,16 @@
 import { Layout } from 'antd';
+import { InferProps } from 'prop-types';
+import propertyTypes from '../../core/property-types';
 import BaseLayout from './base-layout';
 import DocumentationSidebar from './components/documentation-sidebar';
 
 const { Content } = Layout;
 
-const DocumentationLayout = ({ children }) => (
+const propTypes = {
+  children: propertyTypes.children.isRequired,
+};
+
+const DocumentationLayout = ({ children }: InferProps<typeof propTypes>) => (
   <BaseLayout>
     <DocumentationSidebar />
     <Layout>
@@ -12,5 +18,7 @@ const DocumentationLayout = ({ children }) => (
     </Layout>
   </BaseLayout>
 );
+
+DocumentationLayout.propTypes = propTypes;
 
 export default DocumentationLayout;
