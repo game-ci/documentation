@@ -3,19 +3,19 @@ import ReactMarkdown from 'react-markdown';
 
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import DocsLayout from '../../components/layout/docs-layout';
+import DocumentationLayout from '../../components/layout/documentation-layout';
 
 const Page = ({ content, data }) => {
   const { title, date } = data;
   return (
-    <DocsLayout>
+    <DocumentationLayout>
       <div>
         <h1>{title}</h1>
         <sub>{date}</sub>
 
         <ReactMarkdown source={content} />
       </div>
-    </DocsLayout>
+    </DocumentationLayout>
   );
 };
 

@@ -1,5 +1,5 @@
 import BaseLayout from '../components/layout/base-layout';
-import { useRedirect } from '../core/hooks/useRedirect';
+import useRedirect from '../core/hooks/use-redirect';
 
 const Index = () => {
   useRedirect('/docs');

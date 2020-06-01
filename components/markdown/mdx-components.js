@@ -2,7 +2,7 @@ import { Typography } from 'antd';
 
 const { Title, Paragraph } = Typography;
 
-export const mdxComponents = {
+export default {
   p: Paragraph,
   h1: Title,
   // h2: (children, ...props) => <Title level={2} {...props}>{children}</Title>,

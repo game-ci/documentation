@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-export const usePathSegments = (nameOfRootSegment = null) => {
+const usePathSegments = (nameOfRootSegment) => {
   const { asPath } = useRouter();
   const segments = asPath.slice(1).split('#')[0].split('/');
 
@@ -12,9 +12,11 @@ export const usePathSegments = (nameOfRootSegment = null) => {
     return { url, name };
   });
 
-  if (nameOfRootSegment != null) {
+  if (nameOfRootSegment !== undefined) {
     pathSegments.unshift({ url: '/', name: nameOfRootSegment });
   }
 
   return pathSegments;
 };
+
+export default usePathSegments;

@@ -1,27 +1,25 @@
 import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'antd';
+import { SmileFilled } from '@ant-design/icons';
+import Link from 'next/link';
+
+import DatePicker from '../components/date-picker';
+import DocumentationLayout from '../components/layout/documentation-layout';
 
 const { Title, Paragraph } = Typography;
 
-// Custom DatePicker that uses Day.js instead of Moment.js
-import DatePicker from '../components/date-picker';
-
-import { SmileFilled } from '@ant-design/icons';
-
-import Link from 'next/link';
-import DocsLayout from '../components/layout/docs-layout';
-
 const FormItem = Form.Item;
-const Option = Select.Option;
+const { Option } = Select;
 
 export default function Page() {
   return (
-    <DocsLayout>
+    <DocumentationLayout>
       <div style={{ marginTop: '100px' }}>
         <div className="text-center mb-5">
-          <Link href="#">
-            <a href="#">
+          <Link href="/">
+            <a>
               <Title>
-                title <SmileFilled size={48} strokeWidth={1} />
+                title
+                <SmileFilled size={48} strokeWidth={1} />
               </Title>
             </a>
           </Link>
@@ -73,6 +71,6 @@ export default function Page() {
           </Form>
         </div>
       </div>
-    </DocsLayout>
+    </DocumentationLayout>
   );
 }
