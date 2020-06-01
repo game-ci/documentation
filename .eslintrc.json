@@ -13,7 +13,7 @@
     }
   },
   "extends": ["airbnb", "plugin:unicorn/recommended", "prettier"],
-  "plugins": ["react", "jsx-a11y", "import", "prettier", "flowtype", "unicorn"],
+  "plugins": ["react", "jsx-a11y", "import", "prettier", "unicorn"],
   "settings": { "react": { "version": "latest" } },
   "rules": {
     "prettier/prettier": "error",

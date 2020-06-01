@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Breadcrumb } from 'antd';
-import { usePathSegments } from '../../../core/hooks/usePathSegments';
+import usePathSegments from '../../../core/hooks/use-path-segments';
 
 const { Item } = Breadcrumb;
 

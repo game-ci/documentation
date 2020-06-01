@@ -26,7 +26,30 @@ Steps to be performed to submit a pull request:
 
 #### Pull Request Prerequisites
 
-You have [Node](https://nodejs.org/) installed at v12.2.0+ and [Yarn](https://yarnpkg.com/) at v1.18.0+.
+##### Tools
+
+You need the following tools to be installed.
+
+- [Node](https://nodejs.org/) installed at v12.X.
+- [Yarn](https://yarnpkg.com/) at v1.18.0+.
+
+> **Tip:** _Use
+> [nvm](https://github.com/nvm-sh/nvm) or
+> [n](https://github.com/tj/n) or
+> [nodenv](https://github.com/nodenv/nodenv)
+> to manage Node.js versions on your machine._
+
+##### Plugins
+
+Install and enable plugins for your IDE:
+
+- ESLint
+- Prettier - _Enable auto format on save:
+  ([WebStorm](https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_configure),
+  [PhpStorm](https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_configure),
+  [VS Code](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode#format-on-save))._
+
+##### Knowledge
 
 Please note that commit hooks will run automatically to perform some tasks;
 

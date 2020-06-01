@@ -2,7 +2,7 @@ import { Layout } from 'antd';
 
 const { Footer } = Layout;
 
-const FooterWrapper = (props) => (
+const FooterWrapper = () => (
   <Footer style={{ textAlign: 'center' }}>Made with ❤ by open source contributors.</Footer>
 );
 

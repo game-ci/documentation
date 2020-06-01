@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-export const useRedirect = (path) => {
+const useRedirect = (path) => {
   const router = useRouter();
 
   useEffect(() => {
@@ -11,3 +11,5 @@ export const useRedirect = (path) => {
     }
   });
 };
+
+export default useRedirect;

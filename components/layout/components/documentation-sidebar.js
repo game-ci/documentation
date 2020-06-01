@@ -11,7 +11,7 @@ import {
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
-const DocsSidebar = () => {
+const DocumentationSidebar = () => {
   const { asPath: currentKey } = useRouter();
 
   return (
@@ -57,4 +57,4 @@ const DocsSidebar = () => {
   );
 };
 
-export default DocsSidebar;
+export default DocumentationSidebar;
