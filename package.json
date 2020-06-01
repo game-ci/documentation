@@ -25,6 +25,7 @@
     "gray-matter": "4.0.2",
     "next": "9.4.4",
     "postcss-preset-env": "^6.7.0",
+    "prop-types": "^15.7.2",
     "raw-loader": "^4.0.1",
     "rc-picker": "^1.6.1",
     "react": "^16.13.1",

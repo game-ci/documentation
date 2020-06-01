@@ -1,3 +1,4 @@
+import PropTypes, { InferProps } from 'prop-types';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
@@ -6,7 +7,12 @@ import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import DocumentationLayout from '../../components/layout/documentation-layout';
 
-const Page = ({ content, data }) => {
+const propTypes = {
+  content: PropTypes.string.isRequired,
+  data: PropTypes.shape({ title: PropTypes.string, date: PropTypes.string }).isRequired,
+};
+
+const Page = ({ content, data }: InferProps<typeof propTypes>) => {
   const { title, date } = data;
   return (
     <DocumentationLayout>
@@ -19,6 +25,8 @@ const Page = ({ content, data }) => {
     </DocumentationLayout>
   );
 };
+
+Page.propTypes = propTypes;
 
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {

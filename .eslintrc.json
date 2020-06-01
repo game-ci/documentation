@@ -34,6 +34,15 @@
         "aspects": ["invalidHref", "preferButton"]
       }
     ],
+    "unicorn/prevent-abbreviations": [
+      "error",
+      {
+        "whitelist": {
+          "getInitialProps": true,
+          "getStaticProps": true
+        }
+      }
+    ],
     // Waiting for AirBnb upgrade: https://github.com/typescript-eslint/typescript-eslint/issues/2077#issuecomment-634811363
     "@typescript-eslint/camelcase": "off"
   }
