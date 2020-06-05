@@ -7,7 +7,7 @@ const FooterWrapper = () => (
   <Footer style={{ textAlign: 'center' }}>
     Made with ❤ by open source contributors and powered by
     <a href="https://vercel.com?utm_source=unity-ci">
-      <Vercel alt="Vercel" style={{ margin: '0 2px -2px' }} width="20" height="16" />
+      <Vercel alt="Vercel" style={{ margin: '0 4px -2px' }} width="20" height="16" />
     </a>
   </Footer>
 );
