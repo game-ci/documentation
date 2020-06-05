@@ -1,4 +1,4 @@
-# Unity-CI
+# Unity CI
 
 Documentation for open source Unity-CI projects. You can find the `.md` files inside the [docs](./docs) folder.
 The live version is available on [unity-ci.com](https://unity-ci.com).
@@ -15,3 +15,11 @@ You will need `NodeJS v12.x` and the latest
 yarn
 yarn dev
 ```
+
+#### License
+
+[MIT license](./LICENSE)
+
+#### Sponsors
+
+[![Vercel](./images/vercel-brand-logo.svg)](https://vercel.com?utm_source=unity-ci)

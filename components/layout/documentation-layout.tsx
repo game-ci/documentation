@@ -13,7 +13,7 @@ const propTypes = {
 const DocumentationLayout = ({ children }: InferProps<typeof propTypes>) => (
   <BaseLayout>
     <DocumentationSidebar />
-    <Layout>
+    <Layout className="site-layout-background">
       <Content style={{ padding: '24px 96px', minHeight: 280 }}>{children}</Content>
     </Layout>
   </BaseLayout>
