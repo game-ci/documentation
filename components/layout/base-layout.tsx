@@ -12,7 +12,7 @@ export const propTypes = {
 };
 
 const BaseLayout = ({ children }: InferProps<typeof propTypes>) => (
-  <Layout>
+  <Layout style={{ minHeight: '100vh' }}>
     <NavBar />
     <Content style={{ padding: '0 50px' }}>
       <Breadcrumb />
