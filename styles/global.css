@@ -18,6 +18,14 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.ant-typography {
+  margin-bottom: 1.5em !important;
+}
+
+.ant-code-block {
+  margin-bottom: 3rem;
+}
+
 .text-left {
   text-align: left !important;
 }
