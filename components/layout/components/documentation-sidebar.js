@@ -30,33 +30,33 @@ const DocumentationSidebar = () => {
           </Menu.Item>
         </SubMenu>
         <SubMenu key="github" icon={<GithubOutlined />} title="GitHub">
-          <Menu.Item key="/docs/getting-started">
-            <Link href="/docs/[page]" as="/docs/getting-started">
+          <Menu.Item key="/docs/github/getting-started">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/getting-started">
               <a>Getting started</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="/docs/activation">
-            <Link href="/docs/[page]" as="/docs/activation">
+          <Menu.Item key="/docs/github/activation">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/activation">
               <a>Activation</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="/docs/test-runner">
-            <Link href="/docs/[page]" as="/docs/test-runner">
+          <Menu.Item key="/docs/github/test-runner">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/test-runner">
               <a>Test runner</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="/docs/builder">
-            <Link href="/docs/[page]" as="/docs/builder">
+          <Menu.Item key="/docs/github/builder">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/builder">
               <a>Builder</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="/docs/testing-a-license">
-            <Link href="/docs/[page]" as="/docs/testing-a-license">
+          <Menu.Item key="/docs/github/testing-a-license">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/testing-a-license">
               <a>Testing a license</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="/docs/returning-a-license">
-            <Link href="/docs/[page]" as="/docs/returning-a-license">
+          <Menu.Item key="/docs/github/returning-a-license">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/returning-a-license">
               <a>Returning a license</a>
             </Link>
           </Menu.Item>
