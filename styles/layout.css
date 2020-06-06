@@ -12,10 +12,13 @@
 
 .site-layout-main {
   padding: 0;
+  will-change: padding, width;
+  transition: padding 0.3s ease, width 0.3s ease;
 }
 
 .site-layout-main .ant-breadcrumb {
   margin: 16px;
+  transition: margin 0.3s ease, width 0.3s ease;
 }
 
 .ant-layout-sider {
@@ -28,6 +31,7 @@
 .page {
   padding: 24px 56px;
   min-height: 280px;
+  transition: padding 0.3s ease, width 0.3s ease;
 }
 
 @media only screen and (min-width: 992px) {
@@ -57,19 +61,21 @@
   top: 30px;
   right: 0px;
   height: 42px;
-  width: 100%;
+  width: calc(100% + 42px);
   text-align: right;
-  will-change: right, background-color;
-  transition: right 0.3s ease, background-color 0.3s ease, width 0.3s ease;
-}
-
-.ant-layout-sider-zero-width-trigger > .anticon {
-  width: 42px;
+  will-change: right, width;
+  transition: right 0.3s ease, background-color 0.3s ease, width 0s ease;
 }
 
 .ant-layout-sider-zero-width > .ant-layout-sider-zero-width-trigger {
   width: 42px;
   right: -30px;
+  will-change: right, width;
+  transition: right 0.3s ease, background-color 0.3s ease, width 0.3s ease;
+}
+
+.ant-layout-sider-zero-width-trigger > .anticon {
+  width: 42px;
 }
 
 .ant-layout-sider-below > .ant-layout-sider-children {

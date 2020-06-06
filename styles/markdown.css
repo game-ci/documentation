@@ -28,15 +28,18 @@
     margin-left: -45px;
     margin-right: -45px;
     width: calc(100% + 90px);
+    transition: margin 0.3s ease, width 0.3s ease;
   }
 
   .markdown > table td {
     padding: 8px 4px;
+    transition: padding 0.3s ease, width 0.3s ease;
   }
 
   .markdown > .code-block {
     margin-left: -45px;
     margin-right: -45px;
     width: calc(100% + 90px);
+    transition: margin 0.3s ease, width 0.3s ease;
   }
 }
