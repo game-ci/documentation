@@ -6,7 +6,7 @@
 
 html {
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 16px;
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
@@ -16,14 +16,25 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-size: 16px;
 }
 
-.ant-typography:not(li .ant-typography) {
+.ant-typography {
   margin-bottom: 1.5em !important;
 }
 
 .ant-code-block {
   margin-bottom: 3rem;
+}
+
+ol,
+ul,
+dl,
+.ant-typography ol,
+.ant-typography ul,
+.ant-typography dl {
+  margin-top: 1em;
+  margin-bottom: 1.5em;
 }
 
 .text-left {

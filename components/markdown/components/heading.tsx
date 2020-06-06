@@ -1,17 +1,19 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { Typography } from 'antd';
 
 const { Title } = Typography;
 
-export default (properties) => {
-  const { level, children } = properties;
+interface Props {
+  level: number;
+  children: React.ReactNode;
+}
 
+export default ({ level, children }: Props) => {
   switch (level) {
     case 1:
     case 2:
     case 3:
     case 4:
-      return <Title {...properties} />;
+      return <Title level={level}>{children}</Title>;
     case 5:
       return <strong style={{ fontSize: '130%', display: 'block' }}>{children}</strong>;
     case 6:
