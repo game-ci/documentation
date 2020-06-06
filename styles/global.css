@@ -25,6 +25,7 @@ body {
 
 .ant-code-block {
   margin-bottom: 3rem;
+  max-width: 1024px;
 }
 
 ol,
