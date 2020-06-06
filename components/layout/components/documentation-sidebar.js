@@ -25,32 +25,51 @@ const DocumentationSidebar = () => {
         <SubMenu key="main" icon={<CheckOutlined />} title="Unity CI">
           <Menu.Item key="/docs">
             <Link href="/docs">
+              <a>Introduction</a>
+            </Link>
+          </Menu.Item>
+        </SubMenu>
+        <SubMenu key="github" icon={<GithubOutlined />} title="GitHub">
+          <Menu.Item key="/docs/getting-started">
+            <Link href="/docs/[page]" as="/docs/getting-started">
               <a>Getting started</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="/example">
-            <Link href="/example">
-              <a>Example</a>
+          <Menu.Item key="/docs/activation">
+            <Link href="/docs/[page]" as="/docs/activation">
+              <a>Activation</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="3">option3</Menu.Item>
-          <Menu.Item key="4">option4</Menu.Item>
-        </SubMenu>
-        <SubMenu key="github" icon={<GithubOutlined />} title="GitHub">
-          <Menu.Item key="/docs/unity-actions">
-            <Link href="/docs/[page]" as="/docs/unity-actions">
-              <a>Unity Actions</a>
+          <Menu.Item key="/docs/test-runner">
+            <Link href="/docs/[page]" as="/docs/test-runner">
+              <a>Test runner</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="6">option6</Menu.Item>
-          <Menu.Item key="7">option7</Menu.Item>
-          <Menu.Item key="8">option8</Menu.Item>
+          <Menu.Item key="/docs/builder">
+            <Link href="/docs/[page]" as="/docs/builder">
+              <a>Builder</a>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/docs/testing-a-license">
+            <Link href="/docs/[page]" as="/docs/testing-a-license">
+              <a>Testing a license</a>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/docs/returning-a-license">
+            <Link href="/docs/[page]" as="/docs/returning-a-license">
+              <a>Returning a license</a>
+            </Link>
+          </Menu.Item>
         </SubMenu>
         <SubMenu key="gitlab" icon={<GitlabOutlined />} title="GitLab">
-          <Menu.Item key="9">option9</Menu.Item>
+          <Menu.Item key="9" disabled>
+            To be added
+          </Menu.Item>
         </SubMenu>
         <SubMenu key="deployment" icon={<AppstoreAddOutlined />} title="Deployment">
-          <Menu.Item key="10">Steam</Menu.Item>
+          <Menu.Item key="10" disabled>
+            To be added
+          </Menu.Item>
         </SubMenu>
       </Menu>
     </Sider>
