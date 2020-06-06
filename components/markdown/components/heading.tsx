@@ -15,10 +15,9 @@ export default ({ level, children }: Props) => {
     case 4:
       return <Title level={level}>{children}</Title>;
     case 5:
-      return <strong style={{ fontSize: '130%', display: 'block' }}>{children}</strong>;
+      return <h5 className="ant-typography">{children}</h5>;
     case 6:
-      return <strong style={{ fontSize: '110%', display: 'block' }}>{children}</strong>;
     default:
-      return <strong style={{ display: 'block' }}>{children}</strong>;
+      return <h6 className="ant-typography">{children}</h6>;
   }
 };
