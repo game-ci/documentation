@@ -9,7 +9,7 @@ export default function Page() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main className="ant-typography">
         <h1>Welcome to Unity CI</h1>
 
         <p>This site will host documentation for open source Unity CI projects.</p>
