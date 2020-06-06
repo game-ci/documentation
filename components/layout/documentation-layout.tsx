@@ -14,7 +14,7 @@ const DocumentationLayout = ({ children }: InferProps<typeof propTypes>) => (
   <BaseLayout>
     <DocumentationSidebar />
     <Layout className="site-layout-background">
-      <Content style={{ padding: '24px 96px', minHeight: 280 }}>{children}</Content>
+      <Content className="page documentation-page">{children}</Content>
     </Layout>
   </BaseLayout>
 );
