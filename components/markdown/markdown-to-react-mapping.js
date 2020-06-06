@@ -1,19 +1,21 @@
-import { Typography } from 'antd';
+import { Typography, Divider } from 'antd';
 
 import CodeBlock from './components/code-block';
 import Heading from './components/heading';
+// import { List, ListItem } from './components/list';
+// import Blockquote from './components/blockquote';
 
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
 
 export default {
   // root: 'Root container element that contains the rendered markdown',
-  // text: 'Text rendered inside of other elements, such as paragraphs',
+  text: Text,
   // break: 'Hard-break (<br>)',
   paragraph: Paragraph,
   // emphasis: ' - Emphasis (<em>)',
   // strong: ' - Strong/bold (<strong>)',
-  // thematicBreak: ' - Horizontal rule / thematic break (<hr>)',
-  // blockquote: ' - Block quote (<blockquote>)',
+  thematicBreak: Divider,
+  // blockquote: Blockquote, // ' - Block quote (<blockquote>)',
   // delete: ' - Deleted/strike-through (<del>)',
   // link: ' - Link (<a>)',
   // image: ' - Image (<img>)',
@@ -24,8 +26,8 @@ export default {
   // tableBody: ' - Table body (<tbody>)',
   // tableRow: ' - Table row (<tr>)',
   // tableCell: ' - Table cell (<td>/<th>)',
-  // list: ' - List (<ul>/<ol>)',
-  // listItem: ' - List item (<li>)',
+  // list: List, // ' - List (<ul>/<ol>)',
+  // listItem: ListItem, // ' - List item (<li>)',
   // definition: ' - Definition (not rendered by default)',
   heading: Heading,
   // inlineCode: ' - Inline code (<code>)',

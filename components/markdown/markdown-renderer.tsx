@@ -8,10 +8,12 @@ const propTypes = {
 };
 
 const MarkdownRenderer = ({ document, meta }: InferProps<typeof propTypes>) => {
-  const { title, date } = meta;
+  const { title = '', date = '' } = meta;
+  const metaInformation = `${date} - ${title}`.replace(/(^\s-\s)|(\s-\s$)/, '');
+
   return (
     <div>
-      <sub>{`${title} - ${date}`}</sub>
+      <sub>{metaInformation}</sub>
 
       <ReactMarkdown source={document} renderers={renderers} />
     </div>

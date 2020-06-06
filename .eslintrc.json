@@ -39,7 +39,8 @@
       {
         "whitelist": {
           "getInitialProps": true,
-          "getStaticProps": true
+          "getStaticProps": true,
+          "props": true
         }
       }
     ],
