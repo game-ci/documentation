@@ -18,7 +18,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-.ant-typography {
+.ant-typography:not(li .ant-typography) {
   margin-bottom: 1.5em !important;
 }
 
