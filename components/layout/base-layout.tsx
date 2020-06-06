@@ -14,9 +14,10 @@ export const propTypes = {
 const BaseLayout = ({ children }: InferProps<typeof propTypes>) => (
   <Layout style={{ minHeight: '100vh' }}>
     <NavBar />
-    <Content style={{ padding: '0 50px' }}>
+    <Content className="site-layout-main">
       <Breadcrumb />
       <Layout
+        hasSider
         className="site-layout-background"
         style={{ padding: '24px 0', flexDirection: 'row' }}
       >

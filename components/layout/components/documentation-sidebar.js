@@ -15,7 +15,7 @@ const DocumentationSidebar = () => {
   const { asPath: currentKey } = useRouter();
 
   return (
-    <Sider className="site-layout-background" width={200}>
+    <Sider className="site-layout-background" width={200} breakpoint="lg" collapsedWidth="0">
       <Menu
         mode="inline"
         defaultSelectedKeys={[currentKey]}

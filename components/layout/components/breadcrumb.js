@@ -9,7 +9,7 @@ const { Item } = Breadcrumb;
 const BreadcrumbWrapper = () => {
   const segments = usePathSegments(<HomeOutlined />);
   return (
-    <Breadcrumb style={{ margin: '16px 0' }}>
+    <Breadcrumb>
       {segments.map(({ url, name }) => (
         <Item key={url} style={{ textTransform: 'capitalize' }}>
           <Link href={url}>
