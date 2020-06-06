@@ -33,9 +33,9 @@ class CodeBlock extends React.PureComponent {
     const { value, language } = this.props;
     return (
       <pre className="ant-code-block">
-        <code ref={this.setRef} className={`language-${language}`}>
+        <div ref={this.setRef} className={`language-${language}`}>
           {value}
-        </code>
+        </div>
       </pre>
     );
   }
