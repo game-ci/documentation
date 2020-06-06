@@ -32,7 +32,7 @@ class CodeBlock extends React.PureComponent {
   render() {
     const { value, language } = this.props;
     return (
-      <pre className="ant-code-block">
+      <pre className="code-block">
         <div ref={this.setRef} className={`language-${language}`}>
           {value}
         </div>

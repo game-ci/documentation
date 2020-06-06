@@ -33,4 +33,10 @@
   .markdown > table td {
     padding: 8px 4px;
   }
+
+  .markdown > .code-block {
+    margin-left: -45px;
+    margin-right: -45px;
+    width: calc(100% + 90px);
+  }
 }
