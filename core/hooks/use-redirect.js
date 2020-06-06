@@ -1,14 +1,11 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-const useRedirect = (path) => {
+const useRedirect = (path, asUrl, options) => {
   const router = useRouter();
 
   useEffect(() => {
-    const { pathname } = router;
-    if (pathname === '/') {
-      router.push(path);
-    }
+    router.push(path, asUrl, options);
   });
 };
 
