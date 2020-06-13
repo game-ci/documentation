@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 
-import usePathSegments from '../../../core/hooks/use-path-segments';
+import usePathSegments from '../../../core/routing/use-path-segments';
 
 const { Item } = Breadcrumb;
 

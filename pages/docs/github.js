@@ -1,4 +1,4 @@
-import useRedirect from '../../core/hooks/use-redirect';
+import useRedirect from '../../core/routing/use-redirect';
 import DocumentationLayout from '../../components/layout/documentation-layout';
 
 const GithubIndex = () => {
