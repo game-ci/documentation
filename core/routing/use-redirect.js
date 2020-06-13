@@ -5,7 +5,11 @@ const useRedirect = (path, asUrl, options) => {
   const router = useRouter();
 
   useEffect(() => {
-    router.push(path, asUrl, options);
+    if (path.startsWith('http')) {
+      window.location.href = path;
+    } else {
+      router.push(path, asUrl, options);
+    }
   });
 };
 
