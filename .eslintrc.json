@@ -45,6 +45,8 @@
       }
     ],
     // Waiting for AirBnb upgrade: https://github.com/typescript-eslint/typescript-eslint/issues/2077#issuecomment-634811363
-    "@typescript-eslint/camelcase": "off"
+    "@typescript-eslint/camelcase": "off",
+    // Conflict between prettier and eslint-unicorn
+    "react/jsx-wrap-multilines": "off"
   }
 }

@@ -2,6 +2,7 @@
 import { AppProps } from 'next/app';
 
 import 'antd/dist/antd.css';
+// import 'antd/dist/antd.dark.css';
 import '../styles/vars.css';
 import '../styles/global.css';
 import '../styles/layout.css';
