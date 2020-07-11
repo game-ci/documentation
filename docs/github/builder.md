@@ -295,6 +295,56 @@ No version will be set by Builder. **(not recommended)**
 > Not recommended unless you generate a new version in a pre-commit hook. Manually
 > setting versions is error-prone.
 
+#### androidVersionCode
+
+Configure the android `versionCode`.
+
+When not specified, the version code is generated from the version using the `major * 1000000 + minor * 1000 + patch` scheme;
+
+#### androidAppBundle
+
+Set this flag to `true` to build '.aab' instead of '.apk'.
+
+_**required:** `false`_
+_**default:** `false`_
+
+#### androidKeystoreName
+
+Configure the android `keystoreName`.
+
+_**required:** `false`_
+_**default:** ""_
+
+#### androidKeystoreBase64
+
+Configure the base64 contents of the android keystore file.
+
+The contents will be decoded from base64 with `echo $androidKeystoreBase64 | base64 --decode > $androidKeystoreName`;
+
+_**required:** `false`_
+_**default:** ""_
+
+#### androidKeystorePass
+
+Configure the android `keystorePass`.
+
+_**required:** `false`_
+_**default:** ""_
+
+#### androidKeyaliasName
+
+Configure the android `keyaliasName`.
+
+_**required:** `false`_
+_**default:** ""_
+
+#### androidKeyaliasPass
+
+Configure the android `keyaliasPass`.
+
+_**required:** `false`_
+_**default:** ""_
+
 #### allowDirtyBuild
 
 Allows the branch of the build to be dirty, and still generate the build.
@@ -308,6 +358,9 @@ Allows the branch of the build to be dirty, and still generate the build.
 Note that it is generally bad practice to modify your branch
 in a CI Pipeline. However there are exceptions where this might
 be needed. (use with care).
+
+_**required:** `false`_
+_**default:** `false`_
 
 #### customParameters
 
