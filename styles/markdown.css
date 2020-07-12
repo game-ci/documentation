@@ -7,6 +7,7 @@
   border: 1px solid #f0f0f0;
   border-collapse: collapse;
   border-spacing: 0;
+  transition: margin 0.3s ease, width 0.3s ease;
 }
 
 .markdown > table th,
@@ -14,6 +15,7 @@
   padding: 8px 24px;
   text-align: left;
   border: 1px solid #f0f0f0;
+  transition: padding 0.3s ease, width 0.3s ease;
 }
 
 .markdown > table th {
@@ -23,23 +25,26 @@
   background: rgba(0, 0, 0, 0.02);
 }
 
+.markdown > .code-block {
+  max-width: 1024px;
+  transition: margin 0.3s ease, width 0.3s ease;
+}
+
 @media only screen and (max-width: 992px) {
   .markdown > table {
     margin-left: -45px;
     margin-right: -45px;
     width: calc(100% + 90px);
-    transition: margin 0.3s ease, width 0.3s ease;
   }
 
+  .markdown > table th,
   .markdown > table td {
     padding: 8px 4px;
-    transition: padding 0.3s ease, width 0.3s ease;
   }
 
   .markdown > .code-block {
     margin-left: -45px;
     margin-right: -45px;
     width: calc(100% + 90px);
-    transition: margin 0.3s ease, width 0.3s ease;
   }
 }
