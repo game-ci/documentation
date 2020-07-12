@@ -1,7 +1,9 @@
 # Builder
 
+Building the project as part of a workflow may help to create mind-space and focus on the project itself.
+
 Use [Unity - Builder ](https://github.com/features/actions)
-to build Unity projects for different platforms.
+to automatically build Unity projects for different platforms.
 
 ## Basic setup
 

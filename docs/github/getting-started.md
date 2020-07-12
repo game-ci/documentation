@@ -2,7 +2,11 @@
 
 Unity Actions provides the fastest and **easiest** way to automatically test and build any Unity project.
 
-#### Mental model
+There are a few parts to setting up Unity Actions. Steps may slightly differ depending on each license type.
+
+## Mental model
+
+#### Overall steps
 
 1. Understand how
    [Github Actions](https://docs.github.com/en/actions)

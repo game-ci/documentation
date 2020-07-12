@@ -3,6 +3,8 @@
 Manually returning a license is **usually never necessary**,
 unless when running into an _unrecoverable error_ while having a license active.
 
+Also, Unity only allows returning professional licenses.
+
 ## Basic setup
 
 You may use [Unity - Return license](https://github.com/marketplace/actions/unity-return-license)
@@ -16,5 +18,3 @@ Add this step to your workflow:
   uses: webbertakken/unity-return-license@v1
   if: always()
 ```
-
-> _**Note:** Unity does not allow returning of personal licenses._
