@@ -60,11 +60,20 @@ const NavBar = () => (
           </Item>
         </ItemGroup>
         <ItemGroup title="GitHub Actions">
+          <Item icon={<GithubOutlined />} key="external:action:overview">
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://github.com/webbertakken/unity-actions"
+            >
+              Unity Actions
+            </a>
+          </Item>
           <Item icon={<GithubOutlined />} key="external:action:builder">
             <a
               target="_blank"
               rel="noreferrer"
-              href="https://github.com/marketplace/actions/unity-builder"
+              href="https://github.com/webbertakken/unity-builder"
             >
               Unity Builder
             </a>
@@ -73,16 +82,16 @@ const NavBar = () => (
             <a
               target="_blank"
               rel="noreferrer"
-              href="https://github.com/marketplace/actions/unity-test-runner"
+              href="https://github.com/webbertakken/unity-test-runner"
             >
-              Unity Test runner
+              Unity Test Runner
             </a>
           </Item>
           <Item icon={<GithubOutlined />} key="external:action:activate">
             <a
               target="_blank"
               rel="noreferrer"
-              href="https://github.com/marketplace/actions/unity-activate"
+              href="https://github.com/webbertakken/unity-activate"
             >
               Unity Activate
             </a>
@@ -91,7 +100,7 @@ const NavBar = () => (
             <a
               target="_blank"
               rel="noreferrer"
-              href="https://github.com/marketplace/actions/unity-request-activation-file"
+              href="https://github.com/webbertakken/unity-request-activation-file"
             >
               Unity Request Activation
             </a>
@@ -100,7 +109,7 @@ const NavBar = () => (
             <a
               target="_blank"
               rel="noreferrer"
-              href="https://github.com/marketplace/actions/unity-return-license"
+              href="https://github.com/webbertakken/unity-return-license"
             >
               Unity Return License
             </a>
