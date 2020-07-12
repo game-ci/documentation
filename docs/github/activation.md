@@ -1,32 +1,22 @@
 # Activation
 
-[![Actions status](https://github.com/webbertakken/unity-request-manual-activation-file/workflows/Actions%20%F0%9F%98%8E/badge.svg?event=push&branch=master)](https://github.com/webbertakken/unity-request-manual-activation-file/actions?query=branch%3Amaster+event%3Apush+workflow%3A"Actions%20%F0%9F%98%8E")
+#### Professional licenses
 
----
+Skip this chapter.
 
-GitHub Action for
-[requesting the manual activation file](https://github.com/marketplace/actions/unity-request-activation-file) for Unity.
+#### Personal licenses
 
-Part of the
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-collection.
+You may use the
+[Unity - Request Activation File](https://github.com/marketplace/actions/unity-request-activation-file)
+action using below instructions.
 
----
+The activation file uses machine identifiers and the Unity version number.
+All github virtual machines emit the same hardware ID.
+You cannot perform this step locally.
 
-Use this action to acquire a Unity personal license. Required in order to
-use the
-[Activate](https://github.com/webbertakken/unity-actions#activate),
-[Test](https://github.com/webbertakken/unity-actions#test) and
-[Build](https://github.com/webbertakken/unity-actions#build)
-actions.
+Let's go!
 
-### Documentation
-
-See the
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-collection repository for workflow documentation and reference implementation.
-
-## Usage
+## Acquiring an activation file
 
 Create a file called `.github/workflows/activation.yml` and add a job to it.
 
@@ -64,7 +54,7 @@ You use the id to **upload the output file** like so:
 
 Commit and push your workflow definition.
 
-## Activation
+## Converting into a license
 
 Follow these (one-time) steps for simple activation.
 
@@ -74,20 +64,8 @@ Follow these (one-time) steps for simple activation.
 - Open `Github` > `Your repository` > `Settings` > `Secrets`.
 - Add a new secret called `UNITY_LICENSE` and copy the contents your license file into it.
 
-You can now use the
-[Activate](https://github.com/webbertakken/unity-actions#activate),
-[Test](https://github.com/webbertakken/unity-actions#test) and
-[Build](https://github.com/webbertakken/unity-actions#build)
-actions.
+## Next steps
 
-## More actions
+The license can be used in test and build steps.
 
-Visit
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-to find related actions for Unity.
-
-Feel free to contribute.
-
-## Licence
-
-[MIT](./LICENSE)
+You are now ready to start configuring these.
