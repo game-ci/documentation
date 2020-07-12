@@ -1,38 +1,12 @@
 # Test runner
 
-[![Actions status](https://github.com/webbertakken/unity-test-runner/workflows/Actions%20%F0%9F%98%8E/badge.svg?event=push&branch=master)](https://github.com/webbertakken/unity-test-runner/actions?query=branch%3Amaster+event%3Apush+workflow%3A"Actions%20%F0%9F%98%8E")
+## Basic setup
 
----
-
-GitHub Action to
-[run tests](https://github.com/marketplace/actions/unity-test-runner)
-for any Unity project.
-
-Part of the
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-collection.
-
----
-
-This is a recommended step to prepare your pipeline for using the
-[Build](https://github.com/webbertakken/unity-actions#build)
-action.
-
-## Documentation
-
-See the
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-collection repository for workflow documentation and reference implementation.
-
-## Usage
-
-#### Setup test runner
-
-By default the test runner will run all your playmode and editmode tests.
+By default, the test runner will run both `playmode` and `editmode` tests.
 
 Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
-##### Personal License
+#### Personal license
 
 Personal licenses require a one-time manual activation step (per unity version).
 
@@ -51,7 +25,7 @@ Then, define the test step as follows:
     unityVersion: 20XX.X.XXXX
 ```
 
-##### Professional license
+#### Professional license
 
 Professional licenses do not need any manual steps.
 
@@ -76,19 +50,16 @@ Define the test step as follows:
 
 That is all you need to test your project.
 
-#### Storing test results
+## Storing test results
 
 To be able to access the test results,
 they need to be uploaded as artifacts.
+
 To do this it is recommended to use Github Actions official
 [upload artifact action](https://github.com/marketplace/actions/upload-artifact)
 after any test action.
 
-###### Using defaults
-
-By default, Test Runner outputs it's results to a folder named `artifacts`.
-
-Example:
+By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
 - uses: actions/upload-artifact@v1
@@ -97,19 +68,15 @@ Example:
     path: artifacts
 ```
 
-Test results can now be downloaded as Artifacts in the Actions tab.
+Test results can now be downloaded as `Artifacts` in the `Actions` tab.
 
-###### Specifying artifacts folder
+#### Specifying artifacts folder
 
-If a different `artifactsPath` was specified in the test runner,
-you can reference this path using the `id` of the test step.
-
-Example:
+You can specify a different `artifactsPath` in the test runner and reference this path using the `id` of the test step.
 
 ```yaml
 - uses: webbertakken/unity-test-runner@v1.4
   id: myTestStep
-  (...)
 ```
 
 ```yaml
@@ -119,15 +86,14 @@ Example:
     path: ${{ steps.myTestStep.outputs.artifactsPath }}
 ```
 
-#### Caching
+## Caching
 
 In order to make test runs (and builds) faster,
 you can cache Library files from previous runs.
+
 To do so, simply add Github Actions' official
 [cache action](https://github.com/marketplace/actions/cache)
 before any unity steps.
-
-Example:
 
 ```yaml
 - uses: actions/cache@v1.1.0
@@ -140,59 +106,6 @@ Example:
 ```
 
 This simple addition could speed up your test runs by more than 50%.
-
-#### Complete example
-
-A complete workflow that tests all modes separately could look like this:
-
-```yaml
-name: Build project
-
-on:
-  pull_request: {}
-  push: { branches: [master] }
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
-jobs:
-  testAllModes:
-    name: Test in ${{ matrix.testMode }} on version ${{ matrix.unityVersion }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - path/to/your/project
-        unityVersion:
-          - 2019.2.11f1
-        testMode:
-          - playmode
-          - editmode
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          lfs: true
-      - uses: actions/cache@v1.1.0
-        with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}
-          restore-keys: |
-            Library-
-      - uses: webbertakken/unity-test-runner@v1.4
-        id: tests
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          testMode: ${{ matrix.testMode }}
-          artifactsPath: ${{ matrix.testMode }}-artifacts
-      - uses: actions/upload-artifact@v1
-        with:
-          name: Test results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.artifactsPath }}
-```
-
-> **Note:** _Environment variables are set for all jobs in the workflow like this._
 
 ## Configuration options
 
@@ -250,8 +163,6 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 
 Parameters without a value will be considered booleans (with a value of true).
 
-_**example:**_
-
 ```yaml
 - uses: webbertakken/unity-test-runner@master
   with:
@@ -259,16 +170,57 @@ _**example:**_
 ```
 
 _**required:** `false`_
-_**default:** ""_
+_**default:** `""`_
 
-## More actions
+## Complete example
 
-Visit
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-to find related actions for Unity.
+A complete workflow that tests all modes separately could look like this:
 
-Feel free to contribute.
+```yaml
+name: Build project
 
-## Licence
+on:
+  pull_request: {}
+  push: { branches: [master] }
 
-[MIT](./LICENSE)
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+jobs:
+  testAllModes:
+    name: Test in ${{ matrix.testMode }} on version ${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - path/to/your/project
+        unityVersion:
+          - 2019.2.11f1
+        testMode:
+          - playmode
+          - editmode
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/cache@v1.1.0
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}
+          restore-keys: |
+            Library-
+      - uses: webbertakken/unity-test-runner@v1.4
+        id: tests
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Test results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+```
+
+> _**Note:** Environment variables are set for all jobs in the workflow like this._
