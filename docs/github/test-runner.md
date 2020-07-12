@@ -27,9 +27,7 @@ Then, define the test step as follows:
 
 #### Professional license
 
-Professional licenses do not need any manual steps.
-
-Instead, three variables will need to be set.
+Make sure you have set up these variables in the activation step.
 
 - `UNITY_EMAIL` (should contain the email address for your Unity account)
 - `UNITY_PASSWORD` (the password that you use to login to Unity)
