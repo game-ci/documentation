@@ -1,45 +1,15 @@
 # Builder
 
-[![Actions status](https://github.com/webbertakken/unity-builder/workflows/Actions%20%F0%9F%98%8E/badge.svg?event=push&branch=master)](https://github.com/webbertakken/unity-builder/actions?query=branch%3Amaster+event%3Apush+workflow%3A%22Actions+%F0%9F%98%8E%22)
-[![lgtm - code quality](https://img.shields.io/lgtm/grade/javascript/g/webbertakken/unity-builder.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/webbertakken/unity-builder/context:javascript)
-[![codecov - test coverage](https://codecov.io/gh/webbertakken/unity-builder/branch/master/graph/badge.svg)](https://codecov.io/gh/webbertakken/unity-builder)
-
----
-
-GitHub Action to
-[build Unity projects](https://github.com/marketplace/actions/unity-builder)
-for different platforms.
-
-Part of the
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-collection.
-
----
-
-[Github Action](https://github.com/features/actions)
+Use [Unity - Builder ](https://github.com/features/actions)
 to build Unity projects for different platforms.
 
-It is recommended to run the
-[Test](https://github.com/webbertakken/unity-actions#test)
-action from the
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-collection before running this action. This action also requires the [Activation](https://github.com/marketplace/actions/unity-activate) step.
+## Basic setup
 
-## Documentation
-
-See the
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-collection repository for workflow documentation and reference implementation.
-
-## Usage
-
-#### Setup builder
-
-By default the enabled scenes from the project's settings will be built.
+By default, the enabled scenes from the project's settings will be built.
 
 Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
-##### Personal License
+#### Personal License
 
 Personal licenses require a one-time manual activation step (per unity version).
 
@@ -59,11 +29,9 @@ Then, define the build step as follows:
     targetPlatform: WebGL
 ```
 
-##### Professional license
+#### Professional license
 
-Professional licenses do not need any manual steps.
-
-Instead, three variables will need to be set.
+Make sure you have set up these variables in the activation step.
 
 - `UNITY_EMAIL` (should contain the email address for your Unity account)
 - `UNITY_PASSWORD` (the password that you use to login to Unity)
@@ -85,7 +53,7 @@ Define the build step as follows:
 
 That is all you need to build your project.
 
-#### Storing the build
+## Storing the build
 
 To be able to access your built files,
 they need to be uploaded as artifacts.
@@ -106,7 +74,7 @@ Example:
 
 Builds can now be downloaded as Artifacts in the Actions tab.
 
-#### Caching
+## Caching
 
 In order to make builds run faster, you can cache Library files from previous
 builds. To do so simply add Github Actions official
@@ -125,69 +93,6 @@ Example:
 ```
 
 This simple addition could speed up your build by more than 50%.
-
-## Complete example
-
-A complete workflow that builds every available platform could look like this:
-
-```yaml
-name: Build project
-
-on:
-  pull_request: {}
-  push: { branches: [master] }
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
-jobs:
-  buildForSomePlatforms:
-    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - path/to/your/project
-        unityVersion:
-          - 2019.2.11f1
-          - 2019.3.0f1
-        targetPlatform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
-          - StandaloneWindows # Build a Windows standalone.
-          - StandaloneWindows64 # Build a Windows 64-bit standalone.
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
-          - iOS # Build an iOS player.
-          - Android # Build an Android .apk standalone app.
-          - WebGL # WebGL.
-          - WSAPlayer # Build an Windows Store Apps player.
-          - PS4 # Build a PS4 Standalone.
-          - XboxOne # Build a Xbox One Standalone.
-          - tvOS # Build to Apple's tvOS platform.
-          - Switch # Build a Nintendo Switch player.
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          lfs: true
-      - uses: actions/cache@v1.1.0
-        with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
-          restore-keys: |
-            Library-${{ matrix.projectPath }}-
-            Library-
-      - uses: webbertakken/unity-builder@<version>
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v1
-        with:
-          name: Build
-          path: build
-```
-
-> **Note:** _Environment variables are set for all jobs in the workflow like this._
 
 ## Configuration options
 
@@ -313,7 +218,7 @@ _**default:** `false`_
 Configure the android `keystoreName`.
 
 _**required:** `false`_
-_**default:** ""_
+_**default:** `""`_
 
 #### androidKeystoreBase64
 
@@ -322,28 +227,28 @@ Configure the base64 contents of the android keystore file.
 The contents will be decoded from base64 with `echo $androidKeystoreBase64 | base64 --decode > $androidKeystoreName`;
 
 _**required:** `false`_
-_**default:** ""_
+_**default:** `""`_
 
 #### androidKeystorePass
 
 Configure the android `keystorePass`.
 
 _**required:** `false`_
-_**default:** ""_
+_**default:** `""`_
 
 #### androidKeyaliasName
 
 Configure the android `keyaliasName`.
 
 _**required:** `false`_
-_**default:** ""_
+_**default:** `""`_
 
 #### androidKeyaliasPass
 
 Configure the android `keyaliasPass`.
 
 _**required:** `false`_
-_**default:** ""_
+_**default:** `""`_
 
 #### allowDirtyBuild
 
@@ -370,8 +275,6 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 
 Parameters without a value will be considered booleans (with a value of true).
 
-_**example:**_
-
 ```yaml
 - uses: webbertakken/unity-builder@<version>
   with:
@@ -379,16 +282,67 @@ _**example:**_
 ```
 
 _**required:** `false`_
-_**default:** ""_
+_**default:** `""`_
 
-## More actions
+## Complete example
 
-Visit
-[Unity Actions](https://github.com/webbertakken/unity-actions)
-to find related actions for Unity.
+A complete workflow that builds every available platform could look like this:
 
-Feel free to contribute.
+```yaml
+name: Build project
 
-## Licence
+on:
+  pull_request: {}
+  push: { branches: [master] }
 
-[MIT](./LICENSE)
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+jobs:
+  buildForSomePlatforms:
+    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - path/to/your/project
+        unityVersion:
+          - 2019.2.11f1
+          - 2019.3.0f1
+        targetPlatform:
+          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows # Build a Windows standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - iOS # Build an iOS player.
+          - Android # Build an Android .apk standalone app.
+          - WebGL # WebGL.
+          - WSAPlayer # Build an Windows Store Apps player.
+          - PS4 # Build a PS4 Standalone.
+          - XboxOne # Build a Xbox One Standalone.
+          - tvOS # Build to Apple's tvOS platform.
+          - Switch # Build a Nintendo Switch player.
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/cache@v1.1.0
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-
+            Library-
+      - uses: webbertakken/unity-builder@<version>
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Build
+          path: build
+```
+
+> **Note:** _Environment variables are set for all jobs in the workflow like this._
