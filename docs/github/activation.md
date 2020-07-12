@@ -1,10 +1,18 @@
 # Activation
 
-#### Professional licenses
+All actions utilize an installment of Unity, and as such need to be activated.
 
-Skip this chapter.
+Unity differentiates their methods between `personal` and `professional` licenses.
 
-#### Personal licenses
+## Personal license
+
+#### Mental model
+
+1. Request activation file for usage on GitHub
+2. Use that file to acquire a license
+3. Set the license as a secret
+
+#### About the activation file
 
 You may use the
 [Unity - Request Activation File](https://github.com/marketplace/actions/unity-request-activation-file)
@@ -16,7 +24,7 @@ You cannot perform this step locally.
 
 Let's go!
 
-## Acquiring an activation file
+### Acquiring an activation file
 
 Create a file called `.github/workflows/activation.yml` and add a job to it.
 
@@ -54,15 +62,35 @@ You use the id to **upload the output file** like so:
 
 Commit and push your workflow definition.
 
-## Converting into a license
+### Converting into a license
 
 Follow these (one-time) steps for simple activation.
 
 - Download the manual activation file that now appeared as an artifact.
 - Visit [license.unity3d.com](https://license.unity3d.com/manual) and upload it.
 - You should now receive your license file (Unity_v20XX.x.ulf) as a download.
-- Open `Github` > `Your repository` > `Settings` > `Secrets`.
-- Add a new secret called `UNITY_LICENSE` and copy the contents your license file into it.
+- Open `Github` > `<Your repository>` > `Settings` > `Secrets`.
+- Create a secret called `UNITY_LICENSE` and copy the contents your license file into it.
+
+> _**Note:** When changing Unity version, you may need to repeat the same process._
+
+## Professional license
+
+1. Open `Github` > `<Your repository>` > `Settings` > `Secrets`
+2. Create the following secrets;
+   - `UNITY_SERIAL` - _(Add the code that looks like `XX-XXXX-XXXX-XXXX-XXXX-XXXX`)_
+   - `UNITY_EMAIL` - _(Add the email address that you use to login to Unity)_
+   - `UNITY_PASSWORD` - _(Add the password that you use to login to Unity)_
+
+## Optional steps
+
+- Verify your license using
+  [Activate](https://github.com/marketplace/actions/unity-activate).
+- When using a pro license also use
+  [Return License](https://github.com/marketplace/actions/unity-return-license)
+  to free up the license allocation after usage.
+
+> _**Note:** Test runner and Builder already include these steps._
 
 ## Next steps
 
