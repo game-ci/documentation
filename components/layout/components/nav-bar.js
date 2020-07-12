@@ -55,7 +55,7 @@ const NavBar = () => (
         <ItemGroup title="Docker">
           <Item icon={<GitlabOutlined />} key="external:gableroux:unity3d">
             <a target="_blank" rel="noreferrer" href="https://hub.docker.com/r/gableroux/unity3d">
-              GabLeRoux:Unity3D
+              gableroux/unity3d
             </a>
           </Item>
         </ItemGroup>
