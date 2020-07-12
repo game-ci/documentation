@@ -1,5 +1,9 @@
 # Test runner
 
+Running your test suite in an automated workflow helps increase certainty when merging.
+
+Use [Unity - Test runner](https://github.com/marketplace/actions/unity-test-runner) to run your Unity tests.
+
 ## Basic setup
 
 By default, the test runner will run both `playmode` and `editmode` tests.
