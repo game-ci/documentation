@@ -286,6 +286,23 @@ Parameters without a value will be considered booleans (with a value of true).
 _**required:** `false`_
 _**default:** `""`_
 
+## Outputs
+
+Below are outputs that can be accessed by using `${{ steps.UNITY_BUILDER_STEP_ID.outputs.OUTPUT_NAME }}`, where
+`UNITY_BUILDER_STEP_ID` is the id of the Builder step, and `OUTPUT_NAME` is the name of the output.
+
+#### buildVersion
+
+Returns the version that was generated/used by Builder, following the strategy configured for `versioning`.
+
+```yaml
+- uses: webbertakken/unity-builder@<version>
+  id: unityBuilder
+
+- id: print-version
+  run: echo Project Version: ${{ steps.unityBuilder.outputs.buildVersion }}
+```
+
 ## Complete example
 
 A complete workflow that builds every available platform could look like this:
