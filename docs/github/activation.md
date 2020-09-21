@@ -1,6 +1,6 @@
 # Activation
 
-All actions utilize an installment of Unity, and as such need to be activated.
+All actions need a Unity installation, which needs to be activated.
 
 Unity differentiates their methods between `personal` and `professional` licenses.
 
