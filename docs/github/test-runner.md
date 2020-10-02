@@ -166,7 +166,7 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 Parameters without a value will be considered booleans (with a value of true).
 
 ```yaml
-- uses: webbertakken/unity-test-runner@master
+- uses: webbertakken/unity-test-runner@main
   with:
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
 ```
@@ -183,7 +183,7 @@ name: Build project
 
 on:
   pull_request: {}
-  push: { branches: [master] }
+  push: { branches: [main] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
