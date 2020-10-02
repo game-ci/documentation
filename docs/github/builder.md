@@ -310,7 +310,7 @@ name: Build project
 
 on:
   pull_request: {}
-  push: { branches: [master] }
+  push: { branches: [main] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
