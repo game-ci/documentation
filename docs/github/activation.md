@@ -70,7 +70,7 @@ Follow these (one-time) steps for simple activation.
 - Visit [license.unity3d.com](https://license.unity3d.com/manual) and upload it.
 - You should now receive your license file (Unity_v20XX.x.ulf) as a download.
 - Open `Github` > `<Your repository>` > `Settings` > `Secrets`.
-- Create a secret called `UNITY_LICENSE` and copy the contents your license file into it.
+- Create a secret called `UNITY_LICENSE` and copy the entire XML contents of your license file into it.
 
 > _**Note:** When changing Unity version, you may need to repeat the same process._
 
