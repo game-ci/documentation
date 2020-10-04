@@ -68,6 +68,7 @@ Follow these (one-time) steps for simple activation.
 
 - Download the manual activation file that now appeared as an artifact.
 - Visit [license.unity3d.com](https://license.unity3d.com/manual) and upload it.
+- You will be presented with the option to choose `Unity Plus or Pro` and `Unity Personal Edition`. Choose the most applicable one. The `Unity Plus or Pro` requires your serial number.
 - You should now receive your license file (Unity_v20XX.x.ulf) as a download.
 - Open `Github` > `<Your repository>` > `Settings` > `Secrets`.
 - Create a secret called `UNITY_LICENSE` and copy the entire XML contents of your license file into it.
