@@ -2,8 +2,8 @@ import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'a
 import { SmileFilled } from '@ant-design/icons';
 import Link from 'next/link';
 
-import DatePicker from '@/components/date-picker';
-import DocumentationLayout from '@/components/layout/documentation-layout';
+import DatePicker from '../components/date-picker';
+import DocumentationLayout from '../components/layout/documentation-layout';
 
 const { Title } = Typography;
 

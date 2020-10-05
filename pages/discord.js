@@ -1,6 +1,6 @@
 import BaseLayout from '@/layout/base-layout';
 import redirect from '@/core/routing/redirect';
-import LoadingText from '@layout/components/loading-text';
+import LoadingText from '@/layout/components/loading-text';
 import useRedirect from '@/core/routing/use-redirect';
 
 const discordUrl = 'https://discord.gg/WyPN5r9';
