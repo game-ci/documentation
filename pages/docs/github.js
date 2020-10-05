@@ -1,5 +1,5 @@
-import useRedirect from '../../core/routing/use-redirect';
-import DocumentationLayout from '../../components/layout/documentation-layout';
+import useRedirect from '@/core/routing/use-redirect';
+import DocumentationLayout from '@/layout/documentation-layout';
 
 const GithubIndex = () => {
   useRedirect('/docs/github/getting-started');

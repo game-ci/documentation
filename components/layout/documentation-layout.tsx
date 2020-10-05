@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import { InferProps } from 'prop-types';
-import propertyTypes from '../../core/property-types';
+import propertyTypes from '@/core/property-types';
 import BaseLayout from './base-layout';
 import DocumentationSidebar from './components/documentation-sidebar';
 
