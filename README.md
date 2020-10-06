@@ -9,7 +9,7 @@ You will need `NodeJS v12.x` and the latest
 [yarn](https://classic.yarnpkg.com/en/docs/install/).
 
 1. Clone repository
-2. Run te following commands in the folder to install requirements and run the development server
+2. Run the following commands in the folder to install requirements and run the development server
 
 ```bash
 yarn
