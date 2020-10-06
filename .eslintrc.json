@@ -22,7 +22,10 @@
     "plugin:prettier/recommended"
   ],
   "plugins": ["react", "jsx-a11y", "import", "prettier", "unicorn"],
-  "settings": { "react": { "version": "detect" } },
+  "settings": {
+    "react": { "version": "detect" },
+    "import/resolver": { "typescript": {} }
+  },
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],

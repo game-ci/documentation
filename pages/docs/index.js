@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import DocumentationLayout from '@/layout/documentation-layout';
+import DocumentationLayout from '@/components/layout/documentation-layout';
 import Discord from '../../images/discord-brand-logo-wordmark.svg';
 import Github from '../../images/github-brand-text.svg';
 

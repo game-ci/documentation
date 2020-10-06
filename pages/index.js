@@ -1,4 +1,4 @@
-import BaseLayout from '@/layout/base-layout';
+import BaseLayout from '@/components/layout/base-layout';
 import useRedirect from '@/core/routing/use-redirect';
 
 const Index = () => {

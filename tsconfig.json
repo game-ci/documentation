@@ -16,8 +16,7 @@
     "jsx": "preserve",
     "paths": {
       "@/core/*": ["core/*"],
-      "@/layout/*": ["components/layout/*"],
-      "@/markdown/*": ["components/markdown/*"],
+      "@/components/*": ["components/*"]
     }
   },
   "exclude": ["node_modules"],

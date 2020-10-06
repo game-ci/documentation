@@ -2,8 +2,8 @@ import { resolve } from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 
-import DocumentationLayout from '@/layout/documentation-layout';
-import MarkdownRenderer from '@/markdown/markdown-renderer';
+import DocumentationLayout from '@/components/layout/documentation-layout';
+import MarkdownRenderer from '@/components/markdown/markdown-renderer';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
 
 interface Props {
