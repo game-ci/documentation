@@ -3,7 +3,7 @@ import { Layout } from 'antd';
 import NavBar from './components/nav-bar';
 import Breadcrumb from './components/breadcrumb';
 import Footer from './components/footer';
-import propertyTypes from '../../core/property-types';
+import propertyTypes from '@/core/property-types';
 
 const { Content } = Layout;
 

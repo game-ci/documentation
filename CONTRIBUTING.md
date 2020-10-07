@@ -19,10 +19,11 @@ When fixing a bug it is fine to submit a pull request right away.
 
 Steps to be performed to submit a pull request:
 
-1. Fork the repository and create your branch from `master`.
+1. Fork the repository and create your branch from `main`.
 2. Run `yarn` in the repository root.
 3. If you've fixed a bug or added code that should be tested, add tests!
-4. Fill out the description, link any related issues and submit your pull request.
+4. Run `yarn build` and make sure no errors are generated in the console before creating the PR.
+5. Fill out the description, link any related issues and submit your pull request.
 
 #### Pull Request Prerequisites
 
