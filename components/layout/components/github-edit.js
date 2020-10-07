@@ -6,7 +6,7 @@ const propTypes = {
 };
 
 const GithubEdit = ({ query }) => {
-  const [cat, slug] = query['documentation-page'];
+  const [category, page] = query['documentation-page'];
   return (
     <div style={{ marginLeft: 'auto' }}>
       <GithubOutlined style={{ color: '#1890ff' }} />
