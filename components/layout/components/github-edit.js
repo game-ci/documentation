@@ -11,7 +11,7 @@ const GithubEdit = ({ query }) => {
     <div style={{ marginLeft: 'auto' }}>
       <GithubOutlined style={{ color: '#1890ff' }} />
       <a
-        href={`https://github.com/Unity-CI/Website/edit/main/docs/${cat}/${slug}.md`}
+        href={`https://github.com/Unity-CI/Website/edit/main/docs/${category}/${page}.md`}
         style={{
           padding: '0 0 0 8px',
           color: '#1890ff',
