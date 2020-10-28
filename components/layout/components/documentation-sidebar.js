@@ -67,9 +67,36 @@ const DocumentationSidebar = () => {
               <a>Activation</a>
             </Link>
           </Item>
+          <Item key="/docs/gitlab/example-project">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/example-project">
+              <a>Example project</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/android">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/android">
+              <a>Example project</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/ios">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/ios">
+              <a>iOS</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/tests">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/tests">
+              <a>Tests</a>
+            </Link>
+          </Item>
           <Item key="/docs/gitlab/use-custom-build-options">
             <Link href="/docs/[...documentation-page]" as="/docs/gitlab/use-custom-build-options">
               <a>Custom build options</a>
+            </Link>
+          </Item>
+        </SubMenu>
+        <SubMenu key="travis" icon={<GitlabOutlined />} title="Travis">
+          <Item key="/docs/travis/getting-started">
+            <Link href="/docs/[...documentation-page]" as="/docs/travis/getting-started">
+              <a>Getting started</a>
             </Link>
           </Item>
         </SubMenu>
