@@ -217,7 +217,10 @@ _**default:** `false`_
 
 #### androidKeystoreName
 
-Configure the android `keystoreName`.
+Configure the android `keystoreName`. Must be provided if configuring the below keystore options. 
+
+For this to take effect, you must not have your project set to use a custom keystore. If you have it set to use a
+custom keystore, all keystore settings will be ignored, and the build will likely fail with an error in signing.
 
 _**required:** `false`_
 _**default:** `""`_
