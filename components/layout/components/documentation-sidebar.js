@@ -57,8 +57,20 @@ const DocumentationSidebar = () => {
           </Item>
         </SubMenu>
         <SubMenu key="gitlab" icon={<GitlabOutlined />} title="GitLab">
-          <Item key="9" disabled>
-            To be added
+          <Item key="/docs/gitlab/getting-started">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/getting-started">
+              <a>Getting started</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/activation">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/activation">
+              <a>Activation</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/use-custom-build-options">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/use-custom-build-options">
+              <a>Custom build options</a>
+            </Link>
           </Item>
         </SubMenu>
         <SubMenu key="deployment" icon={<AppstoreAddOutlined />} title="Deployment">
