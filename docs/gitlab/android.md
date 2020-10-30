@@ -1,6 +1,6 @@
 # Android
 
-To make build working with Android, you will need a specific Unity license (because that is not the same docker image). Add the content of your specific Unity license in your CI's environment variable : `UNITY_LICENSE_CONTENT_ANDROID`
+To make build working with Android, you will need a specific Unity license (because that is not the same docker image). Add the content of your specific Unity license in your CI's environment variable : `UNITY_LICENSE_ANDROID`
 
 By default the apk is not signed and the build will use the Unity's default debug key.
 For _security reasons_, **you should not add your keystore to git**.
