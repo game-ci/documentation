@@ -34,7 +34,7 @@ Make a first iOS build using your mac from Unity, that will create an xcode proj
 Ensure your target the same path than the ci.  
 Ex: if you let `BUILD_NAME: ExampleProjectName` in `.gitlab-ci.yml`, your xcode project must be at the root of the following path: `.\Builds\iOS\ExampleProjectName\`
 
-## App on portail
+## App on portal
 
 Make sure that you have setup your app on the Apple Developer Portal and the App Store Connect or use [fastlane produce](https://docs.fastlane.tools/actions/produce/) to create it.
 
