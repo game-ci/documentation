@@ -46,7 +46,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    ```bash
    xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   /opt/Unity/Editor/Unity \
+   unity-editor \
    -logFile /dev/stdout \
    -batchmode \
    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
@@ -96,7 +96,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    ```bash
    xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   /opt/Unity/Editor/Unity \
+   unity-editor \
    -logFile /dev/stdout \
    -batchmode \
    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL"
