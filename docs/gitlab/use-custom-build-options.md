@@ -22,7 +22,7 @@ You can add `BuildOptions` per target by adding environment variable `BuildOptio
 ```yaml
 build-ios:
   <<: *build
-  image: gableroux/unity3d:2019.3.7f1-android
+  image: unityci/editor:2019.3.7f1-android
   variables:
     BUILD_TARGET: iOS
 	BuildOptions: AcceptExternalModificationsToPlayer

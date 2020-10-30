@@ -4,7 +4,37 @@ There are a few methods available, if you're using gitlab-ci, the easiest method
 
 ## Unity Personal
 
-### a. Using gitlab-ci
+### a. Using gitlab-ci `get-activation-file` job
+
+Once you've added all required files to your project (mainly [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) and scripts from [`ci` folder](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/ci/)), there should be a manual step that can be triggered for activation.
+
+1. Push your first commit to your project and visit CI/CD Pipelines.
+1. Locate your latest job, there should be a `play` button, click on it and click `get-activation-file`
+1. Wait for the job to run. Once completed, you will be able to download an `.alf` file from the artifacts.
+1. Open [license.unity3d.com/](https://license.unity3d.com/) and upload your license request file (the `.alf` file you just downloaded)
+1. Answer questions and download your license file (`Unity_vYYYY.x.ulf` where `YYYY` should match your Unity version)
+1. Copy the content of this file to CI's environment variable `UNITY_LICENSE` in `Settings` > `CI/CD`. You may uncheck _protected variable_ so it can be used for all branches.
+
+### b. Manually using the docker image
+
+Requirements: [docker](https://www.docker.com/) installed on your machine. You can also do these steps on [labs.play-with-docker.com](https://labs.play-with-docker.com/) if you want.
+
+```bash
+IMAGE=unityci/editor
+IMAGE_VERSION=0.4
+UNITY_VERSION=2020.1.7f1
+docker run --rm -it $IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION \
+  bash -c "unity-editorxvfb-run --auto-servernum --server-args='-screen 0 640x480x24' unity-editor -logFile /dev/stdout -batchmode -createManualActivationFile && cat *.alf"
+```
+
+1. Copy the xml output to a file named `unity3d.alf` on your computer.
+1. Open [license.unity3d.com/](https://license.unity3d.com/) and upload your license request file (the `.alf` file you just created)
+1. Answer questions and download your license file (`Unity_vYYYY.x.ulf` where `YYYY` should match your Unity version)
+1. Copy the content of this file to CI's environment variable `UNITY_LICENSE` in `Settings` > `CI/CD`. You may uncheck _protected variable_ so it can be used for all branches.
+
+### Legacy instructions (for unity versions that did not support the `-createManualActivationFile` argument)
+
+#### a. Using gitlab-ci
 
 Once you've added all required files to your project (mainly [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml)), there should be a manual step that can be triggered for activation.
 
@@ -13,7 +43,7 @@ Once you've added all required files to your project (mainly [`.gitlab-ci.yml`](
 1. Locate your latest job, there should be a `play` button, click on it and click `get-activation-file`
 1. Wait for the job to run and follow instructions in the console
 
-### b. Locally
+#### b. Locally
 
 All you need is [docker](https://www.docker.com/) installed on your machine.
 
@@ -46,7 +76,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    ```bash
    xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   unity-editor \
+   /opt/Unity/Editor/Unity \
    -logFile /dev/stdout \
    -batchmode \
    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
@@ -68,11 +98,13 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 6. Open https://license.unity3d.com/manual and answer questions
 7. Upload `unity3d.alf` for manual activation
 8. Download `Unity_v2018.x.ulf` (`Unity_v2019.x.ulf` for 2019 versions)
-9. Copy the content of `Unity_v2018.x.ulf` license file to your CI's environment variable `UNITY_LICENSE`.
+9. Copy the content of `Unity_v2018.x.ulf` license file to your CI's environment variable `UNITY_LICENSE_CONTENT`.
    _Note: if you are doing this on windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](.gitlab-ci.yml) solves this by removing `\r` character from the env variable so you'll be alright_
-   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
+   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE_CONTENT` to the right place before running tests or creating the builds.
 
 ## Unity Plus/Pro
+
+_**TODO**: Update these instructions, they may be simplified by using `-createManualActivationFile` argument_
 
 1. Clone this project
 2. Pull the docker image and run bash inside, passing unity username and password to env
@@ -88,7 +120,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    -e "TEST_PLATFORM=linux" \
    -e "WORKDIR=/root/project" \
    -v "$(pwd):/root/project" \
-   gableroux/unity3d:$UNITY_VERSION \
+   unityci/editor:$UNITY_VERSION \
    bash
    ```
 
@@ -111,7 +143,3 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 ## Unity license per target
 
 Before `2018.4.8f1` for 2018 versions and before `2019.2.4f1` for 2019 versions, if you need a specific Unity license for a build target, you can add environment var `UNITY_LICENSE_{BUILD_TARGET}`. (`UNITY_LICENSE_ANDROID`, `UNITY_LICENSE_IOS`, ...). \_This is not required anymore now that images share a base image [See related change](https://gitlab.com/gableroux/unity3d/merge_requests/63)\*\*
-
-### Note about components in recent images
-
-Starting from these versions, base image doesn't include windows, mac and webgl components anymore. This means you must use `-mac`, `-windows` or `-webgl` images. [See related change](https://gitlab.com/gableroux/unity3d/merge_requests/63)
