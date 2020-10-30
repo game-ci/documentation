@@ -1,4 +1,6 @@
-## Unity tests
+# Tests
+
+## Unity Tests
 
 Unity supports two kinds of tests (`editmode` and `playmode`). The example project supports both. More information and documentation concerning Unity tests can be found here:  
 [Unity Test Framework](https://docs.unity3d.com/Packages/com.unity.test-framework@1.1/manual/index.html)

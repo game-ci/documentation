@@ -1,6 +1,6 @@
-### iOS support
+# iOS
 
-#### Setup (only one time per mac)
+## Setup (only one time per mac)
 
 Install the latest Xcode command line tools :
 
@@ -18,7 +18,7 @@ sudo gem install fastlane -NV
 brew install fastlane
 ```
 
-#### Unity Settings
+## Unity Settings
 
 1. Switch target to iOS
 1. In `PlayerSettings -> Other Settings`
@@ -28,25 +28,25 @@ brew install fastlane
       1. `ProfileID`: `match AppStore your_bundle_identifier` _Replace `your_bundle_identifier` by yours_
       1. `ProfileType`: `Distribution`
 
-#### XCode project
+## XCode project
 
 Make a first iOS build using your mac from Unity, that will create an xcode project.  
 Ensure your target the same path than the ci.  
 Ex: if you let `BUILD_NAME: ExampleProjectName` in `.gitlab-ci.yml`, your xcode project must be at the root of the following path: `.\Builds\iOS\ExampleProjectName\`
 
-#### App on portail
+## App on portail
 
 Make sure that you have setup your app on the Apple Developer Portal and the App Store Connect or use [fastlane produce](https://docs.fastlane.tools/actions/produce/) to create it.
 
-#### Fastlane initialization
+## Fastlane initialization
 
 Open the terminal at the same path then run `fastlane init`, follow instructions to generate Appfile and default Fastfile.
 
-#### Provisioning profile
+## Provisioning profile
 
 Run `fastlane match init`, follow instructions, select `appstore` provisioning profile type. ([Documentation](https://docs.fastlane.tools/actions/match/))
 
-#### Make lane
+## Make lane
 
 Copy the following instructions on your `fastlane/Fastfile`:
 
@@ -68,14 +68,14 @@ end
 
 Note about `upload_to_testflight`: Change "Team" to your internal tester or remove `(groups:["Team"])` if you want set manually who can test the build
 
-##### Related documentation
+### Related documentation
 
 - [sync_code_signing (alias for match)](https://docs.fastlane.tools/actions/sync_code_signing/)
 - [increment_build_number](https://docs.fastlane.tools/actions/increment_build_number/)
 - [build_app (alias for gym)](https://docs.fastlane.tools/actions/build_app/)
 - [upload_to_testflight (alias for pilot)](https://docs.fastlane.tools/actions/testflight/)
 
-#### Run tests locally
+## Run tests locally
 
 Run the following command to test the build and the deployement localy:
 
@@ -97,7 +97,7 @@ you have to add the following files:
 - `fastlane/Fastfile`
 - `fastlane/Matchfile`
 
-#### Gitlab-runner - register your mac
+## Gitlab-runner - register your mac
 
 To automate your build with gitlab, you need to setup your mac as a gitlab runner.  
 Installation:

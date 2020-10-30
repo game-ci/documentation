@@ -1,4 +1,6 @@
-## About the example project
+# Example Project
+
+## About
 
 [The `unity3d-gitlab-ci-example` project](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/) uses an updated version of the [Unity's Creator Kit: RPG free asset](https://assetstore.unity.com/packages/templates/tutorials/creator-kit-rpg-149309) which is not affiliated with this project at all. Feel free to explore it, dialogs are a bit different ;)
 
@@ -12,3 +14,25 @@ _github-pages integration will be done in [GabLeRoux/unity3d-ci-example#4](https
 
 - [github](https://github.com/gableroux/unity3d-ci-example)
 - [gitlab](https://gitlab.com/gableroux/unity3d-gitlab-ci-example)
+
+## How to run scripts locally
+
+You can execute the local scripts and specify the path of your Unity executable using `UNITY_EXECUTABLE`. You may try this in your project before you setup the whole CI so you confirm it works with your current unity version 👍.
+
+## Test
+
+[`./local_test.sh`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/local_test.sh)
+
+```bash
+UNITY_EXECUTABLE="/Applications/Unity/Hub/Editor/2019.3.7f1/Unity.app/Contents/MacOS/Unity" \
+  ./local_test.sh
+```
+
+## Build
+
+[`./local_build.sh`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/local_build.sh)
+
+```bash
+UNITY_EXECUTABLE="/Applications/Unity/Hub/Editor/2019.3.7f1/Unity.app/Contents/MacOS/Unity" \
+  ./local_build.sh
+```
