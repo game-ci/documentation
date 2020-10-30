@@ -1,14 +1,14 @@
 # Getting started
 
-We have an example for Travis available in the [github mirror of `Unity-CI/unity3d-ci-example`](https://github.com/Unity-CI/unity3d-ci-example). This project is the same as [the one on gitlab](https://gitlab.com/gableroux/unity3d-gitlab-ci-example) to support examples for Travis. You should read the details for [gitlab](http://unity-ci.com/docs/gitlab) _TODO: use a relative link here, didn't take the time to see how_. Activation process is the same. **Here we have what is specific to Travis.**
+We have an example for Travis CI available in the [github mirror of `Unity-CI/unity3d-ci-example`](https://github.com/Unity-CI/unity3d-ci-example). This project is the same as [the one on gitlab](https://gitlab.com/gableroux/unity3d-gitlab-ci-example) to support examples for Travis. You should read the details for [gitlab](http://unity-ci.com/docs/gitlab) _TODO: use a relative link here, didn't take the time to see how_. Activation process is the same. **Here we have what is specific to Travis.**
 
-## Example Travis configuration
+## Example Travis CI configuration
 
 - [`Unity-CI/unity3d-ci-example`'s `.travis.yml`](https://github.com/Unity-CI/unity3d-ci-example/blob/master/.travis.yml)
 
-## How to store Unity License when using Travis
+## How to store Unity License when using Travis CI
 
-Travis doesn't support multiple-lines env variable out of the box. I had troubles with escaping, so I recommend encrypting the license file. [`Unity-CI/unity3d-ci-example`'s `.travis.yml`](https://github.com/Unity-CI/unity3d-ci-example/blob/master/.travis.yml) will decrypt the file and add its content to `UNITY_LICENSE_CONTENT` env var itself afterward.
+Travis CI doesn't support multiple-lines env variable out of the box. I had troubles with escaping, so I recommend encrypting the license file. [`Unity-CI/unity3d-ci-example`'s `.travis.yml`](https://github.com/Unity-CI/unity3d-ci-example/blob/master/.travis.yml) will decrypt the file and add its content to `UNITY_LICENSE_CONTENT` env var itself afterward.
 
 ```bash
 travis encrypt-file --pro -r YOUR_TRAVIS_USERNAME/YOUR_TRAVIS_REPO_NAME ./Unity_v2018.x.ulf # TODO confirm new file name for 2019

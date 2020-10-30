@@ -8,7 +8,7 @@ _github-pages integration will be done in [GabLeRoux/unity3d-ci-example#4](https
 
 ## Git remotes
 
-[The `unity3d-gitlab-ci-example` project](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/) is hosted on multiple remotes to provide examples for [Gitlab-CI](https://about.gitlab.com/product/continuous-integration/), [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/)
+[The `unity3d-gitlab-ci-example` project](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/) is hosted on multiple remotes to provide examples for [Gitlab-CI](https://about.gitlab.com/product/continuous-integration/), [Travis CI](https://travis-ci.org/) and [CircleCI](https://circleci.com/)
 
 - [github](https://github.com/gableroux/unity3d-ci-example)
 - [gitlab](https://gitlab.com/gableroux/unity3d-gitlab-ci-example)

@@ -93,7 +93,7 @@ const DocumentationSidebar = () => {
             </Link>
           </Item>
         </SubMenu>
-        <SubMenu key="travis" icon={<GitlabOutlined />} title="Travis">
+        <SubMenu key="travis" title="Travis CI">
           <Item key="/docs/travis/getting-started">
             <Link href="/docs/[...documentation-page]" as="/docs/travis/getting-started">
               <a>Getting started</a>
