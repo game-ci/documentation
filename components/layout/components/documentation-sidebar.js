@@ -74,7 +74,7 @@ const DocumentationSidebar = () => {
           </Item>
           <Item key="/docs/gitlab/android">
             <Link href="/docs/[...documentation-page]" as="/docs/gitlab/android">
-              <a>Example project</a>
+              <a>Android</a>
             </Link>
           </Item>
           <Item key="/docs/gitlab/ios">
