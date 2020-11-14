@@ -1,29 +1,16 @@
-import PropTypes from 'prop-types';
 import { GithubOutlined } from '@ant-design/icons';
 
-const propTypes = {
-  query: PropTypes.objectOf(PropTypes.object()).isRequired,
-};
+interface GithubEditProps {
+  href: string;
+}
 
-const GithubEdit = ({ query }) => {
-  const [category, page] = query['documentation-page'];
+const GithubEdit = ({ href }: GithubEditProps) => {
   return (
-    <div style={{ marginLeft: 'auto' }}>
-      <GithubOutlined style={{ color: '#1890ff' }} />
-      <a
-        href={`https://github.com/Unity-CI/Website/edit/main/docs/${category}/${page}.md`}
-        style={{
-          padding: '0 0 0 8px',
-          color: '#1890ff',
-          fontSize: '16px',
-        }}
-        type="link"
-      >
-        Edit on GitHub
-      </a>
-    </div>
+    <a href={href} type="link">
+      <GithubOutlined />
+      <span style={{ paddingLeft: 8 }}>Edit on GitHub</span>
+    </a>
   );
 };
 
-GithubEdit.propTypes = propTypes;
 export default GithubEdit;

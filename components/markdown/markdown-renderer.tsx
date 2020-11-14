@@ -10,15 +10,19 @@ const propTypes = {
 };
 
 const MarkdownRenderer = ({ document, meta }: InferProps<typeof propTypes>) => {
-  const router = useRouter();
   const { title = '', date = '' } = meta;
   const metaInformation = `${date} - ${title}`.replace(/(^\s-\s)|(\s-\s$)/, '');
+
+  const router = useRouter();
+  const filePath = router.asPath.replace(/^\/+/, '');
+  const repoPath = 'https://github.com/Unity-CI/Website/edit/main';
+  const fullPath = `${repoPath}/${filePath}.md`;
 
   return (
     <div>
       <sub>{metaInformation}</sub>
       <ReactMarkdown source={document} renderers={renderers} />
-      <GithubEdit query={router.query} />
+      <GithubEdit href={fullPath} />
     </div>
   );
 };
