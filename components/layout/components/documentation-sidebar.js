@@ -6,6 +6,7 @@ import {
   CheckOutlined,
   AppstoreAddOutlined,
   GitlabOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -14,12 +15,17 @@ const { SubMenu, Item } = Menu;
 const DocumentationSidebar = () => {
   const { asPath: currentKey } = useRouter();
 
+  const main = 'main';
+  const current = currentKey.split('/')[2] || main;
+  const openSections = current === main ? [main] : [main, current];
+
   return (
     <Sider className="site-layout-background" width={200} breakpoint="lg" collapsedWidth="0">
       <Menu
         mode="inline"
         defaultSelectedKeys={[currentKey]}
-        defaultOpenKeys={['main', 'github', 'gitlab', 'deployment']}
+        defaultOpenKeys={openSections}
+        subMenuOpenDelay={1}
         style={{ height: '100%' }}
       >
         <SubMenu key="main" icon={<CheckOutlined />} title="Unity CI">
@@ -103,6 +109,13 @@ const DocumentationSidebar = () => {
         <SubMenu key="deployment" icon={<AppstoreAddOutlined />} title="Deployment">
           <Item key="10" disabled>
             To be added
+          </Item>
+        </SubMenu>
+        <SubMenu key="troubleshooting" icon={<QuestionCircleOutlined />} title="Troubleshooting">
+          <Item key="/docs/troubleshooting/common-issues">
+            <Link href="/docs/[...documentation-page]" as="/docs/troubleshooting/common-issues">
+              <a>Common issues</a>
+            </Link>
           </Item>
         </SubMenu>
       </Menu>
