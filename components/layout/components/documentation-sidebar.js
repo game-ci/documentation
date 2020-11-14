@@ -6,9 +6,7 @@ import {
   CheckOutlined,
   AppstoreAddOutlined,
   GitlabOutlined,
-  QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { MenuItemProps } from 'antd/es/menu/MenuItem';
 
 const { Sider } = Layout;
 const { SubMenu, Item } = Menu;
@@ -16,36 +14,15 @@ const { SubMenu, Item } = Menu;
 const DocumentationSidebar = () => {
   const { asPath: currentKey } = useRouter();
 
-  const main = 'main';
-  const current = currentKey.split('/')[2] || main;
-  const openSections = current === main ? [main] : [main, current];
-
-  interface PageLinkProps extends MenuItemProps {
-    path: string;
-  }
-
-  const PageLink = ({ path, title, children, ...rest }: PageLinkProps) => {
-    const key = `/docs/${path}`;
-    return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      <Item {...rest} key={key}>
-        <Link href="/docs/[...documentation-page]" as={key}>
-          <a>{title}</a>
-        </Link>
-      </Item>
-    );
-  };
-
   return (
     <Sider className="site-layout-background" width={200} breakpoint="lg" collapsedWidth="0">
       <Menu
         mode="inline"
-        defaultOpenKeys={openSections}
         defaultSelectedKeys={[currentKey]}
-        subMenuOpenDelay={1}
+        defaultOpenKeys={['main', 'github', 'gitlab', 'deployment']}
         style={{ height: '100%' }}
       >
-        <SubMenu key={main} icon={<CheckOutlined />} title="Unity CI">
+        <SubMenu key="main" icon={<CheckOutlined />} title="Unity CI">
           <Item key="/docs">
             <Link href="/docs">
               <a>Introduction</a>
@@ -53,32 +30,80 @@ const DocumentationSidebar = () => {
           </Item>
         </SubMenu>
         <SubMenu key="github" icon={<GithubOutlined />} title="GitHub">
-          <PageLink path="github/getting-started" title="Getting started" />
-          <PageLink path="github/activation" title="Activation" />
-          <PageLink path="github/test-runner" title="Test runner" />
-          <PageLink path="github/builder" title="Builder" />
-          <PageLink path="github/returning-a-license" title="Returning a license" />
+          <Item key="/docs/github/getting-started">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/getting-started">
+              <a>Getting started</a>
+            </Link>
+          </Item>
+          <Item key="/docs/github/activation">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/activation">
+              <a>Activation</a>
+            </Link>
+          </Item>
+          <Item key="/docs/github/test-runner">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/test-runner">
+              <a>Test runner</a>
+            </Link>
+          </Item>
+          <Item key="/docs/github/builder">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/builder">
+              <a>Builder</a>
+            </Link>
+          </Item>
+          <Item key="/docs/github/returning-a-license">
+            <Link href="/docs/[...documentation-page]" as="/docs/github/returning-a-license">
+              <a>Returning a license</a>
+            </Link>
+          </Item>
         </SubMenu>
         <SubMenu key="gitlab" icon={<GitlabOutlined />} title="GitLab">
-          <PageLink path="gitlab/getting-started" title="Getting started" />
-          <PageLink path="gitlab/activation" title="Activation" />
-          <PageLink path="gitlab/example-project" title="Example project" />
-          <PageLink path="gitlab/activation" title="Activation" />
-          <PageLink path="gitlab/android" title="Android" />
-          <PageLink path="gitlab/ios" title="iOS" />
-          <PageLink path="gitlab/tests" title="Tests" />
-          <PageLink path="gitlab/use-custom-build-options" title="Custom build options" />
+          <Item key="/docs/gitlab/getting-started">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/getting-started">
+              <a>Getting started</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/activation">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/activation">
+              <a>Activation</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/example-project">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/example-project">
+              <a>Example project</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/android">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/android">
+              <a>Android</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/ios">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/ios">
+              <a>iOS</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/tests">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/tests">
+              <a>Tests</a>
+            </Link>
+          </Item>
+          <Item key="/docs/gitlab/use-custom-build-options">
+            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/use-custom-build-options">
+              <a>Custom build options</a>
+            </Link>
+          </Item>
         </SubMenu>
         <SubMenu key="travis" title="Travis CI">
-          <PageLink path="travis/getting-started" title="Getting started" />
+          <Item key="/docs/travis/getting-started">
+            <Link href="/docs/[...documentation-page]" as="/docs/travis/getting-started">
+              <a>Getting started</a>
+            </Link>
+          </Item>
         </SubMenu>
         <SubMenu key="deployment" icon={<AppstoreAddOutlined />} title="Deployment">
           <Item key="10" disabled>
             To be added
           </Item>
-        </SubMenu>
-        <SubMenu key="troubleshooting" icon={<QuestionCircleOutlined />} title="Troubleshooting">
-          <PageLink path="troubleshooting/common-issues" title="Common issues" />
         </SubMenu>
       </Menu>
     </Sider>
