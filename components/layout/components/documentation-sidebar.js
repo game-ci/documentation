@@ -7,6 +7,7 @@ import {
   AppstoreAddOutlined,
   GitlabOutlined,
   QuestionCircleOutlined,
+  CiCircleOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -99,7 +100,7 @@ const DocumentationSidebar = () => {
             </Link>
           </Item>
         </SubMenu>
-        <SubMenu key="travis" title="Travis CI">
+        <SubMenu key="travis" icon={<CiCircleOutlined />} title="Travis CI">
           <Item key="/docs/travis/getting-started">
             <Link href="/docs/[...documentation-page]" as="/docs/travis/getting-started">
               <a>Getting started</a>
