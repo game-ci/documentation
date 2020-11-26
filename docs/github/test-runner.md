@@ -181,7 +181,7 @@ Specific docker image that should be used for testing the project.
 ```yaml
 - uses: webbertakken/unity-test-runner@main
   with:
-    customImage: 'unityci/editor:2020.1.0f1-base-0'
+    customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
 
 _**required:** `false`_
