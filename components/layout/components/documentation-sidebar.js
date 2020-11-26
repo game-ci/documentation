@@ -35,6 +35,11 @@ const DocumentationSidebar = () => {
               <a>Introduction</a>
             </Link>
           </Item>
+          <Item key="/docs/unity-ci/docker-images">
+            <Link href="/docs/[...documentation-page]" as="/docs/unity-ci/docker-images">
+              <a>Docker images</a>
+            </Link>
+          </Item>
         </SubMenu>
         <SubMenu key="github" icon={<SiGithubactions />} title="GitHub">
           <Item key="/docs/github/getting-started">
