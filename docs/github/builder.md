@@ -217,7 +217,7 @@ _**default:** `false`_
 
 #### androidKeystoreName
 
-Configure the android `keystoreName`. Must be provided if configuring the below keystore options. 
+Configure the android `keystoreName`. Must be provided if configuring the below keystore options.
 
 For this to take effect, you must not have your project set to use a custom keystore. If you have it set to use a
 custom keystore, all keystore settings will be ignored, and the build will likely fail with an error in signing.
@@ -284,6 +284,19 @@ Parameters without a value will be considered booleans (with a value of true).
 - uses: webbertakken/unity-builder@<version>
   with:
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
+```
+
+_**required:** `false`_
+_**default:** `""`_
+
+#### customImage
+
+Specific docker image that should be used for building the project.
+
+```yaml
+- uses: webbertakken/unity-builder@<version>
+  with:
+    customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
 
 _**required:** `false`_
