@@ -174,6 +174,19 @@ Parameters without a value will be considered booleans (with a value of true).
 _**required:** `false`_
 _**default:** `""`_
 
+#### customImage
+
+Specific docker image that should be used for testing the project.
+
+```yaml
+- uses: webbertakken/unity-test-runner@main
+  with:
+    customImage: 'unityci/editor:2020.1.0f1-base-0'
+```
+
+_**required:** `false`_
+_**default:** `""`_
+
 ## Complete example
 
 A complete workflow that tests all modes separately could look like this:
