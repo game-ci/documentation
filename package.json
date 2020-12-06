@@ -1,7 +1,7 @@
 {
-  "name": "unity-ci",
+  "name": "game-ci",
   "version": "0.1.0",
-  "description": "Website for projects within the Unity CI group",
+  "description": "Website for projects within the GameCI group",
   "private": true,
   "engines": {
     "node": "12.x"

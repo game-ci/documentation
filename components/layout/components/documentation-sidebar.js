@@ -29,15 +29,15 @@ const DocumentationSidebar = () => {
         subMenuOpenDelay={1}
         style={{ height: '100%' }}
       >
-        <SubMenu key="main" icon={<AiOutlineInfoCircle />} title="Unity CI">
+        <SubMenu key="main" icon={<AiOutlineInfoCircle />} title="GameCI">
           <Item key="/docs">
             <Link href="/docs">
               <a>Introduction</a>
             </Link>
           </Item>
-          <Item key="/docs/unity-ci/docker-images">
-            <Link href="/docs/[...documentation-page]" as="/docs/unity-ci/docker-images">
-              <a>Docker images</a>
+          <Item key="/docs/game-ci/docker-images">
+            <Link href="/docs/[...documentation-page]" as="/docs/game-ci/docker-images">
+              <a>Unity images</a>
             </Link>
           </Item>
         </SubMenu>
