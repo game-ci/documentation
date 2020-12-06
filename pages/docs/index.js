@@ -28,7 +28,7 @@ export default function Page() {
 
         <p style={{ display: 'flex', alignItems: 'center' }}>
           <span>Follow the development on&nbsp;</span>
-          <a href="https://github.com/game-ci/website">
+          <a href="https://github.com/game-ci/documentation">
             <Github alt="GitHub" style={{ height: 16 }} />
           </a>
         </p>

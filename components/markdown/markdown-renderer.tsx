@@ -15,7 +15,7 @@ const MarkdownRenderer = ({ document, meta }: InferProps<typeof propTypes>) => {
 
   const router = useRouter();
   const filePath = router.asPath.replace(/^\/+/, '');
-  const repoPath = 'https://github.com/game-ci/Website/edit/main';
+  const repoPath = 'https://github.com/game-ci/documentation/edit/main';
   const fullPath = `${repoPath}/${filePath}.md`;
 
   return (

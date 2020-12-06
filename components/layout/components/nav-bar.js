@@ -38,7 +38,7 @@ const NavBar = () => (
       <SubMenu icon={<GithubOutlined />} title="Source code">
         <ItemGroup title="Project">
           <Item icon={<GithubOutlined />} key="source:documentation">
-            <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/Website">
+            <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
               Website
             </a>
           </Item>
