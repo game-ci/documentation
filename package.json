@@ -1,7 +1,7 @@
 {
-  "name": "unity-ci",
+  "name": "game-ci",
   "version": "0.1.0",
-  "description": "Website for projects within the Unity CI group",
+  "description": "Website for projects within the GameCI group",
   "private": true,
   "engines": {
     "node": "12.x"
@@ -23,7 +23,7 @@
     "dayjs": "1.8.28",
     "esm": "^3.2.25",
     "gray-matter": "4.0.2",
-    "highlight.js": "^10.0.3",
+    "highlight.js": "^10.1.2",
     "next": "9.4.4",
     "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.7.2",
@@ -31,6 +31,7 @@
     "rc-picker": "^1.6.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-icons": "^3.11.0",
     "react-markdown": "4.3.1"
   },
   "devDependencies": {

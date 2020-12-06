@@ -1,6 +1,6 @@
-# Unity CI
+# GameCI
 
-Documentation for open source Unity-CI projects. You can find the `.md` files inside the [docs](./docs) folder.
+Documentation for open source GameCI projects. You can find the `.md` files inside the [docs](./docs) folder.
 The live version is available on [game.ci](https://game.ci).
 
 ## Run the documentation locally
@@ -16,10 +16,16 @@ yarn
 yarn dev
 ```
 
+## Community
+
+Feel free to join us on
+<a href="http://unity-ci.com/discord"><img height="30" src="media/Discord-Logo.svg" alt="Discord" /></a>
+and engage with the community.
+
 #### License
 
 [MIT license](./LICENSE)
 
 #### Sponsors
 
-[![Vercel](./images/vercel-brand-logo.svg)](https://vercel.com?utm_source=unity-ci)
+[![Vercel](./images/vercel-brand-logo.svg)](https://vercel.com?utm_source=game-ci)

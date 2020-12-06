@@ -31,7 +31,7 @@ brew install fastlane
 ## XCode project
 
 Make a first iOS build using your mac from Unity, that will create an xcode project.  
-Ensure your target the same path than the ci.  
+Ensure you target the same path as the CI.  
 Ex: if you let `BUILD_NAME: ExampleProjectName` in `.gitlab-ci.yml`, your xcode project must be at the root of the following path: `.\Builds\iOS\ExampleProjectName\`
 
 ## App on portal

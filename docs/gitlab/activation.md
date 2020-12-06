@@ -18,7 +18,7 @@ Once you've added all required files to your project (mainly [`.gitlab-ci.yml`](
 All you need is [docker](https://www.docker.com/) installed on your machine.
 
 1. Clone this project
-2. Pull the docker image and run bash inside, passing unity username and password to env
+2. Pull the docker image and run bash inside, passing Unity username and password to env
 
    _hint: you should write this to a shell script and execute the shell script so you don't have your credentials stored in your bash history_. Also make sure you use your Unity3d _email address_ for `UNITY_USERNAME` env var.
 
@@ -60,7 +60,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    If you get the following error:
 
-   > Can't activate unity: No sufficient permissions while processing request HTTP error code 401
+   > Can't activate Unity: No sufficient permissions while processing request HTTP error code 401
 
    Make sure your credentials are valid. You may try to disable 2FA in your account and try again. Once done, you should enable 2FA again for security reasons. See [#11](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/11) for more details.
 
@@ -69,13 +69,13 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 7. Upload `unity3d.alf` for manual activation
 8. Download `Unity_v2018.x.ulf` (`Unity_v2019.x.ulf` for 2019 versions)
 9. Copy the content of `Unity_v2018.x.ulf` license file to your CI's environment variable `UNITY_LICENSE_CONTENT`.
-   _Note: if you are doing this on windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](.gitlab-ci.yml) solves this by removing `\r` character from the env variable so you'll be alright_
+   _Note: if you are doing this on Windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://github.com/game-ci/unity3d-ci-example/blob/master/.gitlab-ci.yml) of the example project solves this by removing `\r` character from the ENV variable so you'll be alright_
    [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE_CONTENT` to the right place before running tests or creating the builds.
 
 ## Unity Plus/Pro
 
 1. Clone this project
-2. Pull the docker image and run bash inside, passing unity username and password to env
+2. Pull the docker image and run bash inside, passing Unity username and password to env
 
    _hint: you should write this to a shell script and execute the shell script so you don't have your credentials stored in your bash history_. Also make sure you use your Unity3d _email address_ for `UNITY_USERNAME` env var.
 

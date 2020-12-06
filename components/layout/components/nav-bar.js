@@ -1,7 +1,7 @@
 import { Layout, Menu } from 'antd';
 import Link from 'next/link';
 import { GithubOutlined, GitlabOutlined } from '@ant-design/icons';
-import UnityCiLogo from '../../../images/unity-ci-brand-logo-wordmark.svg';
+import GameCiLogo from '../../../images/game-ci-brand-logo-wordmark.svg';
 import DiscordLogo from '../../../images/discord-brand-logo-wordmark.svg';
 
 const { Header } = Layout;
@@ -10,7 +10,7 @@ const { Item, ItemGroup, SubMenu } = Menu;
 const NavBar = () => (
   <Header className="header">
     <a className="logo" href="/">
-      <UnityCiLogo height="30" />
+      <GameCiLogo height="30" />
     </a>
     <Menu
       theme="dark"
@@ -38,7 +38,7 @@ const NavBar = () => (
       <SubMenu icon={<GithubOutlined />} title="Source code">
         <ItemGroup title="Project">
           <Item icon={<GithubOutlined />} key="source:documentation">
-            <a target="_blank" rel="noreferrer" href="https://github.com/Unity-CI/Website">
+            <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
               Website
             </a>
           </Item>
