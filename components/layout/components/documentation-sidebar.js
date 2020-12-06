@@ -29,7 +29,7 @@ const DocumentationSidebar = () => {
         subMenuOpenDelay={1}
         style={{ height: '100%' }}
       >
-        <SubMenu key="main" icon={<AiOutlineInfoCircle />} title="Game CI">
+        <SubMenu key="main" icon={<AiOutlineInfoCircle />} title="GameCI">
           <Item key="/docs">
             <Link href="/docs">
               <a>Introduction</a>

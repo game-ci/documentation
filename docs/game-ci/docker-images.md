@@ -1,6 +1,6 @@
-# Game CI Docker images for Unity
+# GameCI Docker images for Unity
 
-All projects for Unity in Game CI use docker images
+All projects for Unity in GameCI use docker images
 ([game-ci/editor](https://github.com/game-ci/docker/))
 which are specialised for CI and command-line use.
 
