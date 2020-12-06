@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <DocumentationLayout>
       <Head>
-        <title>Unity</title>
+        <title>GameCI</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
