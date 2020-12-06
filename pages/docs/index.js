@@ -41,6 +41,10 @@ export default function Page() {
             </a>
           </Link>
         </p>
+
+        <p>
+          <i><strong>Disclaimer</strong>: This website is not sponsored by or affiliated with Unity Technologies.</i>
+        </p>
       </main>
     </DocumentationLayout>
   );
