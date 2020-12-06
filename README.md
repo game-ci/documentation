@@ -1,7 +1,7 @@
 # Unity CI
 
 Documentation for open source Unity-CI projects. You can find the `.md` files inside the [docs](./docs) folder.
-The live version is available on [unity-ci.com](https://unity-ci.com).
+The live version is available on [game.ci](https://game.ci).
 
 ## Run the documentation locally
 
