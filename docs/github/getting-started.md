@@ -1,8 +1,8 @@
 # Getting started
 
-Unity Actions provides the fastest and **easiest** way to automatically test and build any Unity project.
+Unity Actions provide the fastest and **easiest** way to automatically test and build any Unity project.
 
-There are a few parts to setting up Unity Actions. Steps may slightly differ depending on each license type.
+There are a few parts to setting up a workflow. Steps may slightly differ depending on each license type.
 
 ## Mental model
 
@@ -44,7 +44,7 @@ Any subsequent steps assume you have read the above.
 
 #### Supported versions
 
-Unity Actions is based on the
+Unity Actions are based on the
 [unity3d](https://gitlab.com/gableroux/unity3d)
 images from
 [GabLeRoux](https://github.com/GabLeRoux).

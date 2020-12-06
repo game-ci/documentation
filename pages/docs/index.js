@@ -8,18 +8,27 @@ export default function Page() {
   return (
     <DocumentationLayout>
       <Head>
-        <title>Unity CI - Documentation</title>
+        <title>Unity</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="ant-typography">
-        <h1>Welcome to Unity CI</h1>
+        <h1>Welcome to GameCI</h1>
 
-        <p>This site will host documentation for open source Unity CI projects.</p>
+        <p>
+          This site hosts all documentation for GameCI, and will help you setup Continuous
+          Integration for your game projects.
+        </p>
+
+        <p>
+          Continuous Integration is a widely-used practice where automated pipelines check the
+          latest code changes actually work, before merging them into the main branch. This helps
+          developers stay in the flow and release faster and (ultimately) with more confidence.
+        </p>
 
         <p style={{ display: 'flex', alignItems: 'center' }}>
           <span>Follow the development on&nbsp;</span>
-          <a href="https://github.com/webbertakken/unity-ci">
+          <a href="https://github.com/game-ci/website">
             <Github alt="GitHub" style={{ height: 16 }} />
           </a>
         </p>
@@ -28,7 +37,7 @@ export default function Page() {
           <span>Join the discussion on </span>
           <Link href="/discord">
             <a>
-              <Discord alt="Unity-CI Discord" width="100" />
+              <Discord alt="GameCI Discord" width="100" />
             </a>
           </Link>
         </p>

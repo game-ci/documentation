@@ -1,7 +1,7 @@
-# Unity CI Docker images
+# Game CI Docker images for Unity
 
-All projects in Unity CI use docker images
-([unity-ci/editor](https://github.com/Unity-CI/docker/))
+All projects for Unity in Game CI use docker images
+([game-ci/editor](https://github.com/game-ci/docker/))
 which are specialised for CI and command-line use.
 
 They are established empirically by the community
@@ -20,9 +20,9 @@ Images for newly released editor versions are added almost immediately (automati
 
 ## Limitations
 
-#### Old versions of unity
+#### Older versions of unity
 
-There will be limited support for older versions of unity.
+There will be limited support for older versions of Unity.
 
 This is because for older versions, many factors regarding the preparation of stable docker images can not be determined programmatically.
 
