@@ -1,7 +1,7 @@
 # GameCI
 
 Documentation for open source GameCI projects. You can find the `.md` files inside the [docs](./docs) folder.
-The live version is available on [game.ci](https://game.ci).
+The live version is available on [game.ci](https://unity-ci.com/docs).
 
 ## Run the documentation locally
 
