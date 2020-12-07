@@ -19,7 +19,7 @@ yarn dev
 ## Community
 
 Feel free to join us on
-<a href="http://unity-ci.com/discord"><img height="30" src="media/Discord-Logo.svg" alt="Discord" /></a>
+<a href="https://game.ci/discord"><img height="30" src="media/Discord-Logo.svg" alt="Discord" /></a>
 and engage with the community.
 
 #### License
