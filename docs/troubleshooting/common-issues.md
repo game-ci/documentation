@@ -30,6 +30,8 @@ Make sure your branch is clean and all files are indeed present:
 A good way to verify this, is to (locally) clone the Unity project in a new folder and run the build from there.
 
 
+## I cannot activate because
+
 ### 'Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼' during manual activation
 
 When activating a license on [license.unity3d.com](https://license.unity3d.com/), you may encounteur the following error message:
