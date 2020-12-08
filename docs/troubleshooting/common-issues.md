@@ -34,13 +34,13 @@ A good way to verify this, is to (locally) clone the Unity project in a new fold
 
 ### 'Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼' during manual activation
 
-When activating a license on [license.unity3d.com](https://license.unity3d.com/), you may encounteur the following error message:
+When activating a license on [license.unity3d.com](https://license.unity3d.com/), you may encounter the following error message:
 
 > Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼
 
 Here's Unity's workaround:
 
-> Unfortunately, this is a known issue our end. The relevant team are in the process of working on a fix as we speak, in the meantime there is a workaround. Try renaming the alf file with a command to convert characters on it with a `iconv` command.
+> Unfortunately, this is a known issue our end. The relevant team are in the process of working on a fix as we speak, in the meantime there is a workaround. Try renaming the `alf` file with a command to convert characters on it with a `iconv` command.
 
 #### Solution
 
