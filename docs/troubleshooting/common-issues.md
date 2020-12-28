@@ -28,3 +28,23 @@ Make sure your branch is clean and all files are indeed present:
 - No pre-build steps that change your project differently from how that happens locally;
 
 A good way to verify this, is to (locally) clone the Unity project in a new folder and run the build from there.
+
+
+## I cannot activate because
+
+### 'Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼' during manual activation
+
+When activating a license on [license.unity3d.com](https://license.unity3d.com/), you may encounter the following error message:
+
+> Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼
+
+Here's Unity's workaround:
+
+> Unfortunately, this is a known issue our end. The relevant team are in the process of working on a fix as we speak, in the meantime there is a workaround. Try renaming the `alf` file with a command to convert characters on it with a `iconv` command.
+
+#### Solution
+
+```bash
+version=v2020.1.12f1 # update this according to your version and file name
+iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf 
+```

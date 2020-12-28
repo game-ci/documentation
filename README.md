@@ -1,7 +1,7 @@
 # GameCI
 
 Documentation for open source GameCI projects. You can find the `.md` files inside the [docs](./docs) folder.
-The live version is available on [unity-ci.com](https://unity-ci.com).
+The live version is available on [game.ci](https://game.ci).
 
 ## Run the documentation locally
 
@@ -19,7 +19,7 @@ yarn dev
 ## Community
 
 Feel free to join us on
-<a href="http://unity-ci.com/discord"><img height="30" src="media/Discord-Logo.svg" alt="Discord" /></a>
+<a href="https://game.ci/discord"><img height="30" src="media/Discord-Logo.svg" alt="Discord" /></a>
 and engage with the community.
 
 #### License
