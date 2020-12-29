@@ -123,10 +123,11 @@ _**default:** `<your project root>`_
 
 #### unityVersion
 
-Version of Unity to use for testing the project.
+Version of Unity to use for testing the project. 
+Use "auto" to get from your ProjectSettings/ProjectVersion.txt
 
 _**required:** `false`_
-_**default:** `2019.2.1f11`_
+_**default:** `auto`_
 
 #### testMode
 
