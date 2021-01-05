@@ -50,8 +50,6 @@ since `unity-builder` version 2. Any version in this
 [list](https://hub.docker.com/r/unityci/editor/tags)
 can be used to test and build projects.
 
-It's generally considered good practice to use the same Unity version for Unity Actions as you do to develop your project. No need to specify your unity version anywhere, `unity-builder` and `unity-test-runner` will use the one specified in `ProjectSettings/ProjectVersion.txt`.
-
 ## Simple example
 
 Below is a simple example. It is **recommended** to start from here.
