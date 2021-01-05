@@ -44,9 +44,9 @@ Any subsequent steps assume you have read the above.
 
 #### Supported unity versions
 
-Unity Actions are using 
-[game-ci/docker](https://github.com/game-ci/docker/) 
-since `unity-builder` version 2. Any version in this 
+Unity Actions are using
+[game-ci/docker](https://github.com/game-ci/docker/)
+since `unity-builder` version 2. Any version in this
 [list](https://hub.docker.com/r/unityci/editor/tags)
 can be used to test and build projects.
 
@@ -87,11 +87,11 @@ jobs:
 
       # Test
       - name: Run tests
-        uses: webbertakken/unity-test-runner@v2
+        uses: game-ci/unity-test-runner@v2
 
       # Build
       - name: Build project
-        uses: webbertakken/unity-builder@v2
+        uses: game-ci/unity-builder@v2
           targetPlatform: WebGL
 
       # Output
@@ -144,7 +144,7 @@ jobs:
           restore-keys: |
             Library-${{ matrix.projectPath }}-
             Library-
-      - uses: webbertakken/unity-test-runner@v2
+      - uses: game-ci/unity-test-runner@v2
         id: testRunner
         with:
           projectPath: ${{ matrix.projectPath }}
@@ -153,7 +153,7 @@ jobs:
         with:
           name: Test results (all modes)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
-      - uses: webbertakken/unity-builder@v2
+      - uses: game-ci/unity-builder@v2
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
