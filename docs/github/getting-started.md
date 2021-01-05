@@ -42,7 +42,7 @@ Read the official documentation on how to setup a
 
 Any subsequent steps assume you have read the above.
 
-#### Supported versions
+#### Supported unity versions
 
 Unity Actions are using 
 [game-ci/docker](https://github.com/game-ci/docker/) 
@@ -50,7 +50,7 @@ since `unity-builder` version 2. Any version in this
 [list](https://hub.docker.com/r/unityci/editor/tags)
 can be used to test and build projects.
 
-It's generally considered good practice to use the same Unity version for Unity Actions as you do to develop your project.
+It's generally considered good practice to use the same Unity version for Unity Actions as you do to develop your project. No need to specify your unity version anywhere, `unity-builder` and `unity-test-runner` will use the one specified in `ProjectSettings/ProjectVersion.txt`.
 
 ## Simple example
 
@@ -90,14 +90,10 @@ jobs:
       # Test
       - name: Run tests
         uses: webbertakken/unity-test-runner@v2
-        with:
-          unityVersion: 2019.4.17f1
 
       # Build
       - name: Build project
         uses: webbertakken/unity-builder@v2
-        with:
-          unityVersion: 2019.4.17f1
           targetPlatform: WebGL
 
       # Output
@@ -133,8 +129,6 @@ jobs:
       matrix:
         projectPath:
           - test-project
-        unityVersion:
-          - 2019.4.17f1
         targetPlatform:
           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
