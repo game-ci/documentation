@@ -44,12 +44,10 @@ Any subsequent steps assume you have read the above.
 
 #### Supported versions
 
-Unity Actions are based on the
-[unity3d](https://gitlab.com/gableroux/unity3d)
-images from
-[GabLeRoux](https://github.com/GabLeRoux).
-Any version in the
-[list](https://hub.docker.com/r/gableroux/unity3d/tags)
+Unity Actions are using 
+[game-ci/docker](https://github.com/game-ci/docker/) 
+since `unity-builder` version 2. Any version in this 
+[list](https://hub.docker.com/r/unityci/editor/tags)
 can be used to test and build projects.
 
 It's generally considered good practice to use the same Unity version for Unity Actions as you do to develop your project.
@@ -84,26 +82,26 @@ jobs:
           lfs: true
 
       # Cache
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2.1.3
         with:
           path: Library
           key: Library
 
       # Test
       - name: Run tests
-        uses: webbertakken/unity-test-runner@v1.3
+        uses: webbertakken/unity-test-runner@v2
         with:
-          unityVersion: 2019.2.11f1
+          unityVersion: 2019.4.17f1
 
       # Build
       - name: Build project
-        uses: webbertakken/unity-builder@v0.10
+        uses: webbertakken/unity-builder@v2
         with:
-          unityVersion: 2019.2.11f1
+          unityVersion: 2019.4.17f1
           targetPlatform: WebGL
 
       # Output
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Build
           path: build
@@ -136,7 +134,7 @@ jobs:
         projectPath:
           - test-project
         unityVersion:
-          - 2019.2.11f1
+          - 2019.4.17f1
         targetPlatform:
           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
@@ -147,29 +145,29 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2.1.3
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
           restore-keys: |
             Library-${{ matrix.projectPath }}-
             Library-
-      - uses: webbertakken/unity-test-runner@v1.3
+      - uses: webbertakken/unity-test-runner@v2
         id: testRunner
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Test results (all modes)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
-      - uses: webbertakken/unity-builder@v0.10
+      - uses: webbertakken/unity-builder@v2
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Build
           path: build
