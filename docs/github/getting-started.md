@@ -80,7 +80,7 @@ jobs:
           lfs: true
 
       # Cache
-      - uses: actions/cache@v2.1.3
+      - uses: actions/cache@v2
         with:
           path: Library
           key: Library
@@ -92,6 +92,7 @@ jobs:
       # Build
       - name: Build project
         uses: game-ci/unity-builder@v2
+        with:
           targetPlatform: WebGL
 
       # Output
@@ -120,7 +121,7 @@ env:
 
 jobs:
   buildAndTestForSomePlatforms:
-    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -132,12 +133,13 @@ jobs:
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
           - iOS # Build an iOS player.
+          - Android # Build an Android player.
           - WebGL # WebGL.
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - uses: actions/cache@v2.1.3
+      - uses: actions/cache@v2
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
@@ -148,7 +150,6 @@ jobs:
         id: testRunner
         with:
           projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
       - uses: actions/upload-artifact@v2
         with:
           name: Test results (all modes)
@@ -156,7 +157,6 @@ jobs:
       - uses: game-ci/unity-builder@v2
         with:
           projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
       - uses: actions/upload-artifact@v2
