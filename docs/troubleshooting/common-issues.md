@@ -29,7 +29,7 @@ Make sure your branch is clean and all files are indeed present:
 
 A good way to verify this, is to (locally) clone the Unity project in a new folder and run the build from there.
 
-### Gradle error.
+### Gradle error
 
 #### Error
 
