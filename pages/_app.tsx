@@ -2,7 +2,6 @@
 import { AppProps } from 'next/app';
 import { IconContext } from 'react-icons';
 
-import 'antd/dist/antd.css';
 // import 'antd/dist/antd.dark.css';
 import '../styles/vars.css';
 import '../styles/global.css';
@@ -10,10 +9,10 @@ import '../styles/layout.css';
 import '../styles/markdown.css';
 import 'highlight.js/styles/dracula.css';
 
-import '../styles/home/header.scss';
-import '../styles/home/home.scss';
-import '../styles/home/footer.scss';
-import '../styles/home/responsive.scss';
+import '../styles/home/header.less';
+import '../styles/home/home.less';
+import '../styles/home/footer.less';
+import '../styles/home/responsive.less';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

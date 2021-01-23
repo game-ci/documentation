@@ -224,3 +224,12 @@ h6.ant-typography,
 .text-disabled {
   color: var(--textColorSecondary) !important;
 }
+
+/* I tried really hard to use antd customization, but css being css, this is the only way I managed to get things working. */
+.ant-layout-header {
+  background: #373445 !important;
+}
+
+.ant-menu.ant-menu-dark, .ant-menu-dark .ant-menu-sub, .ant-menu.ant-menu-dark .ant-menu-sub {
+  background: #373445 !important;
+}

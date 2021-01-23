@@ -1,5 +1,5 @@
-@import "./default";
-$site-text-color: #314659;
+@import "./default.less";
+@site-text-color: #314659;
 footer.dark {
   background-color: #000;
   color: rgba(255, 255, 255, 0.65);
@@ -24,7 +24,7 @@ footer {
   background: #fff;
   position: relative;
   z-index: 100;
-  color: $site-text-color;
+  color: @site-text-color;
   box-shadow: 0 1000px 0 1000px #fff;
   .ant-row {
     text-align: center;
@@ -56,12 +56,12 @@ footer {
   }
   .footer-wrap {
     position: relative;
-    padding: 86px $padding-space 93px $padding-space;
+    padding: 86px @padding-space 93px @padding-space;
   }
   .bottom-bar {
-    border-top: 1px solid $border-color;
+    border-top: 1px solid @border-color;
     text-align: right;
-    padding: 16px $padding-space;
+    padding: 16px @padding-space;
     margin: 0;
     line-height: 32px;
     a {
@@ -86,7 +86,7 @@ footer {
         max-width: 1200px;
         padding: 86px 24px 93px 24px;
         margin: auto;
-
+        
       }
     }
     .bottom-bar{
