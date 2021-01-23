@@ -54,6 +54,8 @@
     // Allow forOfStatements
     "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
     // Continue is viable in forOf loops in generators
-    "no-continue": "off"
+    "no-continue": "off",
+    // Spreading is needed in case of forwarding props
+    "react/jsx-props-no-spreading": "off"
   }
 }
