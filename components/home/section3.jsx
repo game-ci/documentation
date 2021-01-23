@@ -3,22 +3,22 @@ import { Row, Col } from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 
-import svgBgToParallax from '@/components/home/svgBgToParallax';
+import svgBgToParallax from '@/components/parallax/svgBgToParallax';
 
 const page3Data = [
   {
-    title: 'app.home.tool-package-title',
-    content: 'app.home.tool-package-content',
+    title: 'Contribute',
+    content: 'We should support most cases, but if we missed something, you can help',
     img: 'https://gw.alipayobjects.com/zos/rmsportal/qggKjIGNFlVmMpwDUXPU.svg',
   },
   {
-    title: 'app.home.tool-library-title',
-    content: 'app.home.tool-library-content',
+    title: 'All you need is some time to read the docs',
+    content: 'Really, just read the docs. We cover a lot of stuff',
     img: 'https://gw.alipayobjects.com/zos/rmsportal/dgjVqwkJvptQEtlfctvk.svg',
   },
   {
-    title: 'app.home.tool-kitchen-title',
-    content: 'app.home.tool-kitchen-content',
+    title: 'This is all free',
+    content: 'Free as a beer 🍻, free as a bird 🐦, awesome as a toaster 🍞',
     img: 'https://gw.alipayobjects.com/zos/rmsportal/vUxYuDdsbBBcMDxSGmwc.svg',
   },
 ];

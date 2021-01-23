@@ -7,7 +7,7 @@ import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/URIeCOKLMAbRXaeXoNqN.svg',
-    name: '设计价值观',
+    name: 'Design values',
     nameEn: 'Design Values',
     svgBg: (
       <svg
@@ -64,7 +64,7 @@ const page1Data = [
   },
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/qXncdwwUTTgUFnsbCNCE.svg',
-    name: '视觉',
+    name: 'Visual',
     nameEn: 'Visual',
     svgBg: (
       <svg
@@ -121,7 +121,7 @@ const page1Data = [
   },
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/YFXXZocxAgjReehpPNbX.svg',
-    name: '可视化',
+    name: 'Visualisation',
     nameEn: 'Visualisation',
     svgBg: (
       <svg
@@ -164,7 +164,7 @@ const page1Data = [
   },
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/VPuetGsvJuYBwoDkZWFW.svg',
-    name: '动效',
+    name: 'Animation',
     nameEn: 'Animation',
     svgBg: (
       <svg
@@ -334,7 +334,7 @@ export default class Section1 extends React.PureComponent {
     return (
       <div className="home-page-wrapper page1">
         <div className="page">
-          <h2>app.home.design-language</h2>
+          <h2>Automate the boring tasks</h2>
           <ScrollOverPack playScale="0.3">
             <QueueAnim
               component={Row}

@@ -5,7 +5,7 @@ import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 
 import PropTypes from 'prop-types';
 import Banner from '@/components/home/banner';
-import svgBgToParallax from '@/components/home/svgBgToParallax';
+import svgBgToParallax from '@/components/parallax/svgBgToParallax';
 
 const page2Data = [
   {
@@ -14,18 +14,18 @@ const page2Data = [
   },
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/EPaPtDVGnJhyqyBAUZMl.svg',
-    name: 'Ant Design Pro',
-    slogan: 'app.home.product-pro-slogan',
+    name: 'Use the cloud or your own machines',
+    slogan: 'Most existing CIs already support your machines, you get to decide',
   },
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/GobRAKexhfTSJdLFzDFY.svg',
-    name: 'Ant Design Mobile',
-    slogan: 'app.home.product-mobile-slogan',
+    name: "Don't reinvent the wheel",
+    slogan: 'keep the things rolling',
   },
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/slVtnOCcgeAcLEPwtewY.svg',
-    name: 'AntV',
-    slogan: 'app.home.product-antv-slogan',
+    name: "You're new to all of this?",
+    slogan: 'We got you covered, see the documentation',
   },
 ];
 
@@ -136,16 +136,14 @@ export default function Section2({ isMobile }) {
     if (!isMobile && !i) {
       return;
     }
-    const content =
-      isMobile && !i
-        ? componentButton
-        : [
-          <p key="p">{item.slogan}</p>,
-          <a key="a">
-              <p>learn more</p>
-              <Icon type="right" />
-            </a>,
-          ];
+    const spreadElements = [
+      <p key="p">{item.slogan}</p>,
+      <a key="a">
+        <p>learn more</p>
+        <Icon type="right" />
+      </a>,
+    ];
+    const content = isMobile && !i ? componentButton : [...spreadElements];
     return (
       <Row className="product-block" key={i.toString()}>
         <Col xs={8} md={i === 2 ? 6 : 8} className={`block-image-wrapper${i % 2 ? ' right' : ''}`}>
@@ -162,7 +160,7 @@ export default function Section2({ isMobile }) {
     <div className="home-page-wrapper page2" id="page2">
       <div className="page">
         <h2>
-          <p>app.home.solution</p>
+          <p>Focus on game development</p>
         </h2>
         <ScrollOverPack component={Row} className="page2-content" playScale="0.4">
           <QueueAnim
@@ -173,9 +171,9 @@ export default function Section2({ isMobile }) {
             type="bottom"
             leaveReverse
           >
-            <h3 key="h1">Ant Design Components</h3>
+            <h3 key="h1">Test, Build and Deploy with ease</h3>
             <p key="p">
-              <p>app.home.components-explain</p>
+              <p>Using the tools you already know</p>
             </p>
             {componentButton}
           </QueueAnim>

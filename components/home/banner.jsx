@@ -63,8 +63,8 @@ class Banner extends React.PureComponent {
             </div>
           )}
           <QueueAnim className="text-wrapper" key="text" type="bottom">
-            <h1 key="h1">Ant Design</h1>
-            <p key="p">app.home.introduce</p>
+            <h1 key="h1">GameCI</h1>
+            <p key="p">Open source continuous integration for games.</p>
           </QueueAnim>
           {!isMobile && (
             <div className="img-wrapper" key="image">
