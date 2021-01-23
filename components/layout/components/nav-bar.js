@@ -1,15 +1,12 @@
-import { Input, Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd';
 import Link from 'next/link';
 import { GithubOutlined, GitlabOutlined } from '@ant-design/icons';
+import SearchBar from '@/components/layout/components/search-bar';
+import DiscordLogo from '@/components/layout/logos/discord-logo';
 import GameCiLogo from '../../../images/game-ci-brand-logo-wordmark.svg';
-import DiscordLogo from '../../../images/discord-brand-logo-wordmark.svg';
 
 const { Header } = Layout;
 const { Item, ItemGroup, SubMenu } = Menu;
-
-const search = (value, event) => {
-  console.log(`Searching for ${value} ...`, event);
-};
 
 const NavBar = () => (
   <Header className="header">
@@ -32,26 +29,7 @@ const NavBar = () => (
           <a>Docs</a>
         </Link>
       </Item>
-      <SubMenu
-        selectable={false}
-        style={{ flex: 1, padding: '0 10%' }}
-        title={<Input.Search onSearch={search} />}
-      >
-        <ItemGroup title="Pages">
-          <Item icon={<GithubOutlined />} key="source:documentation">
-            <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
-              Website
-            </a>
-          </Item>
-        </ItemGroup>
-        <ItemGroup title="Sections">
-          <Item icon={<GithubOutlined />} key="source:documentation">
-            <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
-              Website
-            </a>
-          </Item>
-        </ItemGroup>
-      </SubMenu>
+      <SearchBar />
       <SubMenu selectable={false} icon={<GithubOutlined />} title="Source code">
         <ItemGroup title="Project">
           <Item icon={<GithubOutlined />} key="source:documentation">
@@ -135,7 +113,7 @@ const NavBar = () => (
       </SubMenu>
       <Item selectable={false}>
         <Link href="/discord">
-          <DiscordLogo height={30} style={{ verticalAlign: '-0.75em' }} />
+          <DiscordLogo />
         </Link>
       </Item>
     </Menu>
