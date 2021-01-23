@@ -81,3 +81,7 @@
   margin-top: 30px;
   padding-top: 42px;
 }
+
+.ant-menu-item .anticon, .ant-menu-submenu-title .ant-input-search .anticon {
+  margin-right: 0;
+}
