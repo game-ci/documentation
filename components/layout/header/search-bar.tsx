@@ -1,8 +1,10 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { SearchBox } from 'react-instantsearch-dom';
+import { SearchBox, Pagination } from 'react-instantsearch-dom';
 import { FileSearchOutlined } from '@ant-design/icons';
-import Content from '../../search/results';
+import Configuration from '@/components/search/configuration';
+import SearchResults from '@/components/search/results';
+import Stats from '@/components/search/results/components/stats';
 
 const { Item, ItemGroup, SubMenu } = Menu;
 
@@ -13,12 +15,11 @@ const SearchBar = (props) => (
     style={{ flex: 1, padding: '0 10%' }}
     title={<SearchBox />}
   >
+    <Configuration />
     <ItemGroup title="Pages">
-      <Content>
-        {/* <Item icon={<FileSearchOutlined />} key="source:documentation2"> */}
-        {/*  Testing */}
-        {/* </Item> */}
-      </Content>
+      <SearchResults />
+      <Stats />
+      <Pagination />
     </ItemGroup>
     <ItemGroup title="Sections">
       <Item icon={<FileSearchOutlined />} key="source:documentation">
