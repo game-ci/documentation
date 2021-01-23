@@ -1,5 +1,6 @@
 import React from 'react';
 
+// @ts-ignore
 import Logo from '../../../images/discord-brand-logo-wordmark.svg';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

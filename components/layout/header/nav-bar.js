@@ -1,8 +1,8 @@
 import { Layout, Menu } from 'antd';
 import Link from 'next/link';
-import SearchBar from '@/components/layout/components/search-bar';
+import SearchBar from '@/components/layout/header/search-bar';
 import DiscordLogo from '@/components/layout/logos/discord-logo';
-import SourceLinks from '@/components/layout/components/source-links';
+import SourceLinks from '@/components/layout/header/source-links';
 import GameCiLogo from '../../../images/game-ci-brand-logo-wordmark.svg';
 
 const { Header } = Layout;

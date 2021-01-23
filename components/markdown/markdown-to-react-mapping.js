@@ -4,7 +4,6 @@ import CodeBlock from './components/code-block';
 import Heading from './components/heading';
 import { List, ListItem } from './components/list';
 import Article from './components/article';
-// import Blockquote from './components/blockquote';
 
 const { Paragraph } = Typography;
 

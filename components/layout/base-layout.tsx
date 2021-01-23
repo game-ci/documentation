@@ -1,9 +1,9 @@
 import { InferProps } from 'prop-types';
 import { Layout } from 'antd';
-import NavBar from './components/nav-bar';
-import Breadcrumb from './components/breadcrumb';
-import Footer from './components/footer';
 import propertyTypes from '@/core/property-types';
+import NavBar from './header/nav-bar';
+import Breadcrumb from './main/breadcrumb';
+import Footer from './footer/footer';
 
 const { Content } = Layout;
 
