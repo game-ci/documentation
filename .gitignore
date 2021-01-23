@@ -14,6 +14,8 @@
 
 # production
 /build
+/.search/*
+!/.search/.gitkeep
 
 # misc
 .DS_Store
