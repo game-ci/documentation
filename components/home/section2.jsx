@@ -5,7 +5,7 @@ import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 
 import PropTypes from 'prop-types';
 import Banner from '@/components/home/banner';
-import svgBgToParallax from './util';
+import svgBgToParallax from '@/components/home/svgBgToParallax';
 
 const page2Data = [
   {
@@ -119,7 +119,7 @@ const svgBgChildArray = svgBgChild.map((item, i) => {
   const { props } = item;
   return React.cloneElement(item, { children: svgBgToParallax(props.children, i) });
 });
-export default function Page2({ isMobile }) {
+export default function Section2({ isMobile }) {
   const componentButton = (
     <div key="b" className="components-button-wrapper">
       <a>
@@ -134,7 +134,7 @@ export default function Page2({ isMobile }) {
   );
   const children = page2Data.map((item, i) => {
     if (!isMobile && !i) {
-      return undefined;
+      return;
     }
     const content =
       isMobile && !i
@@ -197,10 +197,10 @@ export default function Page2({ isMobile }) {
   );
 }
 
-Page2.propTypes = {
+Section2.propTypes = {
   isMobile: PropTypes.bool,
 };
 
-Page2.defaultProps = {
+Section2.defaultProps = {
   isMobile: false,
 };

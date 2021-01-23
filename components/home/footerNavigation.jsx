@@ -2,7 +2,8 @@ import React from 'react';
 
 import { Row, Col } from 'antd';
 
-function Footer() {
+// TODO: add some actual menu here
+function FooterNavigation() {
   return (
     <footer id="footer" className="dark">
       <div className="footer-wrap">
@@ -62,7 +63,7 @@ function Footer() {
                 >
                   dva-cli
                 </a>
-                -
+                <span>-</span>
                 <p>app.footer.dev-tools</p>
               </div>
               <div>
@@ -183,43 +184,8 @@ function Footer() {
           </Col>
         </Row>
       </div>
-      <Row className="bottom-bar">
-        <Col md={4} sm={24} />
-        <Col md={20} sm={24}>
-          <span
-            style={{
-              lineHeight: '16px',
-              paddingRight: 12,
-              marginRight: 11,
-              borderRight: '1px solid rgba(255, 255, 255, 0.55)',
-            }}
-          >
-            <a
-              href="https://docs.alipay.com/policies/privacy/antfin"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <p>app.footer.privacy</p>
-            </a>
-          </span>
-          <span style={{ marginRight: 24 }}>
-            <a
-              href="https://render.alipay.com/p/f/fd-izto3cem/index.html"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <p>app.footer.commitment</p>
-            </a>
-          </span>
-          <span style={{ marginRight: 12 }}>ICP 证浙 B2-2-100257</span>
-          <span style={{ marginRight: 12 }}>
-            Copyright ©
-            <p>app.footer.company</p>
-          </span>
-        </Col>
-      </Row>
     </footer>
   );
 }
 
-export default Footer;
+export default FooterNavigation;

@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 
-import svgBgToParallax from './util';
+import svgBgToParallax from '@/components/home/svgBgToParallax';
 
 const page3Data = [
   {
@@ -80,7 +80,7 @@ const children = page3Data.map((item, i) => (
     </div>
   </Col>
 ));
-export default function Page3() {
+export default function Section3() {
   return (
     <div className="home-page-wrapper page3" id="page3">
       <div className="parallax-bg top">

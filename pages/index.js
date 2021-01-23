@@ -4,10 +4,10 @@ import { Button } from 'antd';
 import React from 'react';
 
 import Banner from '@/components/home/banner';
-import Page1 from '@/components/home/page1';
-import Page2 from '@/components/home/page2';
-import Page3 from '@/components/home/page3';
-import Footer from '@/components/home/footer';
+import Section1 from '@/components/home/section1';
+import Section2 from '@/components/home/section2';
+import Section3 from '@/components/home/section3';
+import FooterNavigation from '@/components/home/footerNavigation';
 import GameCiLogo from '../images/game-ci-brand-logo-wordmark.svg';
 
 const Index = () => {
@@ -28,10 +28,10 @@ const Index = () => {
       </p>
 
       <Banner isMobile={false} />
-      <Page1 isMobile={false} />
-      <Page2 isMobile={false} />
-      <Page3 />
-      <Footer />
+      <Section1 isMobile={false} />
+      <Section2 isMobile={false} />
+      <Section3 />
+      <FooterNavigation />
     </>
   );
 };

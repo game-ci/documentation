@@ -232,7 +232,7 @@ const svgToXY = page1Data.map((item) => {
   });
 });
 
-export default class Page1 extends React.PureComponent {
+export default class Section1 extends React.PureComponent {
   state = {
     hoverKey: undefined,
   };
