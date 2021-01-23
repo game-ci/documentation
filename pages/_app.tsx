@@ -10,6 +10,11 @@ import '../styles/layout.css';
 import '../styles/markdown.css';
 import 'highlight.js/styles/dracula.css';
 
+import '../styles/home/header.scss';
+import '../styles/home/home.scss';
+import '../styles/home/footer.scss';
+import '../styles/home/responsive.scss';
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <IconContext.Provider value={{ className: 'anticon' }}>

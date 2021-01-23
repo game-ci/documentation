@@ -1,0 +1,45 @@
+@import './default';
+$header-height: 64px;
+$menu-item-border: 2px;
+#header,
+header {
+  transition: all 0.3s;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(240, 241, 242, 65);
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+  & #logo {
+    overflow: hidden;
+    padding-left: 40px;
+    float: left;
+    height: $header-height;
+    line-height: $header-height;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: padding .3s $ease-in-out;
+    img {
+      height: 32px;
+      margin-right: 16px;
+    }
+    img+img {
+      height: 16px;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
+.home {
+  #header,
+  header {
+    box-shadow: none;
+    max-width: 1200px;
+    width: 100%;
+    margin: 20px auto 0;
+    padding: 0 24px;
+    #logo {
+      padding: 0;
+    }
+  }
+}
