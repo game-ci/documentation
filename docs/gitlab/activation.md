@@ -68,9 +68,9 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 6. Open https://license.unity3d.com/manual and answer questions
 7. Upload `unity3d.alf` for manual activation
 8. Download `Unity_v2018.x.ulf` (`Unity_v2019.x.ulf` for 2019 versions)
-9. Copy the content of `Unity_v2018.x.ulf` license file to your CI's environment variable `UNITY_LICENSE_CONTENT`.
+9. Copy the content of `Unity_v2018.x.ulf` license file to your CI's environment variable `UNITY_LICENSE`.
    _Note: if you are doing this on Windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://github.com/game-ci/unity3d-ci-example/blob/master/.gitlab-ci.yml) of the example project solves this by removing `\r` character from the ENV variable so you'll be alright_
-   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE_CONTENT` to the right place before running tests or creating the builds.
+   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
 
 ## Unity Plus/Pro
 
@@ -104,9 +104,9 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
 4. Wait for the command to finish without errors
 5. Obtain the contents of the license file by running `cat /root/.local/share/unity3d/Unity/Unity_lic.ulf`
-6. Copy the content to your CI's environment variable `UNITY_LICENSE_CONTENT`.
+6. Copy the content to your CI's environment variable `UNITY_LICENSE`.
    _Note: if you are doing this on windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) solves this by removing `\r` character from the env variable so you'll be alright_
-   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE_CONTENT` to the right place before running tests or creating the builds.
+   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
 
 ## Unity license per target
 
