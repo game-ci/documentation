@@ -44,5 +44,5 @@ It's generally considered good practice to use the same Unity version for your C
    cp ../unity3d-gitlab-ci-example/Assets/Scripts/Editor/BuildCommand.cs ./Assets/Scripts/Editor/
    ```
 
-1. Open and edit the [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) you copied to your project and update [the variables](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml#L7-12) with the versions you need. Your Unity project version can be found in `ProjectSettings/ProjectVersion.txt`.
+1. Open and edit the [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) you copied to your project and update [the variables](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml#L7-13) with the versions you need. Your Unity project version can be found in `ProjectSettings/ProjectVersion.txt`.
 1. Continue to activation instructions
