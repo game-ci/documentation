@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-reduce,no-shadow,no-param-reassign */
 const withLess = require('@zeit/next-less');
-// const withCss = require('@zeit/next-css');
+const withCss = require('@zeit/next-css');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer');
 
@@ -51,29 +51,28 @@ module.exports = compose([
       javascriptEnabled: true,
       localIdentName: '[local]___[hash:base64:5]',
     },
-    webpack: (config, { isServer }) => {
-      if (isServer) {
-        // deal antd style
-        const antStyles = /antd\/.*?\/style.*?/;
-        const origExternals = [...config.externals];
-        config.externals = [
-          (context, request, callback) => {
-            if (request.match(antStyles)) return callback();
-            if (typeof origExternals[0] === 'function') {
-              return origExternals[0](context, request, callback);
-            }
-            return callback();
-          },
-          ...(typeof origExternals[0] === 'function' ? [] : origExternals),
-        ];
-        config.module.rules.unshift({
-          test: antStyles,
-          use: 'null-loader',
-        });
-      }
-    },
+    // webpack: (config) => {
+    //   // deal antd style
+    //   const antStyles = /antd\/.*?\/style.*?/;
+    //   const origExternals = [...config.externals];
+    //   config.externals = [
+    //     (context, request, callback) => {
+    //       if (request.match(antStyles)) return callback();
+    //       if (typeof origExternals[0] === 'function') {
+    //         origExternals[0](context, request, callback);
+    //       }
+    //       callback();
+    //       return new Promise(() => {});
+    //     },
+    //     ...(typeof origExternals[0] === 'function' ? [] : origExternals),
+    //   ];
+    //   config.module.rules.unshift({
+    //     test: antStyles,
+    //     use: 'null-loader',
+    //   });
+    // },
   }),
-  // withCss(),
+  withCss(),
 ]);
 
 // module.exports = compose([[withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }]]);

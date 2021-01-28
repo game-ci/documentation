@@ -1,10 +1,10 @@
 import React from 'react';
-import { Row, Col, Icon } from 'antd';
+import { Row, Col } from 'antd';
+import Icon from '@ant-design/icons';
 import QueueAnim from 'rc-queue-anim';
 import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 
 import PropTypes from 'prop-types';
-import Banner from '@/components/home/banner';
 import svgBgToParallax from '@/components/parallax/svgBgToParallax';
 
 const page2Data = [
@@ -134,7 +134,7 @@ export default function Section2({ isMobile }) {
   );
   const children = page2Data.map((item, i) => {
     if (!isMobile && !i) {
-      return;
+      return () => {};
     }
     const spreadElements = [
       <p key="p">{item.slogan}</p>,
@@ -147,7 +147,11 @@ export default function Section2({ isMobile }) {
     return (
       <Row className="product-block" key={i.toString()}>
         <Col xs={8} md={i === 2 ? 6 : 8} className={`block-image-wrapper${i % 2 ? ' right' : ''}`}>
-          <img src={item.img} style={isMobile && i === 2 ? { marginLeft: 16 } : {}} />
+          <img
+            src={item.img}
+            style={isMobile && i === 2 ? { marginLeft: 16 } : {}}
+            alt="todo: fill me"
+          />
         </Col>
         <Col xs={16} md={i === 2 ? 18 : 16} className="block-text-wrapper">
           <h4>{item.name}</h4>
