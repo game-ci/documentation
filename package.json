@@ -4,7 +4,7 @@
   "description": "Website for projects within the GameCI group",
   "private": true,
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
