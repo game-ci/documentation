@@ -18,7 +18,7 @@ Any subsequent steps assume you have read the above.
 
 ## Supported versions
 
-The [unity3d-gitlab-ci-example project](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/) is based on [unity3d](https://gitlab.com/gableroux/unity3d) docker images from [GabLeRoux](https://github.com/GabLeRoux). Any version in the [docker hub `gableroux/unity3d` tags list](https://hub.docker.com/r/gableroux/unity3d/tags) can be used to test and build projects.
+The [unity3d-gitlab-ci-example project](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/) is based on [unity3d](https://github.com/game-ci/docker/) docker images from [game-ci](https://github.com/game-ci). Any version in the [docker hub `unityci/editor` tags list](https://hub.docker.com/r/unityci/editor/tags) can be used to test and build projects.
 
 It's generally considered good practice to use the same Unity version for your CI/CD setup as you do to develop your project.
 
