@@ -1,6 +1,6 @@
 # Android
 
-To make build working with Android, you will need a specific Unity license (because that is not the same docker image). Add the content of your specific Unity license in your CI's environment variable : `UNITY_LICENSE_CONTENT_ANDROID`
+Before `2018.4.8f1` for 2018 versions and before `2019.2.4f1` for 2019 versions, you will need a specific Unity license (because that is not the same docker image). Add the content of your specific Unity license in your CI's environment variable : `UNITY_LICENSE_CONTENT_ANDROID`.\_This is not required anymore now that images share a base image [See related change](https://gitlab.com/gableroux/unity3d/merge_requests/63)\*\*
 
 By default the apk is not signed and the build will use the Unity's default debug key.
 For _security reasons_, **you should not add your keystore to git**.
