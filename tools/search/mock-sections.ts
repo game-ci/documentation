@@ -1,5 +1,6 @@
 export default [
   {
+    filename: 'something/a.tsx',
     title: 'What is activating?',
     summary: 'Activation is something nice...',
     body:
@@ -7,6 +8,7 @@ export default [
     categories: ['Activation', 'Introduction'],
   },
   {
+    filename: 'something/a.tsx',
     title: 'How to activate?',
     summary: 'Activation goes like this...',
     body:
@@ -14,6 +16,7 @@ export default [
     categories: ['Activation', 'GitHub Actions'],
   },
   {
+    filename: 'something/b.jsx',
     title: 'Why should I activate?',
     summary: 'Activating is necessary because...',
     body:
