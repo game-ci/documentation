@@ -35,7 +35,7 @@
   margin: 0;
   font-variant: tabular-nums;
   list-style: none;
-  font-feature-settings: 'tnum', "tnum";
+  font-feature-settings: 'tnum', 'tnum';
   position: relative;
   display: inline-block;
   width: 100%;
@@ -95,7 +95,8 @@
   transform: translateX(-10px);
 }
 
-.ais-SearchBox-submitIcon, .ais-SearchBox-resetIcon {
+.ais-SearchBox-submitIcon,
+.ais-SearchBox-resetIcon {
   display: inline-block;
   cursor: pointer;
   line-height: 1;
@@ -103,17 +104,14 @@
   font-size: 14px;
   width: 11px;
   height: 11px;
-  transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1),
+    margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   fill: currentColor;
 }
-
-
 
 /**
  * Everything below here is boilerplate
  */
-
-
 
 .ais-InstantSearch__root {
   display: flex;
@@ -405,21 +403,21 @@ footer {
 }
 
 #searchbox:empty:before {
-  content: "Uncomment the searchBox widget to add a search bar.";
+  content: 'Uncomment the searchBox widget to add a search bar.';
 }
 
 #hits:empty:before {
-  content: "Uncomment the hits widget to add hits list.";
+  content: 'Uncomment the hits widget to add hits list.';
 }
 
 #stats:empty:before {
-  content: "Uncomment the stats widget to add search stats.";
+  content: 'Uncomment the stats widget to add search stats.';
 }
 
 #categories:empty:before {
-  content: "Uncomment the categories widget to add categories list.";
+  content: 'Uncomment the categories widget to add categories list.';
 }
 
 #pagination:empty:before {
-  content: "Uncomment the pagination widget to add pagination.";
+  content: 'Uncomment the pagination widget to add pagination.';
 }

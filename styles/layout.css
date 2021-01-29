@@ -82,6 +82,7 @@
   padding-top: 42px;
 }
 
-.ant-menu-item .ant-input-search .anticon, .ant-menu-submenu-title .ant-input-search .anticon {
+.ant-menu-item .ant-input-search .anticon,
+.ant-menu-submenu-title .ant-input-search .anticon {
   margin-right: 0;
 }
