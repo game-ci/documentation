@@ -1,34 +1,44 @@
-import React from 'react';
-import { Menu } from 'antd';
-import { SearchBox, Pagination } from 'react-instantsearch-dom';
-import { FileSearchOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { SearchBox, Pagination, PoweredBy } from 'react-instantsearch-dom';
 import Configuration from '@/components/search/configuration';
 import SearchResults from '@/components/search/results';
-import Stats from '@/components/search/results/components/stats';
+import Stats from '@/components/search/stats';
 
-const { Item, ItemGroup, SubMenu } = Menu;
+const SearchBar = () => {
+  const [searchFocused, setFocus] = useState(false);
+  const [searchHovered, setSearchHovered] = useState(false);
+  const [resultsHovered, setResultsHovered] = useState(false);
 
-const SearchBar = (props) => (
-  <SubMenu
-    {...props}
-    selectable={false}
-    style={{ flex: 1, padding: '0 10%' }}
-    title={<SearchBox />}
-  >
-    <Configuration />
-    <ItemGroup title="Pages">
-      <SearchResults />
-      <Stats />
-      <Pagination />
-    </ItemGroup>
-    <ItemGroup title="Sections">
-      <Item icon={<FileSearchOutlined />} key="source:documentation">
-        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
-          Website
-        </a>
-      </Item>
-    </ItemGroup>
-  </SubMenu>
-);
+  const active = searchFocused || searchHovered || resultsHovered;
+
+  return (
+    <div
+      onMouseEnter={() => setSearchHovered(true)}
+      onMouseLeave={() => setSearchHovered(false)}
+      style={{
+        flex: 1,
+        padding: '0 10%',
+        position: 'relative',
+        backgroundColor: active ? 'rgb(1 44 84)' : 'transparent',
+      }}
+    >
+      <Configuration />
+      <SearchBox onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} />
+      <div
+        className="ais-results-panel"
+        onMouseEnter={() => setResultsHovered(true)}
+        onMouseLeave={() => setResultsHovered(false)}
+        style={{ display: active ? 'block' : 'none' }}
+      >
+        <SearchResults />
+        <Pagination />
+        <div className="ais-meta-information">
+          <Stats />
+          <PoweredBy />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default SearchBar;

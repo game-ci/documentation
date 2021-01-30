@@ -1,3 +1,4 @@
+import React from 'react';
 import { Layout, Menu } from 'antd';
 import Link from 'next/link';
 import SearchBar from '@/components/layout/header/search-bar';
