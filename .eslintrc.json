@@ -58,6 +58,8 @@
     // Spreading is needed in case of forwarding props
     "react/jsx-props-no-spreading": "off",
     // Allow inline <strong> tags
-    "react/jsx-one-expression-per-line": "off"
+    "react/jsx-one-expression-per-line": "off",
+    // React components should be able to return null
+    "unicorn/no-null": "off"
   }
 }

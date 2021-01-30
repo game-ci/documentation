@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import PropTypes, { InferProps } from 'prop-types';
 import { useRouter } from 'next/router';
-import renderers from './markdown-to-react-mapping';
+import renderers from './markdown-to-page-mapping';
 import GithubEdit from '../layout/main/github-edit';
 
 const propTypes = {

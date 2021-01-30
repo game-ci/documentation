@@ -2,8 +2,7 @@ import { resolve } from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 
-import DocumentationLayout from '@/components/layout/documentation-layout';
-import MarkdownRenderer from '@/components/markdown/markdown-renderer';
+import DocumentationPage from '@/components/layout/documentation-page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
 import readFile from '@/core/fs/read-file';
 
@@ -13,10 +12,8 @@ interface Props {
 }
 
 // Represents all the markdown documentation pages
-const DocumentationPage = ({ content, data }: Props) => (
-  <DocumentationLayout>
-    <MarkdownRenderer meta={data} document={content} />
-  </DocumentationLayout>
+const Documentation = ({ content, data }: Props) => (
+  <DocumentationPage content={content} data={data} />
 );
 
 // Build time: Determines which pages are generated
@@ -58,4 +55,4 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return { props: { ...data } };
 };
 
-export default DocumentationPage;
+export default Documentation;

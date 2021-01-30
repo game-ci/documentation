@@ -1,12 +1,12 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import DocumentationLayout from '@/components/layout/documentation-layout';
+import DocumentationPage from '@/components/layout/documentation-page';
 import Discord from '../../images/discord-brand-logo-wordmark.svg';
 import Github from '../../images/github-brand-text.svg';
 
 export default function Page() {
   return (
-    <DocumentationLayout>
+    <DocumentationPage>
       <Head>
         <title>GameCI</title>
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
@@ -50,6 +50,6 @@ export default function Page() {
           </Link>
         </p>
       </main>
-    </DocumentationLayout>
+    </DocumentationPage>
   );
 }

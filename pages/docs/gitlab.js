@@ -1,13 +1,13 @@
-import useRedirect from '../../core/routing/use-redirect';
-import DocumentationLayout from '../../components/layout/documentation-layout';
+import useRedirect from '@/core/routing/use-redirect';
+import DocumentationPage from '@/components/layout/documentation-page';
 
 const GitlabIndex = () => {
   useRedirect('/docs/gitlab/getting-started');
 
   return (
-    <DocumentationLayout>
+    <DocumentationPage>
       <main className="ant-typography">Redirecting to category index...</main>
-    </DocumentationLayout>
+    </DocumentationPage>
   );
 };
 

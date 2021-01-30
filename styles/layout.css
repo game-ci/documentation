@@ -54,22 +54,40 @@
   }
 }
 
-.ant-layout-sider-zero-width-trigger {
+.ant-layout-sider-zero-width-trigger-left {
   position: absolute;
   top: 30px;
-  right: 0px;
+  right: 0;
   height: 42px;
-  width: calc(100% + 42px);
+  width: 100%;
   text-align: right;
   will-change: right, width;
   transition: right 0.3s ease, background-color 0.3s ease, width 0s ease;
 }
 
-.ant-layout-sider-zero-width > .ant-layout-sider-zero-width-trigger {
+.ant-layout-sider-zero-width > .ant-layout-sider-zero-width-trigger-left {
   width: 42px;
   right: -30px;
   will-change: right, width;
   transition: right 0.3s ease, background-color 0.3s ease, width 0.3s ease;
+}
+
+.ant-layout-sider-zero-width-trigger-right {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  height: 42px;
+  width: 100%;
+  text-align: left;
+  will-change: left, width;
+  transition: left 0.3s ease, background-color 0.3s ease, width 0s ease;
+}
+
+.ant-layout-sider-zero-width > .ant-layout-sider-zero-width-trigger-right {
+  width: 42px;
+  left: -30px;
+  will-change: left, width;
+  transition: left 0.3s ease, background-color 0.3s ease, width 0.3s ease;
 }
 
 .ant-layout-sider-zero-width-trigger > .anticon {
