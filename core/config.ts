@@ -10,7 +10,7 @@ export default {
       // Select the attributes you want to search in
       searchableAttributes: ['title', 'summary', 'body', 'categories', 'filename'],
       // Define business metrics for ranking and sorting
-      customRanking: ['desc(title)'],
+      customRanking: ['asc(level)', 'desc(title)'],
       // Set up some attributes to filter results on
       attributesForFaceting: ['filename'],
       // Define the attribute we want to distinct on
