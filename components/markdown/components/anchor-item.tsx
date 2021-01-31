@@ -1,6 +1,7 @@
 import React from 'react';
 import { ReactNodeLike } from 'prop-types';
 import { Anchor } from 'antd';
+import { extractAnchorId } from '../../../tools/search/utils/extract-sections';
 
 const { Link } = Anchor;
 
@@ -22,7 +23,7 @@ const AnchorItem = ({ level, children }: Props) => {
 
   // identity
   const { value, nodeKey } = textNode;
-  const anchorId = value.toLowerCase().split(' ').join('-');
+  const anchorId = extractAnchorId(value);
 
   // styles
   const paddingLeft = level * 8 - 8;

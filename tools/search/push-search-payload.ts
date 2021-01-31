@@ -1,8 +1,9 @@
 /* eslint-disable no-console,unicorn/no-process-exit */
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import algoliasearch from 'algoliasearch';
 import { difference } from 'lodash';
 import config from '../../core/config';
-import sections from './mock-sections';
 import generateObjectIDs from './utils/generate-object-ids';
 
 (async () => {
@@ -13,6 +14,9 @@ import generateObjectIDs from './utils/generate-object-ids';
       console.log('[push-search-payload] Skipping search update for local builds.');
       return;
     }
+
+    const sectionsRaw = readFileSync(resolve('.search/sections.json'), { encoding: 'utf-8' });
+    const sections = JSON.parse(sectionsRaw);
 
     // Create search client instance
     const client = algoliasearch(config.search.applicationId, process.env.SEARCH_API_PRIVATE_KEY);
@@ -32,7 +36,7 @@ import generateObjectIDs from './utils/generate-object-ids';
     });
 
     // Push objects to Algolia
-    const objects = generateObjectIDs(sections, ['title', 'filename']);
+    const objects = generateObjectIDs(sections, ['title', 'basePath', 'summary']);
     const updatedObjects = (await index.saveObjects(objects)).objectIDs;
     console.log('[push-search-payload] Updated search entries.\n', updatedObjects);
 

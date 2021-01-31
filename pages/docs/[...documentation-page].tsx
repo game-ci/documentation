@@ -1,10 +1,9 @@
 import { resolve } from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
-
 import DocumentationPage from '@/components/layout/documentation-page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
-import readFile from '@/core/fs/read-file';
+import generateSearchDefinitionsFromFiles from '../../tools/search/generate-definitions-from-files';
 
 interface Props {
   content: string;
@@ -20,26 +19,18 @@ const Documentation = ({ content, data }: Props) => (
 export const getStaticPaths: GetStaticPaths = async () => {
   const files = await readDirectoryRecursively(resolve('docs/'));
 
-  const cache = [];
-  const paths = [];
+  if (process.env.CI) {
+    generateSearchDefinitionsFromFiles(files);
+  }
 
+  const paths = [];
   for (const file of files) {
     const path = file.replace(/\.md$/, '');
-
-    cache.push({
-      objectID: `docs/${file}`,
-      path,
-      contents: readFile(resolve('docs/', file)),
-    });
 
     paths.push({
       params: { 'documentation-page': path.split('/') },
     });
   }
-
-  // Todo - Split pages into articles or sub-sections based on headings
-  // Todo - Deduce permalink from headings
-  console.log(cache);
 
   return { paths, fallback: false };
 };

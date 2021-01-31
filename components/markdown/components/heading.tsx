@@ -1,5 +1,6 @@
 import { Typography } from 'antd';
 import React from 'react';
+import { extractAnchorId } from '../../../tools/search/utils/extract-sections';
 
 const { Title } = Typography;
 
@@ -12,7 +13,7 @@ export default ({ level, children }: Props) => {
   const textNode = React.Children.toArray(children)[0];
   // @ts-ignore
   const { value } = textNode.props;
-  const anchorId = value.toLowerCase().split(' ').join('-');
+  const anchorId = extractAnchorId(value);
 
   switch (level) {
     case 1:
