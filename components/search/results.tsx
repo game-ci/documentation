@@ -8,7 +8,7 @@ const SearchResults = ({ searchState, searchResults }: StateResultsProvided) =>
   searchResults && searchResults.nbHits !== 0 ? (
     <Hits hitComponent={Result} />
   ) : (
-    <div>
+    <div style={{ width: '100%', textAlign: 'center' }}>
       No results found for <strong>{searchState.query}</strong>.
     </div>
   );

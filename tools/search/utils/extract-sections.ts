@@ -29,7 +29,7 @@ const forceSingleLine = (content) => {
   return content.replace(/\n/, ' ');
 };
 
-const extractSummary = (rawContent, maxLength = 40) => {
+const extractSummary = (rawContent, maxLength = 100) => {
   const content = forceSingleLine(rawContent);
 
   if (content.length <= maxLength) {

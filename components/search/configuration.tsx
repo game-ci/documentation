@@ -1,8 +1,13 @@
 import React from 'react';
 import { Configure } from 'react-instantsearch-dom';
+import config from '@/core/config';
 
 const Configuration = () => (
-  <Configure hitsPerPage={9} attributesToSnippet={['content:14']} snippetEllipsisText=" [...]" />
+  <Configure
+    hitsPerPage={config.search.hitsPerPage}
+    attributesToSnippet={['content:14']}
+    snippetEllipsisText=" [...]"
+  />
 );
 
 export default Configuration;

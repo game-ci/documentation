@@ -30,8 +30,9 @@ const SearchBar = () => {
         onMouseLeave={() => setResultsHovered(false)}
         style={{ display: active ? 'block' : 'none' }}
       >
-        <SearchResults />
         <Pagination />
+        <div style={{ paddingTop: 8 }} />
+        <SearchResults />
         <div className="ais-meta-information">
           <Stats />
           <PoweredBy />

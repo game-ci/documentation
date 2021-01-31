@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Highlight } from 'react-instantsearch-dom';
+import config from '@/core/config';
 
 const Result = ({ hit }) => {
-  const { permalink } = hit;
+  const { docsPath } = config;
+  const { basePath, anchorId } = hit;
+  const permalink = `${docsPath}/${basePath}#${anchorId}`;
 
   return (
     <article style={{ padding: 8 }}>
@@ -18,7 +21,8 @@ const Result = ({ hit }) => {
 Result.propTypes = {
   hit: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    permalink: PropTypes.string,
+    basePath: PropTypes.string,
+    anchorId: PropTypes.string,
   }).isRequired,
 };
 
