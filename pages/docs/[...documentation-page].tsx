@@ -1,10 +1,9 @@
 import { resolve } from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
-
-import DocumentationLayout from '@/components/layout/documentation-layout';
-import MarkdownRenderer from '@/components/markdown/markdown-renderer';
+import DocumentationPage from '@/components/layout/documentation-page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
+import generateSearchDefinitionsFromFiles from '../../tools/search/generate-definitions-from-files';
 
 interface Props {
   content: string;
@@ -12,19 +11,26 @@ interface Props {
 }
 
 // Represents all the markdown documentation pages
-const DocumentationPage = ({ content, data }: Props) => (
-  <DocumentationLayout>
-    <MarkdownRenderer meta={data} document={content} />
-  </DocumentationLayout>
+const Documentation = ({ content, data }: Props) => (
+  <DocumentationPage content={content} data={data} />
 );
 
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {
   const files = await readDirectoryRecursively(resolve('docs/'));
 
-  const paths = files.map((file) => ({
-    params: { 'documentation-page': file.replace(/\.md$/, '').split('/') },
-  }));
+  if (process.env.CI) {
+    generateSearchDefinitionsFromFiles(files);
+  }
+
+  const paths = [];
+  for (const file of files) {
+    const path = file.replace(/\.md$/, '');
+
+    paths.push({
+      params: { 'documentation-page': path.split('/') },
+    });
+  }
 
   return { paths, fallback: false };
 };
@@ -40,4 +46,4 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return { props: { ...data } };
 };
 
-export default DocumentationPage;
+export default Documentation;

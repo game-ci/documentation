@@ -2,8 +2,8 @@ import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'a
 import { SmileFilled } from '@ant-design/icons';
 import Link from 'next/link';
 
-import DatePicker from '../components/date-picker';
-import DocumentationLayout from '../components/layout/documentation-layout';
+import DatePicker from '@/components/date-picker';
+import DocumentationPage from '@/components/layout/documentation-page';
 
 const { Title } = Typography;
 
@@ -12,7 +12,7 @@ const { Option } = Select;
 
 export default function Page() {
   return (
-    <DocumentationLayout>
+    <DocumentationPage>
       <div style={{ marginTop: '100px' }}>
         <div className="text-center mb-5">
           <Link href="/">
@@ -71,6 +71,6 @@ export default function Page() {
           </Form>
         </div>
       </div>
-    </DocumentationLayout>
+    </DocumentationPage>
   );
 }
