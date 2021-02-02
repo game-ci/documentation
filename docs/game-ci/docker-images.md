@@ -1,15 +1,20 @@
 # GameCI Docker images for Unity
 
-All projects for Unity in GameCI use docker images
-([game-ci/editor](https://github.com/game-ci/docker/))
-which are specialised for CI and command-line use.
+All projects for Unity in GameCI use
+([game-ci/docker](https://github.com/game-ci/docker/))
+docker images which are specialised for CI and command-line use. These images are published on
+[docker hub as `unityci/editor`](https://hub.docker.com/r/unityci/editor/tags?page=1&ordering=last_updated).
 
-They are established empirically by the community
-and come forth from the
+They are established empirically by the community and come forth from the
 [gableroux/unity3d](https://gitlab.com/gableroux/unity3d/)
-project.
+project. It was previously published on
+[docker hub as `gableroux/unity3d`](https://hub.docker.com/r/gableroux/unity3d/).
+**There won't be any new versions releases for `gableroux/unity3d` as it is now deprecated in favor of 
+([game-ci/docker](https://github.com/game-ci/docker/)).**
 
-Images for newly released editor versions are added almost immediately (automatically, allow up to a few hours).
+Images for newly released Unity editor versions are added almost immediately to 
+([game-ci/docker](https://github.com/game-ci/docker/))
+. This process is automated, please allow a few hours.
 
 ## Features
 
