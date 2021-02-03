@@ -220,17 +220,17 @@ _**default:** `false`_
 
 Configure the android `keystoreName`. Must be provided if configuring the below keystore options.
 
-For this to take effect, you must not have your project set to use a custom keystore. If you have it set to use a
-custom keystore, all keystore settings will be ignored, and the build will likely fail with an error in signing.
+For this to take effect, you must enable `Custom Keystore` in your [Android Player settings](https://docs.unity3d.com/Manual/class-PlayerSettingsAndroid.html). 
+The default build script overrides the other keystore settings with these keystore options.
 
 _**required:** `false`_
 _**default:** `""`_
 
 #### androidKeystoreBase64
 
-Configure the base64 contents of the android keystore file.
+Configure the base64 contents of the android keystore file. You should get this with `base64 $androidKeystoreName`
 
-The contents will be decoded from base64 with `echo $androidKeystoreBase64 | base64 --decode > $androidKeystoreName`;
+The contents will be decoded from base64 using `echo $androidKeystoreBase64 | base64 --decode > $projectPath/$androidKeystoreName`
 
 _**required:** `false`_
 _**default:** `""`_
