@@ -104,7 +104,7 @@ platform :ios do
       profile: ENV["sigh_com.company.application_appstore_profile-path"],
       code_signing_identity: "Apple Distribution: #{ENV['APPLE_TEAM_NAME']} (#{ENV['APPLE_TEAM_ID']})"
     )
-	increment_build_number(
+    increment_build_number(
        xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj"
     )
     gym(
@@ -164,27 +164,16 @@ end
 # .github/workflows/main.yml
 
 buildForiOsPlatform:
-  name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+  name: Build for iOS
   runs-on: ubuntu-latest
-  strategy:
-    fail-fast: false
-    matrix:
-      projectPath:
-        - .
-      unityVersion:
-        - 2020.2.2f1
-      targetPlatform:
-        - iOS
   steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       with:
         path: Library
         key: Library-${{ matrix.targetPlatform }}-v2
-    - uses: webbertakken/unity-builder@v2.0-alpha-6
+    - uses: game-ci/unity-builder@v2.0-alpha-6
       with:
-        projectPath: ${{ matrix.projectPath }}
-        unityVersion: ${{ matrix.unityVersion }}
         targetPlatform: ${{ matrix.targetPlatform }}
     - uses: actions/upload-artifact@v2
       with:
