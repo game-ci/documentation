@@ -67,6 +67,11 @@ const DocumentationSidebar = () => {
               <a>Returning a license</a>
             </Link>
           </Item>
+          <Item key="/docs/github/ios">
+            <Link href="/docs/[...ios]" as="/docs/github/ios">
+              <a>iOS</a>
+            </Link>
+          </Item>
         </SubMenu>
         <SubMenu key="gitlab" icon={<SiGitlab />} title="GitLab">
           <Item key="/docs/gitlab/getting-started">

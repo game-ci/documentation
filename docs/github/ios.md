@@ -1,0 +1,261 @@
+# Publish to AppStore
+
+Uploading to AppStore is a little tricky to handle certificates, Make sure you do all these steps carefully
+
+> -- **Note:** You need a Mac environment for doing these steps .
+
+### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
+
+There are diffrent ways of installing fastlane,
+but the recommended approach is to make a Gemfile with following content :
+
+```bash
+# fastlane/Gemfile
+source "https://rubygems.org"
+gem "fastlane"
+```
+
+Then run `bundle install`
+
+This will create a `Gemfile.lock`, upload both `Gemfile` and `Gemfile.lock` to your repo .
+
+### 2- Create storage for Apple certifications
+
+Fastlane has a nice implementation of [codesigning.guide concept](https://codesigning.guide/)
+called match. It basically uploads all necessary keys and certificated in a storage of your
+choice(Private Git repo,Amazon S3,..) and then share it between your different development envs.
+
+For using match :
+
+- Create a private git repository
+
+- Run following command : `fastlane match appstore` this will ask for your github repository
+  and AppleId, and then upload your certificates to the private git repository.
+
+> -- **Note:** Make sure your AppleId have two-step Authentication and have enough
+> access .
+>
+> -- **Note:** If possible,It's also better to remove(after making a backup) all your certificates before doing it. Some times Match mess things up.
+
+## Add following fastlane files to your Fastlane folder
+
+```bash
+# fastlane/Matchfile
+
+git_url(ENV["MATCH_URL"])
+git_basic_authorization(ENV["GIT_TOKEN"])
+
+type("appstore")
+
+app_identifier(ENV["IOS_APP_ID"])
+username(ENV["APPLE_CONNECT_EMAIL"])
+
+```
+
+```bash
+# fastlane/Appfile
+
+for_platform :ios do
+  app_identifier(ENV["IOS_APP_ID"])
+
+  apple_dev_portal_id(ENV["APPLE_DEVELOPER_EMAIL"])
+  itunes_connect_id(ENV["APPLE_CONNECT_EMAIL"])
+
+  team_id(ENV["APPLE_TEAM_ID"])
+  itc_team_id(ENV["APPLE_TEAM_ID"])
+end
+```
+
+In the following file Change com.company.application to your bundle identifier .
+
+```bash
+# fastlane/Fastfile
+keychain_name = "temporary_keychain"
+keychain_password = SecureRandom.base64
+
+platform :ios do
+
+  desc "Push a new release build to the App Store"
+  lane :release do
+    build
+    upload_to_app_store
+  end
+
+  desc "Submit a new Beta Build to Apple TestFlight"
+  lane :beta do
+    build
+    api_key = app_store_connect_api_key(
+      key_id: "#{ENV[APPSTORE_KEY_ID]}",
+      issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
+      key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
+      duration: 1200, # optional
+      in_house: false, # true for enterprice and false for individual accounts
+    )
+    upload_to_testflight(skip_waiting_for_build_processing:true,api_key: api_key)
+  end
+
+  desc "Create .ipa"
+  lane :build do
+    disable_automatic_code_signing(path: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj")
+    certificates
+    update_project_provisioning(
+      xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
+      target_filter: "Unity-iPhone",
+      profile: ENV["sigh_com.company.application_appstore_profile-path"],
+      code_signing_identity: "Apple Distribution: #{ENV['APPLE_TEAM_NAME']} (#{ENV['APPLE_TEAM_ID']})"
+    )
+	increment_build_number(
+       xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj"
+    )
+    gym(
+      project: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
+      scheme: "Unity-iPhone",
+      clean: true,
+      skip_profile_detection: true,
+      codesigning_identity: "Apple Distribution: #{ENV['APPLE_TEAM_NAME']} (#{ENV['APPLE_TEAM_ID']})",
+      export_method: "app-store",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          ENV["IOS_APP_ID"] => "match AppStore #{ENV['IOS_APP_ID']}"
+        }
+      }
+    )
+  end
+
+  desc "Synchronize certificates"
+  lane :certificates do
+    cleanup_keychain
+    create_keychain(
+      name: keychain_name,
+      password: keychain_password,
+      default_keychain: true,
+      lock_when_sleeps: true,
+      timeout: 3600,
+      unlock: true
+    )
+    match(
+      type: "appstore",
+      readonly: true,
+      keychain_name: keychain_name,
+      keychain_password: keychain_password
+    )
+  end
+
+  lane :cleanup_keychain do
+    if File.exist?(File.expand_path("~/Library/Keychains/#{keychain_name}-db"))
+      delete_keychain(name: keychain_name)
+    end
+  end
+
+  after_all do
+    if File.exist?(File.expand_path("~/Library/Keychains/#{keychain_name}-db"))
+      delete_keychain(name: keychain_name)
+    end
+  end
+
+end
+
+```
+
+### Add Github action
+
+```yaml
+# .github/workflows/main.yml
+
+buildForiOsPlatform:
+  name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+  runs-on: ubuntu-latest
+  strategy:
+    fail-fast: false
+    matrix:
+      projectPath:
+        - .
+      unityVersion:
+        - 2020.2.2f1
+      targetPlatform:
+        - iOS
+  steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: Library
+        key: Library-${{ matrix.targetPlatform }}-v2
+    - uses: webbertakken/unity-builder@v2.0-alpha-6
+      with:
+        projectPath: ${{ matrix.projectPath }}
+        unityVersion: ${{ matrix.unityVersion }}
+        targetPlatform: ${{ matrix.targetPlatform }}
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.targetPlatform }}
+        path: build/${{ matrix.targetPlatform }}
+
+  ReleaseToAppStore:
+    name: Release to the App Store
+    runs-on: macos-latest
+    needs: buildForiOsPlatform
+    env:
+      APPLE_CONNECT_EMAIL: ${{ secrets.APPLE_CONNECT_EMAIL }}
+      APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_TEAM_NAME: ${{ secrets.APPLE_TEAM_NAME }}
+      MATCH_URL: ${{ secrets.MATCH_URL }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+      APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      APPSTORE_P8: ${{ secrets. APPSTORE_P8 }}
+      APPSTORE_P8_PATH: ${{ format('{0}/fastlane/p8.json', github.workspace) }}
+      IOS_APP_ID: com.company.application # Change it to match your unity bundle id
+      IOS_BUILD_PATH: ${{ format('{0}/build/iOS', github.workspace) }}
+      PROJECT_NAME: Your Project Name
+      RELEASE_NOTES: Your Release Notes
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Make App Store p8
+        run: echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
+      - name: Download iOS Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-iOS
+          path: build/iOS
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
+      - name: Install Fastlane
+        run: bundle install
+      - name: Prepare for Upload
+        run: find $IOS_BUILD_PATH -type f -iname "*.sh" -exec chmod +x {} \;
+      - name: Upload to the Test Flight
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: 'ios beta'
+      - name: Tidy up artifact to avoid storage limit
+        if: ${{ always() }}
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: build-iOS
+```
+
+## Add secrets to your Github repo
+
+- **APPLE_CONNECT_EMAIL** : Apple connect email (usually same as APPLE_DEVELOPER_EMAIL)
+- **APPLE_DEVELOPER_EMAIL**: Your AppleId
+- **APPLE_TEAM_ID**: Team Id From developer.apple.com/MemberShip
+- **APPLE_TEAM_NAME**: Team Name From developer.apple.com/MemberShip
+- **MATCH_URL**: Address of private repository that you made in previous steps for storing certificates.
+- **GIT_TOKEN**: Base64 of user@MATCH_URL e,g user@https://github.com/game-ci/documentation.git .
+  You can use some online base64 encoder for this step
+- **MATCH_PASSWORD**: The password you set when you use `fastlane match appstore`
+- **APPSTORE_KEY_ID ,APPSTORE_ISSUER_ID,APPSTORE_P8**: Because of limitation in using Apple accounts
+  with 2fa ( 2-factor authentication ) in CI environments, you have to
+  make special key for accessing appstore . Follow [fastlane official guide](https://docs.fastlane.tools/app-store-connect-api/)
+  to generate these values.
+
+# Unity Settings
+
+- Set Signing Team Id and Bundle identifier in iOS player setting
+- Add your application icon (Application with no icon generate error during uploading to test flight)
