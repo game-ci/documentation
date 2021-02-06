@@ -2417,7 +2417,7 @@ date-fns@^2.15.0:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.17.0.tgz#afa55daea539239db0a64e236ce716ef3d681ba1"
   integrity sha512-ZEhqxUtEZeGgg9eHNSOAJ8O9xqSgiJdrL0lzSSfMF54x6KXWJiOH/xntSJ9YomJPrYH/p08t6gWjGWq1SDJlSA==
 
-dayjs@1.10.4, dayjs@^1.8.30:
+dayjs@^1.8.30:
   version "1.10.4"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.4.tgz#8e544a9b8683f61783f570980a8a80eaf54ab1e2"
   integrity sha512-RI/Hh4kqRc1UKLOAf/T5zdMMX5DQIlDxwUe3wSyMMnEbGunnpENCdbUgM+dW7kXidZqCttBrmw7BhN4TMddkCw==
@@ -5222,7 +5222,7 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-next@10.0.6:
+next@^10.0.6:
   version "10.0.6"
   resolved "https://registry.yarnpkg.com/next/-/next-10.0.6.tgz#1d33723d714c85f282b9bf6ff59dcae40f9252cb"
   integrity sha512-uM5Yv4Ha9iL6Lbg7Ez36GyJ0YTdRLzXLA9b1REH3rX2Wytw0Ls5qPuFGk4BHSQpQhYx6Z61iA2qPkGl33W4iBg==
@@ -6508,7 +6508,7 @@ rc-pagination@~3.1.2:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.1"
 
-rc-picker@^2.5.2, rc-picker@~2.5.1:
+rc-picker@~2.5.1:
   version "2.5.2"
   resolved "https://registry.yarnpkg.com/rc-picker/-/rc-picker-2.5.2.tgz#36d91b8cdddbf8b2474af29c2853b77502a7fb01"
   integrity sha512-rQLgvjyFrxjiWlR+Q7CyXdTOP/gHbiXlBca7irOtuEb6HMRLdm+/OfIB7xaaPHgdkv1ZOsxCk8zCEX6j0qf24g==
