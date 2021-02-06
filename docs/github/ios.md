@@ -170,7 +170,7 @@ cocoapods(
 
 This will install pods and generate `xcworkspace` for you .
 
-Then change the gym section to this :
+Then change the gym section so that it use the new `xcworkspace` :
 
 ```bash
 gym(
