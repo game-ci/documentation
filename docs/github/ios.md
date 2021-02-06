@@ -6,7 +6,7 @@ Uploading to AppStore is a little tricky to handle certificates, Make sure you d
 
 ### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
 
-There are diffrent ways of installing fastlane,
+There are different ways of installing fastlane,
 but the recommended approach is to make a Gemfile with following content :
 
 ```bash
@@ -37,7 +37,7 @@ For using match :
 >
 > -- **Note:** If possible,It's also better to remove(after making a backup) all your certificates before doing it. Some times Match mess things up.
 
-## Add following fastlane files to your Fastlane folder
+### 3- Add following fastlane files to your Fastlane folder
 
 ```bash
 # fastlane/Matchfile
@@ -158,12 +158,12 @@ end
 
 ```
 
-### Add Github action
+### 4- Add Github action
 
 ```yaml
 # .github/workflows/main.yml
 
-buildForiOsPlatform:
+BuildForiOSPlatform:
   name: Build for iOS
   runs-on: ubuntu-latest
   steps:
@@ -171,14 +171,14 @@ buildForiOsPlatform:
     - uses: actions/cache@v2
       with:
         path: Library
-        key: Library-${{ matrix.targetPlatform }}-v2
+        key: Library-iOS
     - uses: game-ci/unity-builder@v2.0-alpha-6
       with:
-        targetPlatform: ${{ matrix.targetPlatform }}
+        targetPlatform: iOS
     - uses: actions/upload-artifact@v2
       with:
-        name: build-${{ matrix.targetPlatform }}
-        path: build/${{ matrix.targetPlatform }}
+        name: build-iOS
+        path: build/iOS
 
   ReleaseToAppStore:
     name: Release to the App Store
@@ -229,7 +229,7 @@ buildForiOsPlatform:
           name: build-iOS
 ```
 
-## Add secrets to your Github repo
+### 5- Add secrets to your Github repo
 
 - **APPLE_CONNECT_EMAIL** : Apple connect email (usually same as APPLE_DEVELOPER_EMAIL)
 - **APPLE_DEVELOPER_EMAIL**: Your AppleId
@@ -244,7 +244,7 @@ buildForiOsPlatform:
   make special key for accessing appstore . Follow [fastlane official guide](https://docs.fastlane.tools/app-store-connect-api/)
   to generate these values.
 
-# Unity Settings
+### 6- Unity Settings
 
 - Set Signing Team Id and Bundle identifier in iOS player setting
 - Add your application icon (Application with no icon generate error during uploading to test flight)
