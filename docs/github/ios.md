@@ -171,14 +171,14 @@ buildForiOsPlatform:
     - uses: actions/cache@v2
       with:
         path: Library
-        key: Library-${{ matrix.targetPlatform }}-v2
+        key: Library-iOS-v2
     - uses: game-ci/unity-builder@v2.0-alpha-6
       with:
-        targetPlatform: ${{ matrix.targetPlatform }}
+        targetPlatform: iOS
     - uses: actions/upload-artifact@v2
       with:
-        name: build-${{ matrix.targetPlatform }}
-        path: build/${{ matrix.targetPlatform }}
+        name: build-iOS
+        path: build/iOS
 
   ReleaseToAppStore:
     name: Release to the App Store
