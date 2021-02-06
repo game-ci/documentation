@@ -37,7 +37,7 @@ For using match :
 >
 > -- **Note:** If possible,It's also better to remove(after making a backup) all your certificates before doing it. Some times Match mess things up.
 
-## Add following fastlane files to your Fastlane folder
+### 3- Add following fastlane files to your Fastlane folder
 
 ```bash
 # fastlane/Matchfile
@@ -158,7 +158,7 @@ end
 
 ```
 
-### Add Github action
+### 4- Add Github action
 
 ```yaml
 # .github/workflows/main.yml
@@ -229,7 +229,7 @@ buildForiOsPlatform:
           name: build-iOS
 ```
 
-## Add secrets to your Github repo
+### 5- Add secrets to your Github repo
 
 - **APPLE_CONNECT_EMAIL** : Apple connect email (usually same as APPLE_DEVELOPER_EMAIL)
 - **APPLE_DEVELOPER_EMAIL**: Your AppleId
@@ -244,7 +244,7 @@ buildForiOsPlatform:
   make special key for accessing appstore . Follow [fastlane official guide](https://docs.fastlane.tools/app-store-connect-api/)
   to generate these values.
 
-# Unity Settings
+### 6- Unity Settings
 
 - Set Signing Team Id and Bundle identifier in iOS player setting
 - Add your application icon (Application with no icon generate error during uploading to test flight)
