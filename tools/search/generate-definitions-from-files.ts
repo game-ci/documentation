@@ -10,7 +10,7 @@ export default function generateSearchDefinitionsFromFiles(files) {
   const cache = [];
   for (const file of files) {
     const filePath = file.replace(/\.md$/, '');
-    const fileContents = readFile(filePath.resolve('docs/', file));
+    const fileContents = readFile(path.resolve('docs/', file));
     const sections = extractSections(fileContents, filePath);
     cache.push(...sections);
   }
