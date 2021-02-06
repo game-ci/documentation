@@ -1,6 +1,6 @@
-# Publish to AppStore
+# Publish to Google Play
 
-### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
+### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/android/setup/)
 
 There are different ways of installing fastlane,
 but the recommended approach is to make a Gemfile with following content :
@@ -119,9 +119,9 @@ ReleaseToGooglePlay:
 
 ### 5- Add secrets to your Github repo
 
-- **androidKeystoreBase64** : Base64 of your keystore in step 1 (You can use an online base64 encoder for this)
-- **androidKeystorePass**: Password of your keystore
-- **androidKeyaliasName**: Alias name of your keystore
-- **androidKeyaliasPass**: Password for your alias name in key store
+- **ANDROID_KEYSTORE_BASE64** : Base64 of your keystore in step 1 (You can use an online base64 encoder for this)
+- **ANDROID_KEYSTORE_PASS**: Password of your keystore
+- **ANDROID_KEYALIAS_NAME**: Alias name of your keystore
+- **ANDROID_KEYALIAS_PASS**: Password for your alias name in key store
 - **GOOGLE_PLAY_KEY_FILE**: Your google account service .json file downloaded from step 2
 - **ANDROID_PACKAGE_NAME**: Your application package name e.g com.company.application

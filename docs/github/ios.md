@@ -96,7 +96,7 @@ platform :ios do
 
   desc "Create .ipa"
   lane :build do
-    disable_automatic_code_signing(path: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj")
+    update_code_signing_settings(use_automatic_signing: false,path: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj")
     certificates
     update_project_provisioning(
       xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
@@ -156,6 +156,37 @@ platform :ios do
 
 end
 
+```
+
+> -- **Note:** If you add libraries that need Podfile (e,g Firebase) to your project,
+> Add this line in the beginning of build step :
+
+```
+cocoapods(
+    clean_install: true,
+    podfile: "#{ENV['IOS_BUILD_PATH']}/iOS/"
+)
+```
+
+This will install pods and generate `xcworkspace` for you .
+
+Then change the gym section so that it use the new `xcworkspace` :
+
+```bash
+gym(
+  workspace: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcworkspace",
+  scheme: "Unity-iPhone",
+  clean: true,
+  skip_profile_detection: true,
+  codesigning_identity: "Apple Distribution: #{ENV['APPLE_TEAM_NAME']} (#{ENV['APPLE_TEAM_ID']})",
+  export_method: "app-store",
+  export_options: {
+  method: "app-store",
+    provisioningProfiles: {
+    ENV["IOS_APP_ID"] => "match AppStore #{ENV['IOS_APP_ID']}"
+   }
+  }
+)
 ```
 
 ### 4- Add Github action
