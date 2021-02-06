@@ -158,7 +158,7 @@ end
 
 ```
 
-> -- **Note:** If you add libraries that need Podfile (e,g Firebase) to your project .
+> -- **Note:** If you add libraries that need Podfile (e,g Firebase) to your project,
 > Add this line in the beginning of build step :
 
 ```
