@@ -1,6 +1,6 @@
 # Publish to Google Play
 
-### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
+### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/android/setup/)
 
 There are different ways of installing fastlane,
 but the recommended approach is to make a Gemfile with following content :
