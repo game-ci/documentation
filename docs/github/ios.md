@@ -6,7 +6,7 @@ Uploading to AppStore is a little tricky to handle certificates, Make sure you d
 
 ### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
 
-There are diffrent ways of installing fastlane,
+There are different ways of installing fastlane,
 but the recommended approach is to make a Gemfile with following content :
 
 ```bash
@@ -163,7 +163,7 @@ end
 ```yaml
 # .github/workflows/main.yml
 
-buildForiOsPlatform:
+BuildForiOSPlatform:
   name: Build for iOS
   runs-on: ubuntu-latest
   steps:
@@ -171,7 +171,7 @@ buildForiOsPlatform:
     - uses: actions/cache@v2
       with:
         path: Library
-        key: Library-iOS-v2
+        key: Library-iOS
     - uses: game-ci/unity-builder@v2.0-alpha-6
       with:
         targetPlatform: iOS
