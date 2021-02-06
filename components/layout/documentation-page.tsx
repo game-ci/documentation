@@ -28,4 +28,10 @@ const DocumentationPage = ({ content, data, children }: Props) => {
   );
 };
 
+DocumentationPage.defaultProps = {
+  content: undefined,
+  data: { title: '', date: '' },
+  children: null,
+};
+
 export default DocumentationPage;

@@ -60,5 +60,5 @@ Here's Unity's workaround:
 
 ```bash
 version=v2020.1.12f1 # update this according to your version and file name
-iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf 
+iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf
 ```
