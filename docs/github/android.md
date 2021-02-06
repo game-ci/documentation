@@ -119,7 +119,7 @@ ReleaseToGooglePlay:
 
 ### 5- Add secrets to your Github repo
 
-- **androidKeystoreBase64** : Base64 for your keystore in step one (You can use online base64 encoder for this)
+- **androidKeystoreBase64** : Base64 of your keystore in step 1 (You can use an online base64 encoder for this)
 - **androidKeystorePass**: Password of your keystore
 - **androidKeyaliasName**: Alias name of your keystore
 - **androidKeyaliasPass**: Password for your alias name in key store
