@@ -40,10 +40,10 @@
     "unicorn/prevent-abbreviations": [
       "error",
       {
-        "whitelist": {
-          "getInitialProps": true,
-          "getStaticProps": true,
-          "props": true
+        "replacements": {
+          "props": {
+            "properties": false
+          }
         }
       }
     ],

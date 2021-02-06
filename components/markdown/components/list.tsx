@@ -3,7 +3,7 @@ interface ListProps {
   ordered?: boolean;
 }
 
-export const List = (props: ListProps) => {
+const List = (props: ListProps) => {
   const { ordered, children } = props;
 
   if (ordered) {
@@ -13,13 +13,18 @@ export const List = (props: ListProps) => {
   return <ul>{children}</ul>;
 };
 
+List.defaultProps = {
+  ordered: false,
+};
+
 interface ItemProps {
   children: React.ReactNode;
-  ordered?: boolean;
 }
 
-export const ListItem = (props: ItemProps) => {
+const ListItem = (props: ItemProps) => {
   const { children } = props;
 
   return <li className="ant-typography">{children}</li>;
 };
+
+export { List, ListItem };

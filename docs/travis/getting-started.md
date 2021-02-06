@@ -2,7 +2,6 @@
 
 We have an example for Travis CI available in the [github mirror of `game-ci/unity3d-ci-example`](https://github.com/game-ci/unity3d-ci-example). This project is the same as [the one on gitlab](https://gitlab.com/gableroux/unity3d-gitlab-ci-example) to support examples for Travis. You should read the details for [gitlab](http://game.ci/docs/gitlab) _TODO: use a relative link here, didn't take the time to see how_. Activation process is the same. **Here we have what is specific to Travis.**
 
-
 ## Example Travis CI configuration
 
 - [`game-ci/unity3d-ci-example`'s `.travis.yml`](https://github.com/game-ci/unity3d-ci-example/blob/master/.travis.yml)

@@ -1,7 +1,9 @@
-/* eslint-disable unicorn/no-reduce,no-shadow,no-param-reassign */
+/* eslint-disable unicorn/no-array-reduce,no-param-reassign,@typescript-eslint/no-shadow */
 const withBundleAnalyzer = require('@next/bundle-analyzer');
 
 const compose = (plugins) => ({
+  target: 'serverless',
+
   webpack(config, options) {
     config.module.rules.push({
       test: /\.md$/,
@@ -10,8 +12,8 @@ const compose = (plugins) => ({
 
     return plugins.reduce((config, plugin) => {
       if (Array.isArray(plugin)) {
-        const [_plugin, ...arguments_] = plugin;
-        plugin = _plugin(...arguments_);
+        const [pluginFunction, ...pluginArguments] = plugin;
+        plugin = pluginFunction(...pluginArguments);
       }
       if (plugin instanceof Function) {
         plugin = plugin();
@@ -26,8 +28,8 @@ const compose = (plugins) => ({
   webpackDevMiddleware(config) {
     return plugins.reduce((config, plugin) => {
       if (Array.isArray(plugin)) {
-        const [_plugin, ...arguments_] = plugin;
-        plugin = _plugin(...arguments_);
+        const [pluginFunction, ...pluginArguments] = plugin;
+        plugin = pluginFunction(...pluginArguments);
       }
       if (plugin instanceof Function) {
         plugin = plugin();

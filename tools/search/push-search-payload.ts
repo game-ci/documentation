@@ -1,6 +1,6 @@
 /* eslint-disable no-console,unicorn/no-process-exit */
+import path from 'path';
 import { readFileSync } from 'fs';
-import { resolve } from 'path';
 import algoliasearch from 'algoliasearch';
 import { difference } from 'lodash';
 import config from '../../core/config';
@@ -15,7 +15,7 @@ import generateObjectIDs from './utils/generate-object-ids';
       return;
     }
 
-    const sectionsRaw = readFileSync(resolve('.search/sections.json'), { encoding: 'utf-8' });
+    const sectionsRaw = readFileSync(path.resolve('.search/sections.json'), { encoding: 'utf-8' });
     const sections = JSON.parse(sectionsRaw);
 
     // Create search client instance
@@ -31,7 +31,7 @@ import generateObjectIDs from './utils/generate-object-ids';
       query: '', // Empty query will match all records
       attributesToRetrieve: ['objectID'],
       batch: (batch) => {
-        existingObjects = existingObjects.concat(batch.map((hit) => hit.objectID));
+        existingObjects = [...existingObjects, ...batch.map((hit) => hit.objectID)];
       },
     });
 
@@ -42,7 +42,7 @@ import generateObjectIDs from './utils/generate-object-ids';
 
     // Remove objects that are no longer relevant
     const floatingObjects = difference(existingObjects, updatedObjects);
-    if (floatingObjects.length >= 1) {
+    if (floatingObjects.length > 0) {
       console.log('[push-search-payload] Removing old search entries.\n', floatingObjects);
       await index.deleteObjects(floatingObjects);
     }

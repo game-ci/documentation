@@ -1,3 +1,4 @@
+import React from 'react';
 import { AppProps } from 'next/app';
 import { IconContext } from 'react-icons';
 import { InstantSearch } from 'react-instantsearch-dom';
@@ -11,7 +12,6 @@ import '../styles/layout.css';
 import '../styles/markdown.css';
 import '../styles/search.css';
 import 'highlight.js/styles/dracula.css';
-import React from 'react';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

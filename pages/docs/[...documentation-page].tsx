@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import path from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 import DocumentationPage from '@/components/layout/documentation-page';
@@ -17,7 +17,7 @@ const Documentation = ({ content, data }: Props) => (
 
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {
-  const files = await readDirectoryRecursively(resolve('docs/'));
+  const files = await readDirectoryRecursively(path.resolve('docs/'));
 
   if (process.env.CI) {
     generateSearchDefinitionsFromFiles(files);
@@ -25,10 +25,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   const paths = [];
   for (const file of files) {
-    const path = file.replace(/\.md$/, '');
+    const filePath = file.replace(/\.md$/, '');
 
     paths.push({
-      params: { 'documentation-page': path.split('/') },
+      params: { 'documentation-page': filePath.split('/') },
     });
   }
 

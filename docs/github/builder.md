@@ -220,7 +220,8 @@ _**default:** `false`_
 
 Configure the android `keystoreName`. Must be provided if configuring the below keystore options.
 
-For this to take effect, you must enable `Custom Keystore` in your [Android Player settings](https://docs.unity3d.com/Manual/class-PlayerSettingsAndroid.html). 
+For this to take effect, you must enable `Custom Keystore` in your
+[Android Player settings](https://docs.unity3d.com/Manual/class-PlayerSettingsAndroid.html).
 The default build script overrides the other keystore settings with these keystore options.
 
 _**required:** `false`_

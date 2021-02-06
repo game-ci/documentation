@@ -1,20 +1,24 @@
+import path from 'path';
 import { readdirSync } from 'fs';
-import { resolve } from 'path';
 
 export default function readDirectoryRecursively(directory, fileNames = [], currentDirectory = '') {
   const directoryEntries = readdirSync(directory, { withFileTypes: true });
 
-  directoryEntries.forEach((entry) => {
+  for (const entry of directoryEntries) {
     const { name } = entry;
     if (entry.isDirectory()) {
-      readDirectoryRecursively(resolve(directory, name), fileNames, `${currentDirectory}${name}/`);
-      return;
+      readDirectoryRecursively(
+        path.resolve(directory, name),
+        fileNames,
+        `${currentDirectory}${name}/`,
+      );
+      continue;
     }
 
     if (entry.isFile()) {
       fileNames.push(`${currentDirectory}${name}`);
     }
-  });
+  }
 
   return fileNames;
 }

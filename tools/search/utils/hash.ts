@@ -9,8 +9,8 @@ export default (string, seed = 0) => {
   let h1 = 0xdeadbeef ^ seed;
   let h2 = 0x41c6ce57 ^ seed;
 
-  for (let i = 0, ch; i < string.length; i += 1) {
-    ch = string.charCodeAt(i);
+  for (let index = 0, ch; index < string.length; index += 1) {
+    ch = string.charCodeAt(index);
     h1 = Math.imul(h1 ^ ch, 2654435761);
     h2 = Math.imul(h2 ^ ch, 1597334677);
   }

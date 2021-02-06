@@ -1,5 +1,5 @@
-import { Typography } from 'antd';
 import React from 'react';
+import { Typography } from 'antd';
 import { extractAnchorId } from '../../../tools/search/utils/extract-sections';
 
 const { Title } = Typography;
@@ -9,7 +9,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default ({ level, children }: Props) => {
+const Heading = ({ level, children }: Props) => {
   const textNode = React.Children.toArray(children)[0];
   // @ts-ignore
   const { value } = textNode.props;
@@ -40,3 +40,5 @@ export default ({ level, children }: Props) => {
       );
   }
 };
+
+export default Heading;

@@ -2,7 +2,6 @@ import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'a
 import { SmileFilled } from '@ant-design/icons';
 import Link from 'next/link';
 
-import DatePicker from '@/components/date-picker';
 import DocumentationPage from '@/components/layout/documentation-page';
 
 const { Title } = Typography;
@@ -57,9 +56,6 @@ export default function Page() {
               </Select>
             </FormItem>
 
-            <FormItem label="DatePicker" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
-              <DatePicker name="startDate" />
-            </FormItem>
             <FormItem style={{ marginTop: 48 }} wrapperCol={{ span: 8, offset: 8 }}>
               <Button size="large" type="primary" htmlType="submit">
                 OK
