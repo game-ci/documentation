@@ -62,9 +62,8 @@ BuildForAndroidPlatform:
       with:
         path: Library
         key: Library-Android
-    - uses: webbertakken/unity-builder@v2.0-alpha-6
+    - uses: game-ci/unity-builder@v2.0-alpha-6
       with:
-        unityVersion: 2020.2.2
         targetPlatform: Android
         androidAppBundle: true
         androidKeystoreName: user.keystore
@@ -83,7 +82,7 @@ ReleaseToGooglePlay:
   needs: buildForAndroidPlatform
   env:
     GOOGLE_PLAY_KEY_FILE: ${{ secrets.FASTLANE_SERVICE_ACCOUNT }}
-    GOOGLE_PLAY_KEY_FILE_PATH: ${{ format('{0}/fastlane/google-faslane.json', github.workspace) }}
+    GOOGLE_PLAY_KEY_FILE_PATH: ${{ format('{0}/fastlane/google-fastlane.json', github.workspace) }}
     ANDROID_BUILD_FILE_PATH: ${{ format('{0}/build/Android/Android.aab', github.workspace) }}
     ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
   steps:
