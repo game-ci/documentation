@@ -24,20 +24,20 @@ const SourceLinks = (props) => (
       </Item>
     </ItemGroup>
     <ItemGroup title="Docker">
-      <Item icon={<GitlabOutlined />} key="external:gableroux:unity3d">
-        <a target="_blank" rel="noreferrer" href="https://hub.docker.com/r/gableroux/unity3d">
-          gableroux/unity3d
+      <Item icon={<GitlabOutlined />} key="external:unityci:editor">
+        <a target="_blank" rel="noreferrer" href="https://hub.docker.com/r/unityci/editor">
+          unityci/editor
         </a>
       </Item>
     </ItemGroup>
     <ItemGroup title="GitHub Actions">
       <Item icon={<GithubOutlined />} key="external:action:overview">
-        <a target="_blank" rel="noreferrer" href="https://github.com/webbertakken/unity-actions">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-actions">
           Unity Actions
         </a>
       </Item>
       <Item icon={<GithubOutlined />} key="external:action:builder">
-        <a target="_blank" rel="noreferrer" href="https://github.com/webbertakken/unity-builder">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-builder">
           Unity Builder
         </a>
       </Item>
@@ -45,13 +45,13 @@ const SourceLinks = (props) => (
         <a
           target="_blank"
           rel="noreferrer"
-          href="https://github.com/webbertakken/unity-test-runner"
+          href="https://github.com/game-ci/unity-test-runner"
         >
           Unity Test Runner
         </a>
       </Item>
       <Item icon={<GithubOutlined />} key="external:action:activate">
-        <a target="_blank" rel="noreferrer" href="https://github.com/webbertakken/unity-activate">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-activate">
           Unity Activate
         </a>
       </Item>
@@ -59,7 +59,7 @@ const SourceLinks = (props) => (
         <a
           target="_blank"
           rel="noreferrer"
-          href="https://github.com/webbertakken/unity-request-activation-file"
+          href="https://github.com/game-ci/unity-request-activation-file"
         >
           Unity Request Activation
         </a>
@@ -68,7 +68,7 @@ const SourceLinks = (props) => (
         <a
           target="_blank"
           rel="noreferrer"
-          href="https://github.com/webbertakken/unity-return-license"
+          href="https://github.com/game-ci/unity-return-license"
         >
           Unity Return License
         </a>
