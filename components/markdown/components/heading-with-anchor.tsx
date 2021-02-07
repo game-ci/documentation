@@ -11,7 +11,8 @@ interface Props {
 const copyUrlToClipboard = (hash, onSuccess = () => {}, onError = () => {}) => {
   const { href } = window.location;
 
-  const baseUrl = href.slice(0, Math.min(href.length, href.indexOf('#')));
+  const hashIndex = href.indexOf('#');
+  const baseUrl = hashIndex >= 0 ? href.slice(0, hashIndex) : href;
   const link = `${baseUrl}#${hash}`;
 
   navigator.clipboard.writeText(link).then(onSuccess, onError);
