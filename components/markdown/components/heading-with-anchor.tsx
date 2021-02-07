@@ -39,12 +39,16 @@ const HeadingWithAnchor = ({ level, children }: Props) => {
     }
   };
 
+  const anchor = (
+    <span onClick={onClick} className="anchor" role="button" tabIndex={0} onKeyPress={onKeyPress}>
+      #
+    </span>
+  );
+
   return (
     <Heading level={level} id={anchorId}>
       {children}
-      <span onClick={onClick} className="anchor" role="button" tabIndex={0} onKeyPress={onKeyPress}>
-        #
-      </span>
+      {level >= 2 && anchor}
     </Heading>
   );
 };

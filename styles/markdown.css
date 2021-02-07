@@ -30,7 +30,7 @@
   transition: margin 0.3s ease, width 0.3s ease;
 }
 
-.markdown > .heading {
+.markdown > .heading:not(h1) {
   position: relative;
   padding-left: 1em;
   margin-left: -1em;
@@ -39,6 +39,7 @@
 .markdown > .heading > .anchor {
   position: absolute;
   left: 0;
+  top: 0;
   color: rgb(150, 150, 150);
   opacity: 0;
   cursor: pointer;
