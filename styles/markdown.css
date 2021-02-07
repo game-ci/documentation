@@ -30,6 +30,16 @@
   transition: margin 0.3s ease, width 0.3s ease;
 }
 
+.markdown > .heading > .anchor {
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.3s ease;
+}
+
+.markdown > .heading:hover > .anchor {
+  opacity: 1;
+}
+
 @media only screen and (max-width: 992px) {
   .markdown > table {
     margin-left: -45px;
