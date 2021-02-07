@@ -33,14 +33,17 @@ const HeadingWithAnchor = ({ level, children }: Props) => {
     copyUrlToClipboard(anchorId, onSuccessfullyCopied);
   };
 
+  const onKeyPress = (event) => {
+    if (event.keyCode === 13) {
+      copyUrlToClipboard(anchorId, onSuccessfullyCopied);
+    }
+  };
+
   return (
     <Heading level={level} id={anchorId}>
       {children}
-      <span className="anchor">
-        {' '}
-        <a href={`#${anchorId}`} onClick={onClick}>
-          #
-        </a>
+      <span onClick={onClick} className="anchor" role="button" tabIndex={0} onKeyPress={onKeyPress}>
+        #
       </span>
     </Heading>
   );
