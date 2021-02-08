@@ -2,8 +2,6 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer');
 
 const compose = (plugins) => ({
-  target: 'serverless',
-
   webpack(config, options) {
     config.module.rules.push({
       test: /\.md$/,
