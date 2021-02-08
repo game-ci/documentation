@@ -4,12 +4,17 @@ import Link from 'next/link';
 import SearchBar from '@/components/layout/header/search-bar';
 import DiscordLogo from '@/components/layout/logos/discord-logo';
 import SourceLinks from '@/components/layout/header/source-links';
+// @ts-ignore
 import GameCiLogo from '../../../images/game-ci-brand-logo-wordmark.svg';
 
 const { Header } = Layout;
 const { Item } = Menu;
 
-const NavBar = () => (
+interface Props {
+  showSearch: boolean;
+}
+
+const NavBar = ({ showSearch }: Props) => (
   <Header className="header">
     <a className="logo" href="/">
       <GameCiLogo height="30" />
@@ -30,9 +35,9 @@ const NavBar = () => (
           <a>Docs</a>
         </Link>
       </Item>
-      <SearchBar />
+      {showSearch && <SearchBar />}
       <SourceLinks />
-      <Item selectable={false}>
+      <Item>
         <Link href="/discord">
           <DiscordLogo />
         </Link>

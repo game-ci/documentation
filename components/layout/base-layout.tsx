@@ -1,19 +1,19 @@
-import { InferProps } from 'prop-types';
+import type { ReactNodeLike } from 'prop-types';
 import { Layout } from 'antd';
-import propertyTypes from '@/core/property-types';
 import NavBar from './header/nav-bar';
 import Breadcrumb from './main/breadcrumb';
 import Footer from './footer/footer';
 
 const { Content } = Layout;
 
-export const propTypes = {
-  children: propertyTypes.children.isRequired,
-};
+interface Props {
+  children: ReactNodeLike;
+  showSearch?: boolean;
+}
 
-const BaseLayout = ({ children }: InferProps<typeof propTypes>) => (
+const BaseLayout = ({ children, showSearch }: Props) => (
   <Layout style={{ minHeight: '100vh' }}>
-    <NavBar />
+    <NavBar showSearch={showSearch} />
     <Content className="site-layout-main">
       <Breadcrumb />
       <Layout
@@ -28,6 +28,8 @@ const BaseLayout = ({ children }: InferProps<typeof propTypes>) => (
   </Layout>
 );
 
-BaseLayout.propTypes = propTypes;
+BaseLayout.defaultProps = {
+  showSearch: true,
+};
 
 export default BaseLayout;
