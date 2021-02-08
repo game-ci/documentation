@@ -9,7 +9,7 @@ const Discord = () => {
   useRedirect(discordUrl);
 
   return (
-    <BaseLayout>
+    <BaseLayout showSearch={false}>
       <LoadingText>Redirecting to Discord...</LoadingText>
     </BaseLayout>
   );
