@@ -1,15 +1,15 @@
 import { Typography, Divider } from 'antd';
 
 import CodeBlock from './components/code-block';
-import Heading from './components/heading';
 import { List, ListItem } from './components/list';
 import Article from './components/article';
+import HeadingWithAnchor from './components/heading-with-anchor';
 
 const { Paragraph } = Typography;
 
 export default {
   root: Article,
-  heading: Heading,
+  heading: HeadingWithAnchor,
   paragraph: Paragraph,
   thematicBreak: Divider,
   list: List,

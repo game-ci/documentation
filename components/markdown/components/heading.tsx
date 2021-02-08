@@ -1,44 +1,43 @@
 import React from 'react';
 import { Typography } from 'antd';
-import { extractAnchorId } from '../../../tools/search/utils/extract-sections';
 
 const { Title } = Typography;
 
 interface Props {
   level: number;
   children: React.ReactNode;
+  id?: string;
 }
 
-const Heading = ({ level, children }: Props) => {
-  const textNode = React.Children.toArray(children)[0];
-  // @ts-ignore
-  const { value } = textNode.props;
-  const anchorId = extractAnchorId(value);
-
+const Heading = ({ level, children, ...props }: Props) => {
   switch (level) {
     case 1:
     case 2:
     case 3:
     case 4:
       return (
-        <Title id={anchorId} level={level}>
+        <Title {...props} level={level} className="heading">
           {children}
         </Title>
       );
     case 5:
       return (
-        <h5 id={anchorId} className="ant-typography">
+        <h5 {...props} className="ant-typography heading">
           {children}
         </h5>
       );
     case 6:
     default:
       return (
-        <h6 id={anchorId} className="ant-typography">
+        <h6 {...props} className="ant-typography heading">
           {children}
         </h6>
       );
   }
+};
+
+Heading.defaultProps = {
+  id: undefined,
 };
 
 export default Heading;
