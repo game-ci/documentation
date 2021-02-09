@@ -1,0 +1,88 @@
+{
+  "docs": {
+    "game-ci": {
+      "docker-images": {
+        "key": "game-ci/docker-images",
+        "name": "Docker images"
+      }
+    },
+    "github": {
+      "<versions>": {
+        "v1": {
+          "activation": {
+            "key": "github/v1/activation",
+            "name": "Activation"
+          },
+          "builder": {
+            "key": "github/v1/builder",
+            "name": "Builder"
+          },
+          "deployment": {
+            "android": {
+              "key": "github/v1/deployment/android",
+              "name": "Android"
+            },
+            "ios": {
+              "key": "github/v1/deployment/ios",
+              "name": "iOS"
+            }
+          },
+          "getting-started": {
+            "key": "github/v1/getting-started",
+            "name": "Getting started"
+          },
+          "returning-a-license": {
+            "key": "github/v1/returning-a-license",
+            "name": "Returning a license"
+          },
+          "test-runner": {
+            "key": "github/v1/test-runner",
+            "name": "Test runner"
+          }
+        }
+      }
+    },
+    "gitlab": {
+      "activation": {
+        "key": "gitlab/activation",
+        "name": "Activation"
+      },
+      "android": {
+        "key": "gitlab/android",
+        "name": "Android"
+      },
+      "example-project": {
+        "key": "gitlab/example-project",
+        "name": "Example project"
+      },
+      "getting-started": {
+        "key": "gitlab/getting-started",
+        "name": "Getting started"
+      },
+      "ios": {
+        "key": "gitlab/ios",
+        "name": "iOS"
+      },
+      "tests": {
+        "key": "gitlab/tests",
+        "name": "Tests"
+      },
+      "use-custom-build-options": {
+        "key": "gitlab/use-custom-build-options",
+        "name": "Use custom build options"
+      }
+    },
+    "travis": {
+      "getting-started": {
+        "key": "travis/getting-started",
+        "name": "Getting started"
+      }
+    },
+    "troubleshooting": {
+      "common-issues": {
+        "key": "troubleshooting/common-issues",
+        "name": "Common issues"
+      }
+    }
+  }
+}

@@ -1,5 +1,9 @@
 export const capitalizeFirstLetter = ([first, ...rest], locale = 'en') => {
-  return first.toLocaleUpperCase(locale) + rest.join('');
+  try {
+    return first.toLocaleUpperCase(locale) + rest.join('');
+  } catch {
+    return first.toLocaleUpperCase(locale) + rest;
+  }
 };
 
 export const replaceAll = (input, searchValue: string, replaceValue: string) => {

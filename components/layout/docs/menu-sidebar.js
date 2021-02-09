@@ -1,5 +1,5 @@
 import { Menu, Layout } from 'antd';
-import { map } from 'lodash';
+import { map, has } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -11,11 +11,41 @@ import {
   AiOutlineInfoCircle,
 } from 'react-icons/all';
 import menuStructure from '../../../core/menu-structure.json';
+import { menuVersionBranch } from '../../../tools/menu/generate-menu-structure-from-files';
 
 const { docs } = menuStructure;
 
 const { Sider } = Layout;
 const { SubMenu, Item } = Menu;
+
+const traverseSection = ([key, item]) => {
+  // item
+  if (has(item, 'key')) {
+    return (
+      <Item key={`/docs/${item.key}`}>
+        <Link href="/docs/[...documentation-page]" as={`/docs/${item.key}`}>
+          <a>{item.name}</a>
+        </Link>
+      </Item>
+    );
+  }
+
+  // version container - todo: the versioning logic
+  if (key === menuVersionBranch) {
+    return map(Object.entries(item), ([versionKey, versionCollection]) => (
+      <SubMenu key={versionKey} title={versionKey}>
+        {map(Object.entries(versionCollection), traverseSection)}
+      </SubMenu>
+    ));
+  }
+
+  // other containers
+  return (
+    <SubMenu key="deployment" title="Deployment">
+      {map(Object.entries(item), traverseSection)}
+    </SubMenu>
+  );
+};
 
 const MenuSidebar = () => {
   const { asPath: currentKey } = useRouter();
@@ -46,47 +76,47 @@ const MenuSidebar = () => {
           </Item>
         </SubMenu>
         <SubMenu key="github" icon={<SiGithubactions />} title="GitHub">
-          <Item key="/docs/github/getting-started">
-            <Link href="/docs/[...documentation-page]" as="/docs/github/getting-started">
-              <a>Getting started</a>
-            </Link>
-          </Item>
-          <Item key="/docs/github/activation">
-            <Link href="/docs/[...documentation-page]" as="/docs/github/activation">
-              <a>Activation</a>
-            </Link>
-          </Item>
-          <Item key="/docs/github/test-runner">
-            <Link href="/docs/[...documentation-page]" as="/docs/github/test-runner">
-              <a>Test runner</a>
-            </Link>
-          </Item>
-          <Item key="/docs/github/builder">
-            <Link href="/docs/[...documentation-page]" as="/docs/github/builder">
-              <a>Builder</a>
-            </Link>
-          </Item>
-          <Item key="/docs/github/returning-a-license">
-            <Link href="/docs/[...documentation-page]" as="/docs/github/returning-a-license">
-              <a>Returning a license</a>
-            </Link>
-          </Item>
-          <SubMenu key="deployment" title="Deployment">
-            <Item key="/docs/github/android">
-              <Link href="/docs/[...android]" as="/docs/github/android">
-                <a>Android</a>
-              </Link>
-            </Item>
-            <Item key="/docs/github/ios">
-              <Link href="/docs/[...ios]" as="/docs/github/ios">
-                <a>iOS</a>
-              </Link>
-            </Item>
-          </SubMenu>
+          {map(Object.entries(docs.github), traverseSection)}
+          {/* <Item key="/docs/github/getting-started"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/github/getting-started"> */}
+          {/*    <a>Getting started</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/github/activation"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/github/activation"> */}
+          {/*    <a>Activation</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/github/test-runner"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/github/test-runner"> */}
+          {/*    <a>Test runner</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/github/builder"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/github/builder"> */}
+          {/*    <a>Builder</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/github/returning-a-license"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/github/returning-a-license"> */}
+          {/*    <a>Returning a license</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <SubMenu key="deployment" title="Deployment"> */}
+          {/*  <Item key="/docs/github/android"> */}
+          {/*    <Link href="/docs/[...android]" as="/docs/github/android"> */}
+          {/*      <a>Android</a> */}
+          {/*    </Link> */}
+          {/*  </Item> */}
+          {/*  <Item key="/docs/github/ios"> */}
+          {/*    <Link href="/docs/[...ios]" as="/docs/github/ios"> */}
+          {/*      <a>iOS</a> */}
+          {/*    </Link> */}
+          {/*  </Item> */}
+          {/* </SubMenu> */}
         </SubMenu>
         <SubMenu key="gitlab" icon={<SiGitlab />} title="GitLab">
           {map(docs.gitlab, (item) => {
-            console.log(item);
             return (
               <Item key={`/docs/${item.key}`}>
                 <Link href="/docs/[...documentation-page]" as={`/docs/${item.key}`}>
@@ -95,42 +125,6 @@ const MenuSidebar = () => {
               </Item>
             );
           })}
-
-          {/* <Item key="/docs/gitlab/getting-started"> */}
-          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/getting-started"> */}
-          {/*    <a>Getting started</a> */}
-          {/*  </Link> */}
-          {/* </Item> */}
-          {/* <Item key="/docs/gitlab/activation"> */}
-          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/activation"> */}
-          {/*    <a>Activation</a> */}
-          {/*  </Link> */}
-          {/* </Item> */}
-          {/* <Item key="/docs/gitlab/example-project"> */}
-          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/example-project"> */}
-          {/*    <a>Example project</a> */}
-          {/*  </Link> */}
-          {/* </Item> */}
-          {/* <Item key="/docs/gitlab/android"> */}
-          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/android"> */}
-          {/*    <a>Android</a> */}
-          {/*  </Link> */}
-          {/* </Item> */}
-          {/* <Item key="/docs/gitlab/ios"> */}
-          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/ios"> */}
-          {/*    <a>iOS</a> */}
-          {/*  </Link> */}
-          {/* </Item> */}
-          {/* <Item key="/docs/gitlab/tests"> */}
-          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/tests"> */}
-          {/*    <a>Tests</a> */}
-          {/*  </Link> */}
-          {/* </Item> */}
-          {/* <Item key="/docs/gitlab/use-custom-build-options"> */}
-          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/use-custom-build-options"> */}
-          {/*    <a>Custom build options</a> */}
-          {/*  </Link> */}
-          {/* </Item> */}
         </SubMenu>
         <SubMenu key="travis" icon={<SiTravisci />} title="Travis CI">
           <Item key="/docs/travis/getting-started">
