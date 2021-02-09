@@ -2,7 +2,7 @@ import ReactMarkdown from 'react-markdown';
 import PropTypes, { InferProps } from 'prop-types';
 import { useRouter } from 'next/router';
 import renderers from './markdown-to-page-mapping';
-import GithubEdit from '../layout/main/github-edit';
+import GithubEdit from '../layout/docs/github-edit';
 
 const propTypes = {
   document: PropTypes.string.isRequired,

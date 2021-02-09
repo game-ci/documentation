@@ -1,9 +1,9 @@
 import { Layout } from 'antd';
 import MarkdownRenderer from '@/components/markdown/markdown-renderer';
 import { ReactNodeLike } from 'prop-types';
-import BaseLayout from './base-layout';
-import DocumentationSidebar from './main/documentation-sidebar';
-import DocumentationAnchorsSidebar from './main/documentation-anchors-sidebar';
+import BaseLayout from '../base-layout';
+import MenuSidebar from './menu-sidebar';
+import AnchorsSidebar from './anchors-sidebar';
 
 const { Content } = Layout;
 
@@ -13,25 +13,25 @@ interface Props {
   children?: ReactNodeLike;
 }
 
-const DocumentationPage = ({ content, data, children }: Props) => {
+const Page = ({ content, data, children }: Props) => {
   return (
     <BaseLayout>
-      <DocumentationSidebar />
+      <MenuSidebar />
       <Layout className="site-layout-background">
         <Content className="page documentation-page">
           {content && <MarkdownRenderer meta={data} document={content} />}
           {children}
         </Content>
       </Layout>
-      {content && <DocumentationAnchorsSidebar document={content} />}
+      {content && <AnchorsSidebar document={content} />}
     </BaseLayout>
   );
 };
 
-DocumentationPage.defaultProps = {
+Page.defaultProps = {
   content: undefined,
   data: { title: '', date: '' },
   children: null,
 };
 
-export default DocumentationPage;
+export default Page;

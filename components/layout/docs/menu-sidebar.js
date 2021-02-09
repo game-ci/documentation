@@ -1,4 +1,5 @@
 import { Menu, Layout } from 'antd';
+import { map } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -9,11 +10,14 @@ import {
   SiSteam,
   AiOutlineInfoCircle,
 } from 'react-icons/all';
+import menuStructure from '../../../core/menu-structure.json';
+
+const { docs } = menuStructure;
 
 const { Sider } = Layout;
 const { SubMenu, Item } = Menu;
 
-const DocumentationSidebar = () => {
+const MenuSidebar = () => {
   const { asPath: currentKey } = useRouter();
 
   const main = 'main';
@@ -81,41 +85,52 @@ const DocumentationSidebar = () => {
           </SubMenu>
         </SubMenu>
         <SubMenu key="gitlab" icon={<SiGitlab />} title="GitLab">
-          <Item key="/docs/gitlab/getting-started">
-            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/getting-started">
-              <a>Getting started</a>
-            </Link>
-          </Item>
-          <Item key="/docs/gitlab/activation">
-            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/activation">
-              <a>Activation</a>
-            </Link>
-          </Item>
-          <Item key="/docs/gitlab/example-project">
-            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/example-project">
-              <a>Example project</a>
-            </Link>
-          </Item>
-          <Item key="/docs/gitlab/android">
-            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/android">
-              <a>Android</a>
-            </Link>
-          </Item>
-          <Item key="/docs/gitlab/ios">
-            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/ios">
-              <a>iOS</a>
-            </Link>
-          </Item>
-          <Item key="/docs/gitlab/tests">
-            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/tests">
-              <a>Tests</a>
-            </Link>
-          </Item>
-          <Item key="/docs/gitlab/use-custom-build-options">
-            <Link href="/docs/[...documentation-page]" as="/docs/gitlab/use-custom-build-options">
-              <a>Custom build options</a>
-            </Link>
-          </Item>
+          {map(docs.gitlab, (item) => {
+            console.log(item);
+            return (
+              <Item key={`/docs/${item.key}`}>
+                <Link href="/docs/[...documentation-page]" as={`/docs/${item.key}`}>
+                  <a>{item.name}</a>
+                </Link>
+              </Item>
+            );
+          })}
+
+          {/* <Item key="/docs/gitlab/getting-started"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/getting-started"> */}
+          {/*    <a>Getting started</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/gitlab/activation"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/activation"> */}
+          {/*    <a>Activation</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/gitlab/example-project"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/example-project"> */}
+          {/*    <a>Example project</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/gitlab/android"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/android"> */}
+          {/*    <a>Android</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/gitlab/ios"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/ios"> */}
+          {/*    <a>iOS</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/gitlab/tests"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/tests"> */}
+          {/*    <a>Tests</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
+          {/* <Item key="/docs/gitlab/use-custom-build-options"> */}
+          {/*  <Link href="/docs/[...documentation-page]" as="/docs/gitlab/use-custom-build-options"> */}
+          {/*    <a>Custom build options</a> */}
+          {/*  </Link> */}
+          {/* </Item> */}
         </SubMenu>
         <SubMenu key="travis" icon={<SiTravisci />} title="Travis CI">
           <Item key="/docs/travis/getting-started">
@@ -141,4 +156,4 @@ const DocumentationSidebar = () => {
   );
 };
 
-export default DocumentationSidebar;
+export default MenuSidebar;

@@ -1,7 +1,7 @@
 import path from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
-import DocumentationPage from '@/components/layout/documentation-page';
+import Page from '@/components/layout/docs/page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
 import generateSearchDefinitionsFromFiles from '../../tools/search/generate-definitions-from-files';
 
@@ -11,9 +11,7 @@ interface Props {
 }
 
 // Represents all the markdown documentation pages
-const Documentation = ({ content, data }: Props) => (
-  <DocumentationPage content={content} data={data} />
-);
+const Documentation = ({ content, data }: Props) => <Page content={content} data={data} />;
 
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {

@@ -9,7 +9,7 @@ interface Props {
   document: string;
 }
 
-const DocumentationAnchorsSidebar = ({ document }: Props) => {
+const AnchorsSidebar = ({ document }: Props) => {
   return (
     <Sider
       className="site-layout-background"
@@ -23,4 +23,4 @@ const DocumentationAnchorsSidebar = ({ document }: Props) => {
   );
 };
 
-export default DocumentationAnchorsSidebar;
+export default AnchorsSidebar;

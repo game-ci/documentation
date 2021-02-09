@@ -2,7 +2,7 @@ import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'a
 import { SmileFilled } from '@ant-design/icons';
 import Link from 'next/link';
 
-import DocumentationPage from '@/components/layout/documentation-page';
+import DocumentationPage from '@/components/layout/docs/page';
 
 const { Title } = Typography;
 
