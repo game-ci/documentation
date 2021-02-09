@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import Page from '@/components/layout/docs/page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
 import generateSearchDefinitionsFromFiles from '../../tools/search/generate-definitions-from-files';
+import generateMenuStructureFromFiles from '../../tools/menu/generate-menu-structure-from-files';
 
 interface Props {
   content: string;
@@ -16,6 +17,8 @@ const Documentation = ({ content, data }: Props) => <Page content={content} data
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {
   const files = await readDirectoryRecursively(path.resolve('docs/'));
+
+  generateMenuStructureFromFiles(files);
 
   if (process.env.CI) {
     generateSearchDefinitionsFromFiles(files);
