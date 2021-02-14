@@ -106,9 +106,9 @@
 }
 
 .ant-menu-submenu-title .versionSelect {
-  opacity: 0;
+  opacity: .25;
   will-change: opacity;
-  transition: opacity 0.67s ease;
+  transition: opacity 0.45s ease; /* somewhat specific timing */
   outline: none;
   border: 1px solid;
   border-radius: 3px;
