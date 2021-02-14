@@ -16,7 +16,8 @@
     "jsx": "preserve",
     "paths": {
       "@/core/*": ["core/*"],
-      "@/components/*": ["components/*"]
+      "@/components/*": ["components/*"],
+      "@/tools/*": ["tools/*"]
     }
   },
   "exclude": ["node_modules"],

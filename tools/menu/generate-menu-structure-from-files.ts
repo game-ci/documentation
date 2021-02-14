@@ -33,8 +33,6 @@ export default function generateMenuStructureFromFiles(fileNames: string[]) {
     });
   }
 
-  const menuStructure = { docs: documentationStructure };
-  writeFileSync(path.resolve('core/menu-structure.json'), JSON.stringify(menuStructure, null, 2), {
-    encoding: 'utf8',
-  });
+  const menuStructure = `${JSON.stringify({ docs: documentationStructure }, null, 2)}\n`;
+  writeFileSync(path.resolve('core/menu-structure.json'), menuStructure, { encoding: 'utf8' });
 }
