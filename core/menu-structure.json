@@ -1,8 +1,8 @@
 {
   "docs": {
-    "game-ci": {
+    "docker": {
       "docker-images": {
-        "key": "game-ci/docker-images",
+        "key": "docker/docker-images",
         "name": "Docker images"
       }
     },
