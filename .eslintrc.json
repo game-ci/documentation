@@ -62,6 +62,8 @@
     // React components should be able to return null
     "unicorn/no-null": "off",
     // Redux and Immer use prop reassign by design
-    "no-param-reassign": ["error", { "props": false }]
+    "no-param-reassign": ["error", { "props": false }],
+    // For react components it's not always useful to move small methods up in scope
+    "unicorn/consistent-function-scoping": ["error", { "checkArrowFunctions": false }]
   }
 }

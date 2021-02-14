@@ -8,11 +8,18 @@ import { selectedVersionsSelector, updateSelection } from '@/logic/versions/sele
 
 const mapVersions = (section, collection, selectedOption) => {
   const dispatch = useDispatch();
+
   const onChange = (event) => dispatch(updateSelection({ section, selection: event.target.value }));
+  const noPropagation = (event) => event.stopPropagation();
 
   return (
     <div style={{ display: 'inline-block', float: 'right', paddingRight: 4 }}>
-      <select value={selectedOption} onChange={onChange} className="versionSelect">
+      <select
+        value={selectedOption}
+        className="versionSelect"
+        onChange={onChange}
+        onClick={noPropagation}
+      >
         {map(Object.entries(collection), ([key, item]) => {
           if (key !== menuVersionBranch) return null;
 
