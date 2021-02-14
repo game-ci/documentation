@@ -1,18 +1,24 @@
 import React, { useContext } from 'react';
 import { ReactNodeLike } from 'prop-types';
 import { has, map } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 import MenuContext from '@/components/layout/docs/menu/menu-context';
 import { menuVersionBranch } from '@/tools/menu/generate-menu-structure-from-files';
+import { selectedVersionsSelector, updateSelection } from '@/logic/versions/selected-version-slice';
 
-const mapVersions = (section, collection) => {
+const mapVersions = (section, collection, selectedOption) => {
+  const dispatch = useDispatch();
+  const onChange = (event) => dispatch(updateSelection({ section, selection: event.target.value }));
+
   return (
     <div style={{ display: 'inline-block', float: 'right', paddingRight: 4 }}>
-      <select>
-        {map(Object.entries(collection), ([, item]) => {
+      <select value={selectedOption} onChange={onChange} className="versionSelect">
+        {map(Object.entries(collection), ([key, item]) => {
+          if (key !== menuVersionBranch) return null;
+
           const { meta, ...versions } = item;
           return map(Object.entries(versions), ([version]) => {
-            // todo: on change - dispatch new selection
-            return <option key={version} label={version} />;
+            return <option key={version} value={version} label={version} />;
           });
         })}
       </select>
@@ -27,6 +33,7 @@ interface Props {
 
 const VersionedTitle = ({ section, title }: Props): any => {
   const { menuStructure } = useContext(MenuContext);
+  const selected = useSelector(selectedVersionsSelector);
   const { docs } = menuStructure;
 
   if (!has(docs[section], menuVersionBranch)) {
@@ -36,7 +43,7 @@ const VersionedTitle = ({ section, title }: Props): any => {
   return (
     <span>
       <span>{title}</span>
-      {mapVersions(section, docs[section])}
+      {mapVersions(section, docs[section], selected[section])}
     </span>
   );
 };

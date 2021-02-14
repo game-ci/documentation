@@ -26,7 +26,11 @@ export default function generateMenuStructureFromFiles(fileNames: string[]) {
       // Make version parts identifiable
       const isVersionPart = versionPartRegex.test(rawPart);
       if (isVersionPart) {
-        set(documentationStructure, `${key}.${menuVersionBranch}.meta`, { section: key });
+        set(documentationStructure, `${key}.${menuVersionBranch}.meta`, {
+          section: key,
+          // Note, this will overwrite v1 with v2 and so on, as directory is read alphabetically.
+          currentVersion: part,
+        });
       }
       key += isVersionPart ? `.${menuVersionBranch}.${part}` : `.${part}`;
       lastPart = part;

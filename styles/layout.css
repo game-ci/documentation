@@ -104,3 +104,16 @@
 .ant-menu-submenu-title .ant-input-search .anticon {
   margin-right: 0;
 }
+
+.ant-menu-submenu-title .versionSelect {
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.67s ease;
+  outline: none;
+  border: 1px solid;
+  border-radius: 3px;
+}
+
+.ant-menu-submenu-title:hover .versionSelect {
+  opacity: 1;
+}

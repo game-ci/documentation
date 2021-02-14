@@ -9,7 +9,8 @@
     "github": {
       "<versions>": {
         "meta": {
-          "section": "github"
+          "section": "github",
+          "currentVersion": "v2"
         },
         "v1": {
           "activation": {
@@ -79,6 +80,18 @@
       "use-custom-build-options": {
         "key": "gitlab/use-custom-build-options",
         "name": "Use custom build options"
+      },
+      "<versions>": {
+        "meta": {
+          "section": "gitlab",
+          "currentVersion": "v1"
+        },
+        "v1": {
+          "test": {
+            "key": "gitlab/v1/test",
+            "name": "Test"
+          }
+        }
       }
     },
     "travis": {

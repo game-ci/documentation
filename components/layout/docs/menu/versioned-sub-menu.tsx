@@ -7,10 +7,12 @@ import MenuContext from '@/components/layout/docs/menu/menu-context';
 import { ReactNodeLike } from 'prop-types';
 import { menuVersionBranch } from '@/tools/menu/generate-menu-structure-from-files';
 import { normaliseTitle } from '@/tools/text';
+import { useSelector } from 'react-redux';
+import { selectedVersionsSelector } from '@/logic/versions/selected-version-slice';
 
 const { SubMenu, Item } = Menu;
 
-const populateMenuRecursively = (collection) => {
+const populateMenuRecursively = (collection, selections) => {
   return map(Object.entries(collection), ([key, item]) => {
     // menu item
     if (has(item, 'key')) {
@@ -26,16 +28,19 @@ const populateMenuRecursively = (collection) => {
     // container with versions
     if (key === menuVersionBranch) {
       const { meta, ...versions } = item;
+      const selectedVersion = selections[meta.section];
       return map(Object.entries(versions), ([versionKey, versionCollection]) => {
         // Todo - take hardcoded selected version from globally selected version for meta.section
-        return versionKey === 'v1' ? populateMenuRecursively(versionCollection) : [];
+        return versionKey === selectedVersion
+          ? populateMenuRecursively(versionCollection, selections)
+          : [];
       });
     }
 
     // container with menu items
     return (
       <SubMenu key={key} title={normaliseTitle(key)}>
-        {populateMenuRecursively(item)}
+        {populateMenuRecursively(item, selections)}
       </SubMenu>
     );
   });
@@ -47,12 +52,13 @@ interface Props {
   icon: ReactNodeLike;
 }
 const VersionedSubMenu = ({ section, title, icon, ...props }: Props) => {
+  const selectedVersions = useSelector(selectedVersionsSelector);
   const { menuStructure } = useContext(MenuContext);
   const { docs } = menuStructure;
 
   return (
     <SubMenu {...props} icon={icon} title={<VersionedTitle section={section} title={title} />}>
-      {populateMenuRecursively(docs[section])}
+      {populateMenuRecursively(docs[section], selectedVersions)}
     </SubMenu>
   );
 };

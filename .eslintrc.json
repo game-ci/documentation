@@ -60,6 +60,8 @@
     // Allow inline <strong> tags
     "react/jsx-one-expression-per-line": "off",
     // React components should be able to return null
-    "unicorn/no-null": "off"
+    "unicorn/no-null": "off",
+    // Redux and Immer use prop reassign by design
+    "no-param-reassign": ["error", { "props": false }]
   }
 }

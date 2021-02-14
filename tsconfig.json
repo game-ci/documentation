@@ -15,8 +15,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
-      "@/core/*": ["core/*"],
       "@/components/*": ["components/*"],
+      "@/core/*": ["core/*"],
+      "@/logic/*": ["logic/*"],
       "@/tools/*": ["tools/*"]
     }
   },
