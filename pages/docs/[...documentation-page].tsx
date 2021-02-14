@@ -3,8 +3,8 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 import Page from '@/components/layout/docs/page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
-import generateSearchDefinitionsFromFiles from '../../tools/search/generate-definitions-from-files';
-import generateMenuStructureFromFiles from '../../tools/menu/generate-menu-structure-from-files';
+import generateSearchDefinitionsFromFiles from '@/tools/search/generate-definitions-from-files';
+import generateMenuStructureFromFiles from '@/tools/menu/generate-menu-structure-from-files';
 
 interface Props {
   content: string;

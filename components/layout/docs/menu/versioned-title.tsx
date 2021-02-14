@@ -20,7 +20,7 @@ interface Props {
   title: ReactNodeLike;
 }
 
-const VersionedTitle = ({ section, title }: Props) => {
+const VersionedTitle = ({ section, title }: Props): any => {
   const { menuStructure } = useContext(MenuContext);
   const { docs } = menuStructure;
 

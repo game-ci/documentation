@@ -1,7 +1,7 @@
 import React from 'react';
 import { notification } from 'antd';
 import Heading from '@/components/markdown/components/heading';
-import { extractAnchorId } from '../../../tools/search/utils/extract-sections';
+import { extractAnchorId } from '@/tools/search/utils/extract-sections';
 
 interface Props {
   level: number;
