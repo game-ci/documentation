@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
-
 import usePathSegments from '@/core/routing/use-path-segments';
+import { versionPartRegex } from '@/tools/menu/generate-menu-structure-from-files';
 
 const { Item } = Breadcrumb;
 
@@ -10,13 +10,17 @@ const BreadcrumbWrapper = () => {
   const segments = usePathSegments(<HomeOutlined />);
   return (
     <Breadcrumb>
-      {segments.map(({ url, name }) => (
-        <Item key={url} style={{ textTransform: 'capitalize' }}>
-          <Link href={url}>
-            <a>{name}</a>
-          </Link>
-        </Item>
-      ))}
+      {segments.map(({ url, name }) => {
+        if (versionPartRegex.test(name)) return null;
+
+        return (
+          <Item key={url} style={{ textTransform: 'capitalize' }}>
+            <Link href={url}>
+              <a>{name}</a>
+            </Link>
+          </Item>
+        );
+      })}
     </Breadcrumb>
   );
 };

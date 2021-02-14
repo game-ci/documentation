@@ -4,6 +4,7 @@ import { set } from 'lodash';
 import { normaliseTitle, replaceAll } from '../text';
 
 export const menuVersionBranch = '<versions>';
+export const versionPartRegex = /^v?\d+(\.\d+)*$/;
 
 export default function generateMenuStructureFromFiles(fileNames: string[]) {
   // eslint-disable-next-line no-console
@@ -23,7 +24,11 @@ export default function generateMenuStructureFromFiles(fileNames: string[]) {
       // Sanitise to use as lodash set key
       const part = replaceAll(rawPart, '.', '-');
       // Make version parts identifiable
-      key += /^v?\d+(\.\d+)*$/.test(rawPart) ? `.${menuVersionBranch}.${part}` : `.${part}`;
+      const isVersionPart = versionPartRegex.test(rawPart);
+      if (isVersionPart) {
+        set(documentationStructure, `${key}.${menuVersionBranch}.meta`, { section: key });
+      }
+      key += isVersionPart ? `.${menuVersionBranch}.${part}` : `.${part}`;
       lastPart = part;
     }
 

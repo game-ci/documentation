@@ -4,16 +4,21 @@ import { has, map } from 'lodash';
 import MenuContext from '@/components/layout/docs/menu/menu-context';
 import { menuVersionBranch } from '@/tools/menu/generate-menu-structure-from-files';
 
-const mapVersions = (collection) => (
-  <div style={{ display: 'inline-block', float: 'right', paddingRight: 4 }}>
-    <select>
-      {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-      {map(Object.entries(collection), ([key, item]) => {
-        return <option key={key} label="v1" />;
-      })}
-    </select>
-  </div>
-);
+const mapVersions = (section, collection) => {
+  return (
+    <div style={{ display: 'inline-block', float: 'right', paddingRight: 4 }}>
+      <select>
+        {map(Object.entries(collection), ([, item]) => {
+          const { meta, ...versions } = item;
+          return map(Object.entries(versions), ([version]) => {
+            // todo: on change - dispatch new selection
+            return <option key={version} label={version} />;
+          });
+        })}
+      </select>
+    </div>
+  );
+};
 
 interface Props {
   section: string;
@@ -31,7 +36,7 @@ const VersionedTitle = ({ section, title }: Props): any => {
   return (
     <span>
       <span>{title}</span>
-      {mapVersions(docs[section])}
+      {mapVersions(section, docs[section])}
     </span>
   );
 };

@@ -6,6 +6,7 @@ import VersionedTitle from '@/components/layout/docs/menu/versioned-title';
 import MenuContext from '@/components/layout/docs/menu/menu-context';
 import { ReactNodeLike } from 'prop-types';
 import { menuVersionBranch } from '@/tools/menu/generate-menu-structure-from-files';
+import { normaliseTitle } from '@/tools/text';
 
 const { SubMenu, Item } = Menu;
 
@@ -24,14 +25,16 @@ const populateMenuRecursively = (collection) => {
 
     // container with versions
     if (key === menuVersionBranch) {
-      return map(Object.entries(item), ([, versionCollection]) =>
-        populateMenuRecursively(versionCollection),
-      );
+      const { meta, ...versions } = item;
+      return map(Object.entries(versions), ([versionKey, versionCollection]) => {
+        // Todo - take hardcoded selected version from globally selected version for meta.section
+        return versionKey === 'v1' ? populateMenuRecursively(versionCollection) : [];
+      });
     }
 
     // container with menu items
     return (
-      <SubMenu key="deployment" title="Deployment">
+      <SubMenu key={key} title={normaliseTitle(key)}>
         {populateMenuRecursively(item)}
       </SubMenu>
     );

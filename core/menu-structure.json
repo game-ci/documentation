@@ -8,6 +8,9 @@
     },
     "github": {
       "<versions>": {
+        "meta": {
+          "section": "github"
+        },
         "v1": {
           "activation": {
             "key": "github/v1/activation",
@@ -38,6 +41,12 @@
           "test-runner": {
             "key": "github/v1/test-runner",
             "name": "Test runner"
+          }
+        },
+        "v2": {
+          "activation": {
+            "key": "github/v2/activation",
+            "name": "Activation"
           }
         }
       }
