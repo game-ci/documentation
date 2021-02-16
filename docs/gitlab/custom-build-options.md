@@ -1,4 +1,4 @@
-# Use custom build options
+# Custom build options
 
 First, you need to understand how build options are passed to the build.
 
