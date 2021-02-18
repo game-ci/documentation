@@ -1,11 +1,11 @@
+import { menuVersionBranch } from '@/tools/menu/menu-structure';
 import { has, set } from 'lodash';
-import { menuVersionBranch } from '@/tools/menu/generate-menu-structure-from-files';
 
 // eslint-disable-next-line import/prefer-default-export
 export const getCurrentVersionsRecursively = (collection, sections = {}) => {
   for (const [key, item] of Object.entries(collection)) {
     // skip leaves
-    if (key === 'meta' || has(item, 'key')) {
+    if (key === 'meta' || has(item, 'isLeaf')) {
       continue;
     }
 
@@ -13,8 +13,8 @@ export const getCurrentVersionsRecursively = (collection, sections = {}) => {
     if (key === menuVersionBranch) {
       // @ts-ignore
       const { meta } = item;
-      const { section, currentVersion } = meta;
-      set(sections, `${section}`, currentVersion);
+      const { path, currentVersion } = meta;
+      set(sections, `${path}`, currentVersion);
     }
 
     getCurrentVersionsRecursively(item, sections);

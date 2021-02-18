@@ -1,47 +1,19 @@
-import path from 'path';
+import { MenuStructure } from '@/tools/menu/menu-structure';
+import { sleep } from '@/tools/utils';
 import { writeFileSync } from 'fs';
-import { set } from 'lodash';
-import { normaliseTitle, replaceAll } from '../text';
+import path from 'path';
 
-export const menuVersionBranch = '<versions>';
-export const versionPartRegex = /^v?\d+(\.\d+)*$/;
-
-export default function generateMenuStructureFromFiles(fileNames: string[]) {
+export default async function generateMenuStructureFromFiles(fileNames: string[]) {
   // eslint-disable-next-line no-console
   console.log('event - generating menu structure');
 
-  const documentationStructure = {};
+  const structure = await MenuStructure.generateMenuStructure(fileNames);
 
-  for (const name of fileNames) {
-    const fileName = name.replace(/\.md$/, '');
-    const parts = fileName.split('/');
+  const menuStructure = `${JSON.stringify({ docs: structure }, null, 2)}\n`;
+  writeFileSync(path.resolve('core/menu-structure.json'), menuStructure, {
+    encoding: 'utf8',
+  });
+  await sleep(500); // Allow for windows filesystem to catch up.
 
-    const [topLevelFolder, ...otherParts] = parts;
-
-    let key = topLevelFolder;
-    let lastPart: string = otherParts.join();
-    for (const rawPart of otherParts) {
-      // Sanitise to use as lodash set key
-      const part = replaceAll(rawPart, '.', '-');
-      // Make version parts identifiable
-      const isVersionPart = versionPartRegex.test(rawPart);
-      if (isVersionPart) {
-        set(documentationStructure, `${key}.${menuVersionBranch}.meta`, {
-          section: key,
-          // Note, this will overwrite v1 with v2 and so on, as directory is read alphabetically.
-          currentVersion: part,
-        });
-      }
-      key += isVersionPart ? `.${menuVersionBranch}.${part}` : `.${part}`;
-      lastPart = part;
-    }
-
-    set(documentationStructure, key, {
-      key: fileName,
-      name: normaliseTitle(lastPart),
-    });
-  }
-
-  const menuStructure = `${JSON.stringify({ docs: documentationStructure }, null, 2)}\n`;
-  writeFileSync(path.resolve('core/menu-structure.json'), menuStructure, { encoding: 'utf8' });
+  return menuStructure;
 }

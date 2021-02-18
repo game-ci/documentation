@@ -1,3 +1,5 @@
+import { menuVersionBranch } from '@/tools/menu/menu-structure';
+import { normaliseTitle } from '@/tools/utils/string';
 import React, { useContext } from 'react';
 import { Menu } from 'antd';
 import { has, map } from 'lodash';
@@ -5,8 +7,6 @@ import Link from 'next/link';
 import VersionedTitle from '@/components/layout/docs/menu/versioned-title';
 import MenuContext from '@/components/layout/docs/menu/menu-context';
 import { ReactNodeLike } from 'prop-types';
-import { menuVersionBranch } from '@/tools/menu/generate-menu-structure-from-files';
-import { normaliseTitle } from '@/tools/text';
 import { useSelector } from 'react-redux';
 import { selectedVersionsSelector } from '@/logic/versions/selected-version-slice';
 

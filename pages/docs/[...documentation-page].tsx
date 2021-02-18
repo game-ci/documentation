@@ -18,7 +18,7 @@ const Documentation = ({ content, data }: Props) => <Page content={content} data
 export const getStaticPaths: GetStaticPaths = async () => {
   const files = await readDirectoryRecursively(path.resolve('docs/'));
 
-  generateMenuStructureFromFiles(files);
+  await generateMenuStructureFromFiles(files);
 
   if (process.env.CI) {
     generateSearchDefinitionsFromFiles(files);

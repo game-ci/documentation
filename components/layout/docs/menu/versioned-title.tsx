@@ -1,9 +1,9 @@
+import { menuVersionBranch } from '@/tools/menu/menu-structure';
 import React, { useContext } from 'react';
 import { ReactNodeLike } from 'prop-types';
 import { has, map } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import MenuContext from '@/components/layout/docs/menu/menu-context';
-import { menuVersionBranch } from '@/tools/menu/generate-menu-structure-from-files';
 import { selectedVersionsSelector, updateSelection } from '@/logic/versions/selected-version-slice';
 
 const mapVersions = (section, collection, selectedOption) => {

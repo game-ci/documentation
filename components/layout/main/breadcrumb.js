@@ -1,8 +1,8 @@
+import { versionPartRegex } from '@/tools/menu/menu-structure';
 import Link from 'next/link';
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 import usePathSegments from '@/core/routing/use-path-segments';
-import { versionPartRegex } from '@/tools/menu/generate-menu-structure-from-files';
 
 const { Item } = Breadcrumb;
 

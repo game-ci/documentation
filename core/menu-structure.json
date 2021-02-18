@@ -1,109 +1,147 @@
 {
   "docs": {
     "docker": {
+      "meta": {
+        "path": "docker",
+        "order": 6
+      },
       "docker-images": {
-        "key": "docker/docker-images",
-        "name": "Docker images"
+        "name": "Docker images",
+        "path": "docker/docker-images",
+        "permalinkPath": "docker/docker-images",
+        "isLeaf": true,
+        "order": 100
       }
     },
     "github": {
+      "meta": {
+        "path": "github",
+        "order": 100
+      },
       "<versions>": {
         "meta": {
-          "section": "github",
+          "path": "github",
           "currentVersion": "v2"
         },
-        "v1": {
-          "activation": {
-            "key": "github/v1/activation",
-            "name": "Activation"
-          },
-          "builder": {
-            "key": "github/v1/builder",
-            "name": "Builder"
-          },
-          "deployment": {
-            "android": {
-              "key": "github/v1/deployment/android",
-              "name": "Android"
-            },
-            "ios": {
-              "key": "github/v1/deployment/ios",
-              "name": "iOS"
-            }
-          },
-          "getting-started": {
-            "key": "github/v1/getting-started",
-            "name": "Getting started"
-          },
-          "returning-a-license": {
-            "key": "github/v1/returning-a-license",
-            "name": "Returning a license"
-          },
-          "test-runner": {
-            "key": "github/v1/test-runner",
-            "name": "Test runner"
-          }
-        },
         "v2": {
+          "meta": {
+            "path": "github",
+            "order": 100
+          },
           "activation": {
-            "key": "github/v2/activation",
-            "name": "Activation"
+            "name": "Activation",
+            "path": "github/activation",
+            "permalinkPath": "github/v2/activation",
+            "isLeaf": true,
+            "order": 2
           }
         }
       }
     },
     "gitlab": {
-      "activation": {
-        "key": "gitlab/activation",
-        "name": "Activation"
-      },
-      "android": {
-        "key": "gitlab/android",
-        "name": "Android"
-      },
-      "example-project": {
-        "key": "gitlab/example-project",
-        "name": "Example project"
+      "meta": {
+        "path": "gitlab",
+        "order": 100
       },
       "getting-started": {
-        "key": "gitlab/getting-started",
-        "name": "Getting started"
+        "name": "Getting started",
+        "path": "gitlab/getting-started",
+        "permalinkPath": "gitlab/getting-started",
+        "isLeaf": true,
+        "order": 1
       },
-      "ios": {
-        "key": "gitlab/ios",
-        "name": "iOS"
+      "activation": {
+        "name": "Activation",
+        "path": "gitlab/activation",
+        "permalinkPath": "gitlab/activation",
+        "isLeaf": true,
+        "order": 2
+      },
+      "example-project": {
+        "name": "Example project",
+        "path": "gitlab/example-project",
+        "permalinkPath": "gitlab/example-project",
+        "isLeaf": true,
+        "order": 3
+      },
+      "custom-build-options": {
+        "name": "Custom build options",
+        "path": "gitlab/custom-build-options",
+        "permalinkPath": "gitlab/custom-build-options",
+        "isLeaf": true,
+        "order": 100
+      },
+      "deployment": {
+        "meta": {
+          "path": "gitlab/deployment",
+          "order": 100
+        },
+        "android": {
+          "name": "Android",
+          "path": "gitlab/deployment/android",
+          "permalinkPath": "gitlab/deployment/android",
+          "isLeaf": true,
+          "order": 100
+        },
+        "ios": {
+          "name": "iOS",
+          "path": "gitlab/deployment/ios",
+          "permalinkPath": "gitlab/deployment/ios",
+          "isLeaf": true,
+          "order": 100
+        }
       },
       "tests": {
-        "key": "gitlab/tests",
-        "name": "Tests"
-      },
-      "use-custom-build-options": {
-        "key": "gitlab/use-custom-build-options",
-        "name": "Use custom build options"
+        "name": "Tests",
+        "path": "gitlab/tests",
+        "permalinkPath": "gitlab/tests",
+        "isLeaf": true,
+        "order": 100
       },
       "<versions>": {
         "meta": {
-          "section": "gitlab",
+          "path": "gitlab",
           "currentVersion": "v1"
         },
         "v1": {
+          "meta": {
+            "path": "gitlab",
+            "order": 100
+          },
           "test": {
-            "key": "gitlab/v1/test",
-            "name": "Test"
+            "name": "Test",
+            "path": "gitlab/test",
+            "permalinkPath": "gitlab/v1/test",
+            "isLeaf": true,
+            "order": 100
           }
         }
       }
     },
     "travis": {
+      "meta": {
+        "path": "travis",
+        "order": 100
+      },
       "getting-started": {
-        "key": "travis/getting-started",
-        "name": "Getting started"
+        "name": "Getting started",
+        "path": "travis/getting-started",
+        "permalinkPath": "travis/getting-started",
+        "isLeaf": true,
+        "order": 100
       }
     },
     "troubleshooting": {
+      "meta": {
+        "path": "troubleshooting",
+        "order": 100
+      },
       "common-issues": {
-        "key": "troubleshooting/common-issues",
-        "name": "Common issues"
+        "name": "Common issues",
+        "path": "troubleshooting/common-issues",
+        "permalinkPath": "troubleshooting/common-issues",
+        "isLeaf": true,
+        "order": 100
       }
     }
   }
