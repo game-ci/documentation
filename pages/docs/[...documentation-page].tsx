@@ -1,3 +1,4 @@
+import { MenuStructureParser } from '@/tools/menu/menu-structure-parser';
 import path from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
@@ -17,8 +18,9 @@ const Documentation = ({ content, data }: Props) => <Page content={content} data
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {
   const files = await readDirectoryRecursively(path.resolve('docs/'));
-
-  await generateMenuStructureFromFiles(files);
+  const structure = await generateMenuStructureFromFiles(files);
+  const fileMetas = MenuStructureParser.getFileMetas(structure);
+  console.log(fileMetas);
 
   if (process.env.CI) {
     generateSearchDefinitionsFromFiles(files);
