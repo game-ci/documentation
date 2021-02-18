@@ -1,6 +1,10 @@
 import { normaliseTitle, replaceAll } from '@/tools/utils';
 import { get, flow, has, set, defaultsDeep, unset } from 'lodash';
 
+interface JsonNode {
+  [name: string]: any;
+}
+
 export const menuVersionBranch = '<versions>';
 export const versionPartRegex = /^v?\d+(\.\d+)*$/;
 
@@ -9,7 +13,7 @@ const isVersionPart = (part: any): boolean => {
 };
 
 export class MenuStructure {
-  private structure = {};
+  private structure: JsonNode = {};
 
   private fileName: string;
 
@@ -84,7 +88,7 @@ export class MenuStructure {
       // Make version parts identifiable (inside parent folder, thus before updating key)
       if (isVersionPart(part)) {
         this.addPartToKey(menuVersionBranch);
-        this.addMeta(this.key, { path: this.permalinkPath, currentVersion: part });
+        this.addMeta({ path: this.permalinkPath, currentVersion: part });
       }
 
       this.addPartToKey(part);
@@ -93,11 +97,7 @@ export class MenuStructure {
 
       // Add meta for every part
       if (!has(this.structure, this.key)) {
-        this.addMeta(this.key, {
-          path: this.permalinkPath,
-          order,
-          seoFriendlyPath: this.seoFriendlyPath,
-        });
+        this.addMeta({ path: this.permalinkPath, order, seoFriendlyPath: this.seoFriendlyPath });
       }
     }
   }
@@ -110,7 +110,6 @@ export class MenuStructure {
       path: this.permalinkPath,
       permalinkPath: this.permalinkPath,
       seoFriendlyPath: this.seoFriendlyPath,
-      isLeaf: true,
       order,
     });
   }
@@ -119,7 +118,7 @@ export class MenuStructure {
     const sortOrderNumberRegex = /^\d{2}-/;
 
     const extractSortOrderNumber = (part: string): number => {
-      return Number(part.match(sortOrderNumberRegex)?.[0]?.replace(/-$/, '') || '100');
+      return Number(part.match(sortOrderNumberRegex)?.[0]?.replace(/-$/, '') || 99);
     };
 
     const stripSortOrderNumber = (part: string): string => {
@@ -138,39 +137,52 @@ export class MenuStructure {
     };
   }
 
-  private addMeta(key, meta) {
-    const previousMeta = get(this.structure, `${key}.meta`, {});
+  /**
+   * Add meta to currently selected key.
+   *
+   * New properties overwrite existing properties recursively.
+   *
+   * Example:
+   *   Before:     { a: 1, b: 2 }
+   *   Add:        { a: 3, c: 4 }
+   *   Results in: { a: 3, b: 2, c: 4 }
+   */
+  private addMeta(meta) {
+    const previousMeta = get(this.structure, `${this.key}.meta`, {});
     defaultsDeep(meta, previousMeta);
-    set(this.structure, key, { meta });
+    set(this.structure, `${this.key}.meta`, meta);
   }
 
   public stripVersionNumbersFromLatestVersionInSeoFriendlyPath() {
-    const updateSeoPathsRecursively = (collection, replacePath = null, withPath = null) => {
-      for (const [parent, children] of Object.entries(collection)) {
-        if (parent === 'meta') {
+    const updateSeoPathsRecursively = (
+      collection: JsonNode,
+      replacePath = null,
+      withPath = null,
+    ) => {
+      for (const [key, item] of Object.entries(collection)) {
+        if (key === 'meta') {
           continue;
         }
 
         // Example: Recursively replace /github/v[latest]/something with /github/something.
-        if (replacePath && withPath && has(children, 'path')) {
-          set(collection, `${parent}.path`, children.path.replace(replacePath, withPath));
+        if (replacePath && withPath && has(item, 'path')) {
+          set(collection, `${key}.path`, item.path.replace(replacePath, withPath));
         }
 
-        if (has(children, 'isLeaf')) {
+        if (typeof item !== 'object') {
           continue;
         }
 
-        if (parent === menuVersionBranch) {
-          // @ts-ignore
-          const { currentVersion } = children.meta;
-          const { seoFriendlyPath } = children[currentVersion].meta;
-          const replace = get(collection, `${parent}.${currentVersion}.meta.path`);
-          set(collection, `${parent}.${currentVersion}.meta.path`, seoFriendlyPath);
-          updateSeoPathsRecursively(children, replace, seoFriendlyPath);
+        if (key === menuVersionBranch) {
+          const { currentVersion } = item.meta;
+          const { seoFriendlyPath } = item[currentVersion].meta;
+          const replace = get(collection, `${key}.${currentVersion}.meta.path`);
+          set(collection, `${key}.${currentVersion}.meta.path`, seoFriendlyPath);
+          updateSeoPathsRecursively(item, replace, seoFriendlyPath);
           continue;
         }
 
-        updateSeoPathsRecursively(children, replacePath, withPath);
+        updateSeoPathsRecursively(item, replacePath, withPath);
       }
     };
 
@@ -178,15 +190,15 @@ export class MenuStructure {
   }
 
   private cleanup() {
-    const cleanupRecursively = (collection) => {
-      for (const [parent, children] of Object.entries(collection)) {
-        unset(collection, `${parent}.seoFriendlyPath`);
+    const cleanupRecursively = (collection: JsonNode) => {
+      for (const [key, item] of Object.entries(collection)) {
+        unset(collection, `${key}.seoFriendlyPath`);
 
-        if (parent === 'meta' || has(children, 'isLeaf')) {
+        if (key === 'meta' || typeof item !== 'object') {
           continue;
         }
 
-        cleanupRecursively(children);
+        cleanupRecursively(item);
       }
     };
     cleanupRecursively(this.structure);

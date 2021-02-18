@@ -9,30 +9,82 @@
         "name": "Docker images",
         "path": "docker/docker-images",
         "permalinkPath": "docker/docker-images",
-        "isLeaf": true,
-        "order": 100
+        "order": 99
       }
     },
     "github": {
       "meta": {
         "path": "github",
-        "order": 100
+        "order": 99
       },
       "<versions>": {
         "meta": {
           "path": "github",
           "currentVersion": "v2"
         },
+        "v1": {
+          "meta": {
+            "path": "github/v1",
+            "order": 99
+          },
+          "getting-started": {
+            "name": "Getting started",
+            "path": "github/v1/getting-started",
+            "permalinkPath": "github/v1/getting-started",
+            "order": 1
+          },
+          "activation": {
+            "name": "Activation",
+            "path": "github/v1/activation",
+            "permalinkPath": "github/v1/activation",
+            "order": 2
+          },
+          "test-runner": {
+            "name": "Test runner",
+            "path": "github/v1/test-runner",
+            "permalinkPath": "github/v1/test-runner",
+            "order": 3
+          },
+          "builder": {
+            "name": "Builder",
+            "path": "github/v1/builder",
+            "permalinkPath": "github/v1/builder",
+            "order": 4
+          },
+          "returning-a-license": {
+            "name": "Returning a license",
+            "path": "github/v1/returning-a-license",
+            "permalinkPath": "github/v1/returning-a-license",
+            "order": 5
+          },
+          "deployment": {
+            "meta": {
+              "path": "github/v1/deployment",
+              "order": 15
+            },
+            "android": {
+              "name": "Android",
+              "path": "github/v1/deployment/android",
+              "permalinkPath": "github/v1/deployment/android",
+              "order": 99
+            },
+            "ios": {
+              "name": "iOS",
+              "path": "github/v1/deployment/ios",
+              "permalinkPath": "github/v1/deployment/ios",
+              "order": 99
+            }
+          }
+        },
         "v2": {
           "meta": {
             "path": "github",
-            "order": 100
+            "order": 99
           },
           "activation": {
             "name": "Activation",
             "path": "github/activation",
             "permalinkPath": "github/v2/activation",
-            "isLeaf": true,
             "order": 2
           }
         }
@@ -41,62 +93,55 @@
     "gitlab": {
       "meta": {
         "path": "gitlab",
-        "order": 100
+        "order": 99
       },
       "getting-started": {
         "name": "Getting started",
         "path": "gitlab/getting-started",
         "permalinkPath": "gitlab/getting-started",
-        "isLeaf": true,
         "order": 1
       },
       "activation": {
         "name": "Activation",
         "path": "gitlab/activation",
         "permalinkPath": "gitlab/activation",
-        "isLeaf": true,
         "order": 2
       },
       "example-project": {
         "name": "Example project",
         "path": "gitlab/example-project",
         "permalinkPath": "gitlab/example-project",
-        "isLeaf": true,
         "order": 3
       },
       "custom-build-options": {
         "name": "Custom build options",
         "path": "gitlab/custom-build-options",
         "permalinkPath": "gitlab/custom-build-options",
-        "isLeaf": true,
-        "order": 100
+        "order": 99
       },
       "deployment": {
         "meta": {
           "path": "gitlab/deployment",
-          "order": 100
+          "order": 99
         },
         "android": {
           "name": "Android",
           "path": "gitlab/deployment/android",
           "permalinkPath": "gitlab/deployment/android",
-          "isLeaf": true,
-          "order": 100
+          "order": 99
         },
         "ios": {
           "name": "iOS",
           "path": "gitlab/deployment/ios",
           "permalinkPath": "gitlab/deployment/ios",
-          "isLeaf": true,
-          "order": 100
+          "order": 99
         }
       },
       "tests": {
         "name": "Tests",
         "path": "gitlab/tests",
         "permalinkPath": "gitlab/tests",
-        "isLeaf": true,
-        "order": 100
+        "order": 99
       },
       "<versions>": {
         "meta": {
@@ -106,14 +151,13 @@
         "v1": {
           "meta": {
             "path": "gitlab",
-            "order": 100
+            "order": 99
           },
           "test": {
             "name": "Test",
             "path": "gitlab/test",
             "permalinkPath": "gitlab/v1/test",
-            "isLeaf": true,
-            "order": 100
+            "order": 99
           }
         }
       }
@@ -121,27 +165,25 @@
     "travis": {
       "meta": {
         "path": "travis",
-        "order": 100
+        "order": 99
       },
       "getting-started": {
         "name": "Getting started",
         "path": "travis/getting-started",
         "permalinkPath": "travis/getting-started",
-        "isLeaf": true,
-        "order": 100
+        "order": 99
       }
     },
     "troubleshooting": {
       "meta": {
         "path": "troubleshooting",
-        "order": 100
+        "order": 99
       },
       "common-issues": {
         "name": "Common issues",
         "path": "troubleshooting/common-issues",
         "permalinkPath": "troubleshooting/common-issues",
-        "isLeaf": true,
-        "order": 100
+        "order": 99
       }
     }
   }
