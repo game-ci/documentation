@@ -1,11 +1,10 @@
-import { MenuStructureParser } from '@/tools/menu/menu-structure-parser';
+import { MenuStructure } from '@/tools/menu/menu-structure';
 import path from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 import Page from '@/components/layout/docs/page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
 import generateSearchDefinitionsFromFiles from '@/tools/search/generate-definitions-from-files';
-import generateMenuStructureFromFiles from '@/tools/menu/generate-menu-structure-from-files';
 
 interface Props {
   content: string;
@@ -17,23 +16,18 @@ const Documentation = ({ content, data }: Props) => <Page content={content} data
 
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {
-  const files = await readDirectoryRecursively(path.resolve('docs/'));
-  const structure = await generateMenuStructureFromFiles(files);
-  const fileMetas = MenuStructureParser.getFileMetas(structure);
-  console.log(fileMetas);
+  const filePaths = await readDirectoryRecursively(path.resolve('docs/'));
+  const structure = await MenuStructure.generateFromFiles(filePaths);
+  const fileMetas = await MenuStructure.getFileMetas(structure);
 
+  // Todo - update search engine part
   if (process.env.CI) {
-    generateSearchDefinitionsFromFiles(files);
+    generateSearchDefinitionsFromFiles(filePaths);
   }
 
-  const paths = [];
-  for (const file of files) {
-    const filePath = file.replace(/\.md$/, '');
-
-    paths.push({
-      params: { 'documentation-page': filePath.split('/') },
-    });
-  }
+  const paths = fileMetas.map((file) => ({
+    params: { 'documentation-page': file.meta.path.split('/') },
+  }));
 
   return { paths, fallback: false };
 };
@@ -41,9 +35,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // Build time: Generate JSON for each generated page
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { 'documentation-page': parts } = params;
-  const page = typeof parts !== 'string' ? parts.join('/') : parts;
 
-  const content = await import(`../../docs/${page}.md`);
+  const structure = await MenuStructure.load();
+  const fileMetas = await MenuStructure.getFileMetas(structure);
+
+  const seoPath = typeof parts !== 'string' ? parts.join('/') : parts;
+  const page = fileMetas.find((file) => file.meta.path === seoPath);
+
+  const content = await import(`../../docs/${page.meta.absolutePath}`);
   const { orig, ...data } = matter(content.default);
 
   return { props: { ...data } };

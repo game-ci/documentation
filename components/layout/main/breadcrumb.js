@@ -1,4 +1,4 @@
-import { versionPartRegex } from '@/tools/menu/menu-structure';
+import { versionPartRegex } from '@/tools/menu/menu-structure-generator';
 import Link from 'next/link';
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';

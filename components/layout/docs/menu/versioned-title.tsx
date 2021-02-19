@@ -1,4 +1,4 @@
-import { menuVersionBranch } from '@/tools/menu/menu-structure';
+import { MenuNode, menuVersionBranch } from '@/tools/menu/menu-structure-generator';
 import React, { useContext } from 'react';
 import { ReactNodeLike } from 'prop-types';
 import { has, map } from 'lodash';
@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import MenuContext from '@/components/layout/docs/menu/menu-context';
 import { selectedVersionsSelector, updateSelection } from '@/logic/versions/selected-version-slice';
 
-const mapVersions = (section, collection, selectedOption) => {
+const mapVersions = (section, collection: MenuNode, selectedOption) => {
   const dispatch = useDispatch();
 
   const onChange = (event) => dispatch(updateSelection({ section, selection: event.target.value }));

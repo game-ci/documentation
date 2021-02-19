@@ -1,9 +1,9 @@
+import { MenuStructure } from '@/tools/menu/menu-structure';
 import path from 'path';
 import readDirectoryRecursively from '../../core/fs/read-directory-recursively';
-import generateMenuStructureFromFiles from './generate-menu-structure-from-files';
 
 (async () => {
-  const files = await readDirectoryRecursively(path.resolve('docs/'));
+  const filePaths = await readDirectoryRecursively(path.resolve('docs/'));
 
-  generateMenuStructureFromFiles(files);
+  await MenuStructure.generateFromFiles(filePaths);
 })();

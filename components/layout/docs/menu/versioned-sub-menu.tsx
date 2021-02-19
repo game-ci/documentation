@@ -1,4 +1,4 @@
-import { menuVersionBranch } from '@/tools/menu/menu-structure';
+import { MenuNode, menuVersionBranch } from '@/tools/menu/menu-structure-generator';
 import { normaliseTitle } from '@/tools/utils/string';
 import React, { useContext } from 'react';
 import { Menu } from 'antd';
@@ -12,13 +12,16 @@ import { selectedVersionsSelector } from '@/logic/versions/selected-version-slic
 
 const { SubMenu, Item } = Menu;
 
-const populateMenuRecursively = (collection, selections) => {
+const populateMenuRecursively = (collection: MenuNode, selections) => {
+  // Todo sorting by item.meta.order
   return map(Object.entries(collection), ([key, item]) => {
+    if (key === 'meta') return null;
+
     // menu item
-    if (has(item, 'key')) {
+    if (has(item, 'name')) {
       return (
-        <Item key={`/docs/${item.key}`}>
-          <Link href="/docs/[...documentation-page]" as={`/docs/${item.key}`}>
+        <Item key={`/docs/${item.meta.path}`}>
+          <Link href="/docs/[...documentation-page]" as={`/docs/${item.meta.path}`}>
             <a>{item.name}</a>
           </Link>
         </Item>
@@ -28,7 +31,7 @@ const populateMenuRecursively = (collection, selections) => {
     // container with versions
     if (key === menuVersionBranch) {
       const { meta, ...versions } = item;
-      const selectedVersion = selections[meta.section];
+      const selectedVersion = selections[meta.path];
       return map(Object.entries(versions), ([versionKey, versionCollection]) => {
         // Todo - take hardcoded selected version from globally selected version for meta.section
         return versionKey === selectedVersion

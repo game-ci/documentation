@@ -8,7 +8,7 @@ export class MenuStructureParser {
       }
 
       if (item.meta?.type === 'file') {
-        fileMetas.push({ key, item });
+        fileMetas.push(item);
       }
 
       if (typeof item === 'object') {
