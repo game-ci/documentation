@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
-    "build": "node -v && yarn update-menu && cross-env NODE_OPTIONS=\"-r esm\" next build && yarn update-search",
+    "build": "node -v && yarn update-menu && cross-env NODE_OPTIONS=\"-r esm\" next build",
     "update-menu": "cross-env NODE_OPTIONS=\"-r esm -r dotenv/config\" ts-node -r tsconfig-paths/register tools/menu/cli-generate.ts",
     "update-search": "cross-env NODE_OPTIONS=\"-r esm -r dotenv/config\" ts-node -r tsconfig-paths/register tools/search/push-search-payload.ts",
     "analyze": "cross-env-shell NODE_OPTIONS=\"-r esm\" ANALYZE=true next build",
