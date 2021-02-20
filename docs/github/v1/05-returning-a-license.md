@@ -15,6 +15,6 @@ Add this step to your workflow:
 ```yaml
 # Return License
 - name: Return license
-  uses: game-ci/unity-return-license@v1
+  uses: webbertakken/unity-return-license@v1.1
   if: always()
 ```

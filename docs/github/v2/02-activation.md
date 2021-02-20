@@ -44,7 +44,7 @@ To **configure** this action, add this step and set the id.
 # Request manual activation file
 - name: Request manual activation file
   id: getManualLicenseFile
-  uses: webbertakken/unity-request-manual-activation-file@v1.1
+  uses: game-ci/unity-request-manual-activation-file@v1.1
   with:
     unityVersion: 2019.2.11f1
 ```

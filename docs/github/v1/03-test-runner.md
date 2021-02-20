@@ -21,7 +21,7 @@ your license file and add it as a secret.
 Then, define the test step as follows:
 
 ```yaml
-- uses: webbertakken/unity-test-runner@v1.4
+- uses: webbertakken/unity-test-runner@v1.7
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
@@ -40,7 +40,7 @@ Make sure you have set up these variables in the activation step.
 Define the test step as follows:
 
 ```yaml
-- uses: webbertakken/unity-test-runner@v1.4
+- uses: webbertakken/unity-test-runner@v1.7
   env:
     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -77,7 +77,7 @@ Test results can now be downloaded as `Artifacts` in the `Actions` tab.
 You can specify a different `artifactsPath` in the test runner and reference this path using the `id` of the test step.
 
 ```yaml
-- uses: webbertakken/unity-test-runner@v1.4
+- uses: webbertakken/unity-test-runner@v1.7
   id: myTestStep
 ```
 
@@ -167,7 +167,7 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 Parameters without a value will be considered booleans (with a value of true).
 
 ```yaml
-- uses: webbertakken/unity-test-runner@main
+- uses: webbertakken/unity-test-runner@1.7
   with:
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
 ```
@@ -180,7 +180,7 @@ _**default:** `""`_
 Specific docker image that should be used for testing the project.
 
 ```yaml
-- uses: webbertakken/unity-test-runner@main
+- uses: webbertakken/unity-test-runner@1.7
   with:
     customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
@@ -226,7 +226,7 @@ jobs:
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-      - uses: webbertakken/unity-test-runner@v1.4
+      - uses: webbertakken/unity-test-runner@v1.7
         id: tests
         with:
           projectPath: ${{ matrix.projectPath }}
