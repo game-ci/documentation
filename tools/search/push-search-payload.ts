@@ -1,4 +1,5 @@
 /* eslint-disable no-console,unicorn/no-process-exit */
+import { SearchIndex } from '@/tools/search/search-index';
 import path from 'path';
 import { readFileSync } from 'fs';
 import { currentBranch } from '@/tools/utils/current-branch';
@@ -23,18 +24,20 @@ import generateObjectIDs from './utils/generate-object-ids';
     const client = algoliasearch(config.search.applicationId, process.env.SEARCH_API_PRIVATE_KEY);
 
     // Use existing index or create one if it does not exist
-    const index = client.initIndex(config.search.index);
-    await index.setSettings(config.search.settings);
+    const index = await client.initIndex(SearchIndex.getForCurrentEnvironment());
+    const indexExists = await index.exists();
 
     // Inventory current objects
     let existingObjects = [];
-    await index.browseObjects({
-      query: '', // Empty query will match all records
-      attributesToRetrieve: ['objectID'],
-      batch: (batch) => {
-        existingObjects = [...existingObjects, ...batch.map((hit) => hit.objectID)];
-      },
-    });
+    if (indexExists) {
+      await index.browseObjects({
+        query: '', // Empty query will match all records
+        attributesToRetrieve: ['objectID'],
+        batch: (batch) => {
+          existingObjects = [...existingObjects, ...batch.map((hit) => hit.objectID)];
+        },
+      });
+    }
 
     // Push objects to Algolia
     const objects = generateObjectIDs(sections, ['title', 'basePath', 'summary']);
@@ -47,6 +50,9 @@ import generateObjectIDs from './utils/generate-object-ids';
       console.log('[push-search-payload] Removing old search entries.\n', floatingObjects);
       await index.deleteObjects(floatingObjects);
     }
+
+    // Configure the index
+    await index.setSettings(config.search.settings);
 
     console.log('[push-search-payload] Finished updating search cache.');
   } catch (error) {

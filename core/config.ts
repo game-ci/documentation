@@ -1,9 +1,11 @@
+import { getIsomorphicValue } from '@/tools/utils/get-isomorphic-value';
+
 export default {
   baseUrl: 'https://game.ci',
   docsPath: '/docs',
   search: {
     applicationId: 'W4X62KM9QE',
-    index: 'documentation_sections',
+    index: getIsomorphicValue('SEARCH_INDEX'),
     publicApiKey: '4a06011ed8a467811866c27ca4c1a367',
     hitsPerPage: 12,
     settings: {
