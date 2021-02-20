@@ -1,8 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import PropTypes, { InferProps } from 'prop-types';
-import { useRouter } from 'next/router';
 import renderers from './markdown-to-page-mapping';
-import GithubEdit from '../layout/docs/github-edit';
+import EditOnGithubLink from '../layout/docs/edit-on-github-link';
 
 const propTypes = {
   document: PropTypes.string.isRequired,
@@ -13,16 +12,11 @@ const MarkdownRenderer = ({ document, meta }: InferProps<typeof propTypes>) => {
   const { title = '', date = '' } = meta;
   const metaInformation = `${date} - ${title}`.replace(/(^\s-\s)|(\s-\s$)/, '');
 
-  const router = useRouter();
-  const filePath = router.asPath.replace(/^\/+/, '');
-  const repoPath = 'https://github.com/game-ci/documentation/edit/main';
-  const fullPath = `${repoPath}/${filePath}.md`;
-
   return (
     <div>
       <sub>{metaInformation}</sub>
       <ReactMarkdown source={document} renderers={renderers} />
-      <GithubEdit href={fullPath} />
+      <EditOnGithubLink />
     </div>
   );
 };

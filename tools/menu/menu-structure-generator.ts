@@ -1,27 +1,16 @@
+import { MenuNode, MenuNodeType } from '@/tools/menu/menu-node';
 import { normaliseTitle, replaceAll } from '@/tools/utils';
-import { get, flow, has, set, defaultsDeep, unset } from 'lodash';
-
-export interface MenuNode {
-  [name: string]: any;
-}
-
-export type MenuNodeType = 'file' | 'folder' | 'version' | 'identifier';
-
-export const menuVersionBranch = '<versions>';
-export const versionPartRegex = /^v?\d+(\.\d+)*$/;
-
-const isVersionPart = (part: any): boolean => {
-  return versionPartRegex.test(part);
-};
+import { defaultsDeep, flow, get, has, set, unset } from 'lodash';
+import { MenuSegment } from './menu-segment';
 
 export class MenuStructureGenerator {
   private structure: MenuNode = {};
 
   private fileName: string;
 
-  private parts: string[];
+  private segments: string[];
 
-  private part: string;
+  private segment: string;
 
   private keyArray: string[];
 
@@ -47,13 +36,16 @@ export class MenuStructureGenerator {
     this.seoFriendlyPathArray = [];
   }
 
-  private addPartToKey = (part) => this.keyArray.push(part);
+  private addSegmentToKey = (segment) => this.keyArray.push(segment);
 
-  private addPartToPermalinkPath = (part) => this.permalinkPathArray.push(part);
+  private addSegmentToPermalinkPath = (segment) => this.permalinkPathArray.push(segment);
 
-  private addPartToSeoFriendlyPath = (part) => this.seoFriendlyPathArray.push(part);
+  private addSegmentToSeoFriendlyPath = (segment) => this.seoFriendlyPathArray.push(segment);
 
   static async generateMenuStructure(fileNames: string[]) {
+    // eslint-disable-next-line no-console
+    console.log('event - generating menu structure');
+
     const structure = new this();
     for (const fileName of fileNames) {
       structure.addFromFile(fileName);
@@ -77,55 +69,52 @@ export class MenuStructureGenerator {
     this.reset();
 
     this.fileName = fileName;
-    this.parts = this.fileName.replace(/\.md$/, '').split('/');
+    this.segments = this.fileName.replace(/\.md$/, '').split('/');
 
-    this.addStructureFromParts();
-    this.addMetaForFile();
+    this.addStructureFromSegments();
+    this.addMetaForFileNode();
   }
 
-  private addStructureFromParts() {
-    for (this.part of this.parts) {
-      const { order, part } = this.extractInfoFromPart();
+  private addStructureFromSegments() {
+    for (this.segment of this.segments) {
+      const { order, segment } = this.extractInfoFromSegment();
 
       // Make version parts identifiable
-      if (isVersionPart(part)) {
-        // pointer
-        this.addPartToKey(menuVersionBranch);
-        // meta
-        this.setPartType('identifier');
-        this.setPartPath(this.permalinkPath);
-        this.setPartCurrentVersion(part);
+      if (MenuSegment.isVersion(segment)) {
+        this.addSegmentToKey(MenuSegment.versionContainerIdentifier);
+        this.setNodeType('identifier');
+        this.setNodePath(this.permalinkPath);
+        this.setNodeCurrentVersion(segment);
       }
 
       // Update pointers
-      this.addPartToKey(part);
-      this.addPartToPermalinkPath(part);
-      if (!isVersionPart(part)) this.addPartToSeoFriendlyPath(part);
+      this.addSegmentToKey(segment);
+      this.addSegmentToPermalinkPath(segment);
+      if (!MenuSegment.isVersion(segment)) this.addSegmentToSeoFriendlyPath(segment);
 
       // Add meta for every part
       if (!has(this.structure, this.key)) {
-        this.setPartType(isVersionPart(part) ? 'version' : 'folder');
-        this.setPartOrder(order);
-        this.setPartPath(this.permalinkPath);
-        this.setPartSeoFriendlyPath(this.seoFriendlyPath);
+        this.setNodeType(MenuSegment.isVersion(segment) ? 'version' : 'folder');
+        this.setNodeOrder(order);
+        this.setNodePath(this.permalinkPath);
+        this.setNodeSeoFriendlyPath(this.seoFriendlyPath);
       }
     }
   }
 
-  private addMetaForFile() {
-    const { order, part } = this.extractInfoFromPart();
+  private addMetaForFileNode() {
+    const { order, segment } = this.extractInfoFromSegment();
 
-    set(this.structure, this.key, { name: normaliseTitle(part) });
-
-    this.setPartType('file');
-    this.setPartOrder(order);
-    this.setPartPath(this.permalinkPath);
-    this.setPartPermalinkPath(this.permalinkPath);
-    this.setPartSeoFriendlyPath(this.seoFriendlyPath);
-    this.setPartAbsolutePath(this.fileName);
+    this.setNodeName(normaliseTitle(segment));
+    this.setNodeType('file');
+    this.setNodeOrder(order);
+    this.setNodePath(this.permalinkPath);
+    this.setNodePermalinkPath(this.permalinkPath);
+    this.setNodeSeoFriendlyPath(this.seoFriendlyPath);
+    this.setNodeAbsolutePath(this.fileName);
   }
 
-  private extractInfoFromPart() {
+  private extractInfoFromSegment() {
     const sortOrderNumberRegex = /^\d{2}-/;
 
     const extractSortOrderNumber = (part: string): number => {
@@ -140,12 +129,16 @@ export class MenuStructureGenerator {
       return replaceAll(part, '.', '-');
     };
 
-    const sanitisePart = flow(stripSortOrderNumber, removeForbiddenCharacters);
+    const sanitiseSegment = flow(stripSortOrderNumber, removeForbiddenCharacters);
 
     return {
-      order: extractSortOrderNumber(this.part),
-      part: sanitisePart(this.part),
+      order: extractSortOrderNumber(this.segment),
+      segment: sanitiseSegment(this.segment),
     };
+  }
+
+  private setNodeName(name) {
+    set(this.structure, this.key, { name });
   }
 
   /**
@@ -158,7 +151,7 @@ export class MenuStructureGenerator {
    *   Add:        { a: 3, c: 4 }
    *   Results in: { a: 3, b: 2, c: 4 }
    */
-  private addPartMeta(meta) {
+  private addNodeMeta(meta) {
     const previousMeta = get(this.structure, `${this.key}.meta`, {});
     defaultsDeep(meta, previousMeta);
     set(this.structure, `${this.key}.meta`, meta);
@@ -167,36 +160,36 @@ export class MenuStructureGenerator {
   /**
    * Type of part, to indicate its structure
    */
-  private setPartType(type: MenuNodeType) {
-    this.addPartMeta({ type });
+  private setNodeType(type: MenuNodeType) {
+    this.addNodeMeta({ type });
   }
 
   /**
    * Order in which to appear in the menu
    */
-  private setPartOrder(order: number) {
-    this.addPartMeta({ order });
+  private setNodeOrder(order: number) {
+    this.addNodeMeta({ order });
   }
 
   /**
    * For routing
    */
-  private setPartPath(path: string) {
-    this.addPartMeta({ path });
+  private setNodePath(path: string) {
+    this.addNodeMeta({ path });
   }
 
   /**
    * For linking back to the file in the repo
    */
-  private setPartAbsolutePath(absolutePath: string) {
-    this.addPartMeta({ absolutePath });
+  private setNodeAbsolutePath(absolutePath: string) {
+    this.addNodeMeta({ absolutePath });
   }
 
   /**
    * For linking to a section for a specific version using an anchor
    */
-  private setPartPermalinkPath(permalinkPath: string) {
-    this.addPartMeta({ permalinkPath });
+  private setNodePermalinkPath(permalinkPath: string) {
+    this.addNodeMeta({ permalinkPath });
   }
 
   /**
@@ -204,16 +197,19 @@ export class MenuStructureGenerator {
    *
    * Example: to overwrite `path` github/v2/doc with `seoFriendlyPath` github/doc if v2 is current.
    */
-  private setPartSeoFriendlyPath(seoFriendlyPath: string) {
-    this.addPartMeta({ seoFriendlyPath });
+  private setNodeSeoFriendlyPath(seoFriendlyPath: string) {
+    this.addNodeMeta({ seoFriendlyPath });
   }
 
   /**
    * To overwrite currentVersion in meta every time a newer version is found
    */
-  private setPartCurrentVersion(currentVersion: string) {
-    if (!isVersionPart(currentVersion)) throw new Error('expected version to match a version part');
-    this.addPartMeta({ currentVersion });
+  private setNodeCurrentVersion(currentVersion: string) {
+    if (!MenuSegment.isVersion(currentVersion)) {
+      throw new Error('expected version to match a version part');
+    }
+
+    this.addNodeMeta({ currentVersion });
   }
 
   private stripVersionNumbersFromLatestVersionInSeoFriendlyPath() {
@@ -222,30 +218,28 @@ export class MenuStructureGenerator {
       replacePath = null,
       withPath = null,
     ) => {
-      for (const [key, item] of Object.entries(collection)) {
-        if (key === 'meta') {
-          continue;
-        }
+      for (const [segment, node] of Object.entries(collection)) {
+        if (MenuSegment.isMeta(segment)) continue;
 
         // Example: Recursively replace /github/v[latest]/something with /github/something.
-        if (replacePath && withPath && has(item, 'meta.path')) {
-          set(collection, `${key}.meta.path`, item.meta.path.replace(replacePath, withPath));
+        if (replacePath && withPath && has(node, 'meta.path')) {
+          set(collection, `${segment}.meta.path`, node.meta.path.replace(replacePath, withPath));
         }
 
-        if (typeof item !== 'object') {
+        if (!MenuNode.hasChildren(node)) {
           continue;
         }
 
-        if (key === menuVersionBranch) {
-          const { currentVersion } = item.meta;
-          const { seoFriendlyPath } = item[currentVersion].meta;
-          const replace = get(collection, `${key}.${currentVersion}.meta.path`);
-          set(collection, `${key}.${currentVersion}.meta.path`, seoFriendlyPath);
-          updateSeoPathsRecursively(item, replace, seoFriendlyPath);
+        if (MenuSegment.isVersionContainer(segment)) {
+          const { currentVersion } = node.meta;
+          const { seoFriendlyPath } = node[currentVersion].meta;
+          const replace = get(collection, `${segment}.${currentVersion}.meta.path`);
+          set(collection, `${segment}.${currentVersion}.meta.path`, seoFriendlyPath);
+          updateSeoPathsRecursively(node, replace, seoFriendlyPath);
           continue;
         }
 
-        updateSeoPathsRecursively(item, replacePath, withPath);
+        updateSeoPathsRecursively(node, replacePath, withPath);
       }
     };
 
@@ -254,15 +248,13 @@ export class MenuStructureGenerator {
 
   private cleanup() {
     const cleanupRecursively = (collection: MenuNode) => {
-      for (const [key, item] of Object.entries(collection)) {
-        if (key === 'meta') {
-          continue;
-        }
+      for (const [segment, node] of Object.entries(collection)) {
+        if (MenuSegment.isMeta(segment)) continue;
 
-        unset(collection, `${key}.meta.seoFriendlyPath`);
+        unset(collection, `${segment}.meta.seoFriendlyPath`);
 
-        if (typeof item === 'object') {
-          cleanupRecursively(item);
+        if (MenuNode.hasChildren(node)) {
+          cleanupRecursively(node);
         }
       }
     };

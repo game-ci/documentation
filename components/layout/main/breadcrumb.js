@@ -1,4 +1,4 @@
-import { versionPartRegex } from '@/tools/menu/menu-structure-generator';
+import { MenuSegment } from '@/tools/menu/menu-segment';
 import Link from 'next/link';
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
@@ -11,7 +11,7 @@ const BreadcrumbWrapper = () => {
   return (
     <Breadcrumb>
       {segments.map(({ url, name }) => {
-        if (versionPartRegex.test(name)) return null;
+        if (MenuSegment.isVersion(name)) return null;
 
         return (
           <Item key={url} style={{ textTransform: 'capitalize' }}>

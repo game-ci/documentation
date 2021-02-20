@@ -1,8 +1,8 @@
-import { MenuNode, menuVersionBranch } from '@/tools/menu/menu-structure-generator';
-import { normaliseTitle } from '@/tools/utils/string';
+import { MenuNode } from '@/tools/menu/menu-node';
+import { MenuSegment } from '@/tools/menu/menu-segment';
 import React, { useContext } from 'react';
 import { Menu } from 'antd';
-import { has, map } from 'lodash';
+import { map } from 'lodash';
 import Link from 'next/link';
 import VersionedTitle from '@/components/layout/docs/menu/versioned-title';
 import MenuContext from '@/components/layout/docs/menu/menu-context';
@@ -14,36 +14,36 @@ const { SubMenu, Item } = Menu;
 
 const populateMenuRecursively = (collection: MenuNode, selections) => {
   // Todo sorting by item.meta.order
-  return map(Object.entries(collection), ([key, item]) => {
-    if (key === 'meta') return null;
+  return map(Object.entries(collection), ([segment, node]) => {
+    if (MenuSegment.isMeta(segment)) {
+      return null;
+    }
 
-    // menu item
-    if (has(item, 'name')) {
+    if (MenuNode.isPage(node)) {
       return (
-        <Item key={`/docs/${item.meta.path}`}>
-          <Link href="/docs/[...documentation-page]" as={`/docs/${item.meta.path}`}>
-            <a>{item.name}</a>
+        <Item key={node.meta.path}>
+          <Link href="/docs/[...documentation-page]" as={`/docs/${node.meta.path}`}>
+            <a>{node.name}</a>
           </Link>
         </Item>
       );
     }
 
-    // container with versions
-    if (key === menuVersionBranch) {
-      const { meta, ...versions } = item;
+    if (MenuSegment.isVersionContainer(segment)) {
+      const { meta, ...versions } = node;
       const selectedVersion = selections[meta.path];
-      return map(Object.entries(versions), ([versionKey, versionCollection]) => {
+      return map(Object.entries(versions), ([versionSegment, versionNode]) => {
         // Todo - take hardcoded selected version from globally selected version for meta.section
-        return versionKey === selectedVersion
-          ? populateMenuRecursively(versionCollection, selections)
+        return versionSegment === selectedVersion
+          ? populateMenuRecursively(versionNode, selections)
           : [];
       });
     }
 
     // container with menu items
     return (
-      <SubMenu key={key} title={normaliseTitle(key)}>
-        {populateMenuRecursively(item, selections)}
+      <SubMenu key={node.meta.path} title={MenuSegment.toTitle(segment)}>
+        {populateMenuRecursively(node, selections)}
       </SubMenu>
     );
   });
