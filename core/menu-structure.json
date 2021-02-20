@@ -9,6 +9,7 @@
       "docker-images": {
         "name": "Docker images",
         "meta": {
+          "version": null,
           "absolutePath": "docker/docker-images.md",
           "permalinkPath": "docker/docker-images",
           "path": "docker/docker-images",
@@ -38,6 +39,7 @@
           "getting-started": {
             "name": "Getting started",
             "meta": {
+              "version": "v1",
               "absolutePath": "github/v1/01-getting-started.md",
               "permalinkPath": "github/v1/getting-started",
               "path": "github/v1/getting-started",
@@ -48,6 +50,7 @@
           "activation": {
             "name": "Activation",
             "meta": {
+              "version": "v1",
               "absolutePath": "github/v1/02-activation.md",
               "permalinkPath": "github/v1/activation",
               "path": "github/v1/activation",
@@ -58,6 +61,7 @@
           "test-runner": {
             "name": "Test runner",
             "meta": {
+              "version": "v1",
               "absolutePath": "github/v1/03-test-runner.md",
               "permalinkPath": "github/v1/test-runner",
               "path": "github/v1/test-runner",
@@ -68,6 +72,7 @@
           "builder": {
             "name": "Builder",
             "meta": {
+              "version": "v1",
               "absolutePath": "github/v1/04-builder.md",
               "permalinkPath": "github/v1/builder",
               "path": "github/v1/builder",
@@ -78,6 +83,7 @@
           "returning-a-license": {
             "name": "Returning a license",
             "meta": {
+              "version": "v1",
               "absolutePath": "github/v1/05-returning-a-license.md",
               "permalinkPath": "github/v1/returning-a-license",
               "path": "github/v1/returning-a-license",
@@ -94,6 +100,7 @@
             "android": {
               "name": "Android",
               "meta": {
+                "version": "v1",
                 "absolutePath": "github/v1/06-deployment/android.md",
                 "permalinkPath": "github/v1/deployment/android",
                 "path": "github/v1/deployment/android",
@@ -104,6 +111,7 @@
             "ios": {
               "name": "iOS",
               "meta": {
+                "version": "v1",
                 "absolutePath": "github/v1/06-deployment/ios.md",
                 "permalinkPath": "github/v1/deployment/ios",
                 "path": "github/v1/deployment/ios",
@@ -122,6 +130,7 @@
           "getting-started": {
             "name": "Getting started",
             "meta": {
+              "version": "v2",
               "absolutePath": "github/v2/01-getting-started.md",
               "permalinkPath": "github/v2/getting-started",
               "path": "github/getting-started",
@@ -132,6 +141,7 @@
           "activation": {
             "name": "Activation",
             "meta": {
+              "version": "v2",
               "absolutePath": "github/v2/02-activation.md",
               "permalinkPath": "github/v2/activation",
               "path": "github/activation",
@@ -142,6 +152,7 @@
           "test-runner": {
             "name": "Test runner",
             "meta": {
+              "version": "v2",
               "absolutePath": "github/v2/03-test-runner.md",
               "permalinkPath": "github/v2/test-runner",
               "path": "github/test-runner",
@@ -152,6 +163,7 @@
           "builder": {
             "name": "Builder",
             "meta": {
+              "version": "v2",
               "absolutePath": "github/v2/04-builder.md",
               "permalinkPath": "github/v2/builder",
               "path": "github/builder",
@@ -162,6 +174,7 @@
           "returning-a-license": {
             "name": "Returning a license",
             "meta": {
+              "version": "v2",
               "absolutePath": "github/v2/05-returning-a-license.md",
               "permalinkPath": "github/v2/returning-a-license",
               "path": "github/returning-a-license",
@@ -178,6 +191,7 @@
             "android": {
               "name": "Android",
               "meta": {
+                "version": "v2",
                 "absolutePath": "github/v2/15-deployment/android.md",
                 "permalinkPath": "github/v2/deployment/android",
                 "path": "github/deployment/android",
@@ -188,6 +202,7 @@
             "ios": {
               "name": "iOS",
               "meta": {
+                "version": "v2",
                 "absolutePath": "github/v2/15-deployment/ios.md",
                 "permalinkPath": "github/v2/deployment/ios",
                 "path": "github/deployment/ios",
@@ -208,6 +223,7 @@
       "getting-started": {
         "name": "Getting started",
         "meta": {
+          "version": null,
           "absolutePath": "gitlab/01-getting-started.md",
           "permalinkPath": "gitlab/getting-started",
           "path": "gitlab/getting-started",
@@ -218,6 +234,7 @@
       "activation": {
         "name": "Activation",
         "meta": {
+          "version": null,
           "absolutePath": "gitlab/02-activation.md",
           "permalinkPath": "gitlab/activation",
           "path": "gitlab/activation",
@@ -228,6 +245,7 @@
       "example-project": {
         "name": "Example project",
         "meta": {
+          "version": null,
           "absolutePath": "gitlab/03-example-project.md",
           "permalinkPath": "gitlab/example-project",
           "path": "gitlab/example-project",
@@ -238,6 +256,7 @@
       "custom-build-options": {
         "name": "Custom build options",
         "meta": {
+          "version": null,
           "absolutePath": "gitlab/custom-build-options.md",
           "permalinkPath": "gitlab/custom-build-options",
           "path": "gitlab/custom-build-options",
@@ -254,6 +273,7 @@
         "android": {
           "name": "Android",
           "meta": {
+            "version": null,
             "absolutePath": "gitlab/deployment/android.md",
             "permalinkPath": "gitlab/deployment/android",
             "path": "gitlab/deployment/android",
@@ -264,6 +284,7 @@
         "ios": {
           "name": "iOS",
           "meta": {
+            "version": null,
             "absolutePath": "gitlab/deployment/ios.md",
             "permalinkPath": "gitlab/deployment/ios",
             "path": "gitlab/deployment/ios",
@@ -275,6 +296,7 @@
       "tests": {
         "name": "Tests",
         "meta": {
+          "version": null,
           "absolutePath": "gitlab/tests.md",
           "permalinkPath": "gitlab/tests",
           "path": "gitlab/tests",
@@ -292,6 +314,7 @@
       "getting-started": {
         "name": "Getting started",
         "meta": {
+          "version": null,
           "absolutePath": "travis/getting-started.md",
           "permalinkPath": "travis/getting-started",
           "path": "travis/getting-started",
@@ -309,6 +332,7 @@
       "common-issues": {
         "name": "Common issues",
         "meta": {
+          "version": null,
           "absolutePath": "troubleshooting/common-issues.md",
           "permalinkPath": "troubleshooting/common-issues",
           "path": "troubleshooting/common-issues",

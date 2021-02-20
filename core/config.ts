@@ -10,7 +10,7 @@ export default {
     hitsPerPage: 12,
     settings: {
       // Select the attributes you want to search in
-      searchableAttributes: ['title', 'summary', 'body', 'categories', 'filename'],
+      searchableAttributes: ['title', 'summary', 'body', 'version', 'categories', 'filename'],
       // Define business metrics for ranking and sorting
       customRanking: ['asc(level)', 'desc(title)'],
       // Set up some attributes to filter results on

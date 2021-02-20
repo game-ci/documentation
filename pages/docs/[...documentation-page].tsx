@@ -23,10 +23,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const structure = await MenuStructure.generateFromFiles(filePaths);
   const fileMetas = await MenuStructure.getFileMetas(structure);
 
-  // Todo - update search engine part
-  if (process.env.CI) {
-    generateSearchDefinitionsFromFiles(filePaths);
-  }
+  if (process.env.CI) generateSearchDefinitionsFromFiles(fileMetas);
 
   const paths = fileMetas.map((file) => ({
     params: { 'documentation-page': file.meta.path.split('/') },

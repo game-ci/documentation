@@ -1,3 +1,4 @@
+import { Tag } from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Highlight } from 'react-instantsearch-dom';
@@ -5,15 +6,17 @@ import config from '@/core/config';
 
 const Result = ({ hit }) => {
   const { docsPath } = config;
-  const { basePath, anchorId } = hit;
-  const permalink = `${docsPath}/${basePath}#${anchorId}`;
+  const { path, version, anchorId } = hit;
+  const permalink = `${docsPath}/${path}#${anchorId}`;
 
   return (
     <article style={{ padding: 8 }}>
-      <a href={permalink} style={{ display: 'block', width: '100%' }}>
-        <Highlight attribute="title" hit={hit} tagName="em" />
+      <a href={permalink} style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ flex: 1 }}>
+          <Highlight attribute="title" hit={hit} tagName="em" />
+        </span>
+        {version && <Tag style={{ lineHeight: '120%', fontSize: '80%' }}>{version}</Tag>}
       </a>
-      <Highlight attribute="summary" hit={hit} tagName="em" />
     </article>
   );
 };
@@ -21,8 +24,10 @@ const Result = ({ hit }) => {
 Result.propTypes = {
   hit: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    basePath: PropTypes.string,
+    path: PropTypes.string.isRequired,
     anchorId: PropTypes.string,
+    version: PropTypes.string,
+    summary: PropTypes.string,
   }).isRequired,
 };
 

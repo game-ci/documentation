@@ -40,7 +40,7 @@ import generateObjectIDs from './utils/generate-object-ids';
     }
 
     // Push objects to Algolia
-    const objects = generateObjectIDs(sections, ['title', 'basePath', 'summary']);
+    const objects = generateObjectIDs(sections, ['path', 'version', 'title', 'summary']);
     const updatedObjects = (await index.saveObjects(objects)).objectIDs;
     console.log('[push-search-payload] Updated search entries.\n', updatedObjects);
 
