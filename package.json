@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
-    "build": "node -v && yarn update-menu && cross-env NODE_OPTIONS=\"-r esm\" next build",
+    "build": "node -v && yarn update-menu && cross-env NODE_OPTIONS=\"-r esm\" next build && yarn update-search",
     "update-menu": "cross-env NODE_OPTIONS=\"-r esm -r dotenv/config\" ts-node -r tsconfig-paths/register tools/menu/cli-generate.ts",
     "update-search": "cross-env NODE_OPTIONS=\"-r esm -r dotenv/config\" ts-node -r tsconfig-paths/register tools/search/push-search-payload.ts",
     "analyze": "cross-env-shell NODE_OPTIONS=\"-r esm\" ANALYZE=true next build",
@@ -26,6 +26,7 @@
     "antd": "4.12.2",
     "babel-plugin-import": "1.13.3",
     "cross-env": "^7.0.3",
+    "current-git-branch": "^1.1.0",
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
     "gray-matter": "4.0.2",

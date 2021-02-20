@@ -1,6 +1,7 @@
 /* eslint-disable no-console,unicorn/no-process-exit */
 import path from 'path';
 import { readFileSync } from 'fs';
+import getBranchName from 'current-git-branch';
 import algoliasearch from 'algoliasearch';
 import { difference } from 'lodash';
 import config from '../../core/config';
@@ -9,7 +10,7 @@ import generateObjectIDs from './utils/generate-object-ids';
 (async () => {
   try {
     if (process.env.CI) {
-      console.log('[push-search-payload] Updating search cache.');
+      console.log(`[push-search-payload] Updating search cache for "${getBranchName()}" branch.`);
     } else {
       console.log('[push-search-payload] Skipping search update for local builds.');
       return;
