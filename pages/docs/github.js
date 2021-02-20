@@ -1,13 +1,13 @@
 import useRedirect from '@/core/routing/use-redirect';
-import DocumentationPage from '@/components/layout/documentation-page';
+import Page from '@/components/layout/docs/page';
 
 const GithubIndex = () => {
   useRedirect('/docs/github/getting-started');
 
   return (
-    <DocumentationPage>
+    <Page>
       <main className="ant-typography">Redirecting to category index...</main>
-    </DocumentationPage>
+    </Page>
   );
 };
 

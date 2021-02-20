@@ -35,7 +35,8 @@ const NavBar = ({ showSearch }: Props) => (
           <a>Docs</a>
         </Link>
       </Item>
-      {showSearch && <SearchBar />}
+      {/* Todo - re-enable in https://github.com/game-ci/documentation/issues/93 */}
+      {(showSearch && false && <SearchBar />) || <div style={{ flex: 1 }} />}
       <SourceLinks />
       <Item>
         <Link href="/discord">

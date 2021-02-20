@@ -42,11 +42,7 @@ const SourceLinks = (props) => (
         </a>
       </Item>
       <Item icon={<GithubOutlined />} key="external:action:test-runner">
-        <a
-          target="_blank"
-          rel="noreferrer"
-          href="https://github.com/game-ci/unity-test-runner"
-        >
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-test-runner">
           Unity Test Runner
         </a>
       </Item>
@@ -65,11 +61,7 @@ const SourceLinks = (props) => (
         </a>
       </Item>
       <Item icon={<GithubOutlined />} key="external:action:return-license">
-        <a
-          target="_blank"
-          rel="noreferrer"
-          href="https://github.com/game-ci/unity-return-license"
-        >
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-return-license">
           Unity Return License
         </a>
       </Item>

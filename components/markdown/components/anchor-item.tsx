@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReactNodeLike } from 'prop-types';
 import { Anchor } from 'antd';
-import { extractAnchorId } from '../../../tools/search/utils/extract-sections';
+import { extractAnchorId } from '@/tools/search/utils/extract-sections';
 
 const { Link } = Anchor;
 

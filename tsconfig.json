@@ -15,8 +15,10 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
+      "@/components/*": ["components/*"],
       "@/core/*": ["core/*"],
-      "@/components/*": ["components/*"]
+      "@/logic/*": ["logic/*"],
+      "@/tools/*": ["tools/*"]
     }
   },
   "exclude": ["node_modules"],

@@ -1,0 +1,237 @@
+{
+  "docs": {
+    "docker": {
+      "meta": {
+        "path": "docker",
+        "order": 6,
+        "type": "folder"
+      },
+      "docker-images": {
+        "name": "Docker images",
+        "meta": {
+          "absolutePath": "06-docker/docker-images.md",
+          "permalinkPath": "docker/docker-images",
+          "path": "docker/docker-images",
+          "order": 99,
+          "type": "file"
+        }
+      }
+    },
+    "github": {
+      "meta": {
+        "path": "github",
+        "order": 99,
+        "type": "folder"
+      },
+      "<versions>": {
+        "meta": {
+          "currentVersion": "v1",
+          "path": "github",
+          "type": "identifier"
+        },
+        "v1": {
+          "meta": {
+            "path": "github",
+            "order": 99,
+            "type": "version"
+          },
+          "getting-started": {
+            "name": "Getting started",
+            "meta": {
+              "absolutePath": "github/v1/01-getting-started.md",
+              "permalinkPath": "github/v1/getting-started",
+              "path": "github/getting-started",
+              "order": 1,
+              "type": "file"
+            }
+          },
+          "activation": {
+            "name": "Activation",
+            "meta": {
+              "absolutePath": "github/v1/02-activation.md",
+              "permalinkPath": "github/v1/activation",
+              "path": "github/activation",
+              "order": 2,
+              "type": "file"
+            }
+          },
+          "test-runner": {
+            "name": "Test runner",
+            "meta": {
+              "absolutePath": "github/v1/03-test-runner.md",
+              "permalinkPath": "github/v1/test-runner",
+              "path": "github/test-runner",
+              "order": 3,
+              "type": "file"
+            }
+          },
+          "builder": {
+            "name": "Builder",
+            "meta": {
+              "absolutePath": "github/v1/04-builder.md",
+              "permalinkPath": "github/v1/builder",
+              "path": "github/builder",
+              "order": 4,
+              "type": "file"
+            }
+          },
+          "returning-a-license": {
+            "name": "Returning a license",
+            "meta": {
+              "absolutePath": "github/v1/05-returning-a-license.md",
+              "permalinkPath": "github/v1/returning-a-license",
+              "path": "github/returning-a-license",
+              "order": 5,
+              "type": "file"
+            }
+          },
+          "deployment": {
+            "meta": {
+              "path": "github/deployment",
+              "order": 15,
+              "type": "folder"
+            },
+            "android": {
+              "name": "Android",
+              "meta": {
+                "absolutePath": "github/v1/15-deployment/android.md",
+                "permalinkPath": "github/v1/deployment/android",
+                "path": "github/deployment/android",
+                "order": 99,
+                "type": "file"
+              }
+            },
+            "ios": {
+              "name": "iOS",
+              "meta": {
+                "absolutePath": "github/v1/15-deployment/ios.md",
+                "permalinkPath": "github/v1/deployment/ios",
+                "path": "github/deployment/ios",
+                "order": 99,
+                "type": "file"
+              }
+            }
+          }
+        }
+      }
+    },
+    "gitlab": {
+      "meta": {
+        "path": "gitlab",
+        "order": 99,
+        "type": "folder"
+      },
+      "getting-started": {
+        "name": "Getting started",
+        "meta": {
+          "absolutePath": "gitlab/01-getting-started.md",
+          "permalinkPath": "gitlab/getting-started",
+          "path": "gitlab/getting-started",
+          "order": 1,
+          "type": "file"
+        }
+      },
+      "activation": {
+        "name": "Activation",
+        "meta": {
+          "absolutePath": "gitlab/02-activation.md",
+          "permalinkPath": "gitlab/activation",
+          "path": "gitlab/activation",
+          "order": 2,
+          "type": "file"
+        }
+      },
+      "example-project": {
+        "name": "Example project",
+        "meta": {
+          "absolutePath": "gitlab/03-example-project.md",
+          "permalinkPath": "gitlab/example-project",
+          "path": "gitlab/example-project",
+          "order": 3,
+          "type": "file"
+        }
+      },
+      "custom-build-options": {
+        "name": "Custom build options",
+        "meta": {
+          "absolutePath": "gitlab/custom-build-options.md",
+          "permalinkPath": "gitlab/custom-build-options",
+          "path": "gitlab/custom-build-options",
+          "order": 99,
+          "type": "file"
+        }
+      },
+      "deployment": {
+        "meta": {
+          "path": "gitlab/deployment",
+          "order": 99,
+          "type": "folder"
+        },
+        "android": {
+          "name": "Android",
+          "meta": {
+            "absolutePath": "gitlab/deployment/android.md",
+            "permalinkPath": "gitlab/deployment/android",
+            "path": "gitlab/deployment/android",
+            "order": 99,
+            "type": "file"
+          }
+        },
+        "ios": {
+          "name": "iOS",
+          "meta": {
+            "absolutePath": "gitlab/deployment/ios.md",
+            "permalinkPath": "gitlab/deployment/ios",
+            "path": "gitlab/deployment/ios",
+            "order": 99,
+            "type": "file"
+          }
+        }
+      },
+      "tests": {
+        "name": "Tests",
+        "meta": {
+          "absolutePath": "gitlab/tests.md",
+          "permalinkPath": "gitlab/tests",
+          "path": "gitlab/tests",
+          "order": 99,
+          "type": "file"
+        }
+      }
+    },
+    "travis": {
+      "meta": {
+        "path": "travis",
+        "order": 99,
+        "type": "folder"
+      },
+      "getting-started": {
+        "name": "Getting started",
+        "meta": {
+          "absolutePath": "travis/getting-started.md",
+          "permalinkPath": "travis/getting-started",
+          "path": "travis/getting-started",
+          "order": 99,
+          "type": "file"
+        }
+      }
+    },
+    "troubleshooting": {
+      "meta": {
+        "path": "troubleshooting",
+        "order": 99,
+        "type": "folder"
+      },
+      "common-issues": {
+        "name": "Common issues",
+        "meta": {
+          "absolutePath": "troubleshooting/common-issues.md",
+          "permalinkPath": "troubleshooting/common-issues",
+          "path": "troubleshooting/common-issues",
+          "order": 99,
+          "type": "file"
+        }
+      }
+    }
+  }
+}
