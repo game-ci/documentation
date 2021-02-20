@@ -7,11 +7,14 @@ import getConfig from 'next/config';
  * For a variable to show up in the browser, it needs to be defined in next.config.js under
  * the property `publicRuntimeConfig`.
  *
- * Note: This is a low level method, that should only be used in specific cases where the store has
- * not yet been initialised, but the value is still required.
+ * Notes:
+ *   - This is a low level method, that should only be used in specific cases where the store has
+ *     not yet been initialised, but the value is still required.
+ *   - An empty string is only expected if this function is executed in the code path of a custom
+ *     script outside of NextJS, thus not using next.config.js configuration.
  */
-export function getIsomorphicValue(variableName) {
-  const { publicRuntimeConfig } = getConfig();
+export const getIsomorphicValue = (variableName: string): string => {
+  const config = getConfig();
 
-  return publicRuntimeConfig[variableName];
-}
+  return config ? config.publicRuntimeConfig[variableName] : '';
+};

@@ -1,10 +1,10 @@
 /* eslint-disable no-console,unicorn/no-process-exit */
-import { SearchIndex } from '@/tools/search/search-index';
 import path from 'path';
 import { readFileSync } from 'fs';
 import { currentBranch } from '@/tools/utils/current-branch';
 import algoliasearch from 'algoliasearch';
 import { difference } from 'lodash';
+import { SearchIndex } from './search-index';
 import config from '../../core/config';
 import generateObjectIDs from './utils/generate-object-ids';
 
