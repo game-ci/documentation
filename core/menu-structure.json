@@ -25,13 +25,13 @@
       },
       "<versions>": {
         "meta": {
-          "currentVersion": "v2",
+          "currentVersion": "v1",
           "path": "github",
           "type": "identifier"
         },
         "v1": {
           "meta": {
-            "path": "github/v1",
+            "path": "github",
             "order": 99,
             "type": "version"
           },
@@ -40,7 +40,7 @@
             "meta": {
               "absolutePath": "github/v1/01-getting-started.md",
               "permalinkPath": "github/v1/getting-started",
-              "path": "github/v1/getting-started",
+              "path": "github/getting-started",
               "order": 1,
               "type": "file"
             }
@@ -50,7 +50,7 @@
             "meta": {
               "absolutePath": "github/v1/02-activation.md",
               "permalinkPath": "github/v1/activation",
-              "path": "github/v1/activation",
+              "path": "github/activation",
               "order": 2,
               "type": "file"
             }
@@ -60,7 +60,7 @@
             "meta": {
               "absolutePath": "github/v1/03-test-runner.md",
               "permalinkPath": "github/v1/test-runner",
-              "path": "github/v1/test-runner",
+              "path": "github/test-runner",
               "order": 3,
               "type": "file"
             }
@@ -70,7 +70,7 @@
             "meta": {
               "absolutePath": "github/v1/04-builder.md",
               "permalinkPath": "github/v1/builder",
-              "path": "github/v1/builder",
+              "path": "github/builder",
               "order": 4,
               "type": "file"
             }
@@ -80,14 +80,14 @@
             "meta": {
               "absolutePath": "github/v1/05-returning-a-license.md",
               "permalinkPath": "github/v1/returning-a-license",
-              "path": "github/v1/returning-a-license",
+              "path": "github/returning-a-license",
               "order": 5,
               "type": "file"
             }
           },
           "deployment": {
             "meta": {
-              "path": "github/v1/deployment",
+              "path": "github/deployment",
               "order": 15,
               "type": "folder"
             },
@@ -96,7 +96,7 @@
               "meta": {
                 "absolutePath": "github/v1/15-deployment/android.md",
                 "permalinkPath": "github/v1/deployment/android",
-                "path": "github/v1/deployment/android",
+                "path": "github/deployment/android",
                 "order": 99,
                 "type": "file"
               }
@@ -106,27 +106,10 @@
               "meta": {
                 "absolutePath": "github/v1/15-deployment/ios.md",
                 "permalinkPath": "github/v1/deployment/ios",
-                "path": "github/v1/deployment/ios",
+                "path": "github/deployment/ios",
                 "order": 99,
                 "type": "file"
               }
-            }
-          }
-        },
-        "v2": {
-          "meta": {
-            "path": "github",
-            "order": 99,
-            "type": "version"
-          },
-          "activation": {
-            "name": "Activation",
-            "meta": {
-              "absolutePath": "github/v2/02-activation.md",
-              "permalinkPath": "github/v2/activation",
-              "path": "github/activation",
-              "order": 2,
-              "type": "file"
             }
           }
         }
@@ -213,30 +196,6 @@
           "path": "gitlab/tests",
           "order": 99,
           "type": "file"
-        }
-      },
-      "<versions>": {
-        "meta": {
-          "currentVersion": "v1",
-          "path": "gitlab",
-          "type": "identifier"
-        },
-        "v1": {
-          "meta": {
-            "path": "gitlab",
-            "order": 99,
-            "type": "version"
-          },
-          "test": {
-            "name": "Test",
-            "meta": {
-              "absolutePath": "gitlab/v1/test.md",
-              "permalinkPath": "gitlab/v1/test",
-              "path": "gitlab/test",
-              "order": 99,
-              "type": "file"
-            }
-          }
         }
       }
     },
