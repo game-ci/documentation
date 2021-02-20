@@ -18,6 +18,8 @@ export class MenuStructureGenerator {
 
   private seoFriendlyPathArray: string[];
 
+  private versionOfCurrentPath: string;
+
   private get key() {
     return this.keyArray.join('.');
   }
@@ -31,6 +33,7 @@ export class MenuStructureGenerator {
   }
 
   private reset() {
+    this.versionOfCurrentPath = null;
     this.keyArray = [];
     this.permalinkPathArray = [];
     this.seoFriendlyPathArray = [];
@@ -41,6 +44,10 @@ export class MenuStructureGenerator {
   private addSegmentToPermalinkPath = (segment) => this.permalinkPathArray.push(segment);
 
   private addSegmentToSeoFriendlyPath = (segment) => this.seoFriendlyPathArray.push(segment);
+
+  private setVersionOfCurrentPath = (segment) => {
+    this.versionOfCurrentPath = segment;
+  };
 
   static async generateMenuStructure(fileNames: string[]) {
     // eslint-disable-next-line no-console
@@ -84,6 +91,7 @@ export class MenuStructureGenerator {
         this.addSegmentToKey(MenuSegment.versionContainerIdentifier);
         this.setNodeType('identifier');
         this.setNodePath(this.permalinkPath);
+        this.setVersionOfCurrentPath(segment);
         this.setNodeCurrentVersion(segment);
       }
 
@@ -112,6 +120,7 @@ export class MenuStructureGenerator {
     this.setNodePermalinkPath(this.permalinkPath);
     this.setNodeSeoFriendlyPath(this.seoFriendlyPath);
     this.setNodeAbsolutePath(this.fileName);
+    this.setNodeVersion(this.versionOfCurrentPath);
   }
 
   private extractInfoFromSegment() {
@@ -199,6 +208,13 @@ export class MenuStructureGenerator {
    */
   private setNodeSeoFriendlyPath(seoFriendlyPath: string) {
     this.addNodeMeta({ seoFriendlyPath });
+  }
+
+  /**
+   * Version of parent or self
+   */
+  private setNodeVersion(version: string) {
+    this.addNodeMeta({ version });
   }
 
   /**

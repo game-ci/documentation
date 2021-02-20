@@ -117,6 +117,7 @@
   left: 0;
   background-color: rgb(1 44 84);
   padding: 0 16px 16px;
+  z-index: 10;
 }
 
 .ais-meta-information {

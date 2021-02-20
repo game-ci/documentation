@@ -1,8 +1,15 @@
 /* eslint-disable unicorn/no-array-reduce,no-param-reassign,@typescript-eslint/no-shadow */
+import { SearchIndex } from './tools/search/search-index';
+
 const withBundleAnalyzer = require('@next/bundle-analyzer');
 
 const compose = (plugins) => ({
   target: 'serverless',
+
+  // Interpreted at build-time
+  publicRuntimeConfig: {
+    SEARCH_INDEX: SearchIndex.getForCurrentEnvironment(),
+  },
 
   webpack(config, options) {
     config.module.rules.push({

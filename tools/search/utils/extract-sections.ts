@@ -57,21 +57,24 @@ const finalisePreviousSection = (section) => {
   return finalisedSection;
 };
 
-const createSectionCreator = (basePath) => {
+const createSectionCreator = (meta) => {
   return (line) => {
+    const { path, version } = meta;
+
     return {
       title: extractTitle(line),
       level: determineLevel(line),
-      basePath,
+      path,
+      version,
       anchorId: extractAnchorId(line),
       content: '',
     };
   };
 };
 
-export default function extractSections(fileContents, basePath) {
-  const createNewSectionFromLine = createSectionCreator(basePath);
-  const lines = fileContents.split('\n');
+export default function extractSections(meta, contents) {
+  const createNewSectionFromLine = createSectionCreator(meta);
+  const lines = contents.split('\n');
   const sections = [];
 
   let section;
