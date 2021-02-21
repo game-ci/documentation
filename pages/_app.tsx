@@ -1,4 +1,5 @@
 import React from 'react';
+import 'firebase/firestore';
 import { AppProps } from 'next/app';
 import { IconContext } from 'react-icons';
 import { InstantSearch } from 'react-instantsearch-dom';
@@ -6,6 +7,8 @@ import { client as searchClient, indexName as searchIndex } from '@/core/search'
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from 'logic';
+import { FirebaseAppProvider } from 'reactfire';
+import config from 'core/config';
 
 import 'antd/dist/antd.css';
 // import 'antd/dist/antd.dark.css';
@@ -21,11 +24,13 @@ const store = configureStore({ reducer });
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
-      <InstantSearch searchClient={searchClient} indexName={searchIndex}>
-        <IconContext.Provider value={{ className: 'anticon' }}>
-          <Component {...pageProps} />
-        </IconContext.Provider>
-      </InstantSearch>
+      <FirebaseAppProvider firebaseConfig={config.firebase}>
+        <InstantSearch searchClient={searchClient} indexName={searchIndex}>
+          <IconContext.Provider value={{ className: 'anticon' }}>
+            <Component {...pageProps} />
+          </IconContext.Provider>
+        </InstantSearch>
+      </FirebaseAppProvider>
     </Provider>
   );
 }

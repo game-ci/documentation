@@ -12,7 +12,7 @@ interface Props {
   content?: string;
   data?: { title: string; date: string };
   children?: ReactNodeLike;
-  meta: any;
+  meta?: any;
 }
 
 const Page = ({ content, data, meta, children }: Props) => {
@@ -36,6 +36,7 @@ Page.defaultProps = {
   content: undefined,
   data: { title: '', date: '' },
   children: null,
+  meta: null,
 };
 
 export default Page;
