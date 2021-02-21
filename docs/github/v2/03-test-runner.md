@@ -21,12 +21,11 @@ your license file and add it as a secret.
 Then, define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v1.4
+- uses: game-ci/unity-test-runner@v2
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
     projectPath: path/to/your/project
-    unityVersion: 20XX.X.XXXX
 ```
 
 #### Professional license
@@ -40,14 +39,13 @@ Make sure you have set up these variables in the activation step.
 Define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v1.4
+- uses: game-ci/unity-test-runner@v2
   env:
     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
   with:
     projectPath: path/to/your/project
-    unityVersion: 20XX.X.XXXX
 ```
 
 That is all you need to test your project.
@@ -64,7 +62,7 @@ after any test action.
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v2
   with:
     name: Test results
     path: artifacts
@@ -77,12 +75,12 @@ Test results can now be downloaded as `Artifacts` in the `Actions` tab.
 You can specify a different `artifactsPath` in the test runner and reference this path using the `id` of the test step.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v1.4
+- uses: game-ci/unity-test-runner@v2
   id: myTestStep
 ```
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v2
   with:
     name: Test results
     path: ${{ steps.myTestStep.outputs.artifactsPath }}
@@ -98,7 +96,7 @@ To do so, simply add Github Actions' official
 before any unity steps.
 
 ```yaml
-- uses: actions/cache@v1.1.0
+- uses: actions/cache@v2
   with:
     path: path/to/your/project/Library
     key: Library-MyProjectName-TargetPlatform
@@ -167,7 +165,7 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 Parameters without a value will be considered booleans (with a value of true).
 
 ```yaml
-- uses: game-ci/unity-test-runner@main
+- uses: game-ci/unity-test-runner@v2
   with:
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
 ```
@@ -180,7 +178,7 @@ _**default:** `""`_
 Specific docker image that should be used for testing the project.
 
 ```yaml
-- uses: game-ci/unity-test-runner@main
+- uses: game-ci/unity-test-runner@v2
   with:
     customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
@@ -204,15 +202,13 @@ env:
 
 jobs:
   testAllModes:
-    name: Test in ${{ matrix.testMode }} on version ${{ matrix.unityVersion }}
+    name: Test in ${{ matrix.testMode }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         projectPath:
           - path/to/your/project
-        unityVersion:
-          - 2019.2.11f1
         testMode:
           - playmode
           - editmode
@@ -220,20 +216,19 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-      - uses: game-ci/unity-test-runner@v1.4
+      - uses: game-ci/unity-test-runner@v2
         id: tests
         with:
           projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}

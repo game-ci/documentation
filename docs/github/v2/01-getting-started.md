@@ -42,25 +42,19 @@ Read the official documentation on how to setup a
 
 Any subsequent steps assume you have read the above.
 
-#### Supported versions
+#### Supported unity versions
 
-Unity Actions are based on the
-[unity3d](https://gitlab.com/gableroux/unity3d)
-images from
-[GabLeRoux](https://github.com/GabLeRoux).
-Any version in the
-[list](https://hub.docker.com/r/gableroux/unity3d/tags)
+Unity Actions are using
+[game-ci/docker](https://github.com/game-ci/docker/)
+since `unity-builder` version 2. Any version in this
+[list](https://hub.docker.com/r/unityci/editor/tags)
 can be used to test and build projects.
-
-It's generally considered good practice to use the same Unity version for Unity Actions as you do to develop your project.
 
 ## Simple example
 
 Below is a simple example. It is **recommended** to start from here.
 
 This example assumes that your Unity project is in the root of your repository.
-
-> _Note: this repository tests this workflow_
 
 ```yaml
 name: Actions 😎
@@ -84,26 +78,23 @@ jobs:
           lfs: true
 
       # Cache
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2
         with:
           path: Library
           key: Library
 
       # Test
       - name: Run tests
-        uses: game-ci/unity-test-runner@v1.3
-        with:
-          unityVersion: 2019.2.11f1
+        uses: game-ci/unity-test-runner@v2
 
       # Build
       - name: Build project
-        uses: game-ci/unity-builder@v0.10
+        uses: game-ci/unity-builder@v2
         with:
-          unityVersion: 2019.2.11f1
           targetPlatform: WebGL
 
       # Output
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Build
           path: build
@@ -113,8 +104,6 @@ jobs:
 
 To get an idea of how to create a more advanced workflows,
 have a look at the example below.
-
-> _Note: this repository tests this workflow_
 
 ```yaml
 name: Actions 😎
@@ -128,48 +117,46 @@ env:
 
 jobs:
   buildAndTestForSomePlatforms:
-    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         projectPath:
           - test-project
-        unityVersion:
-          - 2019.2.11f1
         targetPlatform:
           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
           - iOS # Build an iOS player.
+          - Android # Build an Android player.
           - WebGL # WebGL.
     steps:
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           lfs: true
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
           restore-keys: |
             Library-${{ matrix.projectPath }}-
             Library-
-      - uses: game-ci/unity-test-runner@v1.3
+      - uses: game-ci/unity-test-runner@v2
         id: testRunner
         with:
           projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Test results (all modes)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
-      - uses: game-ci/unity-builder@v0.10
+      - uses: game-ci/unity-builder@v2
         with:
           projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Build
           path: build
