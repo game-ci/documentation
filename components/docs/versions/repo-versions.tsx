@@ -11,7 +11,7 @@ interface Props {
 }
 
 const RepoVersions = ({ versions }: Props) => {
-  const [selectedVersion, setSelectedVersion] = useState<string>(versions.slice(-1)[0].NO_ID_FIELD);
+  const [selectedVersion, setSelectedVersion] = useState<any>(versions.slice(-1)[0].NO_ID_FIELD);
   const loading = <p>Fetching versions...</p>;
 
   const ciJobs = useFirestore()
