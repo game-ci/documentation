@@ -349,7 +349,7 @@ env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
 jobs:
-  buildForSomePlatforms:
+  buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
     strategy:
@@ -358,8 +358,8 @@ jobs:
         projectPath:
           - path/to/your/project
         unityVersion:
-          - 2019.2.11f1
-          - 2019.3.0f1
+          - 2019.4.11f1
+          - 2020.2.0f1
         targetPlatform:
           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows # Build a Windows standalone.
@@ -368,16 +368,12 @@ jobs:
           - iOS # Build an iOS player.
           - Android # Build an Android .apk standalone app.
           - WebGL # WebGL.
-          - WSAPlayer # Build an Windows Store Apps player.
-          - PS4 # Build a PS4 Standalone.
-          - XboxOne # Build a Xbox One Standalone.
-          - tvOS # Build to Apple's tvOS platform.
-          - Switch # Build a Nintendo Switch player.
     steps:
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           lfs: true
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
@@ -389,10 +385,10 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
-          name: Build
-          path: build
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
 ```
 
 > **Note:** _Environment variables are set for all jobs in the workflow like this._
