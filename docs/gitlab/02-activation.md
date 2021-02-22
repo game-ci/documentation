@@ -8,7 +8,7 @@ There are a few methods available, if you're using gitlab-ci, the easiest method
 
 Once you've added all required files to your project (mainly [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml)), there should be a manual step that can be triggered for activation.
 
-1. Visit your project's settings > CI/CD > Variables and add `UNITY_USERNAME` and `UNITY_PASSWORD` with your credentials
+1. Visit your project's settings > CI/CD > Variables and add `UNITY_USERNAME` and `UNITY_PASSWORD` with your credentials. Make sure to use your Unity3d _email address_ for `UNITY_USERNAME`.
 1. Push your first commit to your project and visit CI/CD Pipelines.
 1. Locate your latest job, there should be a `play` button, click on it and click `get-activation-file`
 1. Wait for the job to run and follow instructions in the console
