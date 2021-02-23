@@ -16,6 +16,9 @@ const RepoVersions = ({ versions }: Props) => {
 
   const ciJobs = useFirestore()
     .collection('ciJobs')
+    .orderBy('editorVersionInfo.major', 'desc')
+    .orderBy('editorVersionInfo.minor', 'desc')
+    .orderBy('editorVersionInfo.patch', 'desc')
     .where('repoVersionInfo.version', '==', selectedVersion);
 
   const { status, data } = useFirestoreCollectionData<{ [key: string]: any }>(ciJobs);
