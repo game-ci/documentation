@@ -1,4 +1,4 @@
-import Version from '@/components/docs/versions/version';
+import UnityVersion from '@/components/docs/versions/unity-version';
 import Heading from '@/components/markdown/components/heading';
 import { Collapse, Select } from 'antd';
 import React, { useState } from 'react';
@@ -34,7 +34,9 @@ const RepoVersions = ({ versions }: Props) => {
       </Select>
       <br />
       <br />
-      <Collapse>{isLoading ? loading : data.map((version) => <Version data={version} />)}</Collapse>
+      <Collapse>
+        {isLoading ? loading : data.map((version) => <UnityVersion data={version} />)}
+      </Collapse>
     </main>
   );
 };
