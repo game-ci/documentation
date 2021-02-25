@@ -11,7 +11,7 @@ interface Props {
 }
 
 const ImageVersions = ({ versions }: Props) => {
-  const [selectedVersion, setSelectedVersion] = useState<any>(versions.slice(-1)[0].NO_ID_FIELD);
+  const [selectedVersion, setSelectedVersion] = useState<any>(versions[0].NO_ID_FIELD);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
