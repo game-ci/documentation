@@ -66,6 +66,8 @@
     // For react components it's not always useful to move small methods up in scope
     "unicorn/consistent-function-scoping": ["error", { "checkArrowFunctions": false }],
     // From experience, named exports are almost always desired. I got tired of this rule
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    // Firebase requires importing each module that's used
+    "import/no-duplicates": "off"
   }
 }

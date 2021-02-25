@@ -1,4 +1,5 @@
 import React from 'react';
+import 'firebase/auth';
 import 'firebase/firestore';
 import { AppProps } from 'next/app';
 import { IconContext } from 'react-icons';
