@@ -11,7 +11,6 @@ interface Props {
 const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
   if (!selectedRepoVersion) return null;
 
-  useEffect(() => {});
   const ciJobs = useFirestore()
     .collection('ciJobs')
     .orderBy('editorVersionInfo.major', 'desc')
