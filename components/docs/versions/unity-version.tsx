@@ -16,7 +16,7 @@ const UnityVersion = ({ data, ...rest }: Props) => {
     status,
     // imageType,
     // editorVersionInfo,
-    // repoVersionInfo,
+    repoVersionInfo,
     // meta,
     // addedDate,
     modifiedDate,
@@ -45,7 +45,7 @@ const UnityVersion = ({ data, ...rest }: Props) => {
       key={id}
     >
       <Heading level={4}>Status: {status}</Heading>
-      <Builds ciJob={id} />
+      <Builds ciJobId={id} repoVersionInfo={repoVersionInfo} />
       {/* <Heading level={4}>Publication</Heading> */}
       {/* <pre>{JSON.stringify(repoVersionInfo, null, 2)}</pre> */}
       {/* <Heading level={4}>Editor</Heading> */}

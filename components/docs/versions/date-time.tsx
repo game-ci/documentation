@@ -13,8 +13,10 @@ const options = {
 };
 
 const DateTime = ({ utcSeconds }: Props) => {
-  const date = new Date(0).setUTCSeconds(utcSeconds);
-  // @ts-ignore
+  const date = new Date(0); // Use epoch
+
+  date.setUTCSeconds(utcSeconds);
+
   return <span>{`${date.toLocaleString('en-GB', options)}`}</span>;
 };
 
