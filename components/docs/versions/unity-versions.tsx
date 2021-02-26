@@ -1,4 +1,5 @@
 import UnityVersion from '@/components/docs/versions/unity-version';
+import Heading from '@/components/markdown/components/heading';
 import { Collapse } from 'antd';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
@@ -25,12 +26,28 @@ const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
   });
 
   const loading = <p>Fetching versions...</p>;
+  const failures = isLoading ? [] : data.filter((version) => version.status === 'failed');
+
   return (
-    <Collapse>
-      {isLoading
-        ? loading
-        : data.map((version) => <UnityVersion key={version.NO_ID_FIELD} data={version} />)}
-    </Collapse>
+    <main style={{ paddingTop: 24 }}>
+      {failures.length > 0 && (
+        <>
+          <Heading level={3}>Current failures</Heading>
+          <Collapse style={{ marginBottom: 24 }}>
+            {failures.map((version) => (
+              <UnityVersion key={version.NO_ID_FIELD} data={version} />
+            ))}
+          </Collapse>
+        </>
+      )}
+
+      <Heading level={3}>All versions</Heading>
+      <Collapse>
+        {isLoading
+          ? loading
+          : data.map((version) => <UnityVersion key={version.NO_ID_FIELD} data={version} />)}
+      </Collapse>
+    </main>
   );
 };
 
