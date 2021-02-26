@@ -1,16 +1,26 @@
+import BuildFailureDetails from '@/components/docs/versions/build-failure-details';
 import DockerImageLink from '@/components/docs/versions/docker-image-link';
+import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import { Table, Tooltip } from 'antd';
 
-interface Props {
-  ciJob: string;
+interface RepoVersionInfo {
+  version: string;
+  major: number;
+  minor: number;
+  patch: number;
 }
 
-const Builds = ({ ciJob }: Props) => {
+interface Props {
+  ciJobId: string;
+  repoVersionInfo: RepoVersionInfo;
+}
+
+const Builds = ({ ciJobId, repoVersionInfo }: Props) => {
   const loading = <p>Fetching builds...</p>;
 
-  const ciBuilds = useFirestore().collection('ciBuilds').where('relatedJobId', '==', ciJob);
+  const ciBuilds = useFirestore().collection('ciBuilds').where('relatedJobId', '==', ciJobId);
 
   const { status, data } = useFirestoreCollectionData<{ [key: string]: any }>(ciBuilds);
   const isLoading = status === 'loading';
@@ -88,10 +98,30 @@ const Builds = ({ ciJob }: Props) => {
       sorter: (a, b) => a.buildInfo.repoVersion.localeCompare(b.buildInfo.repoVersion, 'en-GB'),
       ellipsis: true,
     },
-  ];
+  ] as ColumnsType<any>;
 
-  // @ts-ignore
-  return <Table key={ciJob} dataSource={data} columns={columns} pagination={false} />;
+  const expandable = {
+    rowExpandable: () => true, // record.status === 'failed',
+    expandedRowRender: (record) => (
+      <BuildFailureDetails
+        style={{ margin: 0 }}
+        ciJob={ciJobId}
+        repoVersionInfo={repoVersionInfo}
+        ciBuild={record}
+      />
+    ),
+  };
+
+  return (
+    <Table
+      key={ciJobId}
+      dataSource={data}
+      rowKey={(row) => row.NO_ID_FIELD}
+      columns={columns}
+      expandable={expandable}
+      pagination={false}
+    />
+  );
 };
 
 export default Builds;
