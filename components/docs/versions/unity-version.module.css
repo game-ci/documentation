@@ -1,0 +1,3 @@
+.panel :global(.ant-collapse-content) > :global(.ant-collapse-content-box) {
+  padding: 0;
+}
