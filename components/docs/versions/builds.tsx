@@ -1,5 +1,5 @@
 import BuildFailureDetails from '@/components/docs/versions/build-failure-details';
-import DockerImageLink from '@/components/docs/versions/docker-image-link';
+import DockerImageLinkOrRetryButton from '@/components/docs/versions/docker-image-link-or-retry-button';
 import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
@@ -43,11 +43,8 @@ const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
     },
     {
       width: 45,
-      render: (value, record) => {
-        const { buildInfo, dockerInfo } = record;
-        return dockerInfo && <DockerImageLink dockerInfo={dockerInfo} buildInfo={buildInfo} />;
-      },
-      key: 'dockerInfo-link-button',
+      render: (value, record) => <DockerImageLinkOrRetryButton record={record} />,
+      key: 'docker-image-link-or-retry-button',
     },
     {
       title: 'Build identifier',
