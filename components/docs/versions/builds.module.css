@@ -1,0 +1,10 @@
+.stickyRow:global(.ant-table-row.ant-table-row-level-0) > :global(td) {
+  position: sticky;
+  top: 99px; /* height of the collapse-item-header + the parent tr > td sticky */
+  background-color: rgb(255, 255, 255);
+  z-index: 1;
+  overflow:hidden;
+}
+
+.expandedContentRow {
+}

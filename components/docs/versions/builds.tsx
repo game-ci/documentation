@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import { Table, Tooltip } from 'antd';
+import styles from './builds.module.css';
 
 interface RepoVersionInfo {
   version: string;
@@ -101,7 +102,8 @@ const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
   ] as ColumnsType<any>;
 
   const expandable = {
-    rowExpandable: () => true, // record.status === 'failed',
+    rowExpandable: () => true,
+    expandedRowClassName: () => styles.expandedContentRow,
     expandedRowRender: (record) => (
       <BuildFailureDetails
         style={{ margin: 0 }}
@@ -117,8 +119,10 @@ const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
       {...props}
       key={ciJobId}
       dataSource={data}
-      rowKey={(row) => row.NO_ID_FIELD}
       columns={columns}
+      sticky
+      rowKey={(row) => row.NO_ID_FIELD}
+      rowClassName={() => styles.stickyRow}
       expandable={expandable}
       pagination={false}
     />
