@@ -1,8 +1,8 @@
 import Builds from '@/components/docs/versions/builds';
 import DateTime from '@/components/docs/versions/date-time';
-import Heading from '@/components/markdown/components/heading';
 import React from 'react';
 import { Collapse } from 'antd';
+import styles from './unity-version.module.css';
 
 const { Panel } = Collapse;
 
@@ -10,7 +10,7 @@ interface Props {
   data: { [key: string]: any };
 }
 
-const UnityVersion = ({ data, ...rest }: Props) => {
+const UnityVersion = ({ data, ...props }: Props) => {
   const {
     NO_ID_FIELD: id,
     status,
@@ -32,7 +32,8 @@ const UnityVersion = ({ data, ...rest }: Props) => {
 
   return (
     <Panel
-      {...rest}
+      {...props}
+      className={styles.panel}
       header={
         <>
           {`${mapStatus[status]} ${id}`}
@@ -44,14 +45,7 @@ const UnityVersion = ({ data, ...rest }: Props) => {
       }
       key={id}
     >
-      <Heading level={4}>Status: {status}</Heading>
       <Builds ciJobId={id} repoVersionInfo={repoVersionInfo} />
-      {/* <Heading level={4}>Publication</Heading> */}
-      {/* <pre>{JSON.stringify(repoVersionInfo, null, 2)}</pre> */}
-      {/* <Heading level={4}>Editor</Heading> */}
-      {/* <pre>{JSON.stringify(editorVersionInfo, null, 2)}</pre> */}
-      {/* <Heading level={4}>Job</Heading> */}
-      {/* <pre>{JSON.stringify(meta, null, 2)}</pre> */}
     </Panel>
   );
 };

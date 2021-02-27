@@ -33,7 +33,7 @@ const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
       {failures.length > 0 && (
         <>
           <Heading level={3}>Current failures</Heading>
-          <Collapse style={{ marginBottom: 24 }}>
+          <Collapse accordion style={{ marginBottom: 24 }}>
             {failures.map((version) => (
               <UnityVersion key={version.NO_ID_FIELD} data={version} />
             ))}
@@ -42,7 +42,7 @@ const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
       )}
 
       <Heading level={3}>All versions</Heading>
-      <Collapse>
+      <Collapse accordion>
         {isLoading
           ? loading
           : data.map((version) => <UnityVersion key={version.NO_ID_FIELD} data={version} />)}

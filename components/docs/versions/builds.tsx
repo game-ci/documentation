@@ -17,7 +17,7 @@ interface Props {
   repoVersionInfo: RepoVersionInfo;
 }
 
-const Builds = ({ ciJobId, repoVersionInfo }: Props) => {
+const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
   const loading = <p>Fetching builds...</p>;
 
   const ciBuilds = useFirestore().collection('ciBuilds').where('relatedJobId', '==', ciJobId);
@@ -114,6 +114,7 @@ const Builds = ({ ciJobId, repoVersionInfo }: Props) => {
 
   return (
     <Table
+      {...props}
       key={ciJobId}
       dataSource={data}
       rowKey={(row) => row.NO_ID_FIELD}
