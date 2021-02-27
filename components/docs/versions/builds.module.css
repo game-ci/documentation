@@ -2,10 +2,13 @@
   position: sticky;
   top: 99px; /* height of the collapse-item-header + the parent tr > td sticky */
   background-color: rgb(255, 255, 255);
-  z-index: 1;
-  overflow:hidden;
+  z-index: 2;
   box-shadow: 0 0 25px rgba(255,255,255,1), 0 0 15px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,1);
   clip-path: inset(-25px 0 0 0);
+}
+
+.stickyRow:global(.ant-table-row.ant-table-row-level-0) > :global(td:not(:last-child)) {
+  clip-path: inset(-25px -1px 0 0); /* fix for space from responsive vs fixed width on cells */
 }
 
 .expandedContentRow {
