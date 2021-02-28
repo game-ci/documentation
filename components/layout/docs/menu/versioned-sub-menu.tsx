@@ -53,8 +53,9 @@ interface Props {
   section: string;
   title: ReactNodeLike;
   icon: ReactNodeLike;
+  children?: ReactNodeLike;
 }
-const VersionedSubMenu = ({ section, title, icon, ...props }: Props) => {
+const VersionedSubMenu = ({ section, title, icon, children, ...props }: Props) => {
   const selectedVersions = useSelector(selectedVersionsSelector);
   const { menuStructure } = useContext(MenuContext);
   const { docs } = menuStructure;
@@ -62,8 +63,13 @@ const VersionedSubMenu = ({ section, title, icon, ...props }: Props) => {
   return (
     <SubMenu {...props} icon={icon} title={<VersionedTitle section={section} title={title} />}>
       {populateMenuRecursively(docs[section], selectedVersions)}
+      {children}
     </SubMenu>
   );
+};
+
+VersionedSubMenu.defaultProps = {
+  children: null,
 };
 
 export default VersionedSubMenu;

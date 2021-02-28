@@ -36,7 +36,13 @@ const MenuSidebar = () => {
             <a>Introduction</a>
           </Link>
         </Item>
-        <VersionedSubMenu key="docker" section="docker" title="Docker" icon={<SiDocker />} />
+        <VersionedSubMenu key="docker" section="docker" title="Docker" icon={<SiDocker />}>
+          <Item key="/docs/docker/versions">
+            <Link href="/docs/docker/versions">
+              <a>Version statuses</a>
+            </Link>
+          </Item>
+        </VersionedSubMenu>
         <VersionedSubMenu key="github" section="github" title="GitHub" icon={<SiGithubactions />} />
         <VersionedSubMenu key="gitlab" section="gitlab" title="GitLab" icon={<SiGitlab />} />
         <VersionedSubMenu key="travis" section="travis" title="Travis CI" icon={<SiTravisci />} />
