@@ -13,6 +13,7 @@ export default {
     appId: '1:841479186623:web:c20350191e962a8a71fe0a',
     measurementId: 'G-1BGVS7HDW8',
   },
+  backendUrl: 'https://europe-west3-unity-ci-versions.cloudfunctions.net',
   search: {
     applicationId: 'W4X62KM9QE',
     index: getIsomorphicValue('SEARCH_INDEX'),
