@@ -44,9 +44,7 @@ To **configure** this action, add this step and set the id.
 # Request manual activation file
 - name: Request manual activation file
   id: getManualLicenseFile
-  uses: game-ci/unity-request-manual-activation-file@v1.1
-  with:
-    unityVersion: 2019.2.11f1
+  uses: game-ci/unity-request-activation-file@v2
 ```
 
 You use the id to **upload the output file** like so:
