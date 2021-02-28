@@ -1,6 +1,7 @@
 import Builds from '@/components/docs/versions/builds';
 import DateTime from '@/components/docs/versions/date-time';
 import ShowAndCopyChangeSetHashButton from '@/components/docs/versions/show-and-copy-change-set-hash-button';
+import Spinner from '@/components/reusable/spinner';
 import React from 'react';
 import { Collapse } from 'antd';
 import styles from './unity-version.module.css';
@@ -25,10 +26,14 @@ const UnityVersion = ({ data, ...props }: Props) => {
 
   if (status === 'deprecated') return null;
 
-  const mapStatus = {
+  const ciJobStatusToIconMap = {
+    created: `${Math.random() < 0.5 ? '👷‍♀️' : '👷‍♂️'}`,
+    scheduled: 'scheduled',
+    inProgress: <Spinner type="pulse" />,
     completed: '✔',
     failed: '😢',
-    created: `${Math.random() < 0.5 ? '👷‍♀️' : '👷‍♂️'}`,
+    superseded: '⏩',
+    deprecated: '⭕',
   };
 
   return (
@@ -37,7 +42,10 @@ const UnityVersion = ({ data, ...props }: Props) => {
       className={styles.panel}
       header={
         <>
-          {`${mapStatus[status]} ${id}`}
+          <div style={{ display: 'inline-block', width: 30, paddingRight: 8, textAlign: 'center' }}>
+            {ciJobStatusToIconMap[status]}
+          </div>
+          <span>{id}</span>
           <ShowAndCopyChangeSetHashButton changeSet={editorVersionInfo.changeSet} />
           <span style={{ float: 'right', opacity: 0.5 }}>
             <span style={{ opacity: 0.6 }}>Last updated:</span>{' '}
