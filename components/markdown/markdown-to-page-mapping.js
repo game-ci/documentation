@@ -1,4 +1,5 @@
 import { Typography, Divider } from 'antd';
+import Blockquote from './components/blockquote';
 
 import CodeBlock from './components/code-block';
 import { List, ListItem } from './components/list';
@@ -15,7 +16,7 @@ export default {
   list: List,
   listItem: ListItem,
   code: CodeBlock,
-  // blockquote: Blockquote, // ' - Block quote (<blockquote>)',
+  blockquote: Blockquote,
   // link: ' - Link (<a>)',
   // image: ' - Image (<img>)',
   // linkReference: ' - Link (through a reference) (<a>)',
