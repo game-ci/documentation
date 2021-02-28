@@ -30,13 +30,12 @@ const DockerImageLinkOrRetryButton = ({ record }: Props) => {
   const imageTag = `${baseOs}-${editorVersion}-${targetPlatform}-${repoVersion}`;
 
   const [retryRequested, setRetryRequested] = useState<boolean>(false);
+  const notify = useNotification();
+  const retryBuild = useAuthenticatedEndpoint('retryBuild', { buildId, relatedJobId });
 
   if (dockerInfo) {
     return <DockerImageLink imageRepo={imageRepo} imageName={imageName} imageTag={imageTag} />;
   }
-
-  const notify = useNotification();
-  const retryBuild = useAuthenticatedEndpoint('retryBuild', { buildId, relatedJobId });
 
   const onClick = async () => {
     try {
