@@ -21,12 +21,12 @@ your license file and add it as a secret.
 Then, define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v1.4
+- uses: game-ci/unity-test-runner@v2
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
     projectPath: path/to/your/project
-    unityVersion: 20XX.X.XXXX
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 #### Professional license
@@ -40,31 +40,44 @@ Make sure you have set up these variables in the activation step.
 Define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v1.4
+- uses: game-ci/unity-test-runner@v2
   env:
     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
   with:
     projectPath: path/to/your/project
-    unityVersion: 20XX.X.XXXX
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 That is all you need to test your project.
 
+## Viewing test results
+
+The test results can be viewed from a [GitHub Status Check](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-status-checks).
+
+To get this functionality, simply provide the [GitHub Token](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret)
+in order to view the tests results from [a check run](https://docs.github.com/en/rest/guides/getting-started-with-the-checks-api#about-check-runs).
+
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+If you choose not to provide the `githubToken`, you may still upload the artifacts in order to access them.
+
 ## Storing test results
 
-To be able to access the test results,
-they need to be uploaded as artifacts.
+To be able to access the test results, they need to be uploaded as artifacts.
 
-To do this it is recommended to use Github Actions official
-[upload artifact action](https://github.com/marketplace/actions/upload-artifact)
-after any test action.
+To do this, it is recommended to use the official Github Actions
+[upload artifact action](https://github.com/marketplace/actions/upload-artifact).
 
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v2
   with:
     name: Test results
     path: artifacts
@@ -77,12 +90,12 @@ Test results can now be downloaded as `Artifacts` in the `Actions` tab.
 You can specify a different `artifactsPath` in the test runner and reference this path using the `id` of the test step.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v1.4
+- uses: game-ci/unity-test-runner@v2
   id: myTestStep
 ```
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v2
   with:
     name: Test results
     path: ${{ steps.myTestStep.outputs.artifactsPath }}
@@ -98,7 +111,7 @@ To do so, simply add Github Actions' official
 before any unity steps.
 
 ```yaml
-- uses: actions/cache@v1.1.0
+- uses: actions/cache@v2
   with:
     path: path/to/your/project/Library
     key: Library-MyProjectName-TargetPlatform
@@ -167,7 +180,7 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 Parameters without a value will be considered booleans (with a value of true).
 
 ```yaml
-- uses: game-ci/unity-test-runner@main
+- uses: game-ci/unity-test-runner@v2
   with:
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
 ```
@@ -175,12 +188,35 @@ Parameters without a value will be considered booleans (with a value of true).
 _**required:** `false`_
 _**default:** `""`_
 
+#### githubToken
+
+Token to authorize access to the GitHub REST API. If provided, a check run will be created with the test results.
+
+It is recommended to use `githubToken: ${{ secrets.GITHUB_TOKEN }}`,
+but creating the check from [a fork of your repo](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#permissions-for-the-github_token)
+may require using a [Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token#creating-a-token).
+
+Reference the [GitHub Checks API docs](https://docs.github.com/en/rest/reference/checks)
+for details on [creating CI tests with the Checks API](https://docs.github.com/en/developers/apps/creating-ci-tests-with-the-checks-api).
+
+_**required:** `false`_
+_**default:** ``_
+
+#### checkName
+
+Name for the check run that is created when a github token is provided.
+
+It may be useful to customize the check name if, for example, you have a job matrix with multiple unity versions.
+
+_**required:** `false`_
+_**default:** `Test Results`_
+
 #### customImage
 
 Specific docker image that should be used for testing the project.
 
 ```yaml
-- uses: game-ci/unity-test-runner@main
+- uses: game-ci/unity-test-runner@v2
   with:
     customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
@@ -204,15 +240,13 @@ env:
 
 jobs:
   testAllModes:
-    name: Test in ${{ matrix.testMode }} on version ${{ matrix.unityVersion }}
+    name: Test in ${{ matrix.testMode }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         projectPath:
-          - path/to/your/project
-        unityVersion:
-          - 2019.2.11f1
+          - test-project
         testMode:
           - playmode
           - editmode
@@ -220,20 +254,19 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-      - uses: game-ci/unity-test-runner@v1.4
+      - uses: game-ci/unity-test-runner@v2
         id: tests
         with:
           projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}

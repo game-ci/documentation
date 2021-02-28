@@ -44,9 +44,7 @@ To **configure** this action, add this step and set the id.
 # Request manual activation file
 - name: Request manual activation file
   id: getManualLicenseFile
-  uses: game-ci/unity-request-manual-activation-file@v1.1
-  with:
-    unityVersion: 2019.2.11f1
+  uses: game-ci/unity-request-activation-file@v2
 ```
 
 You use the id to **upload the output file** like so:
@@ -76,9 +74,10 @@ Follow these (one-time) steps for simple activation.
 
 ## Professional license
 
-1. Open `Github` > `<Your repository>` > `Settings` > `Secrets`
-2. Create the following secrets;
-   - `UNITY_SERIAL` - _(Add the code that looks like `XX-XXXX-XXXX-XXXX-XXXX-XXXX`)_
+1. Subscribe to Unity Plus or Unity Pro, and get your Serial Key from the [Unity Subscriptions page](https://id.unity.com/en/subscriptions)
+2. Open `Github` > `<Your repository>` > `Settings` > `Secrets`
+3. Create the following secrets;
+   - `UNITY_SERIAL` - _(Add the serial key from step 1 that looks like `XX-XXXX-XXXX-XXXX-XXXX-XXXX`)_
    - `UNITY_EMAIL` - _(Add the email address that you use to login to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to login to Unity)_
 
