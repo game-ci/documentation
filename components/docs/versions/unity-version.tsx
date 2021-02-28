@@ -47,7 +47,11 @@ const UnityVersion = ({ data, ...props }: Props) => {
       }
       key={id}
     >
-      <Builds ciJobId={id} repoVersionInfo={repoVersionInfo} />
+      <Builds
+        ciJobId={id}
+        repoVersionInfo={repoVersionInfo}
+        editorVersionInfo={editorVersionInfo}
+      />
     </Panel>
   );
 };

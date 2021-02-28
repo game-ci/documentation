@@ -17,6 +17,7 @@ interface RepoVersionInfo {
 interface Props {
   ciJobId: string;
   repoVersionInfo: RepoVersionInfo;
+  editorVersionInfo;
 }
 
 const mapBuildStatusToIcon = {
@@ -25,7 +26,7 @@ const mapBuildStatusToIcon = {
   published: '✅',
 };
 
-const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
+const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props) => {
   const loading = <p>Fetching builds...</p>;
 
   const ciBuilds = useFirestore().collection('ciBuilds').where('relatedJobId', '==', ciJobId);
@@ -120,6 +121,7 @@ const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
       <BuildFailureDetails
         style={{ margin: 0 }}
         ciJob={ciJobId}
+        editorVersionInfo={editorVersionInfo}
         repoVersionInfo={repoVersionInfo}
         ciBuild={record}
       />
