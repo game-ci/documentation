@@ -26,6 +26,7 @@ Then, define the test step as follows:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
     projectPath: path/to/your/project
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 #### Professional license
@@ -46,18 +47,32 @@ Define the test step as follows:
     UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
   with:
     projectPath: path/to/your/project
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 That is all you need to test your project.
 
+## Viewing test results
+
+The test results can be viewed from a [GitHub Status Check](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-status-checks).
+
+To get this functionality, simply provide the [GitHub Token](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret)
+in order to view the tests results from [a check run](https://docs.github.com/en/rest/guides/getting-started-with-the-checks-api#about-check-runs).
+
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+If you choose not to provide the `githubToken`, you may still upload the artifacts in order to access them.
+
 ## Storing test results
 
-To be able to access the test results,
-they need to be uploaded as artifacts.
+To be able to access the test results, they need to be uploaded as artifacts.
 
-To do this it is recommended to use Github Actions official
-[upload artifact action](https://github.com/marketplace/actions/upload-artifact)
-after any test action.
+To do this, it is recommended to use the official Github Actions
+[upload artifact action](https://github.com/marketplace/actions/upload-artifact).
 
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
@@ -173,6 +188,29 @@ Parameters without a value will be considered booleans (with a value of true).
 _**required:** `false`_
 _**default:** `""`_
 
+#### githubToken
+
+Token to authorize access to the GitHub REST API. If provided, a check run will be created with the test results.
+
+It is recommended to use `githubToken: ${{ secrets.GITHUB_TOKEN }}`,
+but creating the check from [a fork of your repo](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#permissions-for-the-github_token)
+may require using a [Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token#creating-a-token).
+
+Reference the [GitHub Checks API docs](https://docs.github.com/en/rest/reference/checks)
+for details on [creating CI tests with the Checks API](https://docs.github.com/en/developers/apps/creating-ci-tests-with-the-checks-api).
+
+_**required:** `false`_
+_**default:** ``_
+
+#### checkName
+
+Name for the check run that is created when a github token is provided.
+
+It may be useful to customize the check name if, for example, you have a job matrix with multiple unity versions.
+
+_**required:** `false`_
+_**default:** `Test Results`_
+
 #### customImage
 
 Specific docker image that should be used for testing the project.
@@ -208,7 +246,7 @@ jobs:
       fail-fast: false
       matrix:
         projectPath:
-          - path/to/your/project
+          - test-project
         testMode:
           - playmode
           - editmode

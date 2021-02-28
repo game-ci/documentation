@@ -47,8 +47,7 @@ Any subsequent steps assume you have read the above.
 Unity Actions are using
 [game-ci/docker](https://github.com/game-ci/docker/)
 since `unity-builder` version 2. Any version in this
-[list](https://hub.docker.com/r/unityci/editor/tags)
-can be used to test and build projects.
+[list](/docs/docker/versions) can be used.
 
 ## Simple example
 
@@ -86,6 +85,8 @@ jobs:
       # Test
       - name: Run tests
         uses: game-ci/unity-test-runner@v2
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
 
       # Build
       - name: Build project
@@ -124,6 +125,9 @@ jobs:
       matrix:
         projectPath:
           - test-project
+        unityVersion:
+          - 2019.4.1f1
+          - 2020.2.1f1
         targetPlatform:
           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
@@ -147,6 +151,8 @@ jobs:
         id: testRunner
         with:
           projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v2
         with:
           name: Test results (all modes)
@@ -154,6 +160,7 @@ jobs:
       - uses: game-ci/unity-builder@v2
         with:
           projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
       - uses: actions/upload-artifact@v2

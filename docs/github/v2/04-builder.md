@@ -26,7 +26,6 @@ Then, define the build step as follows:
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
-    projectPath: path/to/your/project
     targetPlatform: WebGL
 ```
 
@@ -47,7 +46,6 @@ Define the build step as follows:
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
   with:
-    projectPath: path/to/your/project
     targetPlatform: WebGL
 ```
 
