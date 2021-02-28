@@ -1,5 +1,6 @@
 import BuildFailureDetails from '@/components/docs/versions/build-failure-details';
 import DockerImageLinkOrRetryButton from '@/components/docs/versions/docker-image-link-or-retry-button';
+import Spinner from '@/components/reusable/spinner';
 import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
@@ -16,9 +17,16 @@ interface RepoVersionInfo {
 interface Props {
   ciJobId: string;
   repoVersionInfo: RepoVersionInfo;
+  editorVersionInfo;
 }
 
-const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
+const mapBuildStatusToIcon = {
+  started: <Spinner type="slow" />,
+  failed: '⚠',
+  published: '✅',
+};
+
+const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props) => {
   const loading = <p>Fetching builds...</p>;
 
   const ciBuilds = useFirestore().collection('ciBuilds').where('relatedJobId', '==', ciJobId);
@@ -36,9 +44,17 @@ const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
       dataIndex: 'status',
       key: 'status',
       render: (value, record) => {
-        if (value === 'published') return '✅';
-        if (value === 'failed') return <Tooltip title={record.failure?.reason}>⚠</Tooltip>;
-        return value;
+        const icon = mapBuildStatusToIcon[value];
+        switch (value) {
+          case 'published':
+            return icon;
+          case 'failed':
+            return <Tooltip title={record.failure?.reason}>{icon}</Tooltip>;
+          case 'started':
+            return <Tooltip title="Build has started">{icon}</Tooltip>;
+          default:
+            return value;
+        }
       },
     },
     {
@@ -105,6 +121,7 @@ const Builds = ({ ciJobId, repoVersionInfo, ...props }: Props) => {
       <BuildFailureDetails
         style={{ margin: 0 }}
         ciJob={ciJobId}
+        editorVersionInfo={editorVersionInfo}
         repoVersionInfo={repoVersionInfo}
         ciBuild={record}
       />

@@ -1,5 +1,6 @@
 import Builds from '@/components/docs/versions/builds';
 import DateTime from '@/components/docs/versions/date-time';
+import ShowAndCopyChangeSetHashButton from '@/components/docs/versions/show-and-copy-change-set-hash-button';
 import React from 'react';
 import { Collapse } from 'antd';
 import styles from './unity-version.module.css';
@@ -15,7 +16,7 @@ const UnityVersion = ({ data, ...props }: Props) => {
     NO_ID_FIELD: id,
     status,
     // imageType,
-    // editorVersionInfo,
+    editorVersionInfo,
     repoVersionInfo,
     // meta,
     // addedDate,
@@ -37,6 +38,7 @@ const UnityVersion = ({ data, ...props }: Props) => {
       header={
         <>
           {`${mapStatus[status]} ${id}`}
+          <ShowAndCopyChangeSetHashButton changeSet={editorVersionInfo.changeSet} />
           <span style={{ float: 'right', opacity: 0.5 }}>
             <span style={{ opacity: 0.6 }}>Last updated:</span>{' '}
             <DateTime utcSeconds={modifiedDate.seconds} />
@@ -45,7 +47,11 @@ const UnityVersion = ({ data, ...props }: Props) => {
       }
       key={id}
     >
-      <Builds ciJobId={id} repoVersionInfo={repoVersionInfo} />
+      <Builds
+        ciJobId={id}
+        repoVersionInfo={repoVersionInfo}
+        editorVersionInfo={editorVersionInfo}
+      />
     </Panel>
   );
 };
