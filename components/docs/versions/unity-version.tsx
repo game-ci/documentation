@@ -28,7 +28,7 @@ const UnityVersion = ({ data, ...props }: Props) => {
 
   const ciJobStatusToIconMap = {
     created: `${Math.random() < 0.5 ? '👷‍♀️' : '👷‍♂️'}`,
-    scheduled: 'scheduled',
+    scheduled: <Spinner type="dots" />,
     inProgress: <Spinner type="pulse" />,
     completed: '✔',
     failed: '😢',
