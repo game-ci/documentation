@@ -36,6 +36,11 @@ const SourceLinks = (props) => (
           Unity Actions
         </a>
       </Item>
+      <Item icon={<GithubOutlined />} key="external:action:request-activation-file">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-request-activation-file">
+          Unity Request Activation
+        </a>
+      </Item>
       <Item icon={<GithubOutlined />} key="external:action:builder">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-builder">
           Unity Builder
@@ -49,15 +54,6 @@ const SourceLinks = (props) => (
       <Item icon={<GithubOutlined />} key="external:action:activate">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-activate">
           Unity Activate
-        </a>
-      </Item>
-      <Item icon={<GithubOutlined />} key="external:action:request-activation-file">
-        <a
-          target="_blank"
-          rel="noreferrer"
-          href="https://github.com/game-ci/unity-request-activation-file"
-        >
-          Unity Request Activation
         </a>
       </Item>
       <Item icon={<GithubOutlined />} key="external:action:return-license">
