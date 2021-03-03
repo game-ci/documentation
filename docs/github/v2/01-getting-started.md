@@ -154,6 +154,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: Test results (all modes)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
