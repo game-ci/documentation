@@ -1,4 +1,4 @@
-# Release to the App Store
+# Deploy to the App Store
 
 Uploading to the App Store is a little tricky. Make sure you do all these steps carefully.
 
