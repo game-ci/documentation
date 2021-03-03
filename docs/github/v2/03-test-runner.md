@@ -78,6 +78,7 @@ By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
 - uses: actions/upload-artifact@v2
+  if: always()
   with:
     name: Test results
     path: artifacts
@@ -96,6 +97,7 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 
 ```yaml
 - uses: actions/upload-artifact@v2
+  if: always()
   with:
     name: Test results
     path: ${{ steps.myTestStep.outputs.artifactsPath }}
@@ -269,6 +271,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
