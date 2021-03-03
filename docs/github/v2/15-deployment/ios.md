@@ -268,7 +268,7 @@ buildForiOSPlatform:
 - **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **APPLE_TEAM_NAME**: Team Name from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **MATCH_URL**: Address of private repository that you made in previous steps for storing certificates.
-- **GIT_TOKEN**: Base64 of user@MATCH_URL eg user@https://github.com/game-ci/documentation.git .
+- **GIT_TOKEN**: Base64 of `user@MATCH_URL` e.g. `user@https://github.com/game-ci/documentation.git`.
   You can use an online base64 encoder for this step.
 - **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
 - **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Because of limitations of using Apple accounts
