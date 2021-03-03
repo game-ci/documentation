@@ -189,7 +189,7 @@ gym(
 )
 ```
 
-### 4- Add Github Workflow
+### 4- Add Github workflow
 
 ```yaml
 # .github/workflows/main.yml
@@ -272,11 +272,11 @@ buildForiOSPlatform:
   You can use an online base64 encoder for this step.
 - **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
 - **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Because of limitations of using Apple accounts
-  with 2fa ( 2-factor authentication ) in CI environments, you have to
+  with 2FA (2-factor authentication) in CI environments, you have to
   make a special key for accessing the App Store. Follow the [fastlane official guide](https://docs.fastlane.tools/app-store-connect-api/)
   to generate these values.
 
-### 6- Update Unity Settings
+### 6- Update Unity settings
 
 - Add your [application icon(s)](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Icon.html) (applications without an icon generate an error while uploading to TestFlight)
 - Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Other.html#Identification)
