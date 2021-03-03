@@ -203,7 +203,7 @@ buildForiOSPlatform:
       with:
         path: Library
         key: Library-iOS
-    - uses: game-ci/unity-builder@v2.0-alpha-6
+    - uses: game-ci/unity-builder@v2
       with:
         targetPlatform: iOS
     - uses: actions/upload-artifact@v2
