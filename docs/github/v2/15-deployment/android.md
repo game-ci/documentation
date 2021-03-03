@@ -1,8 +1,9 @@
 # Release to Google Play
 
-### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/android/setup/)
+### 1- Install fastlane
 
-The recommended approach to install fastlane is to make a `Gemfile` with following content:
+The recommended approach to install [fastlane](https://docs.fastlane.tools/getting-started/android/setup/)
+is to make a `Gemfile` with following content:
 
 ```ruby
 # fastlane/Gemfile
@@ -48,7 +49,7 @@ platform :android do
 end
 ```
 
-### 4- Add Github workflow
+### 4- Add this GitHub workflow
 
 ```yaml
 # .github/workflows/main.yml
