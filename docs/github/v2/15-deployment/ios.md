@@ -3,7 +3,7 @@
 Uploading to the App Store is a little tricky. Make sure you do all these steps carefully.
 
 > -- **Note:** You need a Mac environment for doing these steps. 
-> A Mac is also reccommended for debugging any issues with this worfklow.
+> A Mac is also recommended for debugging any issues with this workflow.
 
 ### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
 
