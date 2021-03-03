@@ -10,7 +10,7 @@ const SourceLinks = (props) => (
     <ItemGroup title="Project">
       <Item icon={<GithubOutlined />} key="source:documentation">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
-          Website
+          This Website
         </a>
       </Item>
       <Item icon={<GitlabOutlined />} key="external:example:gitlab">
@@ -24,7 +24,7 @@ const SourceLinks = (props) => (
       </Item>
     </ItemGroup>
     <ItemGroup title="Docker">
-      <Item icon={<GitlabOutlined />} key="external:unityci:editor">
+      <Item icon={<GithubOutlined />} key="external:unityci:editor">
         <a target="_blank" rel="noreferrer" href="https://hub.docker.com/r/unityci/editor">
           unityci/editor
         </a>
@@ -41,9 +41,9 @@ const SourceLinks = (props) => (
           Unity Request Activation
         </a>
       </Item>
-      <Item icon={<GithubOutlined />} key="external:action:builder">
-        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-builder">
-          Unity Builder
+      <Item icon={<GithubOutlined />} key="external:action:activate">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-activate">
+          Unity Activate
         </a>
       </Item>
       <Item icon={<GithubOutlined />} key="external:action:test-runner">
@@ -51,9 +51,9 @@ const SourceLinks = (props) => (
           Unity Test Runner
         </a>
       </Item>
-      <Item icon={<GithubOutlined />} key="external:action:activate">
-        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-activate">
-          Unity Activate
+      <Item icon={<GithubOutlined />} key="external:action:builder">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-builder">
+          Unity Builder
         </a>
       </Item>
       <Item icon={<GithubOutlined />} key="external:action:return-license">
