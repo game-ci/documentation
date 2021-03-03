@@ -1,34 +1,33 @@
-# Publish to Google Play
+# Release to Google Play
 
 ### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/android/setup/)
 
-There are different ways of installing fastlane,
-but the recommended approach is to make a Gemfile with following content :
+The recommended approach to install fastlane is to make a `Gemfile` with following content:
 
-```bash
+```ruby
 # fastlane/Gemfile
 source "https://rubygems.org"
 gem "fastlane"
 ```
 
-Then run `bundle install`
+Then run `bundle install` to create the `Gemfile.lock`
 
-This will create a `Gemfile.lock`, upload both `Gemfile` and `Gemfile.lock` to your repo .
+Upload both `Gemfile` and `Gemfile.lock` to your repo.
 
-### 2- Prepare Google play
+### 2- Prepare Google Play
 
-- You need to manually upload your **first** version of application to google play
+- You need to manually upload your **first** version of your application to Google Play.
 
-The output should be signed using a signing key , this can be done by creating signing key from
+The output should be signed using a signing key. This can be done by creating the signing key from
 [Unity/Player Settings/Publishing Settings](https://docs.unity3d.com/2017.3/Documentation/Manual/class-PlayerSettingsAndroid.html) .
 
-- Follow the setup steps from [this link](https://docs.fastlane.tools/actions/supply/) to create a service account
+- Follow the setup steps from [these fastlane docs](https://docs.fastlane.tools/actions/supply/) to create a service account.
 
-> -- **Note:** Keep your keystore and service_account.json file somewhere safe , you will need it later to upload new releases
+> -- **Note:** Keep your keystore and service_account.json file somewhere safe. You will need them later to upload new releases.
 
-### 3- Add following fastlane files to your Fastlane folder
+### 3- Add the following fastlane files to your fastlane folder
 
-```bash
+```ruby
 # fastlane/Appfile
 for_platform :android do
   package_name(ENV["ANDROID_PACKAGE_NAME"])
@@ -36,7 +35,7 @@ for_platform :android do
 end
 ```
 
-```bash
+```ruby
 # fastlane/Fastfile
 platform :android do
   desc "Upload a new Android version to the Google Play Store"
@@ -49,11 +48,11 @@ platform :android do
 end
 ```
 
-### 4- Add Github action
+### 4- Add Github workflow
 
 ```yaml
 # .github/workflows/main.yml
-BuildForAndroidPlatform:
+buildForAndroidPlatform:
   name: Build For Android Platform
   runs-on: ubuntu-latest
   steps:
@@ -62,7 +61,7 @@ BuildForAndroidPlatform:
       with:
         path: Library
         key: Library-Android
-    - uses: game-ci/unity-builder@v2.0-alpha-6
+    - uses: game-ci/unity-builder@v2
       with:
         targetPlatform: Android
         androidAppBundle: true
@@ -76,7 +75,7 @@ BuildForAndroidPlatform:
         name: build-Android
         path: build/Android
 
-ReleaseToGooglePlay:
+releaseToGooglePlay:
   name: Release to the Google Play Store
   runs-on: ubuntu-latest
   needs: buildForAndroidPlatform
@@ -93,9 +92,10 @@ ReleaseToGooglePlay:
       with:
         name: build-Android
         path: build/Android
-    - name: Prepare for Upload
+    - name: Add Authentication
       run: echo "$GOOGLE_PLAY_KEY_FILE" > $GOOGLE_PLAY_KEY_FILE_PATH
-    - uses: actions/cache@v2
+    - name: Cache Fastlane Dependencies
+      uses: actions/cache@v2
       with:
         path: vendor/bundle
         key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
@@ -110,7 +110,8 @@ ReleaseToGooglePlay:
     #      uses: maierj/fastlane-action@v2.0.0
     #      with:
     #        lane: 'android alpha'
-    - name: Tidy up artifact to avoid storage limit
+    - name: Cleanup to avoid storage limit
+      if: always()
       uses: geekyeggo/delete-artifact@v1
       with:
         name: build-Android
