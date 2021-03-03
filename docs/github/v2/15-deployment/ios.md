@@ -11,7 +11,7 @@ The recommended approach to install [fastlane](https://docs.fastlane.tools/getti
 is to make a `Gemfile` with following content:
 
 ```ruby
-# fastlane/Gemfile
+# Gemfile
 source "https://rubygems.org"
 gem "fastlane"
 ```

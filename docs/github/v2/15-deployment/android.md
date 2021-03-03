@@ -6,7 +6,7 @@ The recommended approach to install [fastlane](https://docs.fastlane.tools/getti
 is to make a `Gemfile` with following content:
 
 ```ruby
-# fastlane/Gemfile
+# Gemfile
 source "https://rubygems.org"
 gem "fastlane"
 ```
@@ -123,6 +123,6 @@ releaseToGooglePlay:
 - **ANDROID_KEYSTORE_BASE64** : Base64 of your keystore in step 1 (You can use an online base64 encoder for this)
 - **ANDROID_KEYSTORE_PASS**: Password of your keystore
 - **ANDROID_KEYALIAS_NAME**: Alias name of your keystore
-- **ANDROID_KEYALIAS_PASS**: Password for your alias name in key store
+- **ANDROID_KEYALIAS_PASS**: Password for your alias name in your keystore
 - **GOOGLE_PLAY_KEY_FILE**: Your google account service .json file downloaded from step 2
 - **ANDROID_PACKAGE_NAME**: Your application package name e.g com.company.application
