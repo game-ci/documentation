@@ -190,75 +190,76 @@ gym(
 )
 ```
 
-### 4- Add this Github workflow
+### 4- Add jobs to your GitHub workflow
 
 ```yaml
 # .github/workflows/main.yml
-buildForiOSPlatform:
-  name: Build for iOS
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-      with:
-        path: Library
-        key: Library-iOS
-    - uses: game-ci/unity-builder@v2
-      with:
-        targetPlatform: iOS
-    - uses: actions/upload-artifact@v2
-      with:
-        name: build-iOS
-        path: build/iOS
+jobs:
+  buildForiOSPlatform:
+    name: Build for iOS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-iOS
+      - uses: game-ci/unity-builder@v2
+        with:
+          targetPlatform: iOS
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-iOS
+          path: build/iOS
 
-releaseToAppStore:
-  name: Release to the App Store
-  runs-on: macos-latest
-  needs: buildForiOSPlatform
-  env:
-    APPLE_CONNECT_EMAIL: ${{ secrets.APPLE_CONNECT_EMAIL }}
-    APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
-    APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-    APPLE_TEAM_NAME: ${{ secrets.APPLE_TEAM_NAME }}
-    MATCH_URL: ${{ secrets.MATCH_URL }}
-    GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-    MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-    APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-    APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-    APPSTORE_P8: ${{ secrets. APPSTORE_P8 }}
-    APPSTORE_P8_PATH: ${{ format('{0}/fastlane/p8.json', github.workspace) }}
-    IOS_APP_ID: com.company.application # Change it to match your unity bundle id
-    IOS_BUILD_PATH: ${{ format('{0}/build/iOS', github.workspace) }}
-    PROJECT_NAME: Your Project Name
-    RELEASE_NOTES: Your Release Notes
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - name: Download iOS Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: build-iOS
-        path: build/iOS
-    - name: Fix File Permissions
-      run: find $IOS_BUILD_PATH -type f -iname "*.sh" -exec chmod +x {} \;
-    - name: Make App Store p8
-      run: echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
-    - name: Cache Fastlane Dependencies
-      uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
-    - name: Install Fastlane
-      run: bundle install
-    - name: Upload to TestFlight
-      uses: maierj/fastlane-action@v2.0.0
-      with:
-        lane: 'ios beta'
-    - name: Cleanup to avoid storage limit
-      if: always()
-      uses: geekyeggo/delete-artifact@v1
-      with:
-        name: build-iOS
+  releaseToAppStore:
+    name: Release to the App Store
+    runs-on: macos-latest
+    needs: buildForiOSPlatform
+    env:
+      APPLE_CONNECT_EMAIL: ${{ secrets.APPLE_CONNECT_EMAIL }}
+      APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_TEAM_NAME: ${{ secrets.APPLE_TEAM_NAME }}
+      MATCH_URL: ${{ secrets.MATCH_URL }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+      APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      APPSTORE_P8: ${{ secrets. APPSTORE_P8 }}
+      APPSTORE_P8_PATH: ${{ format('{0}/fastlane/p8.json', github.workspace) }}
+      IOS_APP_ID: com.company.application # Change it to match your unity bundle id
+      IOS_BUILD_PATH: ${{ format('{0}/build/iOS', github.workspace) }}
+      PROJECT_NAME: Your Project Name
+      RELEASE_NOTES: Your Release Notes
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Download iOS Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-iOS
+          path: build/iOS
+      - name: Fix File Permissions
+        run: find $IOS_BUILD_PATH -type f -iname "*.sh" -exec chmod +x {} \;
+      - name: Make App Store p8
+        run: echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
+      - name: Cache Fastlane Dependencies
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
+      - name: Install Fastlane
+        run: bundle install
+      - name: Upload to TestFlight
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: 'ios beta'
+      - name: Cleanup to avoid storage limit
+        if: always()
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: build-iOS
 ```
 
 ### 5- Add secrets to your GitHub repo

@@ -49,73 +49,74 @@ platform :android do
 end
 ```
 
-### 4- Add this GitHub workflow
+### 4- Add jobs to your GitHub workflow
 
 ```yaml
 # .github/workflows/main.yml
-buildForAndroidPlatform:
-  name: Build For Android Platform
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-      with:
-        path: Library
-        key: Library-Android
-    - uses: game-ci/unity-builder@v2
-      with:
-        targetPlatform: Android
-        androidAppBundle: true
-        androidKeystoreName: user.keystore
-        androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-        androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-        androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
-        androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
-    - uses: actions/upload-artifact@v2
-      with:
-        name: build-Android
-        path: build/Android
+jobs:
+  buildForAndroidPlatform:
+    name: Build For Android Platform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-Android
+      - uses: game-ci/unity-builder@v2
+        with:
+          targetPlatform: Android
+          androidAppBundle: true
+          androidKeystoreName: user.keystore
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-Android
+          path: build/Android
 
-releaseToGooglePlay:
-  name: Release to the Google Play Store
-  runs-on: ubuntu-latest
-  needs: buildForAndroidPlatform
-  env:
-    GOOGLE_PLAY_KEY_FILE: ${{ secrets.FASTLANE_SERVICE_ACCOUNT }}
-    GOOGLE_PLAY_KEY_FILE_PATH: ${{ format('{0}/fastlane/google-fastlane.json', github.workspace) }}
-    ANDROID_BUILD_FILE_PATH: ${{ format('{0}/build/Android/Android.aab', github.workspace) }}
-    ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - name: Download Android Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: build-Android
-        path: build/Android
-    - name: Add Authentication
-      run: echo "$GOOGLE_PLAY_KEY_FILE" > $GOOGLE_PLAY_KEY_FILE_PATH
-    - name: Cache Fastlane Dependencies
-      uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
-    - name: Install Fastlane
-      run: bundle install
-    - name: Upload to Google Play Internal
-      uses: maierj/fastlane-action@v2.0.0
-      with:
-        lane: 'android internal'
-    # Uncomment to upload to alpha branch
-    #    - name: Upload to Google Play Alpha
-    #      uses: maierj/fastlane-action@v2.0.0
-    #      with:
-    #        lane: 'android alpha'
-    - name: Cleanup to avoid storage limit
-      if: always()
-      uses: geekyeggo/delete-artifact@v1
-      with:
-        name: build-Android
+  releaseToGooglePlay:
+    name: Release to the Google Play Store
+    runs-on: ubuntu-latest
+    needs: buildForAndroidPlatform
+    env:
+      GOOGLE_PLAY_KEY_FILE: ${{ secrets.FASTLANE_SERVICE_ACCOUNT }}
+      GOOGLE_PLAY_KEY_FILE_PATH: ${{ format('{0}/fastlane/google-fastlane.json', github.workspace) }}
+      ANDROID_BUILD_FILE_PATH: ${{ format('{0}/build/Android/Android.aab', github.workspace) }}
+      ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Download Android Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-Android
+          path: build/Android
+      - name: Add Authentication
+        run: echo "$GOOGLE_PLAY_KEY_FILE" > $GOOGLE_PLAY_KEY_FILE_PATH
+      - name: Cache Fastlane Dependencies
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
+      - name: Install Fastlane
+        run: bundle install
+      - name: Upload to Google Play Internal
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: 'android internal'
+      # Uncomment to upload to alpha branch
+      #    - name: Upload to Google Play Alpha
+      #      uses: maierj/fastlane-action@v2.0.0
+      #      with:
+      #        lane: 'android alpha'
+      - name: Cleanup to avoid storage limit
+        if: always()
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: build-Android
 ```
 
 ### 5- Add secrets to your Github repo
