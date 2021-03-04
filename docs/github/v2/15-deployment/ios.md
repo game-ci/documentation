@@ -74,25 +74,32 @@ In the following file, change `com.company.application` to your bundle identifie
 # fastlane/Fastfile
 keychain_name = "temporary_keychain"
 keychain_password = SecureRandom.base64
-api_key = app_store_connect_api_key(
-  key_id: "#{ENV[APPSTORE_KEY_ID]}",
-  issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
-  key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
-  duration: 1200, # optional
-  in_house: false, # true for enterprise and false for individual accounts
-)
 
 platform :ios do
 
   desc "Push a new release build to the App Store"
   lane :release do
     build
+    api_key = app_store_connect_api_key(
+      key_id: "#{ENV[APPSTORE_KEY_ID]}",
+      issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
+      key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
+      duration: 1200, # optional
+      in_house: false, # true for enterprise and false for individual accounts
+    )
     upload_to_app_store(api_key: api_key)
   end
 
   desc "Submit a new Beta Build to Apple TestFlight"
   lane :beta do
     build
+    api_key = app_store_connect_api_key(
+      key_id: "#{ENV[APPSTORE_KEY_ID]}",
+      issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
+      key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
+      duration: 1200, # optional
+      in_house: false, # true for enterprise and false for individual accounts
+    )
     upload_to_testflight(skip_waiting_for_build_processing: true, api_key: api_key)
   end
 
