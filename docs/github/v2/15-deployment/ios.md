@@ -81,8 +81,8 @@ platform :ios do
   lane :release do
     build
     api_key = app_store_connect_api_key(
-      key_id: "#{ENV[APPSTORE_KEY_ID]}",
-      issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
+      key_id: "#{ENV['APPSTORE_KEY_ID']}",
+      issuer_id: "#{ENV['APPSTORE_ISSUER_ID']}",
       key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
       duration: 1200, # optional
       in_house: false, # true for enterprise and false for individual accounts
@@ -95,7 +95,7 @@ platform :ios do
     build
     api_key = app_store_connect_api_key(
       key_id: "#{ENV[APPSTORE_KEY_ID]}",
-      issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
+      issuer_id: "#{ENV['APPSTORE_ISSUER_ID']}",
       key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
       duration: 1200, # optional
       in_house: false, # true for enterprise and false for individual accounts
