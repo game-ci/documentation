@@ -80,7 +80,14 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
     build
-    upload_to_app_store
+    api_key = app_store_connect_api_key(
+      key_id: "#{ENV[APPSTORE_KEY_ID]}",
+      issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
+      key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
+      duration: 1200, # optional
+      in_house: false, # true for enterprise and false for individual accounts
+    )
+    upload_to_app_store(api_key: api_key)
   end
 
   desc "Submit a new Beta Build to Apple TestFlight"
@@ -91,7 +98,7 @@ platform :ios do
       issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
       key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
       duration: 1200, # optional
-      in_house: false, # true for enterprice and false for individual accounts
+      in_house: false, # true for enterprise and false for individual accounts
     )
     upload_to_testflight(skip_waiting_for_build_processing: true, api_key: api_key)
   end
@@ -240,10 +247,10 @@ jobs:
         with:
           name: build-iOS
           path: build/iOS
-      - name: Fix File Permissions
-        run: find $IOS_BUILD_PATH -type f -iname "*.sh" -exec chmod +x {} \;
-      - name: Make App Store p8
-        run: echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
+      - name: Make App Store p8 and Fix File Permissions
+        run: |
+          echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
+          find $IOS_BUILD_PATH -type f -iname "*.sh" -exec chmod +x {} \;
       - name: Cache Fastlane Dependencies
         uses: actions/cache@v2
         with:
