@@ -94,7 +94,7 @@ platform :ios do
   lane :beta do
     build
     api_key = app_store_connect_api_key(
-      key_id: "#{ENV[APPSTORE_KEY_ID]}",
+      key_id: "#{ENV['APPSTORE_KEY_ID']}",
       issuer_id: "#{ENV['APPSTORE_ISSUER_ID']}",
       key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
       duration: 1200, # optional
