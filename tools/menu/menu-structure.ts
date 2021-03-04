@@ -4,7 +4,7 @@ import { MenuStructureGenerator } from '@/tools/menu/menu-structure-generator';
 import { MenuStructureParser } from '@/tools/menu/menu-structure-parser';
 import { sleep } from '@/tools/utils';
 import { readFileSync, writeFileSync } from 'fs';
-import { set } from 'lodash';
+import { set, get } from 'lodash';
 import fsPath from 'path';
 
 export class MenuStructure {
@@ -47,5 +47,9 @@ export class MenuStructure {
     }
 
     return sections;
+  }
+
+  static getNodeByUrl(menuStructure, urlPath) {
+    return get(menuStructure, urlPath.replace(/^\/+/, '').split('/').join('.'));
   }
 }

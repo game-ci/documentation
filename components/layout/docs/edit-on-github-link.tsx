@@ -3,13 +3,13 @@ import { GithubOutlined } from '@ant-design/icons';
 import { useContext } from 'react';
 
 const EditOnGithubLink = () => {
-  const { permalinkPath } = useContext(PageContext);
+  const { absolutePath } = useContext(PageContext);
 
   const repoPath = 'https://github.com/game-ci/documentation';
   const editPath = 'edit/main';
-  const filePath = `docs/${permalinkPath}.md`;
+  const filePath = `docs/${absolutePath}`;
 
-  const href = permalinkPath ? `${repoPath}/${editPath}/${filePath}` : `${repoPath}`;
+  const href = absolutePath ? `${repoPath}/${editPath}/${filePath}` : `${repoPath}`;
 
   return (
     <a href={href} type="link">
