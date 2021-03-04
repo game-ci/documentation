@@ -250,7 +250,7 @@ jobs:
       - name: Make App Store p8 and Fix File Permissions
         run: |
           echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
-          find $IOS_BUILD_PATH -type f -iname "*.sh" -exec chmod +x {} \;
+          find $IOS_BUILD_PATH -type f -name "*.sh" -exec chmod +x {} \;
       - name: Cache Fastlane Dependencies
         uses: actions/cache@v2
         with:
