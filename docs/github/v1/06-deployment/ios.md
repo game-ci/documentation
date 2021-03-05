@@ -94,7 +94,8 @@ platform :ios do
   lane :beta do
     # Automate Missing export compliance error
     update_info_plist(
-      plist_path: "#{ENV['IOS_BUILD_PATH']}/iOS/Info.plist",
+      xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
+      plist_path: "Info.plist",
       block: proc do |plist|
         plist['ITSAppUsesNonExemptEncryption'] = false
       end
