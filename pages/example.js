@@ -1,5 +1,5 @@
 import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'antd';
-import { SmileFilled } from '@ant-design/icons';
+import { AiFillSmile } from 'react-icons/all';
 import Link from 'next/link';
 
 import DocumentationPage from '@/components/layout/docs/page';
@@ -18,7 +18,7 @@ export default function Page() {
             <a>
               <Title>
                 title
-                <SmileFilled size={48} strokeWidth={1} />
+                <AiFillSmile size={48} strokeWidth={1} />
               </Title>
             </a>
           </Link>

@@ -2,13 +2,13 @@ import React from 'react';
 import { Menu, Layout } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   SiTravisci,
   SiGithubactions,
   SiGitlab,
   AiOutlineInfoCircle,
   SiDocker,
+  AiOutlineQuestionCircle,
 } from 'react-icons/all';
 import VersionedSubMenu from './menu/versioned-sub-menu';
 
@@ -50,7 +50,7 @@ const MenuSidebar = () => {
           key="troubleshooting"
           section="troubleshooting"
           title="Troubleshooting"
-          icon={<QuestionCircleOutlined />}
+          icon={<AiOutlineQuestionCircle />}
         />
       </Menu>
     </Sider>
