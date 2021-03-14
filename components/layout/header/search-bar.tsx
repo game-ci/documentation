@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { SearchBox, Pagination, PoweredBy } from 'react-instantsearch-dom';
+import { SiAlgolia } from 'react-icons/all';
+import { SearchBox, Pagination } from 'react-instantsearch-dom';
 import Configuration from '@/components/search/configuration';
 import SearchResults from '@/components/search/results';
 import Stats from '@/components/search/stats';
@@ -35,7 +36,12 @@ const SearchBar = () => {
         <SearchResults />
         <div className="ais-meta-information">
           <Stats />
-          <PoweredBy />
+          <span>
+            Powered by
+            <a href="http://algolia.com/">
+              <SiAlgolia size={24} style={{ marginLeft: 8 }} />
+            </a>
+          </span>
         </div>
       </div>
     </div>
