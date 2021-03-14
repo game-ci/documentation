@@ -4,7 +4,7 @@ import ShowAndCopyChangeSetHashButton from '@/components/docs/versions/show-and-
 import Spinner from '@/components/reusable/spinner';
 import React from 'react';
 import { Collapse } from 'antd';
-import styles from './unity-version.module.css';
+import styles from './unity-version.module.scss';
 
 const { Panel } = Collapse;
 

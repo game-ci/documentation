@@ -19,7 +19,7 @@ yarn dev
 ## Community
 
 Feel free to join us on
-<a href="https://game.ci/discord"><img height="30" src="media/Discord-Logo.svg" alt="Discord" /></a>
+[![Discord](assets/readme/Discord.svg)](https://game.ci/discord)
 and engage with the community.
 
 #### License
@@ -28,4 +28,4 @@ and engage with the community.
 
 #### Sponsors
 
-[![Vercel](./images/vercel-brand-logo.svg)](https://vercel.com?utm_source=game-ci)
+[![Vercel](assets/readme/Vercel.svg)](https://vercel.com?utm_source=game-ci)

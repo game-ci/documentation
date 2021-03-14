@@ -1,6 +1,6 @@
 import { ReactNodeLike } from 'prop-types';
 import React from 'react';
-import styles from './blockquote.module.css';
+import styles from './blockquote.module.scss';
 
 interface Props {
   children: ReactNodeLike;

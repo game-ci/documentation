@@ -5,7 +5,7 @@ import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import { Table, Tooltip } from 'antd';
-import styles from './builds.module.css';
+import styles from './builds.module.scss';
 
 interface RepoVersionInfo {
   version: string;
