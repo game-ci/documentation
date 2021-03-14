@@ -1,8 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import DocumentationPage from '@/components/layout/docs/page';
-import Discord from '../../images/discord-brand-logo-wordmark.svg';
-import Github from '../../images/github-brand-text.svg';
+import { IoLogoDiscord, IoLogoGithub } from 'react-icons/all';
 
 export default function Page() {
   return (
@@ -37,7 +36,7 @@ export default function Page() {
         <p style={{ display: 'flex', alignItems: 'center' }}>
           <span>Follow the development on&nbsp;</span>
           <a href="https://github.com/game-ci/documentation">
-            <Github alt="GitHub" style={{ height: 16 }} />
+            <IoLogoGithub alt="GitHub" />
           </a>
         </p>
 
@@ -45,7 +44,7 @@ export default function Page() {
           <span>Join the discussion on </span>
           <Link href="/discord">
             <a>
-              <Discord alt="GameCI Discord" width="100" />
+              <IoLogoDiscord alt="GameCI Discord" />
             </a>
           </Link>
         </p>

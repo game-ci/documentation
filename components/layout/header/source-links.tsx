@@ -6,7 +6,12 @@ const { Item, ItemGroup, SubMenu } = Menu;
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 const SourceLinks = (props) => (
-  <SubMenu {...props} selectable={false} icon={<AiOutlineGithub />} title="Source code">
+  <SubMenu
+    {...props}
+    selectable={false}
+    icon={<AiOutlineGithub size={24} style={{ marginBottom: -5 }} />}
+    title="Source code"
+  >
     <ItemGroup title="Project">
       <Item icon={<AiOutlineGithub />} key="source:documentation">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">

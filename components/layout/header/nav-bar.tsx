@@ -2,10 +2,9 @@ import React from 'react';
 import { Layout, Menu } from 'antd';
 import Link from 'next/link';
 import SearchBar from '@/components/layout/header/search-bar';
-import DiscordLogo from '@/components/layout/logos/discord-logo';
 import SourceLinks from '@/components/layout/header/source-links';
-// @ts-ignore
-import GameCiLogo from '../../../images/game-ci-brand-logo-wordmark.svg';
+import { IoLogoDiscord } from 'react-icons/all';
+import GameCiLogo from '../../../assets/images/game-ci-brand-logo-wordmark.svg';
 
 const { Header } = Layout;
 const { Item } = Menu;
@@ -39,7 +38,10 @@ const NavBar = ({ showSearch }: Props) => (
       <SourceLinks />
       <Item>
         <Link href="/discord">
-          <DiscordLogo />
+          <span>
+            <IoLogoDiscord size={24} style={{ marginBottom: -5 }} />
+            Discord
+          </span>
         </Link>
       </Item>
     </Menu>
