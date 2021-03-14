@@ -1,54 +1,100 @@
 /* eslint-disable unicorn/no-array-reduce,no-param-reassign,@typescript-eslint/no-shadow */
 import { SearchIndex } from './tools/search/search-index';
 
+const withBundleAnalyzer = require('@next/bundle-analyzer');
 const withCSS = require('@zeit/next-css');
 const withLess = require('@zeit/next-less');
+const withSass = require('@zeit/next-sass');
 
-module.exports = withCSS(
-  withLess({
-    target: 'serverless',
+const lessNextConfig = {
+  lessLoaderOptions: {
+    javascriptEnabled: true,
+  },
 
-    // Interpreted at build-time
-    publicRuntimeConfig: {
-      SEARCH_INDEX: SearchIndex.getForCurrentEnvironment(),
-    },
+  webpack: (config, options) => {
+    if (options.isServer) {
+      const antStylesPattern = /antd\/.*?\/style.*?/;
+      const originalExternals = [...config.externals];
 
-    lessLoaderOptions: {
-      javascriptEnabled: true,
-    },
-
-    webpack: (config, { isServer }) => {
-      config.module.rules.push(
-        {
-          test: /\.md$/,
-          use: 'raw-loader',
+      config.externals = [
+        (context, request, callback) => {
+          if (antStylesPattern.test(request) || typeof originalExternals[0] !== 'function') {
+            callback();
+          } else {
+            originalExternals[0](context, request, callback);
+          }
         },
-        {
-          test: /\.svg$/,
-          use: ['@svgr/webpack'],
-        },
-      );
+        ...(typeof originalExternals[0] === 'function' ? [] : originalExternals),
+      ];
 
-      if (isServer) {
-        const antStyles = /antd\/.*?\/style.*?/;
-        const origExternals = [...config.externals];
-        config.externals = [
-          (context, request, callback) => {
-            if (antStyles.test(request) || typeof origExternals[0] !== 'function') {
-              callback();
-            } else {
-              origExternals[0](context, request, callback);
-            }
-          },
-          ...(typeof origExternals[0] === 'function' ? [] : origExternals),
-        ];
+      config.module.rules.unshift({
+        test: antStylesPattern,
+        use: 'null-loader',
+      });
+    }
 
-        config.module.rules.unshift({
-          test: antStyles,
-          use: 'null-loader',
-        });
+    return config;
+  },
+};
+
+const sassNextConfig = {
+  cssModules: true,
+};
+
+const compose = (plugins) => ({
+  target: 'serverless',
+
+  // Interpreted at build-time
+  publicRuntimeConfig: {
+    SEARCH_INDEX: SearchIndex.getForCurrentEnvironment(),
+  },
+
+  webpack: (config, options) => {
+    config.module.rules.push(
+      {
+        test: /\.md$/,
+        use: 'raw-loader',
+      },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
+    );
+
+    return plugins.reduce((config, plugin) => {
+      if (Array.isArray(plugin)) {
+        const [pluginFunction, ...pluginArguments] = plugin;
+        plugin = pluginFunction(...pluginArguments);
+      }
+      if (plugin instanceof Function) {
+        plugin = plugin();
+      }
+      if (plugin && plugin.webpack instanceof Function) {
+        return plugin.webpack(config, options);
       }
       return config;
-    },
-  }),
-);
+    }, config);
+  },
+  webpackDevMiddleware(config) {
+    return plugins.reduce((config, plugin) => {
+      if (Array.isArray(plugin)) {
+        const [pluginFunction, ...pluginArguments] = plugin;
+        plugin = pluginFunction(...pluginArguments);
+      }
+      if (plugin instanceof Function) {
+        plugin = plugin();
+      }
+      if (plugin && plugin.webpackDevMiddleware instanceof Function) {
+        return plugin.webpackDevMiddleware(config);
+      }
+      return config;
+    }, config);
+  },
+});
+
+module.exports = compose([
+  [withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }],
+  [withCSS],
+  [withLess, lessNextConfig],
+  [withSass, sassNextConfig],
+]);

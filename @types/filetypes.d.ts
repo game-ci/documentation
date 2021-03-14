@@ -3,6 +3,8 @@ declare module '*.css' {
   export default content;
 }
 
+declare module '*.scss';
+
 declare module '*.svg' {
   const content: any;
   export default content;

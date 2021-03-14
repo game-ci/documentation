@@ -115,7 +115,7 @@
   font-size: 80%;
   width: 100%;
   left: 0;
-  background-color: rgb(1 44 84);
+  background-color: rgb(1, 44, 84);
   padding: 0 16px 16px;
   z-index: 10;
 }
@@ -212,7 +212,7 @@ a {
   height: auto;
   border-radius: 4px;
   background-color: rgb(24, 26, 27);
-  box-shadow: rgba(0 0 0 0.1) 0px 2px 4px 0px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px 0;
   /*background: #fff;*/
   /*box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);*/
 }
