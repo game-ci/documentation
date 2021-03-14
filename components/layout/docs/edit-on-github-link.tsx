@@ -1,5 +1,5 @@
 import { PageContext } from '@/components/context/page-context';
-import { GithubOutlined } from '@ant-design/icons';
+import { AiOutlineGithub } from 'react-icons/all';
 import { useContext } from 'react';
 
 const EditOnGithubLink = () => {
@@ -13,7 +13,7 @@ const EditOnGithubLink = () => {
 
   return (
     <a href={href} type="link">
-      <GithubOutlined />
+      <AiOutlineGithub />
       <span style={{ paddingLeft: 8 }}>Edit on GitHub</span>
     </a>
   );
