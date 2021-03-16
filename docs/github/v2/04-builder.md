@@ -337,12 +337,7 @@ A complete workflow that builds every available platform could look like this:
 ```yaml
 name: Build project
 
-on:
-  pull_request: {}
-  push: { branches: [main] }
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on: [push, pull_request]
 
 jobs:
   buildForAllSupportedPlatforms:
@@ -370,6 +365,8 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
       - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v2
@@ -377,5 +374,3 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 ```
-
-> **Note:** _Environment variables are set for all jobs in the workflow like this._
