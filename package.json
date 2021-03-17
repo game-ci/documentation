@@ -44,6 +44,7 @@
     "raw-loader": "^4.0.2",
     "rc-queue-anim": "^1.8.5",
     "rc-scroll-anim": "^2.7.6",
+    "rc-tween-one": "^2.7.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icons": "^4.1.0",
