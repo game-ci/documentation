@@ -15,10 +15,12 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
+      "@/components/*": ["components/*"],
       "@/core/*": ["core/*"],
-      "@/components/*": ["components/*"]
+      "@/logic/*": ["logic/*"],
+      "@/tools/*": ["tools/*"]
     }
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "core/typings/**/*", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "@types/**/*", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

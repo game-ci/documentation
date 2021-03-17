@@ -1,0 +1,119 @@
+.logo {
+  height: 30px;
+  margin: 16px 28px 16px 28px;
+  float: left;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+
+.site-layout-main {
+  padding: 0;
+  will-change: padding, width;
+  transition: padding 0.3s ease, width 0.3s ease;
+}
+
+.site-layout-main .ant-breadcrumb {
+  margin: 16px;
+  transition: margin 0.3s ease, width 0.3s ease;
+}
+
+.ant-layout-sider {
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+
+.page {
+  padding: 24px 56px;
+  min-height: 280px;
+  transition: padding 0.3s ease, width 0.3s ease;
+}
+
+@media only screen and (min-width: 992px) {
+  .site-layout-main {
+    padding: 0 50px;
+  }
+
+  .site-layout-main .ant-breadcrumb {
+    margin: 16px 0;
+  }
+
+  .page {
+    padding: 24px 48px;
+    min-height: 280px;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  .page {
+    padding: 24px 96px;
+    min-height: 280px;
+  }
+}
+
+.ant-layout-sider-zero-width-trigger-left {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  height: 42px;
+  width: 100%;
+  text-align: right;
+  will-change: right, width;
+  transition: right 0.3s ease, background-color 0.3s ease, width 0s ease;
+}
+
+.ant-layout-sider-zero-width > .ant-layout-sider-zero-width-trigger-left {
+  width: 42px;
+  right: -30px;
+  will-change: right, width;
+  transition: right 0.3s ease, background-color 0.3s ease, width 0.3s ease;
+}
+
+.ant-layout-sider-zero-width-trigger-right {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  height: 42px;
+  width: 100%;
+  text-align: left;
+  will-change: left, width;
+  transition: left 0.3s ease, background-color 0.3s ease, width 0s ease;
+}
+
+.ant-layout-sider-zero-width > .ant-layout-sider-zero-width-trigger-right {
+  width: 42px;
+  left: -30px;
+  will-change: left, width;
+  transition: left 0.3s ease, background-color 0.3s ease, width 0.3s ease;
+}
+
+.ant-layout-sider-zero-width-trigger > .anticon {
+  width: 42px;
+}
+
+.ant-layout-sider-below > .ant-layout-sider-children {
+  height: 100%;
+  margin-top: 30px;
+  padding-top: 42px;
+}
+
+.ant-menu-item .ant-input-search .anticon,
+.ant-menu-submenu-title .ant-input-search .anticon {
+  margin-right: 0;
+}
+
+.ant-menu-submenu-title .versionSelect {
+  opacity: 0.25;
+  will-change: opacity;
+  transition: opacity 0.3s ease;
+  outline: none;
+  border: 1px solid;
+  border-radius: 3px;
+}
+
+.ant-menu-submenu-title:hover .versionSelect {
+  opacity: 1;
+}

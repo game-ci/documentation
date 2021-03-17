@@ -1,43 +1,55 @@
-import { resolve } from 'path';
+import { MenuStructure } from '@/tools/menu/menu-structure';
+import path from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
-
-import DocumentationLayout from '@/components/layout/documentation-layout';
-import MarkdownRenderer from '@/components/markdown/markdown-renderer';
+import Page from '@/components/layout/docs/page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
+import generateSearchDefinitionsFromFiles from '@/tools/search/generate-definitions-from-files';
 
 interface Props {
   content: string;
   data: { title: string; date: string };
+  meta: { [key: string]: any };
 }
 
 // Represents all the markdown documentation pages
-const DocumentationPage = ({ content, data }: Props) => (
-  <DocumentationLayout>
-    <MarkdownRenderer meta={data} document={content} />
-  </DocumentationLayout>
+const Documentation = ({ content, data, meta }: Props) => (
+  <Page content={content} data={data} meta={meta} />
 );
 
 // Build time: Determines which pages are generated
 export const getStaticPaths: GetStaticPaths = async () => {
-  const files = await readDirectoryRecursively(resolve('docs/'));
+  const filePaths = await readDirectoryRecursively(path.resolve('docs/'));
+  const structure = await MenuStructure.generateFromFiles(filePaths);
+  const fileMetas = await MenuStructure.getFileMetas(structure);
 
-  const paths = files.map((file) => ({
-    params: { 'documentation-page': file.replace(/\.md$/, '').split('/') },
+  if (process.env.CI) generateSearchDefinitionsFromFiles(fileMetas);
+
+  const paths = fileMetas.map((file) => ({
+    params: { 'documentation-page': file.meta.path.split('/') },
   }));
 
   return { paths, fallback: false };
 };
 
-// Build time: Generate JSON for each generated page
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { 'documentation-page': parts } = params;
-  const page = typeof parts !== 'string' ? parts.join('/') : parts;
+interface StaticProps {
+  params: { [key: string]: string[] };
+}
 
-  const content = await import(`../../docs/${page}.md`);
+// Build time: Generate JSON for each generated page
+export const getStaticProps: GetStaticProps = async ({ params }: StaticProps) => {
+  const { 'documentation-page': parts } = params;
+
+  const structure = await MenuStructure.load();
+  const fileMetas = await MenuStructure.getFileMetas(structure);
+
+  const seoPath = parts.join('/');
+  const { meta } = fileMetas.find((file) => file.meta.path === seoPath);
+
+  const content = await import(`../../docs/${meta.absolutePath}`);
   const { orig, ...data } = matter(content.default);
 
-  return { props: { ...data } };
+  return { props: { ...data, meta } };
 };
 
-export default DocumentationPage;
+export default Documentation;

@@ -1,28 +1,36 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import React from 'react';
+import 'firebase/auth';
+import 'firebase/firestore';
 import { AppProps } from 'next/app';
 import { IconContext } from 'react-icons';
+import { InstantSearch } from 'react-instantsearch-dom';
+import { client as searchClient, indexName as searchIndex } from '@/core/search';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { reducer } from 'logic';
+import { FirebaseAppProvider } from 'reactfire';
+import config from 'core/config';
 
-import React from 'react';
-
-// import 'antd/dist/antd.css';
-// import 'antd/dist/antd.dark.css';
-// import 'antd/dist/antd.less';
-
-import '../styles/vars.css';
-import '../styles/global.css';
-import '../styles/layout.css';
-import '../styles/markdown.css';
+import '../assets/styles/antd-custom.less';
+import '../assets/styles/vars.css';
+import '../assets/styles/global.css';
+import '../assets/styles/layout.css';
+import '../assets/styles/markdown.css';
+import '../assets/styles/search.css';
 import 'highlight.js/styles/dracula.css';
 
-// import '../styles/home/header.less';
-// import '../styles/home/home.less';
-// import '../styles/home/footer.less';
-// import '../styles/home/responsive.less';
+const store = configureStore({ reducer });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <IconContext.Provider value={{ className: 'anticon' }}>
-      <Component {...pageProps} />
-    </IconContext.Provider>
+    <Provider store={store}>
+      <FirebaseAppProvider firebaseConfig={config.firebase}>
+        <InstantSearch searchClient={searchClient} indexName={searchIndex}>
+          <IconContext.Provider value={{ className: 'anticon' }}>
+            <Component {...pageProps} />
+          </IconContext.Provider>
+        </InstantSearch>
+      </FirebaseAppProvider>
+    </Provider>
   );
 }

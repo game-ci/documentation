@@ -40,16 +40,34 @@
     "unicorn/prevent-abbreviations": [
       "error",
       {
-        "whitelist": {
-          "getInitialProps": true,
-          "getStaticProps": true,
-          "props": true
+        "replacements": {
+          "props": {
+            "properties": false
+          }
         }
       }
     ],
     // Waiting for AirBnb upgrade: https://github.com/typescript-eslint/typescript-eslint/issues/2077#issuecomment-634811363
     "@typescript-eslint/camelcase": "off",
     // Conflict between prettier and eslint-unicorn
-    "react/jsx-wrap-multilines": "off"
+    "react/jsx-wrap-multilines": "off",
+    // Allow forOfStatements
+    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+    // Continue is viable in forOf loops in generators
+    "no-continue": "off",
+    // Spreading is needed in case of forwarding props
+    "react/jsx-props-no-spreading": "off",
+    // Allow inline <strong> tags
+    "react/jsx-one-expression-per-line": "off",
+    // React components should be able to return null
+    "unicorn/no-null": "off",
+    // Redux and Immer use prop reassign by design
+    "no-param-reassign": ["error", { "props": false }],
+    // For react components it's not always useful to move small methods up in scope
+    "unicorn/consistent-function-scoping": ["error", { "checkArrowFunctions": false }],
+    // From experience, named exports are almost always desired. I got tired of this rule
+    "import/prefer-default-export": "off",
+    // Firebase requires importing each module that's used
+    "import/no-duplicates": "off"
   }
 }

@@ -1,9 +1,8 @@
 import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'antd';
-import { SmileFilled } from '@ant-design/icons';
+import { AiFillSmile } from 'react-icons/all';
 import Link from 'next/link';
 
-import DatePicker from '../components/date-picker';
-import DocumentationLayout from '../components/layout/documentation-layout';
+import DocumentationPage from '@/components/layout/docs/page';
 
 const { Title } = Typography;
 
@@ -12,14 +11,14 @@ const { Option } = Select;
 
 export default function Page() {
   return (
-    <DocumentationLayout>
+    <DocumentationPage>
       <div style={{ marginTop: '100px' }}>
         <div className="text-center mb-5">
           <Link href="/">
             <a>
               <Title>
                 title
-                <SmileFilled size={48} strokeWidth={1} />
+                <AiFillSmile size={48} strokeWidth={1} />
               </Title>
             </a>
           </Link>
@@ -57,9 +56,6 @@ export default function Page() {
               </Select>
             </FormItem>
 
-            <FormItem label="DatePicker" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
-              <DatePicker name="startDate" />
-            </FormItem>
             <FormItem style={{ marginTop: 48 }} wrapperCol={{ span: 8, offset: 8 }}>
               <Button size="large" type="primary" htmlType="submit">
                 OK
@@ -71,6 +67,6 @@ export default function Page() {
           </Form>
         </div>
       </div>
-    </DocumentationLayout>
+    </DocumentationPage>
   );
 }

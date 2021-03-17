@@ -60,5 +60,11 @@ Here's Unity's workaround:
 
 ```bash
 version=v2020.1.12f1 # update this according to your version and file name
-iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf 
+iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf
 ```
+
+### I use my google account to login to Unity, how do I get my username and password?
+
+If you are using google account you can have some issue with activating unity. You just need to go on the unity website, settings, security and change your password. Then use your google email and your new password and it will work just fine ;)
+
+[Source](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/issues/149)

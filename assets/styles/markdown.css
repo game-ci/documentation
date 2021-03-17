@@ -1,0 +1,72 @@
+.markdown > table {
+  width: 100%;
+  max-width: 1024px;
+  margin: 8px 0 16px;
+  direction: ltr;
+  empty-cells: show;
+  border: 1px solid #f0f0f0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  transition: margin 0.3s ease, width 0.3s ease;
+}
+
+.markdown > table th,
+.markdown > table td {
+  padding: 8px 24px;
+  text-align: left;
+  border: 1px solid #f0f0f0;
+  transition: padding 0.3s ease, width 0.3s ease;
+}
+
+.markdown > table th {
+  color: #5c6b77;
+  font-weight: 500;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.markdown > .code-block {
+  max-width: 1024px;
+  transition: margin 0.3s ease, width 0.3s ease;
+}
+
+.markdown > .heading:not(h1) {
+  position: relative;
+  padding-left: 1em;
+  margin-left: -1em;
+}
+
+.markdown > .heading > .anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: rgb(150, 150, 150);
+  opacity: 0;
+  cursor: pointer;
+  will-change: opacity;
+  transition: opacity 0.3s ease;
+  outline: none;
+}
+
+.markdown > .heading:hover > .anchor {
+  opacity: 1;
+}
+
+@media only screen and (max-width: 992px) {
+  .markdown > table {
+    margin-left: -45px;
+    margin-right: -45px;
+    width: calc(100% + 90px);
+  }
+
+  .markdown > table th,
+  .markdown > table td {
+    padding: 8px 4px;
+  }
+
+  .markdown > .code-block {
+    margin-left: -45px;
+    margin-right: -45px;
+    width: calc(100% + 90px);
+  }
+}

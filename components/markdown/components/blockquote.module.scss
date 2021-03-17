@@ -1,0 +1,8 @@
+.blockquote {
+  font-style: italic;
+  border-left-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.blockquote :global(.ant-typography) {
+  color: rgba(0, 0, 0, 0.6);
+}

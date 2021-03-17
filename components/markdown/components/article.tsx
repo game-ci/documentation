@@ -2,6 +2,8 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default ({ children }: Props) => (
+const Article = ({ children }: Props) => (
   <article className="markdown ant-typography">{children}</article>
 );
+
+export default Article;
