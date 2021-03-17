@@ -1,10 +1,8 @@
 import React from 'react';
 import { Row, Col } from 'antd';
-import Icon from '@ant-design/icons';
 import QueueAnim from 'rc-queue-anim';
 import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 
-import PropTypes from 'prop-types';
 import svgBgToParallax from '@/components/parallax/svgBgToParallax';
 
 const page2Data = [
@@ -115,45 +113,54 @@ const svgBgChild = [
   </svg>,
 ];
 
-const svgBgChildArray = svgBgChild.map((item, i) => {
+const svgBgChildArray = svgBgChild.map((item, index) => {
   const { props } = item;
-  return React.cloneElement(item, { children: svgBgToParallax(props.children, i) });
+  return React.cloneElement(item, { children: svgBgToParallax(props.children, index) });
 });
-export default function Section2({ isMobile }) {
+
+interface Props {
+  isMobile: boolean;
+}
+
+const Section2 = ({ isMobile }: Props) => {
   const componentButton = (
     <div key="b" className="components-button-wrapper">
       <a>
         Ant Design of React
-        <Icon type="right" />
+        {/* <Icon type="right" /> */}
       </a>
       <a>
         Ant Design of Angular
-        <Icon type="right" />
+        {/* <Icon type="right" /> */}
       </a>
     </div>
   );
-  const children = page2Data.map((item, i) => {
-    if (!isMobile && !i) {
+  const children = page2Data.map((item, index) => {
+    if (!isMobile && !index) {
       return () => {};
     }
     const spreadElements = [
       <p key="p">{item.slogan}</p>,
       <a key="a">
         <p>learn more</p>
-        <Icon type="right" />
+        {/* <Icon type="right" /> */}
       </a>,
     ];
-    const content = isMobile && !i ? componentButton : [...spreadElements];
+    const content = isMobile && !index ? componentButton : [...spreadElements];
     return (
-      <Row className="product-block" key={i.toString()}>
-        <Col xs={8} md={i === 2 ? 6 : 8} className={`block-image-wrapper${i % 2 ? ' right' : ''}`}>
+      <Row className="product-block" key={index.toString()}>
+        <Col
+          xs={8}
+          md={index === 2 ? 6 : 8}
+          className={`block-image-wrapper${index % 2 ? ' right' : ''}`}
+        >
           <img
             src={item.img}
-            style={isMobile && i === 2 ? { marginLeft: 16 } : {}}
+            style={isMobile && index === 2 ? { marginLeft: 16 } : {}}
             alt="todo: fill me"
           />
         </Col>
-        <Col xs={16} md={i === 2 ? 18 : 16} className="block-text-wrapper">
+        <Col xs={16} md={index === 2 ? 18 : 16} className="block-text-wrapper">
           <h4>{item.name}</h4>
           {content}
         </Col>
@@ -197,12 +204,6 @@ export default function Section2({ isMobile }) {
       <div className="parallax-bg top">{svgBgChildArray[1]}</div>
     </div>
   );
-}
-
-Section2.propTypes = {
-  isMobile: PropTypes.bool,
 };
 
-Section2.defaultProps = {
-  isMobile: false,
-};
+export default Section2;

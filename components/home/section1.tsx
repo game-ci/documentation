@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TweenOneGroup } from 'rc-tween-one';
 import QueueAnim from 'rc-queue-anim';
 import { Row, Col } from 'antd';
@@ -224,37 +224,35 @@ const svgToXY = page1Data.map((item) => {
   const c = item.svgBg.props.children;
   return c.map((child) => {
     const p = child.props;
-    const trnasformXY = p.transform ? getTransformXY(p.transform) : {};
+    const { x, y } = p.transform ? getTransformXY(p.transform) : { x: 0, y: 0 };
     return {
-      x: Number.parseFloat(p.x || p.cx || trnasformXY.x),
-      y: Number.parseFloat(p.y || p.cy || trnasformXY.y),
+      x: Number.parseFloat(p.x || p.cx || x),
+      y: Number.parseFloat(p.y || p.cy || y),
     };
   });
 });
 
-export default class Section1 extends React.PureComponent {
-  state = {
-    hoverKey: undefined,
+interface Props {
+  isMobile: boolean;
+}
+
+const Section1 = ({ isMobile }: Props) => {
+  const [hoverKey, setHoverKey] = useState<any>();
+
+  const onMouseOver = (key) => {
+    setHoverKey(key);
   };
 
-  onMouseOver = (key) => {
-    this.setState({
-      hoverKey: key,
-    });
+  const onMouseOut = () => {
+    setHoverKey(null);
   };
 
-  onMouseOut = () => {
-    this.setState({
-      hoverKey: undefined,
-    });
-  };
-
-  getEnter = (i, e) => {
-    const ii = e.index;
+  const getEnter = (index, event) => {
+    const ii = event.index;
     const r = Math.random() * 2 - 1;
     const y = Math.random() * 10 + 10;
     const delay = Math.round(Math.random() * (ii * 30));
-    const pos = svgToXY[i][ii];
+    const pos = svgToXY[index][ii];
     return [
       { x: 100, y: 150, duration: 0 },
       {
@@ -274,22 +272,22 @@ export default class Section1 extends React.PureComponent {
     ];
   };
 
-  getSvgChild = (child) =>
-    child.map((item, i) => {
+  const getSvgChild = (child) =>
+    child.map((item, index) => {
       const props = { ...item.props };
       if (item.type === 'g') {
         props.transform = undefined;
       } else {
-        ['x', 'y', 'cx', 'cy'].forEach((string) => {
+        for (const string of ['x', 'y', 'cx', 'cy']) {
           if (string in props) {
             props[string] = undefined;
           }
-        });
+        }
       }
-      return <g key={i.toString()}>{React.cloneElement(item, props)}</g>;
+      return <g key={index.toString()}>{React.cloneElement(item, props)}</g>;
     });
 
-  leave = {
+  const leave = {
     opacity: 0,
     duration: 300,
     x: 100,
@@ -297,57 +295,57 @@ export default class Section1 extends React.PureComponent {
     ease: 'easeInBack',
   };
 
-  render() {
-    const children = page1Data.map((item, i) => {
-      const isHover = item.nameEn === this.state.hoverKey;
-      return (
-        <Col key={item.nameEn} md={6} xs={24}>
-          <TweenOneGroup
-            className="page1-point-wrapper"
-            enter={(e) => this.getEnter(i, e)}
-            leave={this.leave}
-            {...item.svgBg.props}
-            component="svg"
-            resetStyleBool={false}
-          >
-            {(this.props.isMobile || isHover) && this.getSvgChild(item.svgBg.props.children)}
-          </TweenOneGroup>
-          <QueueAnim
-            className="page1-block"
-            type="bottom"
-            // component={}
-            componentProps={{ to: item.to }}
-            onMouseEnter={() => {
-              this.onMouseOver(item.nameEn);
-            }}
-            onMouseLeave={this.onMouseOut}
-          >
-            <div className="page1-image">
-              <img src={item.img} />
-            </div>
-            <h3>{item.name}</h3>
-            <p>{item.nameEn}</p>
-          </QueueAnim>
-        </Col>
-      );
-    });
+  const children = page1Data.map((item, index) => {
+    const isHover = item.nameEn === hoverKey;
     return (
-      <div className="home-page-wrapper page1">
-        <div className="page">
-          <h2>Automate the boring tasks</h2>
-          <ScrollOverPack playScale="0.3">
-            <QueueAnim
-              component={Row}
-              key="queue"
-              type="bottom"
-              ease={['easeOutQuart', 'easeInQuart']}
-              leaveReverse
-            >
-              {children}
-            </QueueAnim>
-          </ScrollOverPack>
-        </div>
-      </div>
+      <Col key={item.nameEn} md={6} xs={24}>
+        <TweenOneGroup
+          className="page1-point-wrapper"
+          enter={(event) => getEnter(index, event)}
+          leave={leave}
+          {...item.svgBg.props}
+          component="svg"
+        >
+          {(isMobile || isHover) && getSvgChild(item.svgBg.props.children)}
+        </TweenOneGroup>
+        <QueueAnim
+          className="page1-block"
+          type="bottom"
+          // component={}
+          // componentProps={{ to: item.to }}
+          onMouseEnter={() => {
+            onMouseOver(item.nameEn);
+          }}
+          onMouseLeave={onMouseOut}
+        >
+          <div className="page1-image">
+            <img src={item.img} alt="todo" />
+          </div>
+          <h3>{item.name}</h3>
+          <p>{item.nameEn}</p>
+        </QueueAnim>
+      </Col>
     );
-  }
-}
+  });
+
+  return (
+    <div className="home-page-wrapper page1">
+      <div className="page">
+        <h2>Automate the boring tasks</h2>
+        <ScrollOverPack playScale="0.3">
+          <QueueAnim
+            component={Row}
+            key="queue"
+            type="bottom"
+            ease={['easeOutQuart', 'easeInQuart']}
+            leaveReverse
+          >
+            {children}
+          </QueueAnim>
+        </ScrollOverPack>
+      </div>
+    </div>
+  );
+};
+
+export default Section1;

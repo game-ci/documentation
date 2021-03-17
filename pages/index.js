@@ -1,14 +1,13 @@
 import React from 'react';
 
 import Home from '@/components/home';
-
-import BaseLayout from '@/components/layout/base-layout';
+import HomeLayout from '@/components/layout/home-layout';
 
 const Index = () => {
   return (
-    <BaseLayout>
+    <HomeLayout>
       <Home />
-    </BaseLayout>
+    </HomeLayout>
   );
 };
 

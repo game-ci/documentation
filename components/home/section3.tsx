@@ -69,10 +69,10 @@ const svgBg = [
   />,
 ];
 const svgChildren = svgBgToParallax(svgBg);
-const children = page3Data.map((item, i) => (
-  <Col key={i.toString()} md={8} xs={24} className="page3-block">
+const children = page3Data.map((item, index) => (
+  <Col key={index.toString()} md={8} xs={24} className="page3-block">
     <div className="page3-img-wrapper">
-      <img src={item.img} />
+      <img src={item.img} alt="todo" />
     </div>
     <div className="page3-text-wrapper">
       <h3>{item.title}</h3>
@@ -80,30 +80,31 @@ const children = page3Data.map((item, i) => (
     </div>
   </Col>
 ));
-export default function Section3() {
-  return (
-    <div className="home-page-wrapper page3" id="page3">
-      <div className="parallax-bg top">
-        <svg
-          width="1440px"
-          height="557px"
-          viewBox="0 0 1440 557"
-          stroke="none"
-          strokeWidth="1"
-          fill="none"
-          fillRule="evenodd"
-        >
-          {svgChildren}
-        </svg>
-      </div>
-      <div className="page">
-        <h2>Tools & resources</h2>
-        <ScrollOverPack location="page3">
-          <QueueAnim key="queue" component={Row} type="bottom" leaveReverse>
-            {children}
-          </QueueAnim>
-        </ScrollOverPack>
-      </div>
+
+const Section3 = () => (
+  <div className="home-page-wrapper page3" id="page3">
+    <div className="parallax-bg top">
+      <svg
+        width="1440px"
+        height="557px"
+        viewBox="0 0 1440 557"
+        stroke="none"
+        strokeWidth="1"
+        fill="none"
+        fillRule="evenodd"
+      >
+        {svgChildren}
+      </svg>
     </div>
-  );
-}
+    <div className="page">
+      <h2>Tools & resources</h2>
+      <ScrollOverPack location="page3">
+        <QueueAnim key="queue" component={Row} type="bottom" leaveReverse>
+          {children}
+        </QueueAnim>
+      </ScrollOverPack>
+    </div>
+  </div>
+);
+
+export default Section3;
