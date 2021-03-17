@@ -5,7 +5,7 @@ import Banner from '@/components/home/banner';
 import Section1 from '@/components/home/section1';
 import Section2 from '@/components/home/section2';
 import Section3 from '@/components/home/section3';
-import GameCiLogo from '../../images/game-ci-brand-logo-wordmark.svg';
+import GameCiLogo from 'assets/images/game-ci-brand-logo-wordmark.svg';
 
 const Home = () => (
   <>
