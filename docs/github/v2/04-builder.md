@@ -150,7 +150,7 @@ _**example:**_
 ```yaml
 - uses: game-ci/unity-builder@v2
   with:
-    buildMethod: EditorNamespace.BuilderClassName.StaticBulidMethod
+    buildMethod: EditorNamespace.BuilderClassName.StaticBuildMethod
 ```
 
 _**required:** `false`_
