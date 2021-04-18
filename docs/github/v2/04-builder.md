@@ -153,7 +153,7 @@ Example:
     buildMethod: EditorNamespace.BuilderClassName.StaticBuildMethod
 ```
 
-To use a modified version of the default Unity Builder build script, you can put [BuildScript.cs](docs/github/v2/BuildScript.cs) in your `Assets/Editor/UnityBuilderAction` directory and reference it:
+To use a modified version of the default Unity Builder build script, you can put [BuildScript.cs](https://github.com/game-ci/documentation/blob/main/docs/github/v2/BuildScript.cs) in your `Assets/Editor/UnityBuilderAction` directory and reference it:
 
 ```yaml
 - uses: game-ci/unity-builder@v2
