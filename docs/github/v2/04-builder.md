@@ -140,17 +140,25 @@ _**default:** `build`_
 
 Custom command to run your build.
 
-There are two conditions for a custom buildCommand:
+There are two conditions for a custom buildMethod:
 
 - Must reference a valid path to a `static` method.
-- The class must reside in the `Assets/Editor` directory.
+- The class must reside in the `Assets/Editor` directory (or in an Editor Assembly).
 
-_**example:**_
+Example:
 
 ```yaml
 - uses: game-ci/unity-builder@v2
   with:
     buildMethod: EditorNamespace.BuilderClassName.StaticBuildMethod
+```
+
+To get started with a modified version of the default Unity Builder build script, you can copy [BuildScript.cs](https://github.com/game-ci/documentation/blob/main/example/BuildScript.cs) to your `Assets/Editor/UnityBuilderAction` directory and reference it:
+
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    buildMethod: UnityBuilderAction.BuildScript.Build
 ```
 
 _**required:** `false`_
