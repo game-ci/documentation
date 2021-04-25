@@ -86,7 +86,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "yarn update-menu && git add core/menu-structure.json && lint-staged"
     }
   },
   "lint-staged": {
