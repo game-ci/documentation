@@ -291,5 +291,5 @@ jobs:
 
 ### 7 - Ensure App Exists in App Store Connect
 
-  - Go to Apple's App Store Connect site
+  - Go to Apple's [App Store Connect](https://appstoreconnect.apple.com/)
   - Select Apps, and add the App with the same Bundle Identifier as used earlier
