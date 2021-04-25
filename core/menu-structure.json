@@ -1,11 +1,6 @@
 {
   "docs": {
     "docker": {
-      "meta": {
-        "path": "docker",
-        "order": 99,
-        "type": "folder"
-      },
       "docker-images": {
         "name": "Docker images",
         "meta": {

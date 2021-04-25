@@ -86,7 +86,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "yarn update-menu && lint-staged"
     }
   },
   "lint-staged": {
