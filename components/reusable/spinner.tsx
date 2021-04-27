@@ -1,7 +1,7 @@
 import { ThreeDots } from '@/components/reusable/spinner/three-dots';
 import React from 'react';
 import { AiOutlineLoading3Quarters, FaSpinner } from 'react-icons/all';
-import styles from './spinner.module.css';
+import styles from './spinner.module.scss';
 
 interface Props {
   type: 'spin' | 'pulse' | 'slow' | 'dots';

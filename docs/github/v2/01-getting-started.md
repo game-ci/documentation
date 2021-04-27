@@ -58,12 +58,7 @@ This example assumes that your Unity project is in the root of your repository.
 ```yaml
 name: Actions 😎
 
-on:
-  pull_request: {}
-  push: { branches: [main] }
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on: [push, pull_request]
 
 jobs:
   build:
@@ -85,12 +80,16 @@ jobs:
       # Test
       - name: Run tests
         uses: game-ci/unity-test-runner@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
       # Build
       - name: Build project
         uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: WebGL
 
@@ -109,12 +108,7 @@ have a look at the example below.
 ```yaml
 name: Actions 😎
 
-on:
-  pull_request: {}
-  push: { branches: [main] }
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on: [push, pull_request]
 
 jobs:
   buildAndTestForSomePlatforms:
@@ -149,6 +143,8 @@ jobs:
             Library-
       - uses: game-ci/unity-test-runner@v2
         id: testRunner
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
@@ -159,6 +155,8 @@ jobs:
           name: Test results (all modes)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
       - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}

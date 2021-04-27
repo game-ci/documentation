@@ -305,24 +305,6 @@
         }
       }
     },
-    "travis": {
-      "meta": {
-        "path": "travis",
-        "order": 99,
-        "type": "folder"
-      },
-      "getting-started": {
-        "name": "Getting started",
-        "meta": {
-          "version": null,
-          "absolutePath": "travis/getting-started.md",
-          "permalinkPath": "travis/getting-started",
-          "path": "travis/getting-started",
-          "order": 99,
-          "type": "file"
-        }
-      }
-    },
     "troubleshooting": {
       "meta": {
         "path": "troubleshooting",

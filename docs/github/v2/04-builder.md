@@ -140,17 +140,25 @@ _**default:** `build`_
 
 Custom command to run your build.
 
-There are two conditions for a custom buildCommand:
+There are two conditions for a custom buildMethod:
 
 - Must reference a valid path to a `static` method.
-- The class must reside in the `Assets/Editor` directory.
+- The class must reside in the `Assets/Editor` directory (or in an Editor Assembly).
 
-_**example:**_
+Example:
 
 ```yaml
 - uses: game-ci/unity-builder@v2
   with:
-    buildMethod: EditorNamespace.BuilderClassName.StaticBulidMethod
+    buildMethod: EditorNamespace.BuilderClassName.StaticBuildMethod
+```
+
+To get started with a modified version of the default Unity Builder build script, you can copy [BuildScript.cs](https://github.com/game-ci/documentation/blob/main/example/BuildScript.cs) to your `Assets/Editor/UnityBuilderAction` directory and reference it:
+
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    buildMethod: UnityBuilderAction.BuildScript.Build
 ```
 
 _**required:** `false`_
@@ -337,12 +345,7 @@ A complete workflow that builds every available platform could look like this:
 ```yaml
 name: Build project
 
-on:
-  pull_request: {}
-  push: { branches: [main] }
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on: [push, pull_request]
 
 jobs:
   buildForAllSupportedPlatforms:
@@ -370,6 +373,8 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
       - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v2
@@ -377,5 +382,3 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 ```
-
-> **Note:** _Environment variables are set for all jobs in the workflow like this._

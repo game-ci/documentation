@@ -231,14 +231,9 @@ _**default:** `""`_
 A complete workflow that tests all modes separately could look like this:
 
 ```yaml
-name: Build project
+name: Test project
 
-on:
-  pull_request: {}
-  push: { branches: [main] }
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on: [push, pull_request]
 
 jobs:
   testAllModes:
@@ -264,6 +259,8 @@ jobs:
             Library-
       - uses: game-ci/unity-test-runner@v2
         id: tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
@@ -276,5 +273,3 @@ jobs:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
 ```
-
-> _**Note:** Environment variables are set for all jobs in the workflow like this._
