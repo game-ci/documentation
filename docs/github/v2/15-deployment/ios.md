@@ -276,8 +276,8 @@ jobs:
 - **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **APPLE_TEAM_NAME**: Team Name from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **MATCH_URL**: Address of private repository that you made in previous steps for storing certificates.
-- **GIT_TOKEN**: Base64 of `user@MATCH_URL` e.g. `user@https://github.com/game-ci/documentation.git`.
-  You can use an online base64 encoder for this step.
+- **GIT_TOKEN**: Base64 of `user:personal_access_token` e.g. `MyUserName:ghp_aksaSDKSasjkas8982jaaskalzoUIUsuqwer`.
+  You can use an online base64 encoder for this step or `echo -n MyUserName:ghp_aksaSDKSasjkas8982jaaskalzoUIUsuqwer | base64`. See [Fastlane's match documentation](https://docs.fastlane.tools/actions/match/#git-storage-on-github) for details.
 - **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
 - **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Because of limitations of using Apple accounts
   with 2FA (2-factor authentication) in CI environments, you have to
@@ -288,3 +288,8 @@ jobs:
 
 - Add your [application icon(s)](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Icon.html) (applications without an icon generate an error while uploading to TestFlight)
 - Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Other.html#Identification)
+
+### 7 - Ensure App Exists in App Store Connect
+
+  - Go to Apple's [App Store Connect](https://appstoreconnect.apple.com/)
+  - Select Apps, and add the App with the same Bundle Identifier as used earlier
