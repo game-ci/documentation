@@ -30,7 +30,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    -e "TEST_PLATFORM=linux" \
    -e "WORKDIR=/root/project" \
    -v "$(pwd):/root/project" \
-   gableroux/unity3d:$UNITY_VERSION \
+   unityci/editor:$UNITY_VERSION \
    bash
    ```
 
@@ -46,9 +46,10 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    ```bash
    xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   /opt/Unity/Editor/Unity \
+   /opt/unity/Editor/Unity \
    -logFile /dev/stdout \
    -batchmode \
+   -nographics \
    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
    ```
 
@@ -88,7 +89,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    -e "TEST_PLATFORM=linux" \
    -e "WORKDIR=/root/project" \
    -v "$(pwd):/root/project" \
-   gableroux/unity3d:$UNITY_VERSION \
+   unityci/editor:$UNITY_VERSION \
    bash
    ```
 
@@ -96,9 +97,10 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    ```bash
    xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   /opt/Unity/Editor/Unity \
+   /opt/unity/Editor/Unity \
    -logFile /dev/stdout \
    -batchmode \
+   -nographics \
    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL"
    ```
 
