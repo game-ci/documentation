@@ -23,14 +23,19 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    _hint: you should write this to a shell script and execute the shell script so you don't have your credentials stored in your bash history_. Also make sure you use your Unity3d _email address_ for `UNITY_USERNAME` env var.
 
    ```bash
-   UNITY_VERSION=2019.3.7f1
+   UNITY_VERSION=2020.1.11f1
+   IMAGE=unityci/editor # https://hub.docker.com/r/unityci/editor
+   IMAGE_VERSION=0.12 # https://github.com/game-ci/docker/releases
+   DOCKER_IMAGE=$IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION
+
+   DOCKER_IMAGE=
    docker run -it --rm \
    -e "UNITY_USERNAME=username@example.com" \
    -e "UNITY_PASSWORD=example_password" \
    -e "TEST_PLATFORM=linux" \
    -e "WORKDIR=/root/project" \
    -v "$(pwd):/root/project" \
-   gableroux/unity3d:$UNITY_VERSION \
+   $DOCKER_IMAGE \
    bash
    ```
 
@@ -80,7 +85,11 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    _hint: you should write this to a shell script and execute the shell script so you don't have your credentials stored in your bash history_. Also make sure you use your Unity3d _email address_ for `UNITY_USERNAME` env var.
 
    ```bash
-   UNITY_VERSION=2019.3.7f1
+   UNITY_VERSION=2020.1.11f1
+   IMAGE=unityci/editor # https://hub.docker.com/r/unityci/editor
+   IMAGE_VERSION=0.12 # https://github.com/game-ci/docker/releases
+   DOCKER_IMAGE=$IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION
+   
    docker run -it --rm \
    -e "UNITY_USERNAME=username@example.com" \
    -e "UNITY_PASSWORD=example_password" \
@@ -88,7 +97,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    -e "TEST_PLATFORM=linux" \
    -e "WORKDIR=/root/project" \
    -v "$(pwd):/root/project" \
-   gableroux/unity3d:$UNITY_VERSION \
+   $DOCKER_IMAGE \
    bash
    ```
 
