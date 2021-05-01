@@ -15,7 +15,7 @@ For Unity projects the available disk size is quite small. You may experience an
 
 ✔️ **AWS** is supported.
 
-❌ **GCP** planned, Cloud Run needs to release support for NFS storage.
+⚠ **GCP** planned, Google Cloud Run needs to release support for NFS.
 
 ❌ **Azure** planned, already supported.
 
