@@ -2,8 +2,7 @@
 
 ## What is it?
 
-GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here]
-(https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
+GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
 
 For Unity projects the available disk size is quite small. You may experience an error related to running out of disk space. You may also want to run the build on a server with more memory or processing resources.
 
