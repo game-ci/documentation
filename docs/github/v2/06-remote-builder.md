@@ -7,7 +7,7 @@
 1. Larger options and more control over disc size, memory and CPU.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 
-This is especially useful for GitHub based Unity projects because GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
+GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
 
 For Unity projects the available disk size is quite small. You may experience an error related to running out of disk space. You may also want to run the build on a server with more memory or processing resources.
 
@@ -124,4 +124,4 @@ _Reference:_
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-A full workflow example can be seen in our [own CI workflow](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/aws-tests.yml).
+A full workflow example can be seen in builder's [test workflow](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/aws-tests.yml).
