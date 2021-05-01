@@ -29,7 +29,7 @@ For Unity projects the available disk size is quite small. You may experience an
 
 Self-hosted runners are best used when you already have a server available, running 24/7 that you can setup as a runner. And you're happy to maintain and keep that server available and running.
 
-Remote Builder is better if you don't have a server setup or don't want to manage or maintain a build server.
+Remote Builder is better if you don't have a server setup or don't want to manage or maintain your own build server.
 
 ## Basic Remote Builder setup with AWS
 
