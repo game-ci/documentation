@@ -4,7 +4,7 @@
 
 **You can use remote builder to send a build from any supported git platform to any of the supported remote builder types.**
 
-1. Larger options and more control over disc size, memory and CPU.
+1. Larger options and more control over disc size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 
 GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
