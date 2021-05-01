@@ -64,7 +64,7 @@ _This enables us to access AWS resources from Unity Builder._
 
 ### GitHub Access Token
 
-Include the following `with` variable for the GitHub build step:
+Include the following variable in the `with` section of the builder step:
 
 - `githubToken` (should be a GitHub access token with permission to get repositories)
 
