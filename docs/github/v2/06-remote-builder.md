@@ -10,25 +10,25 @@ For Unity projects the available disk size is quite small. You may experience an
 
 ## Key features
 
-- **Run builds on a cloud provider like AWS.** _This is billed on demand and costs nothing except unless you store the builds (which is cheap) while no builds are running._
+- **Run builds on a cloud provider like AWS.** _This is billed on demand and costs nothing unless you store the builds._
 
 ✔️ **AWS** is supported.
 
-❌ **GCP** planned, Cloud Run needs to release support for NFS storage.
+⚠ **GCP** planned, Google Cloud Run needs to release support for NFS.
 
-❌ **Azure** planned, already supported.
+⚠ **Azure** planned, the needed technologies are already supported.
 
-- **Run builds on a Kubernetes cluster.** _Usually the cluster needs to be up and running at all times at all times as starting up a cluster is slow. Using Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
+- **Run builds on a Kubernetes cluster.** _Usually the cluster needs to be up and running at all times, as starting up a cluster is slow. Using Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
 
 ✔️ All Kubernetes providers that support persistent volumes are supported.
 
-### When to use GitHub self-hosted runner or Remote Builder
+### When to use GitHub self-hosted runner or remote builder?
 
 [GitHub self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) and Remote Builder can enable you to build larger projects.
 
 Self-hosted runners are best used when you already have a server available, running 24/7 that you can setup as a runner. And you're happy to maintain and keep that server available and running.
 
-Remote Builder is better if you don't have a server setup or don't want to manage or maintain a build server.
+Remote Builder is better if you don't have a server setup or don't want to manage or maintain your own build server.
 
 ## Basic Remote Builder setup with AWS
 
@@ -59,11 +59,11 @@ Setup the following as `env` variables for the GitHub build step:
 - `AWS_DEFAULT_REGION` (should be the same AWS region as the base stack e.g `eu-west-2`)
 
 _Note:_
-_This enables us to access AWS resources from the GitHub builder._
+_This enables us to access AWS resources from Unity Builder._
 
 ### GitHub Access Token
 
-Include the following `with` variable for the GitHub build step:
+Include the following variable in the `with` section of the builder step:
 
 - `githubToken` (should be a GitHub access token with permission to get repositories)
 
