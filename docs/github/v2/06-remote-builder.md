@@ -23,7 +23,7 @@ For Unity projects the available disk size is quite small. You may experience an
 
 ✔️ All Kubernetes providers that support persistent volumes are supported.
 
-### When to use GitHub self-hosted runner or Remote Builder
+### When to use GitHub self-hosted runner or remote builder?
 
 [GitHub self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) and Remote Builder can enable you to build larger projects.
 
