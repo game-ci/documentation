@@ -60,7 +60,7 @@ Setup the following as `env` variables for the GitHub build step:
 - `AWS_DEFAULT_REGION` (should be the same AWS region as the base stack e.g `eu-west-2`)
 
 _Note:_
-_This enables us to access AWS resources from the GitHub builder._
+_This enables us to access AWS resources from Unity Builder._
 
 ### GitHub Access Token
 
