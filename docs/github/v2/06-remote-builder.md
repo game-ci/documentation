@@ -119,4 +119,4 @@ _Reference:_
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-A full workflow example can be seen in our [own CI workflow](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/aws-tests.yml).
+A full workflow example can be seen in builder's [test workflow](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/aws-tests.yml).
