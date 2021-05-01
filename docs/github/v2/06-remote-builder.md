@@ -17,7 +17,7 @@ For Unity projects the available disk size is quite small. You may experience an
 
 ⚠ **GCP** planned, Google Cloud Run needs to release support for NFS.
 
-❌ **Azure** planned, already supported.
+⚠ **Azure** planned, the needed technologies are already supported.
 
 - **Run builds on a Kubernetes cluster.** _Usually the cluster needs to be up and running at all times at all times as starting up a cluster is slow. Using Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
 
