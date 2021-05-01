@@ -9,7 +9,7 @@ For Unity projects the available disk size is quite small. You may experience an
 
 **You can use Remote Builder to send a build from any supported git platform to any of the supported remote builder types.**
 
-## Key Features
+## Key features
 
 - **Run builds on a cloud provider like AWS.** _This is billed on demand and costs nothing except unless you store the builds (which is cheap) while no builds are running._
 
