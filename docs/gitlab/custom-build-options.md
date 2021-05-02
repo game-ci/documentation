@@ -7,7 +7,7 @@ First, you need to understand how build options are passed to the build.
 This is the script used during `Unity` command line execution. It is passed to the [`-executeMethod <ClassName.MethodName>` command line parameter](https://docs.unity3d.com/Manual/CommandLineArguments.html) like this:
 
 ```bash
-/opt/Unity/Editor/Unity \
+unity-editor \
   # ...
   -executeMethod BuildCommand.PerformBuild \
   # ...
@@ -20,9 +20,9 @@ You need to have this file in your project in order to build your project in the
 You can add `BuildOptions` per target by adding environment variable `BuildOptions`.
 
 ```yaml
-build-ios:
+build-ios-xcode:
   <<: *build
-  image: gableroux/unity3d:2019.3.7f1-android
+  image: $IMAGE:$UNITY_VERSION-ios-$IMAGE_VERSION
   variables:
     BUILD_TARGET: iOS
 	BuildOptions: AcceptExternalModificationsToPlayer
