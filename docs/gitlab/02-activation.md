@@ -23,14 +23,18 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    _hint: you should write this to a shell script and execute the shell script so you don't have your credentials stored in your bash history_. Also make sure you use your Unity3d _email address_ for `UNITY_USERNAME` env var.
 
    ```bash
-   UNITY_VERSION=2019.3.7f1
+   UNITY_VERSION=2020.1.11f1
+   IMAGE=unityci/editor # https://hub.docker.com/r/unityci/editor
+   IMAGE_VERSION=0.12 # https://github.com/game-ci/docker/releases
+   DOCKER_IMAGE=$IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION
+
    docker run -it --rm \
    -e "UNITY_USERNAME=username@example.com" \
    -e "UNITY_PASSWORD=example_password" \
    -e "TEST_PLATFORM=linux" \
    -e "WORKDIR=/root/project" \
    -v "$(pwd):/root/project" \
-   gableroux/unity3d:$UNITY_VERSION \
+   $DOCKER_IMAGE \
    bash
    ```
 
@@ -46,9 +50,10 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    ```bash
    xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   /opt/Unity/Editor/Unity \
+   unity-editor \
    -logFile /dev/stdout \
    -batchmode \
+   -nographics \
    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
    ```
 
@@ -80,7 +85,11 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    _hint: you should write this to a shell script and execute the shell script so you don't have your credentials stored in your bash history_. Also make sure you use your Unity3d _email address_ for `UNITY_USERNAME` env var.
 
    ```bash
-   UNITY_VERSION=2019.3.7f1
+   UNITY_VERSION=2020.1.11f1
+   IMAGE=unityci/editor # https://hub.docker.com/r/unityci/editor
+   IMAGE_VERSION=0.12 # https://github.com/game-ci/docker/releases
+   DOCKER_IMAGE=$IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION
+
    docker run -it --rm \
    -e "UNITY_USERNAME=username@example.com" \
    -e "UNITY_PASSWORD=example_password" \
@@ -88,7 +97,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    -e "TEST_PLATFORM=linux" \
    -e "WORKDIR=/root/project" \
    -v "$(pwd):/root/project" \
-   gableroux/unity3d:$UNITY_VERSION \
+   $DOCKER_IMAGE \
    bash
    ```
 
@@ -96,9 +105,10 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    ```bash
    xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   /opt/Unity/Editor/Unity \
+   unity-editor \
    -logFile /dev/stdout \
    -batchmode \
+   -nographics \
    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL"
    ```
 
@@ -107,11 +117,3 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 6. Copy the content to your CI's environment variable `UNITY_LICENSE`.
    _Note: if you are doing this on windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) solves this by removing `\r` character from the env variable so you'll be alright_
    [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
-
-## Unity license per target
-
-Before `2018.4.8f1` for 2018 versions and before `2019.2.4f1` for 2019 versions, if you need a specific Unity license for a build target, you can add environment var `UNITY_LICENSE_CONTENT_{BUILD_TARGET}`. (`UNITY_LICENSE_CONTENT_ANDROID`, `UNITY_LICENSE_CONTENT_IOS`, ...). \_This is not required anymore now that images share a base image [See related change](https://gitlab.com/gableroux/unity3d/merge_requests/63)\*\*
-
-### Note about components in recent images
-
-Starting from these versions, base image doesn't include windows, mac and webgl components anymore. This means you must use `-mac`, `-windows` or `-webgl` images. [See related change](https://gitlab.com/gableroux/unity3d/merge_requests/63)
