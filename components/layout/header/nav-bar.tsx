@@ -16,7 +16,7 @@ interface Props {
 const NavBar = ({ showSearch }: Props) => (
   <Header className="header">
     <a className="logo" href="/">
-      <GameCiLogo width="60" />
+      <GameCiLogo width="60" height="60" />
     </a>
     <Menu
       theme="dark"
