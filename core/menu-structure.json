@@ -182,6 +182,17 @@
               "type": "file"
             }
           },
+          "remote-builder": {
+            "name": "Remote builder",
+            "meta": {
+              "version": "v2",
+              "absolutePath": "github/v2/06-remote-builder.md",
+              "permalinkPath": "github/v2/remote-builder",
+              "path": "github/remote-builder",
+              "order": 6,
+              "type": "file"
+            }
+          },
           "deployment": {
             "meta": {
               "path": "github/deployment",
