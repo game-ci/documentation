@@ -1,4 +1,5 @@
 import { PageContext } from '@/components/context/page-context';
+import { Button } from 'antd';
 import { AiOutlineGithub } from 'react-icons/all';
 import { useContext } from 'react';
 
@@ -12,10 +13,9 @@ const EditOnGithubLink = () => {
   const href = absolutePath ? `${repoPath}/${editPath}/${filePath}` : `${repoPath}`;
 
   return (
-    <a href={href} type="link">
-      <AiOutlineGithub />
-      <span style={{ paddingLeft: 8 }}>Edit on GitHub</span>
-    </a>
+    <Button type="primary" icon={<AiOutlineGithub />} href={href}>
+      Edit on GitHub
+    </Button>
   );
 };
 
