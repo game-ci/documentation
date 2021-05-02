@@ -40,8 +40,17 @@ export default function Page() {
           </a>
         </p>
 
+        <iframe
+          title="GameCI discord widget"
+          src="https://discord.com/widget?id=710946343828455455&theme=dark"
+          width="350"
+          height="500"
+          allowTransparency="true"
+          frameBorder="0"
+          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+        />
         <p style={{ display: 'flex', alignItems: 'center' }}>
-          <span>Join the discussion on </span>
+          <span>Join the discussion on&nbsp;</span>
           <Link href="/discord">
             <a>
               <IoLogoDiscord alt="GameCI Discord" />
