@@ -20,7 +20,7 @@ const SearchBar = () => {
         flex: 1,
         padding: '0 10%',
         position: 'relative',
-        backgroundColor: active ? 'rgb(1 44 84)' : 'transparent',
+        backgroundColor: active ? '#373445' : 'transparent',
       }}
     >
       <Configuration />
