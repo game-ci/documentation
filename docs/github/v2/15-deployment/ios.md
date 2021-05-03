@@ -92,6 +92,14 @@ platform :ios do
 
   desc "Submit a new Beta Build to Apple TestFlight"
   lane :beta do
+    # Automate Missing export compliance error
+    update_info_plist(
+      xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
+      plist_path: "Info.plist",
+      block: proc do |plist|
+        plist['ITSAppUsesNonExemptEncryption'] = false
+      end
+    )
     build
     api_key = app_store_connect_api_key(
       key_id: "#{ENV['APPSTORE_KEY_ID']}",

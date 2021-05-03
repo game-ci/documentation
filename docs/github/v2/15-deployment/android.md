@@ -121,7 +121,7 @@ jobs:
 
 ### 5- Add secrets to your Github repo
 
-- **ANDROID_KEYSTORE_BASE64** : Base64 of your keystore in step 1 (You can use an online base64 encoder for this)
+- **ANDROID_KEYSTORE_BASE64** : Base64 of your keystore in step 2 (You can use an online base64 encoder for this)
 - **ANDROID_KEYSTORE_PASS**: Password for your keystore
 - **ANDROID_KEYALIAS_NAME**: Name of the alias in your keystore
 - **ANDROID_KEYALIAS_PASS**: Password for the alias in your keystore
