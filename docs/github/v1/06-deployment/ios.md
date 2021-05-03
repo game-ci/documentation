@@ -1,47 +1,45 @@
-# Deploy to the App Store
+# Publish to AppStore
 
-Uploading to the App Store is a little tricky. Make sure you do all these steps carefully.
+Uploading to AppStore is a little tricky to handle certificates, Make sure you do all these steps carefully
 
-> -- **Note:** You need a Mac environment for doing these steps.
-> A Mac is also recommended for debugging any issues with this workflow.
+> -- **Note:** You need a Mac environment for doing these steps .
 
-### 1- Install fastlane
+### 1- Install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
 
-The recommended approach to install [fastlane](https://docs.fastlane.tools/getting-started/ios/setup/)
-is to make a `Gemfile` with following content:
+There are different ways of installing fastlane,
+but the recommended approach is to make a Gemfile with following content :
 
-```ruby
-# Gemfile
+```bash
+# fastlane/Gemfile
 source "https://rubygems.org"
 gem "fastlane"
 ```
 
-Then run `bundle install` to create the `Gemfile.lock`
+Then run `bundle install`
 
-Upload both `Gemfile` and `Gemfile.lock` to your repo.
+This will create a `Gemfile.lock`, upload both `Gemfile` and `Gemfile.lock` to your repo .
 
 ### 2- Create storage for Apple certifications
 
-Fastlane has a nice implementation of the [codesigning.guide concept](https://codesigning.guide/)
-called match. It basically uploads all necessary keys and certificates to a storage of your
-choice (private git repo, Amazon S3, etc) and then shares it between your different development envs.
+Fastlane has a nice implementation of [codesigning.guide concept](https://codesigning.guide/)
+called match. It basically uploads all necessary keys and certificated in a storage of your
+choice(Private Git repo,Amazon S3,..) and then share it between your different development envs.
 
-For using match:
+For using match :
 
 - Create a private git repository
 
-- Run `fastlane match appstore` which will ask for your github repository
+- Run following command : `fastlane match appstore` this will ask for your github repository
   and AppleId, and then upload your certificates to the private git repository.
 
-> -- **Note:** Make sure your AppleId has two-step Authentication and has enough
-> access.
+> -- **Note:** Make sure your AppleId have two-step Authentication and have enough
+> access .
 >
-> -- **Note:** If possible, it's also better to first remove (after making a backup)
-> all your certificates, as match can mess things up.
+> -- **Note:** If possible,It's also better to remove(after making a backup) all your certificates before doing it. Some times Match mess things up.
 
-### 3- Add the following fastlane files to your fastlane folder
+### 3- Add following fastlane files to your Fastlane folder
 
-```ruby
+```bash
 # fastlane/Matchfile
 
 git_url(ENV["MATCH_URL"])
@@ -54,7 +52,7 @@ username(ENV["APPLE_CONNECT_EMAIL"])
 
 ```
 
-```ruby
+```bash
 # fastlane/Appfile
 
 for_platform :ios do
@@ -68,9 +66,9 @@ for_platform :ios do
 end
 ```
 
-In the following file, change `com.company.application` to your bundle identifier.
+In the following file Change com.company.application to your bundle identifier .
 
-```ruby
+```bash
 # fastlane/Fastfile
 keychain_name = "temporary_keychain"
 keychain_password = SecureRandom.base64
@@ -80,40 +78,25 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
     build
-    api_key = app_store_connect_api_key(
-      key_id: "#{ENV['APPSTORE_KEY_ID']}",
-      issuer_id: "#{ENV['APPSTORE_ISSUER_ID']}",
-      key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
-      duration: 1200, # optional
-      in_house: false, # true for enterprise and false for individual accounts
-    )
-    upload_to_app_store(api_key: api_key)
+    upload_to_app_store
   end
 
   desc "Submit a new Beta Build to Apple TestFlight"
   lane :beta do
-    # Automate Missing export compliance error
-    update_info_plist(
-      xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
-      plist_path: "Info.plist",
-      block: proc do |plist|
-        plist['ITSAppUsesNonExemptEncryption'] = false
-      end
-    )
     build
     api_key = app_store_connect_api_key(
-      key_id: "#{ENV['APPSTORE_KEY_ID']}",
-      issuer_id: "#{ENV['APPSTORE_ISSUER_ID']}",
+      key_id: "#{ENV[APPSTORE_KEY_ID]}",
+      issuer_id: "#{ENV[APPSTORE_ISSUER_ID]}",
       key_filepath: "#{ENV['APPSTORE_P8_PATH']}",
       duration: 1200, # optional
-      in_house: false, # true for enterprise and false for individual accounts
+      in_house: false, # true for enterprice and false for individual accounts
     )
-    upload_to_testflight(skip_waiting_for_build_processing: true, api_key: api_key)
+    upload_to_testflight(skip_waiting_for_build_processing:true,api_key: api_key)
   end
 
   desc "Create .ipa"
   lane :build do
-    update_code_signing_settings(use_automatic_signing: false, path: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj")
+    update_code_signing_settings(use_automatic_signing: false,path: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj")
     certificates
     update_project_provisioning(
       xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
@@ -172,23 +155,24 @@ platform :ios do
   end
 
 end
+
 ```
 
-> -- **Note:** If you add libraries that need `Podfile` (e.g. Firebase) to your project,
-> add this line to the beginning of your build step:
+> -- **Note:** If you add libraries that need Podfile (e,g Firebase) to your project,
+> Add this line in the beginning of build step :
 
-```ruby
+```
 cocoapods(
     clean_install: true,
     podfile: "#{ENV['IOS_BUILD_PATH']}/iOS/"
 )
 ```
 
-This will install pods and generate the `xcworkspace` for you.
+This will install pods and generate `xcworkspace` for you .
 
-Then change the gym section so that it uses the new `xcworkspace`:
+Then change the gym section so that it use the new `xcworkspace` :
 
-```ruby
+```bash
 gym(
   workspace: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcworkspace",
   scheme: "Unity-iPhone",
@@ -205,32 +189,32 @@ gym(
 )
 ```
 
-### 4- Add jobs to your GitHub workflow
+### 4- Add Github action
 
 ```yaml
 # .github/workflows/main.yml
-jobs:
-  buildForiOSPlatform:
-    name: Build for iOS
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: Library
-          key: Library-iOS
-      - uses: game-ci/unity-builder@v1.5
-        with:
-          targetPlatform: iOS
-      - uses: actions/upload-artifact@v2
-        with:
-          name: build-iOS
-          path: build/iOS
 
-  releaseToAppStore:
+BuildForiOSPlatform:
+  name: Build for iOS
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: Library
+        key: Library-iOS
+    - uses: webbertakken/unity-builder@v1.5
+      with:
+        targetPlatform: iOS
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build-iOS
+        path: build/iOS
+
+  ReleaseToAppStore:
     name: Release to the App Store
     runs-on: macos-latest
-    needs: buildForiOSPlatform
+    needs: buildForiOsPlatform
     env:
       APPLE_CONNECT_EMAIL: ${{ secrets.APPLE_CONNECT_EMAIL }}
       APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
@@ -250,49 +234,48 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Make App Store p8
+        run: echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
       - name: Download iOS Artifact
         uses: actions/download-artifact@v2
         with:
           name: build-iOS
           path: build/iOS
-      - name: Make App Store p8 and Fix File Permissions
-        run: |
-          echo "$APPSTORE_P8" > $APPSTORE_P8_PATH
-          find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
-      - name: Cache Fastlane Dependencies
-        uses: actions/cache@v2
+      - uses: actions/cache@v2
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
       - name: Install Fastlane
         run: bundle install
-      - name: Upload to TestFlight
+      - name: Prepare for Upload
+        run: find $IOS_BUILD_PATH -type f -iname "*.sh" -exec chmod +x {} \;
+      - name: Upload to the Test Flight
         uses: maierj/fastlane-action@v2.0.0
         with:
           lane: 'ios beta'
-      - name: Cleanup to avoid storage limit
-        if: always()
+      - name: Tidy up artifact to avoid storage limit
+        if: ${{ always() }}
         uses: geekyeggo/delete-artifact@v1
         with:
           name: build-iOS
 ```
 
-### 5- Add secrets to your GitHub repo
+### 5- Add secrets to your Github repo
 
-- **APPLE_CONNECT_EMAIL**: Apple connect email (usually same as APPLE_DEVELOPER_EMAIL)
+- **APPLE_CONNECT_EMAIL** : Apple connect email (usually same as APPLE_DEVELOPER_EMAIL)
 - **APPLE_DEVELOPER_EMAIL**: Your AppleId
-- **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
-- **APPLE_TEAM_NAME**: Team Name from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
+- **APPLE_TEAM_ID**: Team Id From developer.apple.com/MemberShip
+- **APPLE_TEAM_NAME**: Team Name From developer.apple.com/MemberShip
 - **MATCH_URL**: Address of private repository that you made in previous steps for storing certificates.
-- **GIT_TOKEN**: Base64 of `user@MATCH_URL` e.g. `user@https://github.com/game-ci/documentation.git`.
-  You can use an online base64 encoder for this step.
-- **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
-- **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Because of limitations of using Apple accounts
-  with 2FA (2-factor authentication) in CI environments, you have to
-  make a special key for accessing the App Store. Follow the [fastlane official guide](https://docs.fastlane.tools/app-store-connect-api/)
+- **GIT_TOKEN**: Base64 of user@MATCH_URL e,g user@https://github.com/game-ci/documentation.git .
+  You can use some online base64 encoder for this step
+- **MATCH_PASSWORD**: The password you set when you use `fastlane match appstore`
+- **APPSTORE_KEY_ID ,APPSTORE_ISSUER_ID,APPSTORE_P8**: Because of limitation in using Apple accounts
+  with 2fa ( 2-factor authentication ) in CI environments, you have to
+  make special key for accessing appstore . Follow [fastlane official guide](https://docs.fastlane.tools/app-store-connect-api/)
   to generate these values.
 
-### 6- Update Unity settings
+### 6- Unity Settings
 
-- Add your [application icon(s)](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Icon.html) (applications without an icon generate an error while uploading to TestFlight)
-- Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Other.html#Identification)
+- Set Signing Team Id and Bundle identifier in iOS player setting
+- Add your application icon (Application with no icon generate error during uploading to test flight)
