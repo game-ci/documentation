@@ -36,7 +36,7 @@
     "gray-matter": "4.0.2",
     "highlight.js": "^10.5.0",
     "less": "3.0.4",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "next": "10.0.1",
     "null-loader": "2.0.0",
     "postcss-preset-env": "^6.7.0",
