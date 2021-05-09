@@ -148,10 +148,10 @@ _**default:** `auto`_
 
 The type of tests to be run by the test runner.
 
-Options are: "all", "playmode", "editmode"
+Options are: `All`, `PlayMode`, and `EditMode`.
 
 _**required:** `false`_
-_**default:** `all`_
+_**default:** `All`_
 
 #### artifactsPath
 
