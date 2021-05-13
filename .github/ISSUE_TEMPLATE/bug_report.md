@@ -6,17 +6,18 @@ labels: bug
 assignees: ''
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Bug description**
 
-**To Reproduce**
-Steps to reproduce the behavior:
+<!--A clear and concise description of what the bug is.-->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**How to reproduce**
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+<!--Steps to reproduce the behavior:-->
 
-**Additional context**
-Add any other context about the problem here.
+- **Expected behavior**
+
+<!--A clear and concise description of what you expected to happen.-->
+
+**Additional details**
+
+<!--Please add context, links, reasons, screenshots, etc.-->

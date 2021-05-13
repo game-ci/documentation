@@ -1,6 +1,6 @@
 ---
 name: Other
-about: Something else
+about: Everything else
 title: ''
 labels: ''
 assignees: ''
