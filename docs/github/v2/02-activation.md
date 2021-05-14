@@ -4,7 +4,7 @@ All actions use a Unity installation, which needs to be activated.
 
 Unity differentiates their methods between `personal` and `professional` licenses.
 
-Depending on whether you are using a free or paid version of Unity, you will need to follow the steps for either a [Personal license](#personal-license) or a [Professional license](#professional-license). 
+Depending on whether you are using a free or paid version of Unity, you will need to follow the steps for either a [personal license](#personal-license) or a [professional license](#professional-license). 
 
 ## Personal license
 
