@@ -77,7 +77,7 @@ Follow these (one-time) steps for simple activation.
    - `UNITY_EMAIL` - _(Add the email address that you use to login to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to login to Unity)_
 
-> _**Note:** Do NOT follow the steps for the Personal license if you have a Professional license._
+> _**Note:** Do NOT follow the steps for the personal license if you have a professional license._
 
 ## Optional steps
 
