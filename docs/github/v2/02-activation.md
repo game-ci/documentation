@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Request manual activation file
-      - name: Request manual activation file
+      - name: Request manual activation file 🔑
         id: getManualLicenseFile
         uses: game-ci/unity-request-activation-file@v2
       # Upload artifact (Unity_v20XX.X.XXXX.alf)
