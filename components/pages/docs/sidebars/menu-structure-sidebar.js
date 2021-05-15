@@ -9,12 +9,14 @@ import {
   SiDocker,
   AiOutlineQuestionCircle,
 } from 'react-icons/all';
-import VersionedSubMenu from './menu/versioned-sub-menu';
+import VersionedSubMenu from '../menu/versioned-sub-menu';
+
+import styles from './sidebars.module.scss';
 
 const { Sider } = Layout;
 const { Item } = Menu;
 
-const MenuSidebar = () => {
+const MenuStructureSidebar = () => {
   const { asPath: currentKey } = useRouter();
 
   const main = 'main';
@@ -22,12 +24,13 @@ const MenuSidebar = () => {
   const openSections = [current];
 
   return (
-    <Sider className="site-layout-background" width={200} breakpoint="lg" collapsedWidth="0">
+    <Sider className={styles.sidebar} width={200} breakpoint="lg" collapsedWidth="0">
       <Menu
         mode="inline"
         defaultSelectedKeys={[currentKey]}
         defaultOpenKeys={openSections}
         subMenuOpenDelay={1}
+        className={styles.menuStructure}
         style={{ height: '100%', marginBottom: '-70px' }}
       >
         <Item key="/docs" icon={<AiOutlineInfoCircle />}>
@@ -55,4 +58,4 @@ const MenuSidebar = () => {
   );
 };
 
-export default MenuSidebar;
+export default MenuStructureSidebar;

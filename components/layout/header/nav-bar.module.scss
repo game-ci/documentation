@@ -4,4 +4,16 @@
   &.sticky {
     position: fixed;
   }
+
+  .brand {
+    height: 100%;
+    margin: 0 28px;
+    float: left;
+  }
+
+  .menu {
+    position: relative;
+    display: flex;
+    justify-content: left;
+  }
 }

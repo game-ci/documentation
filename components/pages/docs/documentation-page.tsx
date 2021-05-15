@@ -3,8 +3,10 @@ import MarkdownRenderer from '@/components/markdown/markdown-renderer';
 import { PageContext } from '@/components/context/page-context';
 import { ReactNodeLike } from 'prop-types';
 import DocumentationLayout from './documentation-layout';
-import MenuSidebar from './menu-sidebar';
-import AnchorsSidebar from './anchors-sidebar';
+import MenuStructureSidebar from './sidebars/menu-structure-sidebar';
+import AnchorsSidebar from './sidebars/anchors-sidebar';
+
+import styles from './documentation-page.module.scss';
 
 const { Content } = Layout;
 
@@ -19,9 +21,9 @@ const DocumentationPage = ({ content, data, meta, children }: Props) => {
   return (
     <PageContext.Provider value={meta}>
       <DocumentationLayout>
-        <MenuSidebar />
-        <Layout className="site-layout-background">
-          <Content className="page documentation-page">
+        <MenuStructureSidebar />
+        <Layout>
+          <Content className={styles.documentationContent}>
             {content && <MarkdownRenderer meta={data} document={content} />}
             {children}
           </Content>

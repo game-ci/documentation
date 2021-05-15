@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import MenuContext from '@/components/pages/docs/menu/menu-context';
 import { selectedVersionsSelector, updateSelection } from '@/logic/versions/selected-version-slice';
 
+import styles from './versioned-title.module.scss';
+
 const mapVersions = (section, collection: MenuNode, selectedOption) => {
   const dispatch = useDispatch();
 
@@ -17,7 +19,7 @@ const mapVersions = (section, collection: MenuNode, selectedOption) => {
     <div style={{ display: 'inline-block', float: 'right', paddingRight: 4 }}>
       <select
         value={selectedOption}
-        className="versionSelect"
+        className={styles.versionSelect}
         onChange={onChange}
         onClick={noPropagation}
       >

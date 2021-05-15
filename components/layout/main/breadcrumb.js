@@ -8,6 +8,8 @@ import { AiOutlineHome } from 'react-icons/all';
 import usePathSegments from '@/core/routing/use-path-segments';
 import MenuContext from '../../pages/docs/menu/menu-context';
 
+import styles from './breadcrumb.module.scss';
+
 const { Item } = Breadcrumb;
 
 const BreadcrumbWrapper = () => {
@@ -15,7 +17,7 @@ const BreadcrumbWrapper = () => {
   const { menuStructure } = React.useContext(MenuContext);
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className={styles.breadCrumb}>
       {segments.map(({ url, name }) => {
         if (MenuSegment.isVersion(name)) return null;
         // "/" is a segment too
