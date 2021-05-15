@@ -2,7 +2,7 @@ import { Layout } from 'antd';
 import MarkdownRenderer from '@/components/markdown/markdown-renderer';
 import { PageContext } from '@/components/context/page-context';
 import { ReactNodeLike } from 'prop-types';
-import BaseLayout from '../base-layout';
+import DocumentationLayout from './documentation-layout';
 import MenuSidebar from './menu-sidebar';
 import AnchorsSidebar from './anchors-sidebar';
 
@@ -15,10 +15,10 @@ interface Props {
   meta?: any;
 }
 
-const Page = ({ content, data, meta, children }: Props) => {
+const DocumentationPage = ({ content, data, meta, children }: Props) => {
   return (
     <PageContext.Provider value={meta}>
-      <BaseLayout>
+      <DocumentationLayout>
         <MenuSidebar />
         <Layout className="site-layout-background">
           <Content className="page documentation-page">
@@ -27,16 +27,16 @@ const Page = ({ content, data, meta, children }: Props) => {
           </Content>
         </Layout>
         {content && <AnchorsSidebar document={content} />}
-      </BaseLayout>
+      </DocumentationLayout>
     </PageContext.Provider>
   );
 };
 
-Page.defaultProps = {
+DocumentationPage.defaultProps = {
   content: undefined,
   data: { title: '', date: '' },
   children: null,
   meta: null,
 };
 
-export default Page;
+export default DocumentationPage;

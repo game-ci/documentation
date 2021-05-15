@@ -1,14 +1,3 @@
-import BaseLayout from '@/components/layout/base-layout';
-import useRedirect from '@/core/routing/use-redirect';
+import HomePage from '@/components/pages/home/home-page';
 
-const Index = () => {
-  useRedirect('/docs');
-
-  return (
-    <BaseLayout>
-      <div style={{ padding: '0 24px' }}>Loading docs...</div>
-    </BaseLayout>
-  );
-};
-
-export default Index;
+export default HomePage;

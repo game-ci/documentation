@@ -28,7 +28,7 @@ const MenuSidebar = () => {
         defaultSelectedKeys={[currentKey]}
         defaultOpenKeys={openSections}
         subMenuOpenDelay={1}
-        style={{ height: '100%' }}
+        style={{ height: '100%', marginBottom: '-70px' }}
       >
         <Item key="/docs" icon={<AiOutlineInfoCircle />}>
           <Link href="/docs">

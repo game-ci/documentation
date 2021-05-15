@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import PropTypes, { InferProps } from 'prop-types';
 import renderers from './markdown-to-page-mapping';
-import EditOnGithubLink from '../layout/docs/edit-on-github-link';
+import EditOnGithubLink from '../pages/docs/edit-on-github-link';
 
 const propTypes = {
   document: PropTypes.string.isRequired,

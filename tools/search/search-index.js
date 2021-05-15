@@ -1,11 +1,8 @@
-/* eslint-disable import/no-useless-path-segments */
 import { currentBranch } from '../utils/current-branch';
 
 export class SearchIndex {
-  static name = `search`;
-
   static getForCurrentEnvironment() {
-    const prefix = `${this.name}_`;
+    const prefix = `search_`;
     const index = currentBranch()
       .replace(/\//g, '-') // convert slash (/) to hyphen (-)
       .replace(/[^\w-]/g, '') // remove non-word-characters except hyphen (-)
