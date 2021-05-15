@@ -1,5 +1,8 @@
 import React from 'react';
 import { Typography } from 'antd';
+import cx from 'classnames';
+
+import styles from './markdown-components.module.scss';
 
 const { Title } = Typography;
 
@@ -16,20 +19,20 @@ const Heading = ({ level, children, ...props }: Props) => {
     case 3:
     case 4:
       return (
-        <Title {...props} level={level} className="heading">
+        <Title {...props} level={level} className={styles.heading}>
           {children}
         </Title>
       );
     case 5:
       return (
-        <h5 {...props} className="ant-typography heading">
+        <h5 {...props} className={cx('ant-typography', styles.heading)}>
           {children}
         </h5>
       );
     case 6:
     default:
       return (
-        <h6 {...props} className="ant-typography heading">
+        <h6 {...props} className={cx('ant-typography', styles.heading)}>
           {children}
         </h6>
       );
