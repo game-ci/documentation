@@ -5,20 +5,24 @@ import { Layout, Menu } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 import { IoLogoDiscord } from 'react-icons/all';
+import cx from 'classnames';
 import GameCiLogo from '../../../assets/images/game-ci-brand-logo-wordmark.svg';
+
+import styles from './nav-bar.module.scss';
 
 const { Header } = Layout;
 const { Item } = Menu;
 
 interface Props {
   showSearch?: boolean;
+  stickyHeader?: boolean;
 }
 
-const NavBar = ({ showSearch }: Props) => {
+const NavBar = ({ showSearch, stickyHeader }: Props) => {
   const defaultSelectedKey = useTopLevelRoute();
 
   return (
-    <Header className="header">
+    <Header className={cx(styles.navBar, { [styles.sticky]: stickyHeader })}>
       <a className="logo" href="/">
         <GameCiLogo width="60" height="60" />
       </a>
@@ -55,6 +59,7 @@ const NavBar = ({ showSearch }: Props) => {
 
 NavBar.defaultProps = {
   showSearch: false,
+  stickyHeader: false,
 };
 
 export default NavBar;
