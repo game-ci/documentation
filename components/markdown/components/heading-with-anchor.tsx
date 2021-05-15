@@ -3,6 +3,8 @@ import { notification } from 'antd';
 import Heading from '@/components/markdown/components/heading';
 import { extractAnchorId } from '@/tools/search/utils/extract-sections';
 
+import styles from './markdown-components.module.scss';
+
 interface Props {
   level: number;
   children: React.ReactNode;
@@ -41,7 +43,13 @@ const HeadingWithAnchor = ({ level, children }: Props) => {
   };
 
   const anchor = (
-    <span onClick={onClick} className="anchor" role="button" tabIndex={0} onKeyPress={onKeyPress}>
+    <span
+      onClick={onClick}
+      className={styles.anchor}
+      role="button"
+      tabIndex={0}
+      onKeyPress={onKeyPress}
+    >
       #
     </span>
   );

@@ -15,7 +15,6 @@ import '../assets/styles/antd-custom.less';
 import '../assets/styles/vars.css';
 import '../assets/styles/global.css';
 import '../assets/styles/layout.css';
-import '../assets/styles/markdown.css';
 import '../assets/styles/search.css';
 import 'highlight.js/styles/dracula.css';
 
