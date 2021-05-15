@@ -18,16 +18,19 @@ const BreadcrumbWrapper = () => {
     <Breadcrumb>
       {segments.map(({ url, name }) => {
         if (MenuSegment.isVersion(name)) return null;
+        // "/" is a segment too
+        if (typeof name !== 'string') return null;
 
         // If segment matches folder in generated menu-structure, determine its first page
         const menuNode = MenuStructure.getNodeByUrl(menuStructure, url);
         const nearestUrl = MenuNode.findFirstPage(menuNode);
         const href = nearestUrl ? `/docs/${nearestUrl}` : url;
+        const capitalisedName = name.charAt(0).toUpperCase() + name.slice(1);
 
         return (
-          <Item key={href} style={{ textTransform: 'capitalize' }}>
+          <Item key={href}>
             <Link href={href}>
-              <a>{name}</a>
+              <a>{capitalisedName}</a>
             </Link>
           </Item>
         );

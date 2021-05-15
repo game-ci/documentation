@@ -7,7 +7,7 @@ const usePathSegments = (nameOfRootSegment) => {
   let url = '';
   const pathSegments = segments.map((segment) => {
     url += `/${segment}`;
-    const name = segment.replace('-', ' ');
+    const name = segment.replace(/-/g, ' ');
 
     return { url, name };
   });
