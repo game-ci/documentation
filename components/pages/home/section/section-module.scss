@@ -1,0 +1,30 @@
+.section {
+  width: 100%;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.openingSection {
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(180deg, #373445, #453439);
+  user-select: none;
+
+  .logo {
+    height: 50vmin;
+    width: 50vmin;
+  }
+
+  .title {
+    width: 70vmin;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: center;
+    font-size: 3.5vmin;
+  }
+}
+
+.whyGameCiSection {
+  min-height: 100vh;
+}
