@@ -5,6 +5,8 @@ import Configuration from '@/components/search/configuration';
 import SearchResults from '@/components/search/results';
 import Stats from '@/components/search/stats';
 
+import styles from './search-bar.module.scss';
+
 const SearchBar = () => {
   const [searchFocused, setFocus] = useState(false);
   const [searchHovered, setSearchHovered] = useState(false);
@@ -16,6 +18,7 @@ const SearchBar = () => {
     <div
       onMouseEnter={() => setSearchHovered(true)}
       onMouseLeave={() => setSearchHovered(false)}
+      className={styles.searchBar}
       style={{
         flex: 1,
         padding: '0 10%',
@@ -24,7 +27,11 @@ const SearchBar = () => {
       }}
     >
       <Configuration />
-      <SearchBox onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} />
+      <SearchBox
+        className={styles.searchBox}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+      />
       <div
         className="ais-results-panel"
         onMouseEnter={() => setResultsHovered(true)}
