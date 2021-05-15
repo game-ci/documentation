@@ -9,6 +9,7 @@ hljs.registerLanguage('typescript', require('highlight.js/lib/languages/typescri
 hljs.registerLanguage('bash', require('highlight.js/lib/languages/bash'));
 hljs.registerLanguage('ruby', require('highlight.js/lib/languages/ruby'));
 hljs.registerLanguage('powershell', require('highlight.js/lib/languages/powershell'));
+hljs.registerLanguage('plaintext', require('highlight.js/lib/languages/plaintext'));
 
 class CodeBlock extends React.PureComponent {
   constructor(properties) {

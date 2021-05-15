@@ -8,7 +8,7 @@ Below you'll find a collection of answers to commonly reported problems.
 
 #### Error
 
-```console
+```plaintext
 Scripts have compiler errors.
 (Filename: ./Runtime/Utilities/Argv.cpp Line: 361)
 
@@ -33,7 +33,7 @@ A good way to verify this, is to (locally) clone the Unity project in a new fold
 
 #### Error
 
-```console
+```plaintext
 Error: 3.690 [ERROR] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] Command execution: started DaemonCommandExecution[command = Build{id=69dbd5b3-10f2-488e-8640-977da68733f9, currentDir=/github/workspace/Temp/gradleOut/launcher}, connection = DefaultDaemonConnection: socket connection from /127.0.0.1:33657 to /127.0.0.1:43866] after 0.0 minutes of idle
 ```
 
