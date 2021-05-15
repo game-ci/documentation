@@ -26,7 +26,6 @@
     background: rgba(0, 0, 0, 0.02);
   }
 
-
   .blockquote {
     font-style: italic;
     border-left-color: rgba(0, 0, 0, 0.3) !important;
@@ -39,6 +38,7 @@
   .codeBlock {
     max-width: 1024px;
     background: rgb(40 42 54);
+    color: rgba(255, 255, 255, 0.75);
     transition: margin 0.3s ease, width 0.3s ease;
   }
 
@@ -64,9 +64,11 @@
     opacity: 1;
   }
 
-  .list {}
+  .list {
+  }
 
-  .listItem {}
+  .listItem {
+  }
 
   @media only screen and (max-width: 992px) {
     :global(table) {
