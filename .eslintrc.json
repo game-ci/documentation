@@ -41,9 +41,8 @@
       "error",
       {
         "replacements": {
-          "props": {
-            "properties": false
-          }
+          "props": { "properties": false },
+          "ref": { "reference": false }
         }
       }
     ],
