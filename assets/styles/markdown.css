@@ -27,6 +27,7 @@
 
 .markdown > .code-block {
   max-width: 1024px;
+  background: rgb(40 42 54);
   transition: margin 0.3s ease, width 0.3s ease;
 }
 

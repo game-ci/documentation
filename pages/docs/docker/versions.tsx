@@ -1,12 +1,12 @@
 import React from 'react';
-import Page from '@/components/layout/docs/page';
+import DocumentationPage from '@/components/pages/docs/documentation-page';
 import Versions from '@/components/docs/versions/versions';
 
 const VersionsPage = () => {
   return (
-    <Page>
+    <DocumentationPage>
       <Versions />
-    </Page>
+    </DocumentationPage>
   );
 };
 

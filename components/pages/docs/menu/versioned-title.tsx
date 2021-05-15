@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 import { ReactNodeLike } from 'prop-types';
 import { map } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import MenuContext from '@/components/layout/docs/menu/menu-context';
+import MenuContext from '@/components/pages/docs/menu/menu-context';
 import { selectedVersionsSelector, updateSelection } from '@/logic/versions/selected-version-slice';
 
 const mapVersions = (section, collection: MenuNode, selectedOption) => {

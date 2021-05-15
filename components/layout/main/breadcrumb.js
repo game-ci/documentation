@@ -1,3 +1,4 @@
+import React from 'react';
 import { MenuNode } from '@/tools/menu/menu-node';
 import { MenuSegment } from '@/tools/menu/menu-segment';
 import { MenuStructure } from '@/tools/menu/menu-structure';
@@ -5,14 +6,13 @@ import Link from 'next/link';
 import { Breadcrumb } from 'antd';
 import { AiOutlineHome } from 'react-icons/all';
 import usePathSegments from '@/core/routing/use-path-segments';
-import { useContext } from 'react';
-import MenuContext from '../docs/menu/menu-context';
+import MenuContext from '../../pages/docs/menu/menu-context';
 
 const { Item } = Breadcrumb;
 
 const BreadcrumbWrapper = () => {
   const segments = usePathSegments(<AiOutlineHome />);
-  const { menuStructure } = useContext(MenuContext);
+  const { menuStructure } = React.useContext(MenuContext);
 
   return (
     <Breadcrumb>

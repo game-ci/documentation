@@ -4,8 +4,8 @@ import React, { useContext } from 'react';
 import { Menu } from 'antd';
 import { map } from 'lodash';
 import Link from 'next/link';
-import VersionedTitle from '@/components/layout/docs/menu/versioned-title';
-import MenuContext from '@/components/layout/docs/menu/menu-context';
+import VersionedTitle from '@/components/pages/docs/menu/versioned-title';
+import MenuContext from '@/components/pages/docs/menu/menu-context';
 import { ReactNodeLike } from 'prop-types';
 import { useSelector } from 'react-redux';
 import { selectedVersionsSelector } from '@/logic/versions/selected-version-slice';
@@ -21,7 +21,7 @@ const populateMenuRecursively = (collection: MenuNode, selections) => {
 
     if (MenuNode.isPage(node)) {
       return (
-        <Item key={node.meta.path}>
+        <Item key={`/docs/${node.meta.path}`}>
           <Link href="/docs/[...documentation-page]" as={`/docs/${node.meta.path}`}>
             <a>{node.name}</a>
           </Link>

@@ -2,7 +2,7 @@ import { MenuStructure } from '@/tools/menu/menu-structure';
 import path from 'path';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
-import Page from '@/components/layout/docs/page';
+import DocumentationPage from '@/components/pages/docs/documentation-page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
 import generateSearchDefinitionsFromFiles from '@/tools/search/generate-definitions-from-files';
 
@@ -14,7 +14,7 @@ interface Props {
 
 // Represents all the markdown documentation pages
 const Documentation = ({ content, data, meta }: Props) => (
-  <Page content={content} data={data} meta={meta} />
+  <DocumentationPage content={content} data={data} meta={meta} />
 );
 
 // Build time: Determines which pages are generated
