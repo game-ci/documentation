@@ -72,9 +72,9 @@
 
   @media only screen and (max-width: 992px) {
     :global(table) {
-      margin-left: -45px;
-      margin-right: -45px;
-      width: calc(100% + 90px);
+      margin-left: -40px;
+      margin-right: -40px;
+      width: calc(100% + 80px);
     }
 
     :global(table th),
@@ -83,9 +83,9 @@
     }
 
     .codeBlock {
-      margin-left: -45px;
-      margin-right: -45px;
-      width: calc(100% + 90px);
+      margin-left: -40px;
+      margin-right: -40px;
+      width: calc(100% + 80px);
     }
   }
 }

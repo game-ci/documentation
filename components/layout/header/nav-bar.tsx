@@ -23,13 +23,13 @@ const NavBar = ({ showSearch, stickyHeader }: Props) => {
 
   return (
     <Header className={cx(styles.navBar, { [styles.sticky]: stickyHeader })}>
-      <a className="logo" href="/">
-        <GameCiLogo width="60" height="60" />
+      <a className={styles.brand} href="/">
+        <GameCiLogo height={64} width={64} />
       </a>
       <Menu
         theme="dark"
         mode="horizontal"
-        style={{ position: 'relative', display: 'flex', justifyContent: 'left' }}
+        className={styles.menu}
         defaultSelectedKeys={[defaultSelectedKey]}
       >
         <Item key="/">

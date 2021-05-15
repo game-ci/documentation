@@ -1,0 +1,14 @@
+:global(.ant-menu-submenu-title) {
+  .versionSelect {
+    opacity: 0.25;
+    will-change: opacity;
+    transition: opacity 0.3s ease;
+    outline: none;
+    border: 1px solid;
+    border-radius: 3px;
+  }
+
+  &:hover .versionSelect {
+    opacity: 1;
+  }
+}

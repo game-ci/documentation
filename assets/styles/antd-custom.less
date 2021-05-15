@@ -1,27 +1,32 @@
 @import "../../node_modules/antd/dist/antd.less";
 
+//
 // Brand
+//
+
 @brand-primary: rgb(61, 192, 148);
 @brand-secondary: rgb(55, 52, 69);
 @brand-tertiary: rgb(240, 242, 245);
 
+//
 // Theme
+//
+
 @primary-color: @brand-primary;
 
+//
 // Backgrounds
+//
+
 @body-background: @brand-tertiary;
 @background-color-base: @body-background;
 @layout-body-background: @body-background;
 @component-background: @body-background;
 
-// Header
-@layout-header-height: 64px;
-@layout-header-background: rgb(55, 52, 69);
-
-// Footer
-@layout-footer-background: @layout-body-background;
-
+//
 // Typography
+//
+
 @font-size-base: 14px;
 @heading-color: @brand-secondary;
 @text-color: fade(@brand-secondary, 85%);
@@ -32,7 +37,10 @@
 @heading-4-size: ceil(@font-size-base * 1.42);
 @heading-5-size: ceil(@font-size-base * 1.14);
 
+//
 // Spacing
+//
+
 @typography-title-margin-bottom: 1em;
 .@{typography-prefix-cls} {
   ul,
@@ -44,4 +52,29 @@
       margin-bottom: 0.5em;
     }
   }
+}
+.@{ant-prefix}-anchor-link-title {
+  padding-bottom: 2px; // prevents hidden overflow
+}
+
+//
+// Header
+//
+
+@layout-header-height: 64px;
+@layout-header-background: rgb(55, 52, 69);
+
+//
+// Footer
+//
+
+@layout-footer-background: @layout-body-background;
+
+//
+// Sider
+//
+
+@layout-sider-background: @layout-body-background;
+.@{layout-prefix-cls}-sider-zero-width-trigger {
+  background: @brand-secondary;
 }

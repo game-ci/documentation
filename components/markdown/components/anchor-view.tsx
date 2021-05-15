@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Anchor } from 'antd';
 import { ReactNodeLike } from 'prop-types';
 
+import styles from './anchor-view.module.scss';
+
 interface Props {
   children: ReactNodeLike;
 }
@@ -27,8 +29,8 @@ const AnchorView = ({ children }: Props) => {
   });
 
   return (
-    <Anchor targetOffset={targetOffset} affix showInkInFixed>
-      <div style={{ padding: 8 }} />
+    <Anchor className={styles.anchorWrapper} targetOffset={targetOffset} affix showInkInFixed>
+      <div className={styles.topSpacer} />
       {children}
     </Anchor>
   );
