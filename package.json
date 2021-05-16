@@ -50,6 +50,8 @@
     "react-instantsearch-dom": "^6.9.0",
     "react-markdown": "5.0.3",
     "react-redux": "^7.2.2",
+    "react-spring": "^9.1.2",
+    "react-visibility-sensor": "^5.1.1",
     "reactfire": "^3.0.0-rc.0",
     "redux": "^4.0.5",
     "sass": "^1.32.8",

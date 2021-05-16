@@ -1,16 +1,23 @@
 .section {
   width: 100%;
-  min-height: 400px;
+  min-height: 50vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 10vh 10vw;
+
+  .title {
+    width: 70vmin;
+    text-align: center;
+  }
 }
 
 .openingSection {
   min-height: calc(100vh - 64px);
   background: linear-gradient(180deg, var(--brand-secondary), #453439);
   user-select: none;
+  padding: 0;
 
   .logo {
     height: 50vmin;
@@ -18,13 +25,74 @@
   }
 
   .title {
-    width: 70vmin;
     color: var(--brand-tertiary);
-    text-align: center;
     font-size: 3.5vmin;
   }
 }
 
-.whyGameCiSection {
+.ourVisionSection {
   min-height: 100vh;
+
+  :global(.ant-typography) {
+    color: var(--brand-primary-brighter);
+  }
+}
+
+.visualRepresentationOfWhatWeDoSection {
+  background: var(--brand-secondary);
+
+  :global(.ant-typography) {
+    color: var(--brand-tertiary);
+  }
+}
+
+.thePerksSection {
+  .title {
+    font-size: 250%;
+  }
+
+  .cardAnimator {
+    height: 100%;
+  }
+
+  .card {
+    display: inline-block;
+    background-color: white;
+    margin-bottom: 1em;
+    height: 100%; // Needed for stretch
+    box-shadow: 4px 4px 4px -1px rgb(0 0 0 / 10%);
+
+    > div:first-of-type {
+      background: var(--brand-secondary);
+    }
+
+    > div:last-of-type {
+      height: calc(100% - 60.86px);
+      background: linear-gradient(350deg, #ffffff, #f3f3f3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .cardTitle {
+      color: var(--brand-primary-brighter);
+      text-align: center;
+    }
+  }
+}
+
+.codeExamplesSection {
+  background: var(--brand-primary);
+  :global(.ant-typography) {
+    color: var(--brand-secondary);
+  }
+}
+
+.whoChoseForUsSection {
+}
+
+.pricingSection {
+}
+
+.gallerySection {
 }
