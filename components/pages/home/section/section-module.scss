@@ -1,6 +1,6 @@
 .section {
   width: 100%;
-  min-height: 400px;
+  min-height: 50vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,6 +25,31 @@
   }
 }
 
-.whyGameCiSection {
+.ourVisionSection {
   min-height: 100vh;
+
+  :global(.ant-typography) {
+    color: var(--brand-primary);
+  }
+}
+
+.visualRepresentationOfWhatWeDoSection {
+  background: var(--brand-secondary);
+
+  :global(.ant-typography) {
+    color: var(--brand-tertiary);
+  }
+}
+
+.whyGameCiSection {
+}
+
+.codeExamplesSection {
+  background: var(--brand-primary);
+  :global(.ant-typography) {
+    color: var(--brand-secondary);
+  }
+}
+
+.pricingSection {
 }

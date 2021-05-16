@@ -1,14 +1,17 @@
 import Section from '@/components/pages/home/section/section';
 import React from 'react';
+import { Typography } from 'antd';
 
 import styles from './section-module.scss';
 
-const WhyGameCiSection = () => {
+const { Title } = Typography;
+
+const WhyChooseForUsSection = () => {
   return (
     <Section className={styles.whyGameCiSection}>
-      <span style={{ fontSize: '35vmin' }}>👨‍🔧</span>
+      <Title level={2}>Why choose for GameCI</Title>
     </Section>
   );
 };
 
-export default WhyGameCiSection;
+export default WhyChooseForUsSection;
