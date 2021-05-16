@@ -88,7 +88,7 @@ const cards = [
 ];
 
 const ThePerksSection = () => {
-  const column = { xs: 24, sm: 24, md: 12, lg: 12, xl: 8, xxl: 8 };
+  const column = { xs: 24, sm: 24, md: 12, lg: 12, xl: 8, xxl: 6 };
   return (
     <Section className={styles.thePerksSection}>
       <Title level={2} className={styles.title}>
@@ -97,7 +97,7 @@ const ThePerksSection = () => {
 
       <Row gutter={[24, 16]} align="stretch" justify="space-around">
         {cards.map((card, index) => (
-          <Col {...column}>
+          <Col {...column} key={card.title}>
             <FadeIntoView className={styles.cardAnimator} delay={index * 100}>
               <Card
                 className={styles.card}

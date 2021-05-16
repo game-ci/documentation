@@ -18,18 +18,18 @@ const OpeningSection = () => {
 
   return (
     <Section ref={ref} className={styles.openingSection}>
-      <FadeIntoView>
+      <FadeIntoView delay={100}>
         <GameCiLogo className={styles.logo} />
       </FadeIntoView>
 
-      <FadeIntoView delay={250}>
+      <FadeIntoView delay={300}>
         <Title level={1} className={styles.title}>
           The fastest and <strong>easiest</strong> way to automatically test and build your game
           projects
         </Title>
       </FadeIntoView>
 
-      <FadeIntoView delay={500}>
+      <FadeIntoView delay={750}>
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
         <a onClick={scrollToNextSection} style={{ marginTop: '15vh', fontSize: '7vmin' }}>
           ⇩
