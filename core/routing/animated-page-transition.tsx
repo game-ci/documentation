@@ -10,7 +10,7 @@ export const AnimatedPageTransition = ({ children }: PageTransitionProps) => {
   const topLevelRoute = useTopLevelRoute();
 
   const transitions = useTransition(topLevelRoute, {
-    from: { opacity: 0, transform: 'translate3d(100%, 0%, 0px)' },
+    from: { opacity: 0, transform: 'translate3d(50%, 0%, 0px)' },
     enter: { opacity: 1, transform: 'translate3d(0%, 0px, 0px)' },
     config: config.default,
   });
