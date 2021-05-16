@@ -9,7 +9,7 @@
 
 .openingSection {
   min-height: calc(100vh - 64px);
-  background: linear-gradient(180deg, #373445, #453439);
+  background: linear-gradient(180deg, var(--brand-secondary), #453439);
   user-select: none;
 
   .logo {
@@ -19,7 +19,7 @@
 
   .title {
     width: 70vmin;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--brand-tertiary);
     text-align: center;
     font-size: 3.5vmin;
   }
