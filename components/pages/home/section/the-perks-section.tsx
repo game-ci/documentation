@@ -1,4 +1,5 @@
 import Section from '@/components/pages/home/section/section';
+import FadeIntoView from '@/components/reusable/animations/fade-into-view';
 import React from 'react';
 import { Typography, Card, Col, Row } from 'antd';
 
@@ -95,18 +96,20 @@ const ThePerksSection = () => {
       </Title>
 
       <Row gutter={[24, 16]} align="stretch" justify="space-around">
-        {cards.map((card) => (
+        {cards.map((card, index) => (
           <Col {...column}>
-            <Card
-              className={styles.card}
-              title={
-                <Title level={4} className={styles.cardTitle}>
-                  {card.title}
-                </Title>
-              }
-            >
-              {card.content}
-            </Card>
+            <FadeIntoView className={styles.cardAnimator} delay={index * 100}>
+              <Card
+                className={styles.card}
+                title={
+                  <Title level={4} className={styles.cardTitle}>
+                    {card.title}
+                  </Title>
+                }
+              >
+                {card.content}
+              </Card>
+            </FadeIntoView>
           </Col>
         ))}
       </Row>
