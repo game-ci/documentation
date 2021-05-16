@@ -14,7 +14,7 @@ interface Props {
 const BaseLayout = ({ children, showSearch, stickyHeader }: Props) => (
   <Layout style={{ minHeight: '100vh' }}>
     <NavBar showSearch={showSearch} stickyHeader={stickyHeader} />
-    <Content style={{ paddingTop: stickyHeader ? '64px' : 0 }}>{children}</Content>
+    <Content>{children}</Content>
     <Footer />
   </Layout>
 );
