@@ -96,20 +96,18 @@ jobs:
           path: build/Android
       - name: Add Authentication
         run: echo "$GOOGLE_PLAY_KEY_FILE" > $GOOGLE_PLAY_KEY_FILE_PATH
-      - name: Cache Fastlane Dependencies
-        uses: actions/cache@v2
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
       - name: Install Fastlane
-        run: bundle install
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
       - name: Upload to Google Play Internal
-        uses: maierj/fastlane-action@v2.0.0
+        uses: maierj/fastlane-action@v2.0.1
         with:
           lane: 'android internal'
       # Uncomment to upload to alpha branch
       #    - name: Upload to Google Play Alpha
-      #      uses: maierj/fastlane-action@v2.0.0
+      #      uses: maierj/fastlane-action@v2.0.1
       #      with:
       #        lane: 'android alpha'
       - name: Cleanup to avoid storage limit
