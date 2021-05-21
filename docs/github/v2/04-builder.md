@@ -51,6 +51,9 @@ Define the build step as follows:
 
 That is all you need to build your project.
 
+NOTE: Issues have been observed when using a `UNITY_PASSWORD` with special characters.
+It is recommended to use a password without any special characters (mixed-case alphanumeric characters only).
+
 ## Storing the build
 
 To be able to access your built files,
