@@ -9,7 +9,8 @@ const { Title } = Typography;
 const CodeExamplesSection = () => {
   return (
     <Section className={styles.codeExamplesSection}>
-      <Title level={2}>Code exmaples (WIP)</Title>
+      <Title level={2}>Code examples</Title>
+      <p>with editable code or checkbox add/remove functionality</p>
     </Section>
   );
 };

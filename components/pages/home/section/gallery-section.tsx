@@ -8,7 +8,7 @@ const { Title } = Typography;
 
 const GallerySection = () => (
   <Section className={styles.gallerySection}>
-    <Title level={2}>Our vision (WIP)</Title>
+    <Title level={2}>Gallery with pipelines and such (WIP)</Title>
   </Section>
 );
 
