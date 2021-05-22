@@ -9,7 +9,7 @@ const { Title } = Typography;
 const PricingSection = () => {
   return (
     <Section className={styles.pricingSection}>
-      <Title level={2}>Pricing (WIP)</Title>
+      <Title level={2}>Pricing calculator &lt;3</Title>
     </Section>
   );
 };

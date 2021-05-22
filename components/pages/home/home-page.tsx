@@ -7,7 +7,7 @@ import OpeningSection from '@/components/pages/home/section/opening-section';
 import OurVisionSection from '@/components/pages/home/section/our-vision-section';
 import PricingSection from '@/components/pages/home/section/pricing-section';
 import VisualRepresentationOfWhatWeDoSection from '@/components/pages/home/section/visual-representation-of-what-we-do-section';
-import WhoChoseForUsSection from '@/components/pages/home/section/who-chose-for-us-section';
+import WhoIsUsingGameCiSection from '@/components/pages/home/section/who-is-using-game-ci-section';
 import ThePerksSection from '@/components/pages/home/section/the-perks-section';
 import React from 'react';
 
@@ -17,7 +17,7 @@ const HomePage = () => (
     {/* <OurVisionSection /> */}
     {/* <VisualRepresentationOfWhatWeDoSection /> */}
     <ThePerksSection />
-    {/* <WhoChoseForUsSection /> */}
+    {/* <WhoIsUsingGameCiSection /> */}
     {/* <CodeExamplesSection /> */}
     {/* <PricingSection /> */}
     {/* <GallerySection /> */}
