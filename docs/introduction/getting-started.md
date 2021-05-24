@@ -14,8 +14,8 @@ To get started creating your workflow, you need 3 things:
 
 **Create a repository** on your chosen Git host and follow their instructions to commit and push your project.
 
-Be sure to **ignore any automatically generated files**, by adding the reference [.gitignore](https://github.com/github/gitignore/blob/master/Unity.gitignore) file.
+Be sure to **ignore any automatically generated files**, by adding the reference [.gitignore](https://github.com/github/gitignore/blob/master/Unity.gitignore) file to the root of your project.
 
-To **ensure large files are handled correctly** in [LFS](https://git-lfs.github.com/), you can add our reference [.gitattributes](https://gist.github.com/webbertakken/ff250a0d5e59a8aae961c2e509c07fbc) file.
+To **ensure large files are handled correctly** (in [LFS](https://git-lfs.github.com/)), you can add our reference [.gitattributes](https://gist.github.com/webbertakken/ff250a0d5e59a8aae961c2e509c07fbc) file to the root of your project.
 
 You are now **ready** to create a workflow! Choose the CI system you chose in the menu on the left.
