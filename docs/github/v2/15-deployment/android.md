@@ -17,7 +17,7 @@ Upload both `Gemfile` and `Gemfile.lock` to your repo.
 
 ### 2- Prepare Google Play
 
-- You need to manually upload your **first** version of your application to Google Play.
+You need to manually upload your **first** version of your application to Google Play. You also need to get your app out of the "draft" status if you want to deploy anything but draft releases. The easiest way to do this is to try to release an Alpha release manually through play console. You will be guided to answer all the right forms.
 
 The output should be signed using a signing key. This can be done by creating the signing key from
 [Unity/Player Settings/Publishing Settings](https://docs.unity3d.com/2017.3/Documentation/Manual/class-PlayerSettingsAndroid.html) .
