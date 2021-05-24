@@ -316,6 +316,24 @@
         }
       }
     },
+    "introduction": {
+      "meta": {
+        "path": "introduction",
+        "order": 99,
+        "type": "folder"
+      },
+      "getting-started": {
+        "name": "Getting started",
+        "meta": {
+          "version": null,
+          "absolutePath": "introduction/getting-started.md",
+          "permalinkPath": "introduction/getting-started",
+          "path": "introduction/getting-started",
+          "order": 99,
+          "type": "file"
+        }
+      }
+    },
     "troubleshooting": {
       "meta": {
         "path": "troubleshooting",

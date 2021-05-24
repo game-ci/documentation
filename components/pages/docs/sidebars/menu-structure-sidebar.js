@@ -33,11 +33,12 @@ const MenuStructureSidebar = () => {
         className={styles.menuStructure}
         style={{ height: '100%', marginBottom: '-70px' }}
       >
-        <Item key="/docs" icon={<AiOutlineInfoCircle />}>
-          <Link href="/docs">
-            <a>Introduction</a>
-          </Link>
-        </Item>
+        <VersionedSubMenu
+          key="introduction"
+          section="introduction"
+          title="Introduction"
+          icon={<AiOutlineInfoCircle />}
+        />
         <VersionedSubMenu key="docker" section="docker" title="Docker" icon={<SiDocker />}>
           <Item key="/docs/docker/versions">
             <Link href="/docs/docker/versions">
