@@ -3,6 +3,8 @@ import { Button } from 'antd';
 import { AiOutlineGithub } from 'react-icons/all';
 import { useContext } from 'react';
 
+import styles from './edit-on-github-link.module.scss';
+
 const EditOnGithubLink = () => {
   const { absolutePath } = useContext(PageContext);
 
@@ -13,7 +15,12 @@ const EditOnGithubLink = () => {
   const href = absolutePath ? `${repoPath}/${editPath}/${filePath}` : `${repoPath}`;
 
   return (
-    <Button type="primary" icon={<AiOutlineGithub />} href={href}>
+    <Button
+      className={styles.editOnGitHubLink}
+      type="primary"
+      icon={<AiOutlineGithub />}
+      href={href}
+    >
       Edit on GitHub
     </Button>
   );
