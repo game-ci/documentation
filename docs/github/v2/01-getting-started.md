@@ -1,6 +1,6 @@
 # Getting started
 
-Unity Actions provide the fastest and **easiest** way to automatically test and build any Unity project.
+GitHub [Actions for Unity](https://github.com/game-ci/unity-actions) provide the fastest and **easiest** way to automatically test and build any Unity project.
 
 There are a few parts to setting up a workflow. Steps may slightly differ depending on each license type.
 
