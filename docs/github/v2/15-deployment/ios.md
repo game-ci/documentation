@@ -294,8 +294,8 @@ jobs:
 
 ### 6- Update Unity settings
 
-- Add your [application icon(s)](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Icon.html) (applications without an icon generate an error while uploading to TestFlight)
-- Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Other.html#Identification)
+- Add your [application icon(s)](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#icon) (applications without an icon generate an error while uploading to TestFlight)
+- Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#Identification)
 
 ### 7 - Ensure App Exists in App Store Connect
 
