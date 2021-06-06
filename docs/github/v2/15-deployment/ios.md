@@ -68,8 +68,6 @@ for_platform :ios do
 end
 ```
 
-In the following file, change `com.company.application` to your bundle identifier.
-
 ```ruby
 # fastlane/Fastfile
 keychain_name = "temporary_keychain"
@@ -118,7 +116,7 @@ platform :ios do
     update_project_provisioning(
       xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
       target_filter: "Unity-iPhone",
-      profile: ENV["sigh_com.company.application_appstore_profile-path"],
+      profile: ENV["sigh_#{ENV["IOS_APP_ID"]}_appstore_profile-path"],
       code_signing_identity: "Apple Distribution: #{ENV['APPLE_TEAM_NAME']} (#{ENV['APPLE_TEAM_ID']})"
     )
     increment_build_number(
