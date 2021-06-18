@@ -239,7 +239,7 @@ jobs:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
       APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-      APPSTORE_P8: ${{ secrets. APPSTORE_P8 }}
+      APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
       APPSTORE_P8_PATH: ${{ format('{0}/fastlane/p8.json', github.workspace) }}
       IOS_APP_ID: com.company.application # Change it to match your unity bundle id
       IOS_BUILD_PATH: ${{ format('{0}/build/iOS', github.workspace) }}
