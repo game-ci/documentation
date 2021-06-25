@@ -3,7 +3,8 @@
   z-index: 50; // Stay above ant components
 
   &.sticky {
-    position: fixed;
+    position: sticky;
+    top: 0;
   }
 
   .brand {
