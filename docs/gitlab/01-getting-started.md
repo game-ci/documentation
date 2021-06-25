@@ -33,9 +33,9 @@ It's generally considered good practice to use the same Unity version for your C
 ### I already have my own Unity project
 
 1. Clone [the unity3d-gitlab-ci-example project](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/)
-1. Copy [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml), [`Assets/Scripts/Editor/BuildCommand.cs`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/Assets/Scripts/Editor/BuildCommand.cs) and [`ci` folder](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/ci) to your project:
+1. Copy [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) to the root of your repository, [`Assets/Scripts/Editor/BuildCommand.cs`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/Assets/Scripts/Editor/BuildCommand.cs) and [`ci` folder](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/ci) to your project:
 
-   Assuming you've cloned the example project in the parent folder of your project, execute these commands from the root folder of your project:
+   Assuming you've cloned the example project in the parent folder of your project, and your Unity project is at the root of your repository, execute these commands from the root folder of your project:
 
    ```bash
    mkdir -p Assets/Scripts/Editor/
@@ -45,4 +45,5 @@ It's generally considered good practice to use the same Unity version for your C
    ```
 
 1. Open and edit the [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) you copied to your project and update [the variables](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml#L7-13) with the versions you need. Your Unity project version can be found in `ProjectSettings/ProjectVersion.txt`.
-1. Continue to activation instructions
+2. If your Unity project is not at the root of your repository, also update UNITY_DIR variable.
+3. Continue to activation instructions
