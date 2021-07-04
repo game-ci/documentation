@@ -15,14 +15,7 @@ const AnchorItem = ({ level, children }: Props) => {
     return null;
   }
 
-  // @ts-ignore
-  const textNode = React.Children.toArray(children)[0]?.props;
-  if (!textNode) {
-    return null;
-  }
-
-  // identity
-  const { value, nodeKey } = textNode;
+  const value = React.Children.toArray(children)[0];
   const anchorId = extractAnchorId(value);
 
   // styles
@@ -31,7 +24,7 @@ const AnchorItem = ({ level, children }: Props) => {
 
   return (
     <div style={{ paddingLeft, fontSize }}>
-      <Link key={nodeKey} href={`#${anchorId}`} title={value} />
+      <Link href={`#${anchorId}`} title={value} />
     </div>
   );
 };

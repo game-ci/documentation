@@ -27,9 +27,7 @@ const onSuccessfullyCopied = () => {
 };
 
 const HeadingWithAnchor = ({ level, children }: Props) => {
-  const textNode = React.Children.toArray(children)[0];
-  // @ts-ignore
-  const { value } = textNode.props;
+  const value = React.Children.toArray(children)[0];
   const anchorId = extractAnchorId(value);
 
   const onClick = () => {

@@ -35,11 +35,11 @@ class CodeBlock extends React.PureComponent {
   }
 
   render() {
-    const { value, language } = this.props;
+    const { children, language } = this.props;
     return (
       <pre className={styles.codeBlock}>
         <div ref={this.setRef} className={`language-${language}`}>
-          {value}
+          {children}
         </div>
       </pre>
     );
@@ -51,7 +51,7 @@ CodeBlock.defaultProps = {
 };
 
 CodeBlock.propTypes = {
-  value: PropTypes.string.isRequired,
+  children: PropTypes.string.isRequired,
   language: PropTypes.string,
 };
 
