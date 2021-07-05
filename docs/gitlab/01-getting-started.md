@@ -22,6 +22,10 @@ The [unity3d-gitlab-ci-example project](https://gitlab.com/gableroux/unity3d-git
 
 It's generally considered good practice to use the same Unity version for your CI/CD setup as you do to develop your project.
 
+## Video tutorial
+
+https://www.youtube.com/watch?v=8APwSXeoI9o
+
 ## Setting up gitlab-ci for your Unity project
 
 ### I don't have a Unity project yet
@@ -45,5 +49,5 @@ It's generally considered good practice to use the same Unity version for your C
    ```
 
 1. Open and edit the [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) you copied to your project and update [the variables](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml#L7-13) with the versions you need. Your Unity project version can be found in `ProjectSettings/ProjectVersion.txt`.
-2. If your Unity project is not at the root of your repository, also update UNITY_DIR variable.
-3. Continue to activation instructions
+1. If your Unity project is not at the root of your repository, also update UNITY_DIR variable.
+1. Continue to activation instructions
