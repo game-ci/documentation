@@ -17,12 +17,26 @@ class EmbeddedLink {
   }
 
   static isYoutubeLink(link: string) {
-    return /^https:\/\/www\.youtube\.com\/watch\?v=.+$/.test(link);
+    if (link.startsWith('https://www.youtube.com')) {
+      if (/^https:\/\/www\.youtube\.com\/embed\/.+$/.test(link)) {
+        return true;
+      }
+
+      throw new Error(
+        `Found youtube link, but it is malformed.
+        expected format: "https://www.youtube.com/embed/XXXXXXXXXX"
+        but received: "${link}"`,
+      );
+    }
+
+    return false;
   }
 }
 
 const EmbeddedLinkOrParagraph = ({ node, children, ...props }) => {
   const link = EmbeddedLink.fromChildren(children);
+  if (!link) return <Paragraph {...props}>{children}</Paragraph>;
+
   if (EmbeddedLink.isYoutubeLink(link)) {
     return (
       <iframe
