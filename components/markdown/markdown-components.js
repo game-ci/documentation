@@ -1,12 +1,10 @@
 /* eslint-disable react/prop-types */
-import { Typography, Divider } from 'antd';
+import { Divider } from 'antd';
 import Blockquote from './components/blockquote';
-
 import CodeBlock from './components/code-block';
+import EmbeddedLinkOrParagraph from './components/embedded-link-or-paragraph';
 import { List, ListItem } from './components/list';
 import HeadingWithAnchor from './components/heading-with-anchor';
-
-const { Paragraph } = Typography;
 
 export default {
   h1: ({ node, children, ...props }) => (
@@ -39,7 +37,7 @@ export default {
       {children}
     </HeadingWithAnchor>
   ),
-  p: Paragraph,
+  p: EmbeddedLinkOrParagraph,
   hr: Divider,
   ol: ({ node, children, ...props }) => (
     <List {...props} ordered>
