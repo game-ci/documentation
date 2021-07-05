@@ -17,16 +17,18 @@ class EmbeddedLink {
   }
 
   static isYoutubeLink(link: string) {
-    if (link.startsWith('https://www.youtube.com')) {
-      if (/^https:\/\/www\.youtube\.com\/embed\/.+$/.test(link)) {
-        return true;
+    // Starts with youtube
+    if (/^https:\/\/www\.youtube(-nocookie)?\.com/.test(link)) {
+      // Url as expected
+      if (!/^https:\/\/www\.youtube-nocookie\.com\/embed\/.+$/.test(link)) {
+        throw new Error(
+          `Found youtube link, but it is malformed.
+        expected format: "https://www.youtube-nocookie.com/embed/XXXXXXXXXX"
+        but received: "${link}"`,
+        );
       }
 
-      throw new Error(
-        `Found youtube link, but it is malformed.
-        expected format: "https://www.youtube.com/embed/XXXXXXXXXX"
-        but received: "${link}"`,
-      );
+      return true;
     }
 
     return false;
