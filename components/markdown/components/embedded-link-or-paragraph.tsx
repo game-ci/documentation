@@ -34,8 +34,10 @@ class EmbeddedLink {
 }
 
 const EmbeddedLinkOrParagraph = ({ node, children, ...props }) => {
+  const regularParagraph = <Paragraph {...props}>{children}</Paragraph>;
+
   const link = EmbeddedLink.fromChildren(children);
-  if (!link) return <Paragraph {...props}>{children}</Paragraph>;
+  if (!link) return regularParagraph;
 
   if (EmbeddedLink.isYoutubeLink(link)) {
     return (
@@ -51,7 +53,7 @@ const EmbeddedLinkOrParagraph = ({ node, children, ...props }) => {
     );
   }
 
-  return <Paragraph {...props}>{children}</Paragraph>;
+  return regularParagraph;
 };
 
 export default EmbeddedLinkOrParagraph;
