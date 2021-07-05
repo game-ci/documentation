@@ -97,7 +97,7 @@ const ThePerksSection = () => {
 
       <Row gutter={[24, 16]} align="stretch" justify="space-around">
         {cards.map((card, index) => (
-          <Col {...column}>
+          <Col key={card.title} {...column}>
             <FadeIntoView className={styles.cardAnimator} delay={index * 100}>
               <Card
                 className={styles.card}
