@@ -2,6 +2,7 @@ import Article from '@/components/markdown/components/article';
 import ReactMarkdown from 'react-markdown';
 import PropTypes, { InferProps } from 'prop-types';
 import components from './markdown-components';
+import parsing from './markdown-html-parsing';
 import EditOnGithubLink from '../pages/docs/edit-on-github-link';
 
 const propTypes = {
@@ -18,7 +19,9 @@ const MarkdownRenderer = ({ document, meta }: InferProps<typeof propTypes>) => {
       <sub>{metaInformation}</sub>
       <Article>
         {/* @ts-ignore // todo - fix type properly */}
-        <ReactMarkdown components={components}>{document}</ReactMarkdown>
+        <ReactMarkdown components={components} escapeHtml={false} astPlugins={[parsing.parseHtml]}>
+          {document}
+        </ReactMarkdown>
       </Article>
       <EditOnGithubLink />
     </div>
