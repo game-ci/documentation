@@ -68,8 +68,6 @@ for_platform :ios do
 end
 ```
 
-In the following file, change `com.company.application` to your bundle identifier.
-
 ```ruby
 # fastlane/Fastfile
 keychain_name = "temporary_keychain"
@@ -118,7 +116,7 @@ platform :ios do
     update_project_provisioning(
       xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
       target_filter: "Unity-iPhone",
-      profile: ENV["sigh_com.company.application_appstore_profile-path"],
+      profile: ENV["sigh_#{ENV["IOS_APP_ID"]}_appstore_profile-path"],
       code_signing_identity: "Apple Distribution: #{ENV['APPLE_TEAM_NAME']} (#{ENV['APPLE_TEAM_ID']})"
     )
     increment_build_number(
@@ -241,7 +239,7 @@ jobs:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
       APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-      APPSTORE_P8: ${{ secrets. APPSTORE_P8 }}
+      APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
       APPSTORE_P8_PATH: ${{ format('{0}/fastlane/p8.json', github.workspace) }}
       IOS_APP_ID: com.company.application # Change it to match your unity bundle id
       IOS_BUILD_PATH: ${{ format('{0}/build/iOS', github.workspace) }}
@@ -294,8 +292,8 @@ jobs:
 
 ### 6- Update Unity settings
 
-- Add your [application icon(s)](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Icon.html) (applications without an icon generate an error while uploading to TestFlight)
-- Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/PlayerSettingsiOS-Other.html#Identification)
+- Add your [application icon(s)](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#icon) (applications without an icon generate an error while uploading to TestFlight)
+- Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#Identification)
 
 ### 7 - Ensure App Exists in App Store Connect
 

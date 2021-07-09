@@ -44,7 +44,19 @@ Follow [setup instructions](https://docs.fastlane.tools/actions/supply/) to get 
 
 Uncomment the `#deploy-android` job in gitlab-ci.yml and replace `com.youcompany.yourgame` by your package name.
 
-You can change the track `internal` to `alpha`, `beta` or `production`.
+You can change the track `internal` to `alpha`, `beta` or `production` (Note: if you are using the `internal` track you will also have to mark your release as a draft in the `fastlane supply` command using `--release_status draft`).
+
+**Gemfile**
+
+You will also need to add a Gemfile to your project to install the `fastlane` gem. Something like the following:
+
+```
+source "https://rubygems.org"
+
+gem "fastlane"
+```
+
+and then copy the file to the current directory prior to installing the gem. eg `cp $CI_PROJECT_DIR/Gemfile .`.
 
 That is the simplest way with command line but you can also make `fastlane/Fastfile` and `fastlane/Appfile`, with the following command after building a temporary gradle project (export gradle project option in Unity build settings):
 

@@ -72,7 +72,7 @@ If you choose not to provide the `githubToken`, you may still upload the artifac
 To be able to access the test results, they need to be uploaded as artifacts.
 
 To do this, it is recommended to use the official Github Actions
-[upload artifact action](https://github.com/marketplace/actions/upload-artifact).
+[upload artifact action](https://github.com/marketplace/actions/upload-a-build-artifact).
 
 By default, Test Runner outputs its results to a folder named `artifacts`.
 

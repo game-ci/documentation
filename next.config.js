@@ -13,7 +13,7 @@ const lessNextConfig = {
 
   webpack: (config, options) => {
     if (options.isServer) {
-      const antStylesPattern = /antd\/.*?\/style.*?/;
+      const antStylesPattern = /(antd\/.*?\/style).*(?<!\.js)$/;
       const originalExternals = [...config.externals];
 
       config.externals = [

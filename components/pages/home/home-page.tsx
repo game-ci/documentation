@@ -10,9 +10,11 @@ import VisualRepresentationOfWhatWeDoSection from '@/components/pages/home/secti
 import WhoIsUsingGameCiSection from '@/components/pages/home/section/who-is-using-game-ci-section';
 import ThePerksSection from '@/components/pages/home/section/the-perks-section';
 import React from 'react';
+import Header from '@/components/pages/home/header';
 
 const HomePage = () => (
   <BaseLayout showSearch={false} stickyHeader>
+    <Header />
     <OpeningSection />
     {/* <OurVisionSection /> */}
     {/* <VisualRepresentationOfWhatWeDoSection /> */}
