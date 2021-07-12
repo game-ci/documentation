@@ -22,10 +22,18 @@ Feel free to join us on
 [![Discord](assets/readme/Discord.svg)](https://game.ci/discord)
 and engage with the community.
 
-#### License
+## Support us
 
-[MIT license](./LICENSE)
+GameCI is free for everyone forever.
 
-#### Sponsors
+You can support us at [OpenCollective](https://opencollective.com/game-ci).
+
+## Licence
+
+This repository is [MIT](./LICENSE) licensed.
+
+This includes all contributions from the community.
+
+## Sponsors
 
 [![Vercel](assets/readme/Vercel.svg)](https://vercel.com?utm_source=game-ci)
