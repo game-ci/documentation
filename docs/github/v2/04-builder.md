@@ -200,7 +200,7 @@ No configuration required.
 
 Generates the version based on the latest git tag. For example `0.17.2` will
 generate the version `0.17.2`. A leading "v" is stripped, so a version of
-`v1.3.3` will generate a version of `1.3.3`.
+`v1.3.3` will generate a version of `1.3.3`. **(advanced users)**
 
 > Compatible with **all platforms**.
 > Does **not** modify your repository.
