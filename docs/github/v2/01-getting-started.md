@@ -49,6 +49,11 @@ Unity Actions are using
 since `unity-builder` version 2. Any version in this
 [list](/docs/docker/versions) can be used.
 
+## Video tutorial
+
+https://www.youtube-nocookie.com/embed/M2BZr02uai0
+
+
 ## Simple example
 
 Below is a simple example. It is **recommended** to start from here.
@@ -75,7 +80,75 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: Library
-          key: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Test
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          targetPlatform: WebGL
+
+      # Output
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
+```
+
+## Simple example with Git LFS
+
+If you are using GitHub's git-lfs hosting service to store your large binary assets, you will want to cache them to avoid consuming massive amounts of bandwidth. The extra steps in this example try to restore your git-lfs assets from a cache before doing a git lfs pull.  
+
+```yaml
+name: Actions 😎
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build my project ✨
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout (without LFS)
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Git LFS
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v2
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+          
+      # Cache
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
 
       # Test
       - name: Run tests
@@ -137,8 +210,9 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ hashFiles(matrix.projectPath) }}
           restore-keys: |
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
             Library-${{ matrix.projectPath }}-
             Library-
       - uses: game-ci/unity-test-runner@v2
