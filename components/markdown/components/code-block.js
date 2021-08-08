@@ -2,6 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as hljs from 'highlight.js/lib/core';
 
+import { Button } from 'antd';
+
+// Icon for Copy Button
+import { GrCopy } from 'react-icons/all';
+
+import { useNotification } from '@/core/hooks/use-notification';
 import styles from './markdown-components.module.scss';
 
 hljs.registerLanguage('yaml', require('highlight.js/lib/languages/yaml'));
@@ -36,12 +42,37 @@ class CodeBlock extends React.PureComponent {
 
   render() {
     const { children, language } = this.props;
+
+    // Add Styling to button here.
+    // TODO decide if the button should be left or right aligned.
+    const CopyButton = () => (
+      <div
+        style={{
+          textAlign: 'right',
+        }}
+      >
+        <Button
+          onClick={() => {
+            navigator.clipboard.writeText(children[0]);
+            useNotification().info({
+              message: 'Code Copied Successfully',
+            });
+          }}
+        >
+          <GrCopy />
+        </Button>
+      </div>
+    );
+
     return (
-      <pre className={styles.codeBlock}>
-        <div ref={this.setRef} className={`language-${language}`}>
-          {children}
-        </div>
-      </pre>
+      <>
+        <pre className={styles.codeBlock}>
+          <CopyButton />
+          <div ref={this.setRef} className={`language-${language}`}>
+            {children}
+          </div>
+        </pre>
+      </>
     );
   }
 }
