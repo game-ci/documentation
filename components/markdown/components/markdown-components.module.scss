@@ -40,6 +40,7 @@
     background: rgb(40 42 54);
     color: rgba(255, 255, 255, 0.75);
     transition: margin 0.3s ease, width 0.3s ease;
+    margin: 0;
   }
 
   .heading:not(:global(h1)) {

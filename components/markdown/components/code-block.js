@@ -49,6 +49,7 @@ class CodeBlock extends React.PureComponent {
       <div
         style={{
           textAlign: 'right',
+          marginBottom: '-32px',
         }}
       >
         <Button
@@ -65,14 +66,12 @@ class CodeBlock extends React.PureComponent {
     );
 
     return (
-      <>
-        <pre className={styles.codeBlock}>
-          <CopyButton />
-          <div ref={this.setRef} className={`language-${language}`}>
-            {children}
-          </div>
-        </pre>
-      </>
+      <pre className={styles.codeBlock}>
+        <CopyButton />
+        <div ref={this.setRef} className={`language-${language}`} style={{ marginRight: 36 }}>
+          {children}
+        </div>
+      </pre>
     );
   }
 }

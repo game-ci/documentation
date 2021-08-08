@@ -48,5 +48,24 @@ export default {
   li: ListItem,
   code: ({ node, inline, children, ...props }) =>
     inline ? <code {...props}>{children}</code> : <CodeBlock {...props}>{children}</CodeBlock>,
+
+  // Created a custom pre element which checks if code element is embedded or not.
+  pre: ({ node, children }) => {
+    if (node.children && node.children.length > 0 && node.children[0].tagName === 'code') {
+      return (
+        <pre
+          style={{
+            backgroundColor: 'rgb(40 42 54)',
+            padding: 0,
+            maxWidth: 1024,
+          }}
+        >
+          {children}
+        </pre>
+      );
+    }
+
+    return <pre>{children}</pre>;
+  },
   blockquote: Blockquote,
 };
