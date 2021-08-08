@@ -7,6 +7,7 @@ import { Button } from 'antd';
 // Icon for Copy Button
 import { GrCopy } from 'react-icons/all';
 
+import { useNotification } from '@/core/hooks/use-notification';
 import styles from './markdown-components.module.scss';
 
 hljs.registerLanguage('yaml', require('highlight.js/lib/languages/yaml'));
@@ -21,10 +22,6 @@ class CodeBlock extends React.PureComponent {
   constructor(properties) {
     super(properties);
     this.setRef = this.setRef.bind(this);
-    this.setViewRef = this.setViewRef.bind(this);
-    this.state = {
-      didCopyCode: false,
-    };
   }
 
   componentDidMount() {
@@ -44,55 +41,43 @@ class CodeBlock extends React.PureComponent {
     this.codeEl = element;
   }
 
-  setViewRef(element) {
-    this.viewElement = element;
-  }
-
-  // Checking if the codeblock is present in viewport.
-  // Based on that setting the copy button or text
-  isInViewport = () => {
-    const { top } = this.viewElement ? this.viewElement.getBoundingClientRect() : { top: -1000 };
-    const { bottom } = this.viewElement
-      ? this.viewElement.getBoundingClientRect()
-      : { bottom: -1000 };
-    if (bottom < 0 || top >= window.innerHeight) {
-      this.setState({
-        didCopyCode: false,
-      });
-    }
-  };
-
   highlightCode() {
     hljs.highlightBlock(this.codeEl);
   }
 
   render() {
     const { children, language } = this.props;
-    const { didCopyCode } = this.state;
 
     // Add Styling to button here.
+    // TODO decide if the button should be left or right aligned.
     const CopyButton = () => (
-      <Button
-        onClick={() => {
-          this.setState({
-            didCopyCode: true,
-          });
-          navigator.clipboard.writeText(children[0]);
+      <div
+        style={{
+          textAlign: 'right',
         }}
       >
-        <GrCopy />
-      </Button>
+        <Button
+          onClick={() => {
+            navigator.clipboard.writeText(children[0]);
+            useNotification().info({
+              message: 'Code Copied Successfully',
+            });
+          }}
+        >
+          <GrCopy />
+        </Button>
+      </div>
     );
 
     return (
-      <div ref={this.setViewRef}>
-        <div>{didCopyCode ? 'Code Copied Sucessfully' : <CopyButton />}</div>
+      <>
         <pre className={styles.codeBlock}>
+          <CopyButton />
           <div ref={this.setRef} className={`language-${language}`}>
             {children}
           </div>
         </pre>
-      </div>
+      </>
     );
   }
 }
