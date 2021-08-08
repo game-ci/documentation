@@ -50,16 +50,16 @@ const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
       numberArrayB = [...numberArrayB, ...temporaryB];
 
       // sorting based on the versions. Using Multiplication to give priority
-      const productionA =
+      const productA =
         Number.parseInt(numberArrayA[1], 10) * 1000000 +
         Number.parseInt(numberArrayA[2], 10) * 1000 +
         Number.parseInt(numberArrayA[3], 10);
-      const productionB =
+      const productB =
         Number.parseInt(numberArrayB[1], 10) * 1000000 +
         Number.parseInt(numberArrayB[2], 10) * 1000 +
         Number.parseInt(numberArrayB[3], 10);
 
-      return productionB - productionA;
+      return productB - productA;
     });
   }
 
