@@ -26,15 +26,10 @@ class CodeBlock extends React.PureComponent {
 
   componentDidMount() {
     this.highlightCode();
-    document.addEventListener('scroll', this.isInViewport);
   }
 
   componentDidUpdate() {
     this.highlightCode();
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('scroll', this.isInViewport);
   }
 
   setRef(element) {
