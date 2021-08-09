@@ -31,35 +31,37 @@ const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
   if (data) {
     // Sorting the data based on the version numbers to maintain the version order
     data.sort((a, b) => {
-      const numberStringA = a.NO_ID_FIELD.split('-')[1];
-      const numberStringB = b.NO_ID_FIELD.split('-')[1];
+      const infoA = a.editorVersionInfo;
+      const infoB = b.editorVersionInfo;
 
-      let numberArrayA = numberStringA.split('.');
-      let numberArrayB = numberStringB.split('.');
+      // Using major , minor and patch to compare the two numbers
+      const { major: majorA, minor: minorA, patch: patchA } = infoA;
+      const { major: majorB, minor: minorB, patch: patchB } = infoB;
 
-      if (numberArrayA[0] > numberArrayB[0]) return -1;
-      if (numberArrayA[0] < numberArrayB[0]) return 1;
+      // First checking for major version.
+      if (majorA > majorB) return -1;
+      if (majorA < majorB) return 1;
 
-      // Assuming here f keyword is present in last version.
-      const temporaryA = numberArrayA[2].split('f');
-      const temporaryB = numberArrayB[2].split('f');
+      // If major version is equal check for minor version.
+      if (minorA > minorB) return -1;
+      if (minorA < minorB) return 1;
 
-      numberArrayA.pop();
-      numberArrayA = [...numberArrayA, ...temporaryA];
-      numberArrayB.pop();
-      numberArrayB = [...numberArrayB, ...temporaryB];
+      // If major and minor both are equal check the patch version.
 
-      // sorting based on the versions. Using Multiplication to give priority
-      const productA =
-        Number.parseInt(numberArrayA[1], 10) * 1000000 +
-        Number.parseInt(numberArrayA[2], 10) * 1000 +
-        Number.parseInt(numberArrayA[3], 10);
-      const productB =
-        Number.parseInt(numberArrayB[1], 10) * 1000000 +
-        Number.parseInt(numberArrayB[2], 10) * 1000 +
-        Number.parseInt(numberArrayB[3], 10);
+      // For patch assuming "f" is present and splitting based on that.(Can use regex to split also).
 
-      return productB - productA;
+      // Calculating a patchNumber which is the priority offset based sum of the numbers in
+      // the array formed after split. The offset is used to correctly get the priority.
+      let patchANumber = 0;
+      for (const [index, currentValue] of patchA.split('f').entries()) {
+        patchANumber += 10 ** (9 - 3 * index) * Number.parseInt(currentValue, 10);
+      }
+      let patchBNumber = 0;
+      for (const [index, currentValue] of patchB.split('f').entries()) {
+        patchBNumber += 10 ** (9 - 3 * index) * Number.parseInt(currentValue, 10);
+      }
+
+      return patchBNumber - patchANumber;
     });
   }
 
