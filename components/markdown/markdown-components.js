@@ -50,6 +50,12 @@ export default {
     inline ? <code {...props}>{children}</code> : <CodeBlock {...props}>{children}</CodeBlock>,
 
   // Created a custom pre element which checks if code element is embedded or not.
-  pre: ({ node, children }) => <>{children}</>,
+  pre: ({ node, children }) => {
+    if (node.children?.length === 1 && node.children[0].tagName === 'code') {
+      return children;
+    }
+
+    return <pre>{children}</pre>;
+  },
   blockquote: Blockquote,
 };
