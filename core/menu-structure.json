@@ -10,10 +10,21 @@
         "name": "Docker images",
         "meta": {
           "version": null,
-          "absolutePath": "docker/docker-images.md",
+          "absolutePath": "docker/01-docker-images.md",
           "permalinkPath": "docker/docker-images",
           "path": "docker/docker-images",
-          "order": 99,
+          "order": 1,
+          "type": "file"
+        }
+      },
+      "customize-docker-images": {
+        "name": "Customize docker images",
+        "meta": {
+          "version": null,
+          "absolutePath": "docker/02-customize-docker-images.md",
+          "permalinkPath": "docker/customize-docker-images",
+          "path": "docker/customize-docker-images",
+          "order": 2,
           "type": "file"
         }
       }
