@@ -4,7 +4,7 @@
 
 **You can use remote builder to send a build from any supported git platform to any of the supported remote builder types.**
 
-1. Larger options and more control over disc size, memory and CPU. You can build projects of almost any size.
+1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 
 GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
@@ -42,17 +42,17 @@ Remote Builder is better if you don't have a server setup or don't want to manag
 - You must have an AWS account setup and ready to create resources.
 - It is suggested you have a workflow setup from the [builder section](builder).
 
-### Create base stack on AWS Cloud Formation
+### Create base stack on AWS CloudFormation
 
 1. Open [this link](https://raw.githubusercontent.com/game-ci/unity-builder/main/dist/cloud-formations/base-setup.yml), right-click and save as a yaml file locally (filename doesn't matter, must end with .yaml).
-2. Open AWS console, navigate to the Cloud Formation service.
+2. Open AWS console, navigate to the CloudFormation service.
 3. Select the option to create a new stack.
 4. Locate the section where you can upload a template. Upload the file you downloaded in step 1. The default values for all other fields will work, usually I name the stack something like `game-ci-base`.
 5. Create the stack and wait for the stack to finish creating. You can delete this stack at any time to cleanup the resources.
 
 _Note:_
 
-- _An AWS Cloud Formation stack is just a group of resources that is created and destroyed together._
+- _An AWS CloudFormation stack is just a group of resources that is created and destroyed together._
 - _The stack we created manages the persistent storage and aws permissions for the builds._
 
 ### AWS Credentials
