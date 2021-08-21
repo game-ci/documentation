@@ -6,25 +6,36 @@
         "order": 99,
         "type": "folder"
       },
-      "use-cases": {
-        "name": "Use cases",
+      "getting-started": {
+        "name": "Getting started",
         "meta": {
           "version": null,
-          "absolutePath": "cloudrunner/01-use-cases.md",
-          "permalinkPath": "cloudrunner/use-cases",
-          "path": "cloudrunner/use-cases",
+          "absolutePath": "cloudrunner/01-getting-started.md",
+          "permalinkPath": "cloudrunner/getting-started",
+          "path": "cloudrunner/getting-started",
           "order": 1,
           "type": "file"
         }
       },
-      "concept": {
-        "name": "Concept",
+      "basic-aws-setup": {
+        "name": "Basic aws setup",
         "meta": {
           "version": null,
-          "absolutePath": "cloudrunner/02-concept.md",
-          "permalinkPath": "cloudrunner/concept",
-          "path": "cloudrunner/concept",
+          "absolutePath": "cloudrunner/02-basic-aws-setup.md",
+          "permalinkPath": "cloudrunner/basic-aws-setup",
+          "path": "cloudrunner/basic-aws-setup",
           "order": 2,
+          "type": "file"
+        }
+      },
+      "use-cases": {
+        "name": "Use cases",
+        "meta": {
+          "version": null,
+          "absolutePath": "cloudrunner/03-use-cases.md",
+          "permalinkPath": "cloudrunner/use-cases",
+          "path": "cloudrunner/use-cases",
+          "order": 3,
           "type": "file"
         }
       },
@@ -32,10 +43,10 @@
         "name": "Faq",
         "meta": {
           "version": null,
-          "absolutePath": "cloudrunner/03-faq.md",
+          "absolutePath": "cloudrunner/04-faq.md",
           "permalinkPath": "cloudrunner/faq",
           "path": "cloudrunner/faq",
-          "order": 3,
+          "order": 4,
           "type": "file"
         }
       }
@@ -230,17 +241,6 @@
               "permalinkPath": "github/v2/returning-a-license",
               "path": "github/returning-a-license",
               "order": 5,
-              "type": "file"
-            }
-          },
-          "remote-builder": {
-            "name": "Remote builder",
-            "meta": {
-              "version": "v2",
-              "absolutePath": "github/v2/06-remote-builder.md",
-              "permalinkPath": "github/v2/remote-builder",
-              "path": "github/remote-builder",
-              "order": 6,
               "type": "file"
             }
           },
