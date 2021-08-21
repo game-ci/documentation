@@ -1,8 +1,8 @@
-# TL;DR / What is it?
+# Concept Overview
 
 **You can use remote builder to send a build from any supported git platform to a Kubernetes cluster or AWS.**
 
-# Benefits
+# Benefits Overview
 
 1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
@@ -27,20 +27,18 @@ However, you can use Cloud Builder to run any automated work that requires the U
 
 # Supported platforms
 
-## Run builds on a Kubernetes cluster
-
-_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow. Using Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
-
-✔️ All Kubernetes providers that support persistent volumes are supported.
-
 ## Run builds on a cloud provider like AWS
 
-_This is billed on demand and costs nothing unless you store the builds._
-
-✔️ **AWS** is supported.
+✔️ **AWS** support is released and out of beta.
 
 ⚠ **GCP**, Google Cloud Run needs to release support for NFS.
 
 ⚠ **Azure**, the needed technologies are already supported.
 
-Next checkout the basic-aws-setup.
+## Run builds on a Kubernetes cluster
+
+_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow. Using Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
+
+_This requires ReadWriteMany which not all Kubernetes provide, we plan for future versions to not require ReadWriteMany support._
+
+✔️ All Kubernetes providers that support persistent volumes in mode "ReadWriteMany" are supported.
