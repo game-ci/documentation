@@ -1,25 +1,19 @@
 # Remote builder
 
-## What is it?
+## TL;DR / What is it?
 
-**You can use remote builder to send a build from any supported git platform to any of the supported remote builder types.**
+**You can use remote builder to send a build from any supported git platform to a Kubernetes cluster or AWS.**
+
+## Benefits
 
 1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 
+## GitHub Actions and Game Development
+
 GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
 
 For Unity projects the available disk size is quite small. You may experience an error related to running out of disk space. You may also want to run the build on a server with more memory or processing resources.
-
-### Run builds on a cloud provider like AWS
-
-_This is billed on demand and costs nothing unless you store the builds._
-
-✔️ **AWS** is supported.
-
-⚠ **GCP** planned, Google Cloud Run needs to release support for NFS.
-
-⚠ **Azure** planned, the needed technologies are already supported.
 
 ### Run builds on a Kubernetes cluster
 
@@ -27,33 +21,21 @@ _Usually the cluster needs to be up and running at all times, as starting up a c
 
 ✔️ All Kubernetes providers that support persistent volumes are supported.
 
-### When to use GitHub self-hosted runner or remote builder?
+### Run builds on a cloud provider like AWS
 
-[GitHub self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) and Remote Builder can enable you to build larger projects.
+_This is billed on demand and costs nothing unless you store the builds._
 
-Self-hosted runners are best used when you already have a server available, running 24/7 that you can setup as a runner. And you're happy to maintain and keep that server available and running.
+✔️ **AWS** is supported.
 
-Remote Builder is better if you don't have a server setup or don't want to manage or maintain your own build server.
+⚠ **GCP**, Google Cloud Run needs to release support for NFS.
+
+⚠ **Azure**, the needed technologies are already supported.
 
 ## Basic Remote Builder setup with AWS
 
 ### Requirements
 
 - You must have an AWS account setup and ready to create resources.
-- It is suggested you have a workflow setup from the [builder section](builder).
-
-### Create base stack on AWS CloudFormation
-
-1. Open [this link](https://raw.githubusercontent.com/game-ci/unity-builder/main/dist/cloud-formations/base-setup.yml), right-click and save as a yaml file locally (filename doesn't matter, must end with .yaml).
-2. Open AWS console, navigate to the CloudFormation service.
-3. Select the option to create a new stack.
-4. Locate the section where you can upload a template. Upload the file you downloaded in step 1. The default values for all other fields will work, usually I name the stack something like `game-ci-base`.
-5. Create the stack and wait for the stack to finish creating. You can delete this stack at any time to cleanup the resources.
-
-_Note:_
-
-- _An AWS CloudFormation stack is just a group of resources that is created and destroyed together._
-- _The stack we created manages the persistent storage and aws permissions for the builds._
 
 ### AWS Credentials
 

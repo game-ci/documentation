@@ -1,5 +1,45 @@
 {
   "docs": {
+    "cloudrunner": {
+      "meta": {
+        "path": "cloudrunner",
+        "order": 99,
+        "type": "folder"
+      },
+      "use-cases": {
+        "name": "Use cases",
+        "meta": {
+          "version": null,
+          "absolutePath": "cloudrunner/01-use-cases.md",
+          "permalinkPath": "cloudrunner/use-cases",
+          "path": "cloudrunner/use-cases",
+          "order": 1,
+          "type": "file"
+        }
+      },
+      "concept": {
+        "name": "Concept",
+        "meta": {
+          "version": null,
+          "absolutePath": "cloudrunner/02-concept.md",
+          "permalinkPath": "cloudrunner/concept",
+          "path": "cloudrunner/concept",
+          "order": 2,
+          "type": "file"
+        }
+      },
+      "faq": {
+        "name": "Faq",
+        "meta": {
+          "version": null,
+          "absolutePath": "cloudrunner/03-faq.md",
+          "permalinkPath": "cloudrunner/faq",
+          "path": "cloudrunner/faq",
+          "order": 3,
+          "type": "file"
+        }
+      }
+    },
     "docker": {
       "meta": {
         "path": "docker",
