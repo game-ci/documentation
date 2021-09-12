@@ -1,5 +1,6 @@
 import type { ReactNodeLike } from 'prop-types';
 import { Layout } from 'antd';
+import React from 'react';
 import NavBar from './header/nav-bar';
 import Footer from './footer/footer';
 
