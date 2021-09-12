@@ -4,7 +4,6 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import matter from 'gray-matter';
 import DocumentationPage from '@/components/pages/docs/documentation-page';
 import readDirectoryRecursively from '@/core/fs/read-directory-recursively';
-import generateSearchDefinitionsFromFiles from '@/tools/search/generate-definitions-from-files';
 
 interface Props {
   content: string;
@@ -22,8 +21,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const filePaths = await readDirectoryRecursively(path.resolve('docs/'));
   const structure = await MenuStructure.generateFromFiles(filePaths);
   const fileMetas = await MenuStructure.getFileMetas(structure);
-
-  if (process.env.CI) generateSearchDefinitionsFromFiles(fileMetas);
 
   const paths = fileMetas.map((file) => ({
     params: { 'documentation-page': file.meta.path.split('/') },
