@@ -1,7 +1,11 @@
 # Deploy to the App Store
 
-Uploading to the App Store is a little tricky. Make sure you do all these steps carefully.
+This guide is intended to help with automating iOS builds and uploads to the App Store.
+This guide assumes that you already have experience with [using xCode for distribution](https://developer.apple.com/documentation/xcode/preparing-your-app-for-distribution).
+It is important to be familiar with the manual process, as automating this process can be complicated.
 
+> -- **Note:** Make sure you do all these steps carefully.
+>
 > -- **Note:** You need a Mac environment for doing these steps.
 > A Mac is also recommended for debugging any issues with this workflow.
 
@@ -297,5 +301,5 @@ jobs:
 
 ### 7 - Ensure App Exists in App Store Connect
 
-  - Go to Apple's [App Store Connect](https://appstoreconnect.apple.com/)
-  - Select Apps, and add the App with the same Bundle Identifier as used earlier
+- Go to Apple's [App Store Connect](https://appstoreconnect.apple.com/)
+- Select Apps, and add the App with the same Bundle Identifier as used earlier
