@@ -225,6 +225,8 @@ Configure the android `versionCode`.
 
 When not specified, the version code is generated from the version using the `major * 1000000 + minor * 1000 + patch` scheme;
 
+If your app uses a date-based versioning scheme (i.e. versions such as 2021.10.0), then the automatic scheme will not work, as `2021010000` is dangerously close to the maximum allowed version code. One solution is to set it to `github.run_number` instead, which is the number of times GitHub actions has run for the current workflow.
+
 #### androidAppBundle
 
 Set this flag to `true` to build '.aab' instead of '.apk'.
