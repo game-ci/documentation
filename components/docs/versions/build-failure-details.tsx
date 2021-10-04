@@ -1,6 +1,7 @@
 import CodeBlock from '@/components/markdown/components/code-block';
 import Heading from '@/components/markdown/components/heading';
 import React, { useReducer } from 'react';
+import Article from '@/components/markdown/components/article';
 
 interface Props {
   ciJob;
@@ -58,20 +59,20 @@ const BuildFailureDetails = ({
     `--build-arg=module=${targetPlatform}`;
 
   return (
-    <article {...rest}>
+    <Article {...rest}>
       <Heading level={4}>CI Job</Heading>
       <pre>{JSON.stringify(ciJob, null, 2)}</pre>
       <br />
       <Heading level={4}>Commands</Heading>
       <p>To manually build for debugging:</p>
-      <CodeBlock value={command} language="powershell" />
+      <CodeBlock language="powershell">{[command]}</CodeBlock>
       <br />
       <Heading level={3}>Associated tags</Heading>
       <pre>{JSON.stringify(tags, null, 2)}</pre>
       <br />
       <Heading level={4}>CI Build</Heading>
       <pre>{JSON.stringify(ciBuild, null, 2)}</pre>
-    </article>
+    </Article>
   );
 };
 
