@@ -97,6 +97,6 @@ docker run --rm -it gableroux/editor:ubuntu-2021.1.16f1-android-0.15.0 ruby --ve
 ruby 2.6.0p0 (2018-12-25 revision 66547) [x86_64-linux]
 ```
 
-If you are using [github-actions unity-builder](https://github.com/marketplace/actions/unity-builder) you can then customize the docker image used during build with the following parameter: https://game.ci/docs/github/builder#customimage
+If you are using [github-actions unity-builder](https://github.com/marketplace/actions/unity-builder) you can then customize the docker image used during build using [the customimage parameter](https://game.ci/docs/github/builder#customimage)
 
 For more information on how to publish to docker hub, you may refer to [docker's documentation](https://docs.docker.com/docker-hub/repos/)
