@@ -29,7 +29,7 @@ build-ios-xcode:
   image: $IMAGE:$UNITY_VERSION-ios-$IMAGE_VERSION
   variables:
     BUILD_TARGET: iOS
-  BuildOptions: AcceptExternalModificationsToPlayer
+    BuildOptions: AcceptExternalModificationsToPlayer
 ```
 
 If you would like to use several `BuildOptions`, you have to separate all values by `,`:
