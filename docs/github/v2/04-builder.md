@@ -313,6 +313,8 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 
 Parameters without a value will be considered booleans (with a value of true).
 
+Complete list of available parameters can be found in the [Unity Documentation](https://docs.unity3d.com/ScriptReference/BuildOptions.html).
+
 ```yaml
 - uses: game-ci/unity-builder@v2
   with:
