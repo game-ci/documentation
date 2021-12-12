@@ -39,9 +39,6 @@ For using match:
 
 > -- **Note:** Make sure your AppleId has two-step Authentication and has enough
 > access.
->
-> -- **Note:** If possible, it's also better to first remove (after making a backup of)
-> all your certificates, as match can mess things up.
 
 ### 3- Add the following fastlane files to your fastlane folder
 
