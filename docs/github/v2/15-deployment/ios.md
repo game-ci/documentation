@@ -207,7 +207,7 @@ jobs:
 - **APPLE_DEVELOPER_EMAIL**: Your AppleId
 - **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **APPLE_TEAM_NAME**: Team Name from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
-- **MATCH_URL**: Url to which `fastlane match appstore` uploaded certificates.
+- **MATCH_URL**: Https url for the private git repo to which `fastlane match appstore` uploaded certificates.
 - **MATCH_GIT_BASIC_AUTHORIZATION**: Base64 key of your GitHub Personal Access Token (PAT), generated with `echo -n <username>:<PAT> | base64`;
   See [Fastlane's Match documentation](https://docs.fastlane.tools/actions/match/#git-storage-on-github) for details
 - **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
