@@ -46,13 +46,13 @@ For using match:
 # fastlane/Appfile
 
 for_platform :ios do
-  app_identifier(ENV["IOS_APP_ID"])
+  app_identifier(ENV['IOS_APP_ID'])
 
-  apple_dev_portal_id(ENV["APPLE_DEVELOPER_EMAIL"])
-  itunes_connect_id(ENV["APPLE_CONNECT_EMAIL"])
+  apple_dev_portal_id(ENV['APPLE_DEVELOPER_EMAIL'])
+  itunes_connect_id(ENV['APPLE_CONNECT_EMAIL'])
 
-  team_id(ENV["APPLE_TEAM_ID"])
-  itc_team_id(ENV["APPLE_TEAM_ID"])
+  team_id(ENV['APPLE_TEAM_ID'])
+  itc_team_id(ENV['APPLE_TEAM_ID'])
 end
 ```
 
@@ -72,7 +72,7 @@ platform :ios do
     # Missing Export Compliance can also be set through Deliverfile
     update_info_plist(
       xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
-      plist_path: "Info.plist",
+      plist_path: 'Info.plist',
       block: proc do |plist|
         plist['ITSAppUsesNonExemptEncryption'] = false
       end
@@ -85,18 +85,16 @@ platform :ios do
   lane :build do
     setup_ci
     app_store_connect_api_key(
-      key_id: ENV["APPSTORE_KEY_ID"],
-      issuer_id: ENV["APPSTORE_ISSUER_ID"],
-      key_content: ENV['APPSTORE_P8']
-      duration: 1200, # optional
-      in_house: false, # true for enterprise and false for individual accounts
+      key_id: ENV['APPSTORE_KEY_ID'],
+      issuer_id: ENV['APPSTORE_ISSUER_ID'],
+      key_content: ENV["APPSTORE_P8"]
     )
     match(
-      type: "appstore",
-      storage_mode: "git",
-      git_url: ENV["MATCH_URL"],
-      git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
-      app_identifier: ENV["IOS_APP_ID"]
+      type: 'appstore',
+      storage_mode: 'git',
+      git_url: ENV['MATCH_URL'],
+      git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION'],
+      app_identifier: ENV['IOS_APP_ID']
     )
     update_code_signing_settings(
       use_automatic_signing: true,
@@ -105,7 +103,7 @@ platform :ios do
     update_code_signing_settings(
       use_automatic_signing: false,
       team_id: ENV["sigh_#{ENV['IOS_APP_ID']}_appstore_team-id"],
-      code_sign_identity: "iPhone Distribution",
+      code_sign_identity: 'iPhone Distribution',
       targets: 'Unity-iPhone',
       path: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
       profile_name: ENV["sigh_#{ENV['IOS_APP_ID']}_appstore_profile-name"],
@@ -113,8 +111,8 @@ platform :ios do
     )
     build_app(
       project: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
-      scheme: "Unity-iPhone",
-      xcargs: "-allowProvisioningUpdates"
+      scheme: 'Unity-iPhone',
+      xcargs: '-allowProvisioningUpdates'
     )
   end
 
@@ -138,8 +136,8 @@ Then change the build_app section so that it uses the new `xcworkspace`:
 ```ruby
     build_app(
       workspace: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcworkspace",
-      scheme: "Unity-iPhone",
-      xcargs: "-allowProvisioningUpdates"
+      scheme: 'Unity-iPhone',
+      xcargs: '-allowProvisioningUpdates'
     )
 ```
 
