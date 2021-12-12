@@ -181,7 +181,7 @@ jobs:
           APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_TEAM_NAME: ${{ secrets.APPLE_TEAM_NAME }}
-          MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}
+          MATCH_URL: ${{ secrets.MATCH_URL }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
@@ -207,7 +207,7 @@ jobs:
 - **APPLE_DEVELOPER_EMAIL**: Your AppleId
 - **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **APPLE_TEAM_NAME**: Team Name from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
-- **MATCH_REPOSITORY**: Url to which `fastlane match appstore` uploaded certificates. For example, https://github.com/game-ci/match would be `git@github.com:game-ci/match.git`
+- **MATCH_URL**: Url to which `fastlane match appstore` uploaded certificates.
 - **MATCH_GIT_BASIC_AUTHORIZATION**: Base64 key of your GitHub Personal Access Token (PAT), generated with `echo -n <username>:<PAT> | base64`;
   See [Fastlane's Match documentation](https://docs.fastlane.tools/actions/match/#git-storage-on-github) for details
 - **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
