@@ -93,7 +93,7 @@ platform :ios do
       type: 'appstore',
       storage_mode: 'git',
       git_url: ENV['MATCH_URL'],
-      git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION'],
+      git_basic_authorization: Base64.strict_encode64("#{ENV['APPLE_CONNECT_EMAIL']}:#{ENV['MATCH_PERSONAL_ACCESS_TOKEN']}"),
       app_identifier: ENV['IOS_APP_ID']
     )
     update_code_signing_settings(
@@ -182,7 +182,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_TEAM_NAME: ${{ secrets.APPLE_TEAM_NAME }}
           MATCH_URL: ${{ secrets.MATCH_URL }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.MATCH_PERSONAL_ACCESS_TOKEN }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
@@ -208,8 +208,7 @@ jobs:
 - **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **APPLE_TEAM_NAME**: Team Name from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **MATCH_URL**: Https url for the private git repo to which `fastlane match appstore` uploaded certificates.
-- **MATCH_GIT_BASIC_AUTHORIZATION**: Base64 key of your GitHub Personal Access Token (PAT), generated with `echo -n <username>:<PAT> | base64`;
-  See [Fastlane's Match documentation](https://docs.fastlane.tools/actions/match/#git-storage-on-github) for details
+- **MATCH_PERSONAL_ACCESS_TOKEN**: GitHub [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with full repo access to MATCH_URL
 - **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
 - **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Because of limitations of using Apple accounts
   with 2FA (2-factor authentication) in CI environments, you have to
