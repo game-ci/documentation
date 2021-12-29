@@ -180,7 +180,6 @@ jobs:
           APPLE_CONNECT_EMAIL: ${{ secrets.APPLE_CONNECT_EMAIL }}
           APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_TEAM_NAME: ${{ secrets.APPLE_TEAM_NAME }}
           MATCH_URL: ${{ secrets.MATCH_URL }}
           MATCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.MATCH_PERSONAL_ACCESS_TOKEN }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
@@ -206,7 +205,6 @@ jobs:
 - **APPLE_CONNECT_EMAIL**: Apple connect email (usually same as APPLE_DEVELOPER_EMAIL)
 - **APPLE_DEVELOPER_EMAIL**: Your AppleId
 - **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
-- **APPLE_TEAM_NAME**: Team Name from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 - **MATCH_URL**: Https url for the private git repo to which `fastlane match appstore` uploaded certificates.
 - **MATCH_PERSONAL_ACCESS_TOKEN**: GitHub [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with full repo access to MATCH_URL
 - **MATCH_PASSWORD**: The password you set with `fastlane match appstore`
