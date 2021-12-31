@@ -6,9 +6,9 @@ This page assumes you are registered as a [partner](https://partner.steamgames.c
 
 Create a specialised builder account that only has access to `Edit App Metadata` and `Publish App Changes To Steam`.
 
-https://partner.steamgames.com/doc/sdk/uploading#Build_Account
+See [the docs](https://partner.steamgames.com/doc/sdk/uploading#Build_Account)
 
-### 2. Add jobs to GitHub Workflow
+### 2. Add jobs to main.yml
 
 ```yaml
 jobs:
