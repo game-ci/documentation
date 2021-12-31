@@ -1,12 +1,12 @@
 # Deploy to Steam
 
-This page assumes you are registered as a [partner](https://partner.steamgames.com/) with Steam.
+This page assumes you are registered as a [partner](https://partner.steamgames.com/) with Steam and that you are familiar with [using SteamPipe to upload your builds to Steam](https://partner.steamgames.com/doc/sdk/uploading).
 
 ### 1. Create a Steam Build Account
 
 Create a specialised builder account that only has access to `Edit App Metadata` and `Publish App Changes To Steam`.
 
-See [the docs](https://partner.steamgames.com/doc/sdk/uploading#Build_Account)
+See [the docs](https://partner.steamgames.com/doc/sdk/uploading#Build_Account).
 
 ### 2. Add jobs to main.yml
 
