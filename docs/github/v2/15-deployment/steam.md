@@ -29,7 +29,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: Library
-          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
             Library-
@@ -81,8 +81,8 @@ jobs:
 
 ### 3. Add GitHub Secrets
 
-- **STEAM_USERNAME**: The username of the Steam Build Account that you created in setup step 1.
-- **STEAM_PASSWORD**: The password of the Steam Build Account that you created in setup step 1.
+- **STEAM_USERNAME**: The username of the Steam Build Account that you created in step 1.
+- **STEAM_PASSWORD**: The password of the Steam Build Account that you created in step 1.
 - **STEAM_CONFIG_VDF**, **STEAM_SSFN_FILE_NAME**, and **STEAM_SSFN_FILE_CONTENTS**: See the step "Setup Steam Authentication" below. 
 - **STEAM_APP_ID**: The identifier of your app on steam. You can find it on your [dashboard](https://partner.steamgames.com/dashboard).
 
