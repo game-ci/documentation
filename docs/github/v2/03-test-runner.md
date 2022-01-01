@@ -128,6 +128,27 @@ This simple addition could speed up your test runs by more than 50%.
 
 Below options can be specified under `with:` for the `unity-test-runner` action.
 
+#### unityVersion
+
+Version of Unity to use for testing the project.
+Use "auto" to get from your ProjectSettings/ProjectVersion.txt
+
+_**required:** `false`_
+_**default:** `auto`_
+
+#### customImage
+
+Specific docker image that should be used for testing the project.
+
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    customImage: 'unityci/editor:2020.1.14f1-base-0'
+```
+
+_**required:** `false`_
+_**default:** `""`_
+
 #### projectPath
 
 Specify the path to your Unity project to be tested.
@@ -136,13 +157,22 @@ The path should be relative to the root of your project.
 _**required:** `false`_
 _**default:** `<your project root>`_
 
-#### unityVersion
+#### customParameters
 
-Version of Unity to use for testing the project.
-Use "auto" to get from your ProjectSettings/ProjectVersion.txt
+Custom parameters to configure the test runner.
+
+Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
+
+Parameters without a value will be considered booleans (with a value of true).
+
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
+```
 
 _**required:** `false`_
-_**default:** `auto`_
+_**default:** `""`_
 
 #### testMode
 
@@ -173,22 +203,23 @@ Options are: "true", "false"
 _**required:** `false`_
 _**default:** `false`_
 
-#### customParameters
+#### sshAgent
 
-Custom parameters to configure the test runner.
+SSH Agent path to forward to the container.
 
-Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
-
-Parameters without a value will be considered booleans (with a value of true).
-
-```yaml
-- uses: game-ci/unity-test-runner@v2
-  with:
-    customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
-```
+This is useful if your manifest has a dependency on a private GitHub repo.
 
 _**required:** `false`_
-_**default:** `""`_
+_**default:** ``_
+
+#### gitPrivateToken
+
+GitHub Private Access Token (PAT) to pull from GitHub.
+
+This is useful if your manifest has a dependency on a private GitHub repo.
+
+_**required:** `false`_
+_**default:** ``_
 
 #### githubToken
 
@@ -212,19 +243,6 @@ It may be useful to customize the check name if, for example, you have a job mat
 
 _**required:** `false`_
 _**default:** `Test Results`_
-
-#### customImage
-
-Specific docker image that should be used for testing the project.
-
-```yaml
-- uses: game-ci/unity-test-runner@v2
-  with:
-    customImage: 'unityci/editor:2020.1.14f1-base-0'
-```
-
-_**required:** `false`_
-_**default:** `""`_
 
 ## Complete example
 
