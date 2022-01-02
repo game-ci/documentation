@@ -99,13 +99,13 @@ This simple addition could speed up your build by more than 50%.
 
 Below options can be specified under `with:` for the `unity-builder` action.
 
-#### projectPath
+#### targetPlatform
 
-Specify the path to your Unity project to be built.
-The path should be relative to the root of your project.
+Platform that the build should target.
 
-_**required:** `false`_
-_**default:** `<your project root>`_
+Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html) listed in the Unity scripting manual.
+
+_**required:** `true`_
 
 #### unityVersion
 
@@ -115,13 +115,26 @@ Use "auto" to get from your ProjectSettings/ProjectVersion.txt
 _**required:** `false`_
 _**default:** `auto`_
 
-#### targetPlatform
+#### customImage
 
-Platform that the build should target.
+Specific docker image that should be used for building the project.
 
-Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html) listed in the Unity scripting manual.
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    customImage: 'unityci/editor:2020.1.14f1-base-0'
+```
 
-_**required:** `true`_
+_**required:** `false`_
+_**default:** `""`_
+
+#### projectPath
+
+Specify the path to your Unity project to be built.
+The path should be relative to the root of your project.
+
+_**required:** `false`_
+_**default:** `<your project root>`_
 
 #### buildName
 
@@ -164,8 +177,31 @@ To get started with a modified version of the default Unity Builder build script
     buildMethod: UnityBuilderAction.BuildScript.Build
 ```
 
+If you need to pass custom parameters to this build method, see `customParameters` below.
+
 _**required:** `false`_
 _**default:** Built-in script that will run a build out of the box._
+
+#### customParameters
+
+Custom parameters to configure the build.
+
+Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
+
+Parameters without a value will be considered booleans (with a value of true).
+
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
+```
+
+There are 2 main use cases:
+- To pass your own custom parameters to be used with `buildMethod` above
+- To pass [Unity Build Options](https://docs.unity3d.com/ScriptReference/BuildOptions.html) (for example, `customParameters: -EnableHeadlessMode` will do server builds)
+
+_**required:** `false`_
+_**default:** `""`_
 
 #### versioning
 
@@ -288,6 +324,38 @@ Configure the android `keyaliasPass`. Recommended to use GitHub Secrets.
 _**required:** `false`_
 _**default:** `""`_
 
+#### androidTargetSdkVersion
+
+Configure the android target API level. If used, must be one of [Unity's AndroidSdkVersions](https://docs.unity3d.com/ScriptReference/AndroidSdkVersions.html).
+
+_**required:** `false`_
+_**default:** `""`_
+
+#### sshAgent
+
+SSH Agent path to forward to the container.
+
+This is useful if your manifest has a dependency on a private GitHub repo.
+
+_**required:** `false`_
+_**default:** `""`_
+
+#### gitPrivateToken
+
+Github private token to pull from github.
+
+This is useful if your manifest has a dependency on a private GitHub repo.
+
+_**required:** `false`_
+_**default:** `""`_
+
+#### chownFilesTo
+
+User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build artifacts.
+
+_**required:** `false`_
+_**default:** `""`_
+
 #### allowDirtyBuild
 
 Allows the branch of the build to be dirty, and still generate the build.
@@ -304,36 +372,6 @@ be needed. (use with care).
 
 _**required:** `false`_
 _**default:** `false`_
-
-#### customParameters
-
-Custom parameters to configure the build.
-
-Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
-
-Parameters without a value will be considered booleans (with a value of true).
-
-```yaml
-- uses: game-ci/unity-builder@v2
-  with:
-    customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
-```
-
-_**required:** `false`_
-_**default:** `""`_
-
-#### customImage
-
-Specific docker image that should be used for building the project.
-
-```yaml
-- uses: game-ci/unity-builder@v2
-  with:
-    customImage: 'unityci/editor:2020.1.14f1-base-0'
-```
-
-_**required:** `false`_
-_**default:** `""`_
 
 ## Outputs
 
