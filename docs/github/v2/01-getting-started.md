@@ -1,12 +1,12 @@
-# Getting started
+# Getting Started
 
 GitHub [Actions for Unity](https://github.com/game-ci/unity-actions) provide the fastest and **easiest** way to automatically test and build any Unity project.
 
 There are a few parts to setting up a workflow. Steps may slightly differ depending on each license type.
 
-## Mental model
+## Mental Model
 
-#### Overall steps
+#### Overall Steps
 
 1. Understand how
    [Github Actions](https://docs.github.com/en/actions)
@@ -15,7 +15,7 @@ There are a few parts to setting up a workflow. Steps may slightly differ depend
 3. Set up a workflow for your project.
 4. Result: Merge pull requests with more confidence.
 
-#### Setting up a workflow
+#### Setting Up a Workflow
 
 Setting up a workflow is easy!
 
@@ -35,28 +35,33 @@ _**Note:** all steps will be explained in the next chapters._
 
 ## Support
 
-#### First time using GitHub Actions?
+#### First Time Using GitHub Actions?
 
 Read the official documentation on how to setup a
 [workflow](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/configuring-a-workflow).
 
 Any subsequent steps assume you have read the above.
 
-#### Supported unity versions
+#### Supported Unity Versions
 
 Unity Actions are using
 [game-ci/docker](https://github.com/game-ci/docker/)
 since `unity-builder` version 2. Any version in this
 [list](/docs/docker/versions) can be used.
 
-## Video tutorial
+## Video Tutorial
 
 https://www.youtube-nocookie.com/embed/M2BZr02uai0
 
+## Workflow Examples
 
-## Simple example
+Below are workflow examples displaying various levels of complexity.
 
-Below is a simple example. It is **recommended** to start from here.
+It is **recommended** to start from the [Simple Example](/docs/github/getting-started#simple-example) and work your way down the page.
+
+### Simple Example
+
+This example tests your project then builds it for a single target (WebGL in this case).
 
 This example assumes that your Unity project is in the root of your repository.
 
@@ -97,6 +102,8 @@ jobs:
         uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: WebGL
 
@@ -107,9 +114,9 @@ jobs:
           path: build
 ```
 
-## Simple example with Git LFS
+### Simple Example with Git LFS
 
-If you are using GitHub's git-lfs hosting service to store your large binary assets, you will want to cache them to avoid consuming massive amounts of bandwidth. The extra steps in this example try to restore your git-lfs assets from a cache before doing a git lfs pull.  
+If you are using GitHub's git-lfs hosting service to store your large binary assets, you will want to cache them to avoid consuming massive amounts of bandwidth. The extra steps in this example try to restore your git-lfs assets from a cache before doing a git lfs pull.
 
 ```yaml
 name: Actions 😎
@@ -141,7 +148,7 @@ jobs:
           git lfs pull
           git add .
           git reset --hard
-          
+
       # Cache
       - uses: actions/cache@v2
         with:
@@ -163,6 +170,8 @@ jobs:
         uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: WebGL
 
@@ -173,10 +182,11 @@ jobs:
           path: build
 ```
 
-## Advanced example
+### Advanced Example
 
-To get an idea of how to create a more advanced workflows,
-have a look at the example below.
+This example leverages the powerful Github Actions construct called a
+[matrix](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategy)
+to test and build for multiple versions of Unity and several target platforms in parallel.
 
 ```yaml
 name: Actions 😎
@@ -231,11 +241,175 @@ jobs:
       - uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
+```
+
+### IL2CPP Example
+
+IL2CPP builds require the base operating system to match the build target.
+
+Below is an example to build for all supported platforms with the IL2CPP scripting backend enabled in the project settings.
+
+> **Note: Tests are currently only compatible on Linux hosts.**
+
+```yaml
+name: Actions 😎
+
+on: [push, pull_request]
+
+jobs:
+  buildAndTestForLinuxBasedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - test-project
+        unityVersion:
+          - 2019.4.1f1
+          - 2020.2.1f1
+        targetPlatform:
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - iOS # Build an iOS player.
+          - Android # Build an Android player.
+          - WebGL # WebGL.
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+      - uses: actions/cache@v2
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ hashFiles(matrix.projectPath) }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
+            Library-${{ matrix.projectPath }}-
+            Library-
+      - uses: game-ci/unity-test-runner@v2
+        id: testRunner
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Test results (all modes)
+          path: ${{ steps.testRunner.outputs.artifactsPath }}
+      - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
+
+  buildForWindowsBasedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: windows-2019
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - test-project
+        unityVersion:
+          - 2019.4.1f1
+          - 2020.2.1f1
+        targetPlatform:
+          - StandaloneWindows # Build a Windows 32-bit standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - tvOS # Build an AppleTV player.
+          - WSAPlayer # Build a UWP App.
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+      - uses: actions/cache@v2
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ hashFiles(matrix.projectPath) }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
+            Library-${{ matrix.projectPath }}-
+            Library-
+      - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
+
+  buildForMacOSBasedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - test-project
+        unityVersion:
+          - 2019.4.1f1
+          - 2020.2.1f1
+        targetPlatform:
+          - StandaloneOSX # Build a macOS standalone.
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ hashFiles(matrix.projectPath) }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
+            Library-${{ matrix.projectPath }}-
+            Library-
+
+      - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+
       - uses: actions/upload-artifact@v2
         with:
           name: Build

@@ -1,4 +1,4 @@
-# GameCI Docker images for Unity
+# GameCI Docker Images for Unity
 
 All projects for Unity in GameCI use
 [`game-ci/docker`](https://github.com/game-ci/docker/)
@@ -25,7 +25,7 @@ Images for newly released Unity editor versions are added almost immediately to
 
 ## Limitations
 
-#### Older versions of unity
+#### Older Versions of Unity
 
 There will be limited support for older versions of Unity.
 
@@ -37,13 +37,38 @@ Due to that:
 
 #### Limited IL2CPP support
 
-Currently images are only available with Ubuntu as the base operating system.
+Currently images are only available with Ubuntu or Windows as the base operating system.
 
 Some platforms require their respective operating systems in order to generate IL2CPP builds.
 
 That's why:
 
-- IL2CPP for Windows is not supported
 - IL2CPP for MacOS is not supported
 
-We are looking to include both Windows and MacOS as base images "in the future", which is mostly dependent on contributions from the community.
+We are looking to include MacOS as a base image "in the future", which is mostly dependent on contributions from the community.
+
+If you are looking to generate IL2CPP builds for MacOS, you can do so via [Github Actions](/docs/github/getting-started#il2cpp-example) without a docker container.
+
+#### Concurrent Builds on Windows and MacOS
+
+Windows and MacOS will consume a license seat for each concurrent build instance. This is in contrast to Linux based builds which consume the same seat allowing
+for unlimited simultaneous instances on the same license seat. This is not an issue for free licenses, but for paid licenses, you will need to be mindful of
+starting too many parallel jobs as activation will fail. Below are some examples of number of consumed seats for a build:
+
+You are building for 1 target on a Linux based platform, 1 target for a Windows based platform, and 1 target for a MacOS based platform:
+
+- Number of seats consumed for the Linux build instances: 1
+- Number of seats consumed for the Windows build instances: 1
+- Number of seats consumed for the MacOS build instances: 1
+
+Total concurrently consumed seats: **3**
+
+You are building for 3 targets on a Linux based platform, 3 targets for a Windows based platform, and 1 target for a MacOS based platform:
+
+- Number of seats consumed for the Linux build instances: 1
+- Number of seats consumed for the Windows build instances: 3
+- Number of seats consumed for the MacOS build instances: 1
+
+Total concurrently consumed seats: **5**
+
+This does not preclude you from doing builds sequentially, for example if you only have 1 seat available for your CI pipeline in the second example, you could build all Linux targets simultaneously, then build each Windows platform sequentially, and finally build the 1 MacOS target after that. More license seats would allow you to parallelize more Windows and MacOS builds. We prioritize getting build targets onto Linux and only use Windows and MacOS when necessary to maximize parallelism.

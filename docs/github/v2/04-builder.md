@@ -2,12 +2,24 @@
 
 Building the project as part of a workflow may help to create mind-space and focus on the project itself.
 
-Use [Unity - Builder ](https://github.com/marketplace/actions/unity-builder)
+Use [Unity - Builder](https://github.com/marketplace/actions/unity-builder)
 to automatically build Unity projects for different platforms.
 
 ## Basic setup
 
-By default, the enabled scenes from the project's settings will be built.
+#### Credentials
+
+Make sure you have set up these variables in the [activation step](/docs/github/activation):
+
+- `UNITY_EMAIL` (the email address for your Unity account)
+- `UNITY_PASSWORD` (the password that you use to login to Unity)
+
+NOTE: Issues have been observed when using a `UNITY_PASSWORD` with special characters.
+It is recommended to use a password without any special characters (mixed-case alphanumeric characters only).
+
+**GameCI does not acquire nor store your Unity email or password. They are required for reactivating the license during build and test steps.**
+
+#### Workflow File Setup
 
 Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
@@ -16,7 +28,7 @@ Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 Personal licenses require a one-time manual activation step (per unity version).
 
 Make sure you
-[acquire and activate](https://github.com/marketplace/actions/unity-request-activation-file)
+[acquire and activate](/docs/github/activation)
 your license file and add it as a secret.
 
 Then, define the build step as follows:
@@ -25,19 +37,19 @@ Then, define the build step as follows:
 - uses: game-ci/unity-builder@v2
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
   with:
     targetPlatform: WebGL
 ```
 
 #### Professional license
 
-Make sure you have set up these variables in the activation step.
+Make sure you have set up these variables in the activation step:
 
-- `UNITY_EMAIL` (should contain the email address for your Unity account)
-- `UNITY_PASSWORD` (the password that you use to login to Unity)
 - `UNITY_SERIAL` (the serial provided by Unity)
 
-Define the build step as follows:
+Then, define the build step as follows:
 
 ```yaml
 - uses: game-ci/unity-builder@v2
@@ -51,8 +63,7 @@ Define the build step as follows:
 
 That is all you need to build your project.
 
-NOTE: Issues have been observed when using a `UNITY_PASSWORD` with special characters.
-It is recommended to use a password without any special characters (mixed-case alphanumeric characters only).
+By default, the enabled scenes from the project's settings will be built.
 
 ## Storing the build
 
@@ -197,6 +208,7 @@ Parameters without a value will be considered booleans (with a value of true).
 ```
 
 There are 2 main use cases:
+
 - To pass your own custom parameters to be used with `buildMethod` above
 - To pass [Unity Build Options](https://docs.unity3d.com/ScriptReference/BuildOptions.html) (for example, `customParameters: -EnableHeadlessMode` will do server builds)
 
@@ -471,3 +483,7 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 ```
+
+## Next Steps
+
+You can find more workflow examples in [Getting Started](/docs/github/getting-started#workflow-examples).
