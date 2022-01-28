@@ -21,6 +21,8 @@ jobs:
         targetPlatform:
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
+    outputs:
+      buildVersion: ${{ jobs.build.outputs.buildVersion }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -34,15 +36,18 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
             Library-
       - uses: game-ci/unity-builder@v2
+        id: build
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
+          versioning: Semantic
       - uses: actions/upload-artifact@v2
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
   deployToSteam:
+    needs: [ buildForWindowsAndLinux ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -58,12 +63,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: Build-StandaloneLinux64
-          path: build/StandaloneLinux64
-      - name: Get Version
-        id: versioning
-        uses: paulhatch/semantic-version@v4.0.2
-        with:
-          format: "${major}.${minor}.${patch}"
+          path: build/StandaloneLinux64      
       - uses: game-ci/steam-deploy@v1
         with:
           username: ${{ secrets.STEAM_USERNAME }}
@@ -72,7 +72,7 @@ jobs:
           ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: ${{ secrets.STEAM_APP_ID }}
-          buildDescription: v${{ steps.versioning.outputs.version }}
+          buildDescription: v${{ needs.buildForWindowsAndLinux.outputs.buildVersion }}
           rootPath: build
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
