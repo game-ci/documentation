@@ -25,7 +25,7 @@ Images for newly released Unity editor versions are added almost immediately to
 
 ## Limitations
 
-#### Older versions of unity
+#### Older versions of Unity
 
 There will be limited support for older versions of Unity.
 
@@ -37,13 +37,36 @@ Due to that:
 
 #### Limited IL2CPP support
 
-Currently images are only available with Ubuntu as the base operating system.
+Currently images are only available with Ubuntu or Windows as the base operating system.
 
 Some platforms require their respective operating systems in order to generate IL2CPP builds.
 
 That's why:
 
-- IL2CPP for Windows is not supported
 - IL2CPP for MacOS is not supported
 
-We are looking to include both Windows and MacOS as base images "in the future", which is mostly dependent on contributions from the community.
+We are looking to include MacOS as a base image "in the future", which is mostly dependent on contributions from the community.
+
+If you are looking to generate IL2CPP builds for MacOS, you can do so via [Github Actions](/docs/github/getting-started#il2cpp-example) without a docker container.
+
+#### Concurrent builds on Windows and MacOS
+
+Windows and MacOS will each consume an additional license seat if they are needed for a target platform. This is not an issue for free licenses, but for paid licenses, you will need to be mindful of starting too many parallel jobs as activation will fail. Below are some examples of number of consumed seats for a build:
+
+You are building for 1 target on a Linux based platform, 1 target for a Windows based platform, and 1 target for a MacOS based platform:
+
+- Number of seats consumed for the Linux build instances: 1
+- Number of seats consumed for the Windows build instances: 1
+- Number of seats consumed for the MacOS build instances: 1
+
+Total concurrently consumed seats: **3**
+
+You are building for 3 targets on a Linux based platform, 3 targets for a Windows based platform, and 1 target for a MacOS based platform:
+
+- Number of seats consumed for the Linux build instances: 1
+- Number of seats consumed for the Windows build instances: 1
+- Number of seats consumed for the MacOS build instances: 1
+
+Total concurrently consumed seats: **3**
+
+Notice it doesn't matter how many targets you build on each platform, the cost is always one concurrent license seat. This does not preclude you from doing builds sequentially, for example if you only have 1 seat available for your CI pipeline, you could build all Linux targets first, then build all Windows targets, and finally build the 1 MacOS target after that. More license seats would allow you to parallelize more platforms. In this example, having 3 seats means being able to build all targets simultaneously.

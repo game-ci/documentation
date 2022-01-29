@@ -1,8 +1,8 @@
-# Customize GameCI unity docker images
+# Customize GameCI Unity Docker images
 
 Sometimes, you will want to add tools to the existing unity docker images for specific needs. For example, in some projects, you might need Blender installed for unity to allow building a project with blender assets. Sometimes, you'll need some specific command lines or runtime that are used by unity in a _postprocess_ step. This documentation will guide you into building your own images on top of the existing ones to add your desired tools.
 
-## Example: Add ruby to existing images
+## Example: Add Ruby to existing images
 
 In the following example, we will be adding `Ruby` on top of the existing docker images (all unity components) for the `2021.1.16f1` unity version and GameCI's `0.15.0` version and publish them.
 

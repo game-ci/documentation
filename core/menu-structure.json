@@ -231,6 +231,17 @@
                 "order": 99,
                 "type": "file"
               }
+            },
+            "steam": {
+              "name": "Steam",
+              "meta": {
+                "version": "v2",
+                "absolutePath": "github/v2/15-deployment/steam.md",
+                "permalinkPath": "github/v2/deployment/steam",
+                "path": "github/deployment/steam",
+                "order": 99,
+                "type": "file"
+              }
             }
           }
         }
