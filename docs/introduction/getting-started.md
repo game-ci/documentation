@@ -1,6 +1,6 @@
-# Getting Started
+# Getting started
 
-The term for automatically testing and building your project is Continuous Integration, or CI for short.
+The term for automatically testing, building, and deploying your project is Continuous Integration, or CI for short.
 
 The configuration for CI, we commonly call a CI-workflow.
 
@@ -10,7 +10,7 @@ To get started creating your workflow, you need 3 things:
 - A Git host (GitHub, GitLab, your private server, etc.)
 - A CI system (GitHub Actions, GitLab pipelines, CircleCI, TravisCI, Jenkins, etc.)
 
-## Preparing the Project
+## Preparing the project
 
 **Create a repository** on your chosen Git host and follow their instructions to commit and push your project.
 

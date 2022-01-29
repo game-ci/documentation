@@ -1,4 +1,4 @@
-# GameCI Docker Images for Unity
+# GameCI Docker images for Unity
 
 All projects for Unity in GameCI use
 [`game-ci/docker`](https://github.com/game-ci/docker/)
@@ -25,7 +25,7 @@ Images for newly released Unity editor versions are added almost immediately to
 
 ## Limitations
 
-#### Older Versions of Unity
+#### Older versions of Unity
 
 There will be limited support for older versions of Unity.
 
@@ -35,7 +35,7 @@ Due to that:
 
 - Android builds for 2019.2 or lower will require you to roll your own images. This process will require you to manually specify NDK/SDK locations.
 
-#### Limited IL2CPP Support
+#### Limited IL2CPP support
 
 Currently images are only available with Ubuntu or Windows as the base operating system.
 
@@ -49,7 +49,7 @@ We are looking to include MacOS as a base image "in the future", which is mostly
 
 If you are looking to generate IL2CPP builds for MacOS, you can do so via [Github Actions](/docs/github/getting-started#il2cpp-example) without a docker container.
 
-#### Concurrent Builds on Windows and MacOS
+#### Concurrent builds on Windows and MacOS
 
 Windows and MacOS will each consume an additional license seat if they are needed for a target platform. This is not an issue for free licenses, but for paid licenses, you will need to be mindful of starting too many parallel jobs as activation will fail. Below are some examples of number of consumed seats for a build:
 

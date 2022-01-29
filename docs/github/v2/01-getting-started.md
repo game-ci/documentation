@@ -1,12 +1,12 @@
-# Getting Started
+# Getting started
 
 GitHub [Actions for Unity](https://github.com/game-ci/unity-actions) provide the fastest and **easiest** way to automatically test and build any Unity project.
 
 There are a few parts to setting up a workflow. Steps may slightly differ depending on each license type.
 
-## Mental Model
+## Mental model
 
-#### Overall Steps
+#### Overall steps
 
 1. Understand how
    [Github Actions](https://docs.github.com/en/actions)
@@ -15,7 +15,7 @@ There are a few parts to setting up a workflow. Steps may slightly differ depend
 3. Set up a workflow for your project.
 4. Result: Merge pull requests with more confidence.
 
-#### Setting Up a Workflow
+#### Setting up a workflow
 
 Setting up a workflow is easy!
 
@@ -35,14 +35,14 @@ _**Note:** all steps will be explained in the next chapters._
 
 ## Support
 
-#### First Time Using GitHub Actions?
+#### First time using GitHub Actions?
 
 Read the official documentation on how to setup a
 [workflow](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/configuring-a-workflow).
 
 Any subsequent steps assume you have read the above.
 
-#### Supported Unity Versions
+#### Supported Unity versions
 
 Unity Actions are using
 [game-ci/docker](https://github.com/game-ci/docker/)
@@ -53,13 +53,13 @@ since `unity-builder` version 2. Any version in this
 
 https://www.youtube-nocookie.com/embed/M2BZr02uai0
 
-## Workflow Examples
+## Workflow examples
 
 Below are workflow examples displaying various levels of complexity.
 
 It is **recommended** to start from the [Simple Example](/docs/github/getting-started#simple-example) and work your way down the page.
 
-### Simple Example
+### Simple example
 
 This example tests your project then builds it for a single target (WebGL in this case).
 
@@ -114,7 +114,7 @@ jobs:
           path: build
 ```
 
-### Simple Example with Git LFS
+### Simple example with Git LFS
 
 If you are using GitHub's git-lfs hosting service to store your large binary assets, you will want to cache them to avoid consuming massive amounts of bandwidth. The extra steps in this example try to restore your git-lfs assets from a cache before doing a git lfs pull.
 
@@ -182,79 +182,11 @@ jobs:
           path: build
 ```
 
-### Advanced Example
+### Advanced IL2CPP example
 
 This example leverages the powerful Github Actions construct called a
 [matrix](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategy)
 to test and build for multiple versions of Unity and several target platforms in parallel.
-
-```yaml
-name: Actions 😎
-
-on: [push, pull_request]
-
-jobs:
-  buildAndTestForSomePlatforms:
-    name: Build for ${{ matrix.targetPlatform }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - test-project
-        unityVersion:
-          - 2019.4.1f1
-          - 2020.2.1f1
-        targetPlatform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
-          - StandaloneWindows64 # Build a Windows 64-bit standalone.
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
-          - iOS # Build an iOS player.
-          - Android # Build an Android player.
-          - WebGL # WebGL.
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          lfs: true
-      - uses: actions/cache@v2
-        with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ hashFiles(matrix.projectPath) }}
-          restore-keys: |
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
-            Library-${{ matrix.projectPath }}-
-            Library-
-      - uses: game-ci/unity-test-runner@v2
-        id: testRunner
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: Test results (all modes)
-          path: ${{ steps.testRunner.outputs.artifactsPath }}
-      - uses: game-ci/unity-builder@v2
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Build
-          path: build
-```
-
-### IL2CPP Example
 
 IL2CPP builds require the base operating system to match the build target.
 

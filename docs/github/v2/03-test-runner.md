@@ -1,10 +1,10 @@
-# Test Runner
+# Test runner
 
 Running your test suite in an automated workflow helps increase certainty when merging.
 
 Use [Unity - Test runner](https://github.com/marketplace/actions/unity-test-runner) to run your Unity tests.
 
-## Basic Setup
+## Basic setup
 
 By default, the test runner will run both `playmode` and `editmode` tests.
 
@@ -29,7 +29,7 @@ Then, define the test step as follows:
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-#### Professional License
+#### Professional license
 
 Make sure you have set up these variables in the activation step.
 
@@ -52,7 +52,7 @@ Define the test step as follows:
 
 That is all you need to test your project.
 
-## Viewing Test Results
+## Viewing test results
 
 The test results can be viewed from a [GitHub Status Check](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-status-checks).
 
@@ -67,7 +67,7 @@ in order to view the tests results from [a check run](https://docs.github.com/en
 
 If you choose not to provide the `githubToken`, you may still upload the artifacts in order to access them.
 
-## Storing Test Results
+## Storing test results
 
 To be able to access the test results, they need to be uploaded as artifacts.
 
@@ -86,7 +86,7 @@ By default, Test Runner outputs its results to a folder named `artifacts`.
 
 Test results can now be downloaded as `Artifacts` in the `Actions` tab.
 
-#### Specifying Artifacts Folder
+#### Specifying artifacts folder
 
 You can specify a different `artifactsPath` in the test runner and reference this path using the `id` of the test step.
 
@@ -124,7 +124,7 @@ before any unity steps.
 
 This simple addition could speed up your test runs by more than 50%.
 
-## Configuration Options
+## Configuration options
 
 Below options can be specified under `with:` for the `unity-test-runner` action.
 
@@ -244,7 +244,7 @@ It may be useful to customize the check name if, for example, you have a job mat
 _**required:** `false`_
 _**default:** `Test Results`_
 
-## Complete Example
+## Complete example
 
 A complete workflow that tests all modes separately could look like this:
 

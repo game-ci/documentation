@@ -6,19 +6,19 @@ Unity differentiates their methods between `personal` and `professional` license
 
 Depending on whether you are using a free or paid version of Unity, you will need to follow the steps for either a [personal license](#personal-license) or a [professional license](#professional-license).
 
-## Personal License
+## Personal license
 
 Follow these steps if you are using a free version of Unity.
 
 > _**Note:** Do NOT follow the steps for the personal license if you have a professional license._
 
-#### Mental Model
+#### Mental model
 
 1. Request an activation file for usage on GitHub
 2. Use that file to acquire a license
 3. Set the license as a secret
 
-#### About the Activation File
+#### About the activation file
 
 You may use the
 [Unity - Request Activation File](https://github.com/marketplace/actions/unity-request-activation-file)
@@ -28,7 +28,7 @@ The activation file uses machine identifiers so you cannot perform this step loc
 
 Let's go!
 
-#### Acquiring an Activation File
+#### Acquiring an activation file
 
 Create a file called `.github/workflows/activation.yml` and add the below workflow definition to it:
 
@@ -55,7 +55,7 @@ jobs:
 
 Commit and push your workflow definition.
 
-#### Converting into a License
+#### Converting into a license
 
 Follow these (one-time) steps for simple activation.
 
@@ -73,7 +73,7 @@ Follow these (one-time) steps for simple activation.
 
 > _**Note:** When changing Unity version, you may need to repeat the same process._
 
-## Professional License
+## Professional license
 
 1. Subscribe to Unity Plus or Unity Pro, and get your Serial Key from the [Unity Subscriptions page](https://id.unity.com/en/subscriptions)
 2. Open `Github` > `<Your repository>` > `Settings` > `Secrets`
@@ -86,7 +86,7 @@ Follow these (one-time) steps for simple activation.
 
 > _**Note:** Do NOT follow the steps for the personal license if you have a professional license._
 
-## Optional Steps
+## Optional steps
 
 - Verify your license using
   [Activate](https://github.com/marketplace/actions/unity-activate).
@@ -96,7 +96,7 @@ Follow these (one-time) steps for simple activation.
 
 > _**Note:** Test runner and Builder already include these steps._
 
-## Next Steps
+## Next steps
 
 The license can now be used in test and build steps.
 
