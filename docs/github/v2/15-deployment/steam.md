@@ -22,7 +22,7 @@ jobs:
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
     outputs:
-      buildVersion: ${{ jobs.build.outputs.buildVersion }}
+      buildVersion: ${{ steps.build.outputs.buildVersion }}
     steps:
       - uses: actions/checkout@v2
         with:
