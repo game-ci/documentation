@@ -159,7 +159,7 @@ _**default:** `<your project root>`_
 
 #### customParameters
 
-Custom parameters to configure the test runner.
+Unity Test Framework [Custom parameters](https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/reference-command-line.html) to configure the test runner.
 
 Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
 
