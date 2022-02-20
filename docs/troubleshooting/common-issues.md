@@ -67,4 +67,4 @@ iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf
 
 If you are using google account you can have some issue with activating unity. You just need to go on the unity website, settings, security and change your password. Then use your google email and your new password and it will work just fine ;)
 
-[Source](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/issues/149)
+[Source](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/149)

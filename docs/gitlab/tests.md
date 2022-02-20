@@ -9,8 +9,8 @@ Unity supports two kinds of tests (`editmode` and `playmode`). The example proje
 
 Tests can be found here:
 
-- [`editmode` tests in `Assets/Scripts/Editor/EditModeTests`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/Assets/Scripts/Editor/EditModeTests)
-- [`playmode` tests in `Assets/Tests/`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/Assets/Tests/)
+- [`editmode` tests in `Assets/Scripts/Editor/EditModeTests`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/Assets/Scripts/Editor/EditModeTests)
+- [`playmode` tests in `Assets/Tests/`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/Assets/Tests/)
 
 ## Code coverage support
 

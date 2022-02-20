@@ -6,7 +6,7 @@ There are a few methods available, if you're using gitlab-ci, the easiest method
 
 ### a. Using gitlab-ci
 
-Once you've added all required files to your project (mainly [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml)), there should be a manual step that can be triggered for activation.
+Once you've added all required files to your project (mainly [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml)), there should be a manual step that can be triggered for activation.
 
 1. Visit your project's settings > CI/CD > Variables and add `UNITY_USERNAME` and `UNITY_PASSWORD` with your credentials. Make sure to use your Unity3d _email address_ for `UNITY_USERNAME`.
 1. Push your first commit to your project and visit CI/CD Pipelines.
@@ -67,15 +67,15 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 
    > Can't activate Unity: No sufficient permissions while processing request HTTP error code 401
 
-   Make sure your credentials are valid. You may try to disable 2FA in your account and try again. Once done, you should enable 2FA again for security reasons. See [#11](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/11) for more details.
+   Make sure your credentials are valid. You may try to disable 2FA in your account and try again. Once done, you should enable 2FA again for security reasons. See [#11](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/issues/11) for more details.
 
 5. Copy xml content and save as `unity3d.alf`
 6. Open https://license.unity3d.com/manual and answer questions
 7. Upload `unity3d.alf` for manual activation
 8. Download `Unity_v2018.x.ulf` (`Unity_v2019.x.ulf` for 2019 versions)
 9. Copy the content of `Unity_v2018.x.ulf` license file to your CI's environment variable `UNITY_LICENSE`.
-   _Note: if you are doing this on Windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://github.com/game-ci/unity3d-ci-example/blob/master/.gitlab-ci.yml) of the example project solves this by removing `\r` character from the ENV variable so you'll be alright_
-   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
+   _Note: if you are doing this on Windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://github.com/game-ci/unity3d-ci-example/blob/main/.gitlab-ci.yml) of the example project solves this by removing `\r` character from the ENV variable so you'll be alright_
+   [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
 
 ## Unity Plus/Pro
 
@@ -115,5 +115,5 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
 4. Wait for the command to finish without errors
 5. Obtain the contents of the license file by running `cat /root/.local/share/unity3d/Unity/Unity_lic.ulf`
 6. Copy the content to your CI's environment variable `UNITY_LICENSE`.
-   _Note: if you are doing this on windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) solves this by removing `\r` character from the env variable so you'll be alright_
-   [`.gitlab-ci.yml`](https://gitlab.com/gableroux/unity3d-gitlab-ci-example/-/blob/master/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
+   _Note: if you are doing this on windows, chances are the [line endings will be wrong as explained here](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/issues/5#note_95831816). Luckily for you, [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml) solves this by removing `\r` character from the env variable so you'll be alright_
+   [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml) will then place the `UNITY_LICENSE` to the right place before running tests or creating the builds.
