@@ -13,26 +13,26 @@ const SourceLinks = (props) => (
     title="Source code"
   >
     <ItemGroup title="Projects">
-      <Item icon={<AiOutlineGithub />} key="source:documentation">
+      <Item icon={<AiOutlineGithub />} key="source:game-ci:documentation">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
           This Website
         </a>
       </Item>
-      <Item icon={<AiOutlineGithub />} key="source:game-ci">
+      <Item icon={<AiOutlineGithub />} key="source:game-ci:versioning-backend">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/versioning-backend">
           Versioning Backend
         </a>
       </Item>
     </ItemGroup>
     <ItemGroup title="Docker">
-      <Item icon={<AiOutlineGithub />} key="external:unityci:editor">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:docker">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/docker">
           Docker images for Unity
         </a>
       </Item>
     </ItemGroup>
     <ItemGroup title="Gitlab">
-      <Item icon={<AiOutlineGitlab />} key="external:example:gitlab">
+      <Item icon={<AiOutlineGitlab />} key="external:game-ci:unity3d-gitlab-ci-example">
         <a
           target="_blank"
           rel="noreferrer"
@@ -43,12 +43,12 @@ const SourceLinks = (props) => (
       </Item>
     </ItemGroup>
     <ItemGroup title="GitHub Actions">
-      <Item icon={<AiOutlineGithub />} key="external:action:overview">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:unity-actions">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-actions">
           Unity Actions
         </a>
       </Item>
-      <Item icon={<AiOutlineGithub />} key="external:action:request-activation-file">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:unity-request-activation-file">
         <a
           target="_blank"
           rel="noreferrer"
@@ -57,27 +57,27 @@ const SourceLinks = (props) => (
           Unity Request Activation
         </a>
       </Item>
-      <Item icon={<AiOutlineGithub />} key="external:action:activate">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:unity-activate">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-activate">
           Unity Activate
         </a>
       </Item>
-      <Item icon={<AiOutlineGithub />} key="external:action:test-runner">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:unity-test-runner">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-test-runner">
           Unity Test Runner
         </a>
       </Item>
-      <Item icon={<AiOutlineGithub />} key="external:action:builder">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:unity-builder">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-builder">
           Unity Builder
         </a>
       </Item>
-      <Item icon={<AiOutlineGithub />} key="external:action:return-license">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:unity-return-license">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-return-license">
           Unity Return License
         </a>
       </Item>
-      <Item icon={<AiOutlineGithub />} key="external:action:build-and-test">
+      <Item icon={<AiOutlineGithub />} key="external:game-ci:steam-deploy">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/steam-deploy">
           Steam Deploy
         </a>
