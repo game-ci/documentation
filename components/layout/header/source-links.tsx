@@ -12,26 +12,33 @@ const SourceLinks = (props) => (
     icon={<AiOutlineGithub size={24} style={{ marginBottom: -5 }} />}
     title="Source code"
   >
-    <ItemGroup title="Project">
+    <ItemGroup title="Projects">
       <Item icon={<AiOutlineGithub />} key="source:documentation">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/documentation">
           This Website
         </a>
       </Item>
+      <Item icon={<AiOutlineGithub />} key="source:game-ci">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/versioning-backend">
+          Versioning Backend
+        </a>
+      </Item>
+    </ItemGroup>
+    <ItemGroup title="Docker">
+      <Item icon={<AiOutlineGithub />} key="external:unityci:editor">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/docker">
+          Docker images for Unity
+        </a>
+      </Item>
+    </ItemGroup>
+    <ItemGroup title="Gitlab">
       <Item icon={<AiOutlineGitlab />} key="external:example:gitlab">
         <a
           target="_blank"
           rel="noreferrer"
           href="https://gitlab.com/gableroux/unity3d-gitlab-ci-example"
         >
-          Example CI project
-        </a>
-      </Item>
-    </ItemGroup>
-    <ItemGroup title="Docker">
-      <Item icon={<AiOutlineGithub />} key="external:unityci:editor">
-        <a target="_blank" rel="noreferrer" href="https://hub.docker.com/r/unityci/editor">
-          unityci/editor
+          gitlab-ci unity3d example project
         </a>
       </Item>
     </ItemGroup>
@@ -68,6 +75,11 @@ const SourceLinks = (props) => (
       <Item icon={<AiOutlineGithub />} key="external:action:return-license">
         <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/unity-return-license">
           Unity Return License
+        </a>
+      </Item>
+      <Item icon={<AiOutlineGithub />} key="external:action:build-and-test">
+        <a target="_blank" rel="noreferrer" href="https://github.com/game-ci/steam-deploy">
+          Steam Deploy
         </a>
       </Item>
     </ItemGroup>
