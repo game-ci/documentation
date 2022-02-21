@@ -36,7 +36,7 @@ const SourceLinks = (props) => (
         <a
           target="_blank"
           rel="noreferrer"
-          href="https://gitlab.com/gableroux/unity3d-gitlab-ci-example"
+          href="https://gitlab.com/game-ci/unity3d-gitlab-ci-example"
         >
           gitlab-ci unity3d example project
         </a>
