@@ -6,7 +6,7 @@ docker images which are specialised for CI and command-line use. These images ar
 [docker hub as `unityci/editor`](https://hub.docker.com/r/unityci/editor/tags?page=1&ordering=last_updated).
 
 They are established empirically by the community and come forth from the
-[`gableroux/unity3d`](https://gitlab.com/gableroux/unity3d/)
+[`gableroux/unity3d`](https://gitlab.com/game-ci/unity3d/)
 project. It was previously published on
 [docker hub as `gableroux/unity3d`](https://hub.docker.com/r/gableroux/unity3d/).
 **There won't be any new versions releases for `gableroux/unity3d` as it is now deprecated in favor of

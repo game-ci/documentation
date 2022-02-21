@@ -1,6 +1,6 @@
 # Android
 
-Before `2018.4.8f1` for 2018 versions and before `2019.2.4f1` for 2019 versions, you will need a specific Unity license (because that is not the same docker image). Add the content of your specific Unity license in your CI's environment variable : `UNITY_LICENSE_CONTENT_ANDROID`. _This is not required anymore now that images share a base image [See related change](https://gitlab.com/gableroux/unity3d/merge_requests/63)_
+Before `2018.4.8f1` for 2018 versions and before `2019.2.4f1` for 2019 versions, you will need a specific Unity license (because that is not the same docker image). Add the content of your specific Unity license in your CI's environment variable : `UNITY_LICENSE_CONTENT_ANDROID`. _This is not required anymore now that images share a base image [See related change](https://gitlab.com/game-ci/unity3d/merge_requests/63)_
 
 By default the apk is not signed and the build will use the Unity's default debug key.
 For _security reasons_, **you should not add your keystore to git**.
@@ -27,7 +27,7 @@ Note about _keystore security_, if you would like to use another solution for st
 
 `BUILD_APP_BUNDLE` env var is defined in `gitlab-ci.yml`. Set it to `true` to build an `.aab` file. Note: to build an android app bundle, you need an image with **Android NDK**.
 
-See [related issue gableroux/unity3d#61](https://gitlab.com/gableroux/unity3d/issues/61)
+See [related issue gableroux/unity3d#61](https://gitlab.com/game-ci/unity3d/issues/61)
 
 ### Bundle version code
 
