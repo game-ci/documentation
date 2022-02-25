@@ -25,7 +25,7 @@ Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
 #### Personal license
 
-Personal licenses require a one-time manual activation step (per unity version).
+Personal licenses require a one-time manual activation step.
 
 Make sure you
 [acquire and activate](/docs/github/activation)
@@ -47,6 +47,8 @@ Then, define the build step as follows:
 
 Make sure you have set up these variables in the activation step:
 
+- `UNITY_EMAIL` (should contain the email address for your Unity account)
+- `UNITY_PASSWORD` (the password that you use to login to Unity)
 - `UNITY_SERIAL` (the serial provided by Unity)
 
 Then, define the build step as follows:
