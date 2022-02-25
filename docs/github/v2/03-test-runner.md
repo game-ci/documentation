@@ -161,6 +161,8 @@ _**default:** `<your project root>`_
 
 Custom parameters to configure the test runner.
 
+For example, you may refer to the [Unity Test Framework command line arguments](https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/reference-command-line.html) for options that could help with configuring your tests.
+
 Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
 
 Parameters without a value will be considered booleans (with a value of true).
