@@ -12,7 +12,7 @@ Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
 #### Personal license
 
-Personal licenses require a one-time manual activation step (per unity version).
+Personal licenses require a one-time manual activation step.
 
 Make sure you
 [acquire and activate](https://github.com/marketplace/actions/unity-request-activation-file)
