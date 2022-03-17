@@ -9,7 +9,7 @@ It is important to be familiar with the manual process, as automating this proce
 > -- **Note:** You need a Mac environment for doing these steps.
 > A Mac is also recommended for debugging any issues with this workflow.
 
-### Conceptual Overview
+### Conceptual overview
 
 When you build your Unity project for iOS, Unity will produce an Xcode project that needs to be built using Xcode on a Mac. In order to upload your app to the App Store, TestFlight, or a third-party beta distribution service, you will first need to build it in Xcode and then code-sign it.
 
@@ -37,7 +37,7 @@ Then run `bundle install`. This will create an additional `Gemfile.lock` file in
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
-### 2- Create and Store Codesigning Certificates
+### 2- Create and store Codesigning Certificates
 
 Codesigning your iOS app for distribution requires an Apple developer or distribution certificate. Traditionally, allowing multiple developers on a team to build the same app (or allowing builds on a cloud CI system) requires you to either manually share a `.p12` file across all machines that will build the project, or set up a different codesigning identity for each developer or shared build machine. Updating all of these identities and certificates whenever changes are necessary can be a pain point.
 
@@ -234,9 +234,9 @@ jobs:
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
 
-          IOS_BUNDLE_ID: com.company.application # Change it to match your Unity bundle id
           IOS_BUILD_PATH: ${{ format('{0}/build/iOS', github.workspace) }}
-          PROJECT_NAME: Your Project Name
+          IOS_BUNDLE_ID: com.company.application # Change it to match your Unity bundle id
+          PROJECT_NAME: Your Project Name # Change it to match your project's name
         run: |
           find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
           bundle install
@@ -251,7 +251,7 @@ jobs:
 
 ### 5- Add secrets to your GitHub repo
 
-On your project's GitHub repo page, add a number of Repository Secrest by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right.
+On your project's GitHub repo page, add a number of Repository Secrets by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right.
 
 - **APPLE_CONNECT_EMAIL**: Apple Connect email (if using our recommendation to create a single shared developer Apple ID for Fastlane Match, this will be the same as `APPLE_DEVELOPER_EMAIL`)
 - **APPLE_DEVELOPER_EMAIL**: Your Apple ID
