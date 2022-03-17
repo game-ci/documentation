@@ -177,11 +177,13 @@ Then change the `build_app` step at the end of this build phase to use the new `
 
 ### 4- Add jobs to your GitHub Actions workflow
 
-Building for iOS requires two steps: Unity builds your project and generates an Xcode project, which then must be built in Xcode via Fastlane. This workflow below splits that across two jobs: the Unity build happens on Linux (which is cheaper per minute), uploads the generated Xcode project as an artifact to the Action run, and then downloads that Xcode project on a Mac runner to finish up the build from there. If your project requires IL2CPP, you will need to complete the Unity build on a Mac runner.
+Building for iOS requires two steps: Unity builds your project and generates an Xcode project, which then must be built in Xcode via Fastlane.
 
-The `releaseToAppStore` job below builds your app and submits it to Apple for App Store release. If you want to submit your app for TestFlight distribution, you can create a job that is identical except it runs `bundle exec fastlane beta` instead of `bundle exec fastlane release`. You can build your iOS app without uploading it (e.g. to confirm it builds successfully, or as a preparation step before uploading to an alternative distribution service) by instead running `bundle exec fastlane build`.
+Both workflows described below build your app and submit it to Apple for App Store release. If you want to submit your app for TestFlight distribution, you can create a job that is identical except it runs `bundle exec fastlane beta` instead of `bundle exec fastlane release` during the "Fix File Permissions and Run Fastlane" step. You can build your iOS app without uploading it (e.g. to confirm it builds successfully, or as a preparation step before uploading to an alternative distribution service) by instead running `bundle exec fastlane build`.
 
 Please note that Apple will aggressively rate-limit you if you try to upload builds too frequently. We recommend you configure any workflow that submits to the App Store or TestFlight to be manually triggered, or otherwise make sure it won't automatically run more than a few times a day.
+
+There are two options for how to set up your build, depending on whether or not your project uses IL2CPP as its scripting backend. If your project does **not** rely on IL2CPP, you can build your Unity project on Linux before switching over to a Mac runner for the Xcode build. Because Linux execution time is cheaper than Mac execution time when using GitHub Actions hosted runners, this will be cheaper, and is what you should most likely do if you do not require IL2CPP support.
 
 ```yaml
 # .github/workflows/main.yml
@@ -247,6 +249,49 @@ jobs:
         uses: geekyeggo/delete-artifact@v1
         with:
           name: build-iOS
+```
+
+If your project does require IL2CPP, you will need to run your Unity build on a Mac runner. This allows your workflow to be slightly simpler, as you can run both builds on the same runner, but it may be more expensive.
+
+```yaml
+# .github/workflows/main.yml
+jobs:
+  buildForiOSAndReleaseToAppStore:
+    name: Build for iOS and Release to the App Store
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-iOS
+
+      - uses: game-ci/unity-builder@v2
+        with:
+          targetPlatform: iOS
+
+      - name: Fix File Permissions and Run Fastlane
+        env:
+          APPLE_CONNECT_EMAIL: ${{ secrets.APPLE_CONNECT_EMAIL }}
+          APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+          MATCH_URL: ${{ secrets.MATCH_URL }}
+          MATCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.MATCH_PERSONAL_ACCESS_TOKEN }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
+
+          IOS_BUILD_PATH: ${{ format('{0}/build/iOS', github.workspace) }}
+          IOS_BUNDLE_ID: com.company.application # Change it to match your Unity bundle id
+          PROJECT_NAME: Your Project Name # Change it to match your project's name
+        run: |
+          find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
+          bundle install
+          bundle exec fastlane ios release
 ```
 
 ### 5- Add secrets to your GitHub repo
