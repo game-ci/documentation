@@ -51,7 +51,7 @@ If your Apple Developer account is messy and has lots of invalid, expired, or Xc
 
 Next, create a private git repository to store your certificates.
 
-From the command-line on your Mac, run the following to generate new Development and Distribution certificates. It will ask you for the Apple ID and password of your new shared Apple ID, as well as a password used to encrypt the git repo. You will need to use this password later; it's recommended you use a team-wide password manager or similar shared secure keystore to both generate and store this password.
+From the command-line on your Mac, run the following to generate new Development and Distribution certificates. It will ask you for the Apple ID and password of your new shared Apple ID, the URL of the git repository you have just created, and a password to encrypt the contents of the git repo. You will need to use this password later; it's recommended you use a team-wide password manager or similar shared secure keystore to both generate and store this password.
 
 ```bash
 bundle exec fastlane match development
@@ -177,13 +177,13 @@ Then change the `build_app` step at the end of this build phase to use the new `
 
 ### 4- Add jobs to your GitHub Actions workflow
 
-Building for iOS requires two steps: Unity builds your project and generates an Xcode project, which then must be built in Xcode via Fastlane.
+Building for iOS is a two-step build process. When Unity builds your project for iOS, it generates an Xcode project, which then must be built and code-signed in Xcode via Fastlane.
 
 Both workflows described below build your app and submit it to Apple for App Store release. If you want to submit your app for TestFlight distribution, you can create a job that is identical except it runs `bundle exec fastlane beta` instead of `bundle exec fastlane release` during the "Fix File Permissions and Run Fastlane" step. You can build your iOS app without uploading it (e.g. to confirm it builds successfully, or as a preparation step before uploading to an alternative distribution service) by instead running `bundle exec fastlane build`.
 
 Please note that Apple will aggressively rate-limit you if you try to upload builds too frequently. We recommend you configure any workflow that submits to the App Store or TestFlight to be manually triggered, or otherwise make sure it won't automatically run more than a few times a day.
 
-There are two options for how to set up your build, depending on whether or not your project uses IL2CPP as its scripting backend. If your project does **not** rely on IL2CPP, you can build your Unity project on Linux before switching over to a Mac runner for the Xcode build. Because Linux execution time is cheaper than Mac execution time when using GitHub Actions hosted runners, this will be cheaper, and is what you should most likely do if you do not require IL2CPP support.
+There are two options for how to set up the two-phase build, depending on whether or not your project uses IL2CPP as its scripting backend. If your project does **not** rely on IL2CPP, you can build your Unity project on Linux before switching over to a Mac runner to build the generated Xcode project. Because Linux execution time is cheaper than Mac execution time when using GitHub Actions hosted runners, this will be cheaper, and is what you should most likely do if you do not require IL2CPP support.
 
 ```yaml
 # .github/workflows/main.yml
@@ -306,12 +306,10 @@ On your project's GitHub repo page, add a number of Repository Secrets by going 
 - **MATCH_PASSWORD**: The password you set when configuring Fastlane Match.
 - **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Your App Store Connect API keys from the previous step. `APPSTORE_KEY_ID` is the "Key ID" from the table row, `APPSTORE_ISSUER_ID` is your issuer ID from the top of the page, and `APPSTORE_P8` is the entire contents of the `.p8` file you downloaded, starting with `-----BEGIN PRIVATE KEY-----` and ending with `-----END PRIVATE KEY-----`.
 
-### 6- Update Unity settings
+### 6- Confirming your Unity and App Store Connect settings
 
-- Add your [application icon(s)](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#icon) (applications without an icon generate an error while uploading to TestFlight)
-- Set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#Identification)
+At this point, if you have previously set up your app for manual iOS builds and TestFlight/App Store distribution, your GitHub Actions workflow will likely complete successfully. If that is not the case, there are a few more steps to finish setup.
 
-### 7 - Ensure App Exists in App Store Connect
+In Unity, you will need to ensure that your [application icon(s)](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#icon) are set, as applications without the correct icons will generate an error while uploading to TestFlight. Additionally, set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#Identification). The bundle identifier needs to be the same as you have set for the `IOS_BUNDLE_ID` repository secret. If you don't know your Signing Team ID, you can find it by going to https://developer.apple.com/account/#!/membership while logged in, and it will be the "Team ID" listed.
 
-- Go to Apple's [App Store Connect](https://appstoreconnect.apple.com/)
-- Select Apps, and add the App with the same Bundle Identifier as used earlier
+In order to upload a build to Apple, an entry for your app needs to exist in your team's [App Store Connect](https://appstoreconnect.apple.com/). From the App Store Connect homepage, select "My Apps", and create or confirm the existence of an App with the same bundle identifier you are using in your Unity build settings and the `IOS_BUNDLE_ID` GitHub repository secret.
