@@ -143,7 +143,7 @@ platform :ios do
       profile_uuid: ENV["sigh_#{ENV['IOS_BUNDLE_ID']}_appstore"]
     )
 
-    build_app(
+    build_app( #alias: gym
       project: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
       scheme: 'Unity-iPhone',
       xcargs: '-allowProvisioningUpdates'
@@ -165,10 +165,10 @@ end
 
 This will install pods and generate the `xcworkspace` for you.
 
-Then change the `build_app` step at the end of this build phase to use the new `xcworkspace` instead of the old `xcodeproj`:
+Then change the [`build_app`](http://docs.fastlane.tools/actions/build_app/#build_app) (alias: [`gym`](https://docs.fastlane.tools/actions/gym/)) step at the end of this build phase to use the new `xcworkspace` instead of the old `xcodeproj`:
 
 ```ruby
-    build_app(
+    build_app( #alias: gym
       workspace: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcworkspace",
       scheme: 'Unity-iPhone',
       xcargs: '-allowProvisioningUpdates'
