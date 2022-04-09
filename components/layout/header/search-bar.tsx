@@ -10,7 +10,7 @@ const SearchBar = () => {
         position: 'relative',
       }}
     >
-      <DocSearch apiKey="d085b783b0341babb98dc7fdc6a2a8be" indexName="game" />
+      <DocSearch apiKey="d085b783b0341babb98dc7fdc6a2a8be" indexName="game" appId="BH4D9OD16A" />
     </div>
   );
 };
