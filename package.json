@@ -38,7 +38,7 @@
     "highlight.js": "^10.5.0",
     "less": "3.0.4",
     "lodash": "^4.17.21",
-    "next": "10.0.1",
+    "next": "12.1.0",
     "null-loader": "2.0.0",
     "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.7.2",
