@@ -8,8 +8,9 @@
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=\"-r esm\" next",
-    "build": "node -v && yarn update-menu && cross-env NODE_OPTIONS=\"-r esm\" next build",
+    "build": "node -v && yarn update-menu && cross-env NODE_OPTIONS=\"-r esm\" next build && yarn update-search",
     "update-menu": "cross-env NODE_OPTIONS=\"-r esm -r dotenv/config\" ts-node -r tsconfig-paths/register tools/menu/cli-generate.ts",
+    "update-search": "cross-env NODE_OPTIONS=\"-r esm -r dotenv/config\" ts-node -r tsconfig-paths/register tools/search/push-search-payload.ts",
     "analyze": "cross-env-shell NODE_OPTIONS=\"-r esm\" ANALYZE=true next build",
     "lint": "prettier --write . --loglevel=warn && eslint . --quiet --fix",
     "eslint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
