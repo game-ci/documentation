@@ -18,7 +18,6 @@ export default {
     applicationId: 'W4X62KM9QE',
     index: getIsomorphicValue('SEARCH_INDEX'),
     publicApiKey: '4a06011ed8a467811866c27ca4c1a367',
-    hitsPerPage: 12,
     settings: {
       // Select the attributes you want to search in
       searchableAttributes: ['title', 'summary', 'body', 'version', 'categories', 'filename'],
