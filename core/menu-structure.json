@@ -17,14 +17,25 @@
           "type": "file"
         }
       },
+      "windows-docker-images": {
+        "name": "Windows docker images",
+        "meta": {
+          "version": null,
+          "absolutePath": "docker/02-windows-docker-images.md",
+          "permalinkPath": "docker/windows-docker-images",
+          "path": "docker/windows-docker-images",
+          "order": 2,
+          "type": "file"
+        }
+      },
       "customize-docker-images": {
         "name": "Customize docker images",
         "meta": {
           "version": null,
-          "absolutePath": "docker/02-customize-docker-images.md",
+          "absolutePath": "docker/03-customize-docker-images.md",
           "permalinkPath": "docker/customize-docker-images",
           "path": "docker/customize-docker-images",
-          "order": 2,
+          "order": 3,
           "type": "file"
         }
       }
@@ -228,6 +239,17 @@
                 "absolutePath": "github/v2/15-deployment/ios.md",
                 "permalinkPath": "github/v2/deployment/ios",
                 "path": "github/deployment/ios",
+                "order": 99,
+                "type": "file"
+              }
+            },
+            "steam": {
+              "name": "Steam",
+              "meta": {
+                "version": "v2",
+                "absolutePath": "github/v2/15-deployment/steam.md",
+                "permalinkPath": "github/v2/deployment/steam",
+                "path": "github/deployment/steam",
                 "order": 99,
                 "type": "file"
               }

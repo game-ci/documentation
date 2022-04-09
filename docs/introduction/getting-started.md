@@ -1,6 +1,6 @@
 # Getting started
 
-The term for automatically testing, building and deploying your project is Continuous Integration, or CI for short.
+The term for automatically testing, building, and deploying your project is Continuous Integration, or CI for short.
 
 The configuration for CI, we commonly call a CI-workflow.
 

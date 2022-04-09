@@ -45,7 +45,7 @@ Any subsequent steps assume you have read the above.
 #### Supported versions
 
 Unity Actions are based on the
-[unity3d](https://gitlab.com/gableroux/unity3d)
+[unity3d](https://gitlab.com/game-ci/unity3d)
 images from
 [GabLeRoux](https://github.com/GabLeRoux).
 Any version in the

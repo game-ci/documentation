@@ -2,21 +2,33 @@
 
 Building the project as part of a workflow may help to create mind-space and focus on the project itself.
 
-Use [Unity - Builder ](https://github.com/marketplace/actions/unity-builder)
+Use [Unity - Builder](https://github.com/marketplace/actions/unity-builder)
 to automatically build Unity projects for different platforms.
 
 ## Basic setup
 
-By default, the enabled scenes from the project's settings will be built.
+#### Credentials
+
+Make sure you have set up these variables in the [activation step](/docs/github/activation):
+
+- `UNITY_EMAIL` (the email address for your Unity account)
+- `UNITY_PASSWORD` (the password that you use to login to Unity)
+
+NOTE: Issues have been observed when using a `UNITY_PASSWORD` with special characters.
+It is recommended to use a password without any special characters (mixed-case alphanumeric characters only).
+
+**GameCI does not acquire nor store your Unity email or password. They are required for reactivating the license during build and test steps.**
+
+#### Workflow file setup
 
 Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
-#### Personal License
+#### Personal license
 
-Personal licenses require a one-time manual activation step (per unity version).
+Personal licenses require a one-time manual activation step.
 
 Make sure you
-[acquire and activate](https://github.com/marketplace/actions/unity-request-activation-file)
+[acquire and activate](/docs/github/activation)
 your license file and add it as a secret.
 
 Then, define the build step as follows:
@@ -25,19 +37,21 @@ Then, define the build step as follows:
 - uses: game-ci/unity-builder@v2
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
   with:
     targetPlatform: WebGL
 ```
 
 #### Professional license
 
-Make sure you have set up these variables in the activation step.
+Make sure you have set up these variables in the activation step:
 
 - `UNITY_EMAIL` (should contain the email address for your Unity account)
 - `UNITY_PASSWORD` (the password that you use to login to Unity)
 - `UNITY_SERIAL` (the serial provided by Unity)
 
-Define the build step as follows:
+Then, define the build step as follows:
 
 ```yaml
 - uses: game-ci/unity-builder@v2
@@ -51,8 +65,7 @@ Define the build step as follows:
 
 That is all you need to build your project.
 
-NOTE: Issues have been observed when using a `UNITY_PASSWORD` with special characters.
-It is recommended to use a password without any special characters (mixed-case alphanumeric characters only).
+By default, the enabled scenes from the project's settings will be built.
 
 ## Storing the build
 
@@ -99,13 +112,13 @@ This simple addition could speed up your build by more than 50%.
 
 Below options can be specified under `with:` for the `unity-builder` action.
 
-#### projectPath
+#### targetPlatform
 
-Specify the path to your Unity project to be built.
-The path should be relative to the root of your project.
+Platform that the build should target.
 
-_**required:** `false`_
-_**default:** `<your project root>`_
+Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html) listed in the Unity scripting manual.
+
+_**required:** `true`_
 
 #### unityVersion
 
@@ -115,13 +128,26 @@ Use "auto" to get from your ProjectSettings/ProjectVersion.txt
 _**required:** `false`_
 _**default:** `auto`_
 
-#### targetPlatform
+#### customImage
 
-Platform that the build should target.
+Specific docker image that should be used for building the project.
 
-Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html) listed in the Unity scripting manual.
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    customImage: 'unityci/editor:2020.1.14f1-base-0'
+```
 
-_**required:** `true`_
+_**required:** `false`_
+_**default:** `""`_
+
+#### projectPath
+
+Specify the path to your Unity project to be built.
+The path should be relative to the root of your project.
+
+_**required:** `false`_
+_**default:** `<your project root>`_
 
 #### buildName
 
@@ -164,8 +190,32 @@ To get started with a modified version of the default Unity Builder build script
     buildMethod: UnityBuilderAction.BuildScript.Build
 ```
 
+If you need to pass custom parameters to this build method, see `customParameters` below.
+
 _**required:** `false`_
 _**default:** Built-in script that will run a build out of the box._
+
+#### customParameters
+
+Custom parameters to configure the build.
+
+Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
+
+Parameters without a value will be considered booleans (with a value of true).
+
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
+```
+
+There are 2 main use cases:
+
+- To pass your own custom parameters to be used with `buildMethod` above
+- To pass [Unity Build Options](https://docs.unity3d.com/ScriptReference/BuildOptions.html) (for example, `customParameters: -EnableHeadlessMode` will do server builds)
+
+_**required:** `false`_
+_**default:** `""`_
 
 #### versioning
 
@@ -288,6 +338,38 @@ Configure the android `keyaliasPass`. Recommended to use GitHub Secrets.
 _**required:** `false`_
 _**default:** `""`_
 
+#### androidTargetSdkVersion
+
+Configure the android target API level. If used, must be one of [Unity's AndroidSdkVersions](https://docs.unity3d.com/ScriptReference/AndroidSdkVersions.html).
+
+_**required:** `false`_
+_**default:** `""`_
+
+#### sshAgent
+
+SSH Agent path to forward to the container.
+
+This is useful if your manifest has a dependency on a private GitHub repo.
+
+_**required:** `false`_
+_**default:** `""`_
+
+#### gitPrivateToken
+
+Github private token to pull from github.
+
+This is useful if your manifest has a dependency on a private GitHub repo.
+
+_**required:** `false`_
+_**default:** `""`_
+
+#### chownFilesTo
+
+User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build artifacts.
+
+_**required:** `false`_
+_**default:** `""`_
+
 #### allowDirtyBuild
 
 Allows the branch of the build to be dirty, and still generate the build.
@@ -304,36 +386,6 @@ be needed. (use with care).
 
 _**required:** `false`_
 _**default:** `false`_
-
-#### customParameters
-
-Custom parameters to configure the build.
-
-Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
-
-Parameters without a value will be considered booleans (with a value of true).
-
-```yaml
-- uses: game-ci/unity-builder@v2
-  with:
-    customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
-```
-
-_**required:** `false`_
-_**default:** `""`_
-
-#### customImage
-
-Specific docker image that should be used for building the project.
-
-```yaml
-- uses: game-ci/unity-builder@v2
-  with:
-    customImage: 'unityci/editor:2020.1.14f1-base-0'
-```
-
-_**required:** `false`_
-_**default:** `""`_
 
 ## Outputs
 
@@ -373,7 +425,7 @@ steps:
       sshAgent: ${{ env.SSH_AUTH_SOCK }}
 ```
 
-## UPM Authentication using .upmconfig.toml
+## UPM authentication using .upmconfig.toml
 
 Unity requires an .upmconfig.toml to exist in the home directory to authenticate and download packages from private UPM registries.
 To create this file, first create the `/home/runner/work/_temp/_github_home` directory, and then create the .upmconfig.toml file inside that directory.
@@ -433,3 +485,7 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 ```
+
+## Next steps
+
+You can find more workflow examples in [Getting Started](/docs/github/getting-started#workflow-examples).
