@@ -1,5 +1,6 @@
 import { DocSearch } from '@docsearch/react';
 import '@docsearch/css';
+import config from '@/core/config';
 
 const SearchBar = () => {
   return (
@@ -10,7 +11,11 @@ const SearchBar = () => {
         position: 'relative',
       }}
     >
-      <DocSearch apiKey="1df02f65283b9c1c95637a3a0d8a024a" indexName="game" appId="E57FOT37U9" />
+      <DocSearch
+        apiKey={config.search.publicApiKey}
+        indexName={config.search.index}
+        appId={config.search.applicationId}
+      />
     </div>
   );
 };
