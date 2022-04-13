@@ -34,7 +34,7 @@ Follow the ["Setup" section of the Fastlane Supply documentation](https://docs.f
 
 After the last step, it will tell you to test the connection to the Google Play Store, and then add your JSON file path to your Appfile. You can do the first step if you would like (you may need to run `bundle exec fastlane` instead of just `fastlane`), but don't worry about the Appfile, as we will be be creating that in the next step.
 
-Instead, create a Repository Secret in your GitHub repository by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right. It should be titled `GOOGLE_PLAY_KEY_FILE` and its value should be the plaintext contents of the download JSON file.
+Instead, create a Repository Secret in your GitHub repository by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right. It should be titled `GOOGLE_PLAY_KEY_FILE` and its value should be the plaintext contents of the downloaded JSON file.
 
 ### 3- Generate an upload key and keystore
 
