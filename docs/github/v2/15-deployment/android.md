@@ -6,7 +6,7 @@ This guide is intended to help with automating Android builds to upload to the P
 
 [Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate building and submitting your Android apps to Google, and is the easiest way to deploy your Unity project to Android for Play Store distribution.
 
-To configure Fastlane for your GitHub Actions workflow runners, you will need to locally set up a `Gemfile` and `Fastfile` within your project. A `Gemfile` specifies what Ruby dependencies are needed to set up and run Fastlane (which is written in Ruby), and a `Fastfile` will be how you configure your iOS build settings. We will set up the `Gemfile` now, and the `Fastfile` in a later step.
+To configure Fastlane for your GitHub Actions workflow runners, you will need to locally set up a `Gemfile` and `Fastfile` within your project. A `Gemfile` specifies what Ruby dependencies are needed to set up and run Fastlane (which is written in Ruby), and a `Fastfile` will be how you configure your Android deployment settings. We will set up the `Gemfile` now, and the `Fastfile` in a later step.
 
 You will need your local machine to have [Ruby](https://www.ruby-lang.org/en/documentation/installation/) installed, as well as Bundler. If you have Ruby installed but are unsure if you have Bundler, you can run the following to install it:
 
