@@ -40,8 +40,7 @@ Instead, create a Repository Secret in your GitHub repository by going to Settin
 
 Distributing an app via the Google Play store requires uploading an unsigned Android App Bundle (AAB) file and letting Google codesign your app for you using Play App Signing. In order to do this, you need to create an upload signing key, which you will then sign your app with.
 
-In Unity, while Android is your selected build platform, open Player Settings.
-TODO: Write up Unity instructions. Under "Publishing Settings", click the "Keystore Manager" button to open the keystore manager. Click the "Keystore" dropdown, and then "Create New" > "Anywhere" to create a new keystore file. You can select any file location, just note where it is.
+In Unity, while Android is your selected build platform, open Player Settings. Under "Publishing Settings", click the "Keystore Manager" button to open the keystore manager. Click the "Keystore" dropdown, and then "Create New" > "Anywhere" to create a new keystore file. You can select any file location, just note where it is.
 
 Fill out all the fields in this form. Both of the password and password confirmation fields (so, four password fields total) should contain the same password. Click "Add key" when you're done. In Player Settings, confirm that the "Custom Keystore" checkbox is checked, and the correct keystore path, keystore password, alias name, and alias password are set. Be sure to commit and push these changes to your git repository.
 
@@ -59,7 +58,7 @@ Add four Repository Secrets in your GitHub repository by going to Settings -> Se
 
 In order to automate submission to the Google Play store, Google requires you to have already manually uploaded a version of your app to the Google Play Console. You also need to get your app out of the "Draft" status if you want to deploy anything but draft releases.
 
-To begin, build your game in Unity. Ensure that the "TODO" checkbox is checked in the TODO settings, and that the keystore from the previous step is selected in the Publishing Settings section of the Player Settings. If both of these are correct, your build should produce an `.aab` file that has been signed with your upload key.
+To begin, build your game in Unity. Ensure that the "Build App Bundle (Google Play)" checkbox is checked in the Build Settings, and that the keystore from the previous step is selected in the Publishing Settings section of the Player Settings. If both of these are correct, your build should produce an `.aab` file that has been signed with your upload key.
 
 In the Google Play Console, select "Internal Testing" from the left-side menu (or an alternate track if you want to do a public production or beta released). Click "Create new release", and drag in an AAB you've manually built in Unity (or an existing GitHub Actions workflow). Fill out the rest of the required fields, then click Save.
 
@@ -165,7 +164,7 @@ jobs:
 
 On your project's GitHub repo page, add a number of Repository Secrets by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right.
 
-- **ANDROID_KEYSTORE_BASE64** : Base64 of your keystore in step 2
+- **ANDROID_KEYSTORE_BASE64** : Base64 of your keystore, generated in step 3
 - **ANDROID_KEYSTORE_PASS**: Password for your keystore
 - **ANDROID_KEYALIAS_NAME**: Name of the alias in your keystore
 - **ANDROID_KEYALIAS_PASS**: Password for the alias in your keystore
