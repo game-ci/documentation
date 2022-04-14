@@ -129,14 +129,36 @@
             "type": "file"
           }
         },
-        "dependency-override": {
-          "name": "Dependency override",
+        "custom-dependency": {
+          "name": "Custom dependency",
           "meta": {
             "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/06-dependency-override.md",
-            "permalinkPath": "cloud-runner/advanced-topics/dependency-override",
-            "path": "cloud-runner/advanced-topics/dependency-override",
+            "absolutePath": "cloud-runner/05-advanced-topics/06-custom-dependency.md",
+            "permalinkPath": "cloud-runner/advanced-topics/custom-dependency",
+            "path": "cloud-runner/advanced-topics/custom-dependency",
             "order": 6,
+            "type": "file"
+          }
+        },
+        "secrets-and-secruity": {
+          "name": "Secrets and secruity",
+          "meta": {
+            "version": null,
+            "absolutePath": "cloud-runner/05-advanced-topics/07-secrets-and-secruity.md",
+            "permalinkPath": "cloud-runner/advanced-topics/secrets-and-secruity",
+            "path": "cloud-runner/advanced-topics/secrets-and-secruity",
+            "order": 7,
+            "type": "file"
+          }
+        },
+        "logging": {
+          "name": "Logging",
+          "meta": {
+            "version": null,
+            "absolutePath": "cloud-runner/05-advanced-topics/08-logging.md",
+            "permalinkPath": "cloud-runner/advanced-topics/logging",
+            "path": "cloud-runner/advanced-topics/logging",
+            "order": 8,
             "type": "file"
           }
         }

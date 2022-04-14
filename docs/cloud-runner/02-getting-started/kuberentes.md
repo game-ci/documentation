@@ -2,37 +2,22 @@
 
 ### Requirements
 
-- You must have an AWS account setup and ready to create resources.
-- Create a service account and generate an AWS access key and key id.
+- You must have a Kuberentes cluster setup and ready that supports persistent volumes.
+- Create a kubeconfig and encode it as base64.
 
 ### K8s Credentials
 
 Setup the following as `env` variables for the GitHub build step:
 
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_DEFAULT_REGION` (should be the same AWS region as the base stack e.g `eu-west-2`)
-
-_Note:_
-_This enables us to access AWS resources from Unity Builder._
+- `kubeConfig` (should be encoded as base64)
 
 ### GitHub Access Token
 
-Include the following variable in the `with` section of the builder step:
-
-- `githubToken` (should be a GitHub access token with permission to get repositories)
-
-_Note:_
-_This enables us to get the repository from the AWS build machine._
+Link to configuration page
 
 ### Build Step Parameters
 
-Add the following parameters to the build step described in the [builder section](builder):
-
-- `cloudRunnerCluster` (should be `aws`)
-- `awsStackName` (should be the name you gave the base stack in aws)
-- `remoteBuildMemory` (the memory the build container should be given)
-- `remoteBuildCpu` (the CPU units the build container should be given)
+Link to configuration page
 
 #### Allowed CPU/Memory combinations
 

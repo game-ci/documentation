@@ -13,24 +13,24 @@ For Unity projects the available disk size is quite small. You may experience an
 
 ### Supported Cloud Provider Platforms
 
-_This is billed on demand and costs nothing unless you store the builds._
+| Release Status                         | Platform               |
+| -------------------------------------- | ---------------------- |
+| ✔️ is supported                        | **Kuberenets "K8s"\*** |
+| ✔️ is supported                        | **AWS**                |
+| ⚠ Depedent on custom depdency override | **GCP**                |
+| ⚠ Depedent on custom depdency override | **Azure**              |
 
-✔️ **AWS** is supported.
+\*_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
+_Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
 
-⚠ **GCP** planned, Google Cloud Run needs to release support for NFS.
-
-⚠ **Azure** planned, the needed technologies are already supported.
-
-✔️ All Kubernetes providers that support persistent volumes are supported.
-(_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow. Using Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._)
-
-### When to use GitHub self-hosted runner or remote builder?
-
-[GitHub self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) and Remote Builder can enable you to build larger projects.
+### When to use self-hosted runner or remote builder?
 
 Self-hosted runners are best used when you already have a server available, running 24/7 that you can setup as a runner. And you're happy to maintain and keep that server available and running.
 
-Remote Builder is better if you don't have a server setup or don't want to manage or maintain your own build server.
+Cloud Runner is better if you don't have a server setup or don't want to manage or maintain your own build server.
+
+For GitHub users you can consider this solution OR use Cloud Runner.
+[GitHub self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) and Cloud Runner can enable you to build larger projects.
 
 ## Releases
 
