@@ -3,20 +3,7 @@
 ### Requirements
 
 - You must have an AWS account setup and ready to create resources.
-- It is suggested you have a workflow setup from the [builder section](builder).
-
-### Create base stack on AWS CloudFormation
-
-1. Open [this link](https://raw.githubusercontent.com/game-ci/unity-builder/main/dist/cloud-formations/base-setup.yml), right-click and save as a yaml file locally (filename doesn't matter, must end with .yaml).
-2. Open AWS console, navigate to the CloudFormation service.
-3. Select the option to create a new stack.
-4. Locate the section where you can upload a template. Upload the file you downloaded in step 1. The default values for all other fields will work, usually I name the stack something like `game-ci-base`.
-5. Create the stack and wait for the stack to finish creating. You can delete this stack at any time to cleanup the resources.
-
-_Note:_
-
-- _An AWS CloudFormation stack is just a group of resources that is created and destroyed together._
-- _The stack we created manages the persistent storage and aws permissions for the builds._
+- Create a service account and generate an AWS access key and key id.
 
 ### AWS Credentials
 
@@ -42,7 +29,7 @@ _This enables us to get the repository from the AWS build machine._
 
 Add the following parameters to the build step described in the [builder section](builder):
 
-- `remoteBuildCluster` (should be `aws`)
+- `cloudRunnerCluster` (should be `aws`)
 - `awsStackName` (should be the name you gave the base stack in aws)
 - `remoteBuildMemory` (the memory the build container should be given)
 - `remoteBuildCpu` (the CPU units the build container should be given)
@@ -50,29 +37,25 @@ Add the following parameters to the build step described in the [builder section
 #### Allowed CPU/Memory combinations
 
 There are some limitations to the CPU and Memory parameters. AWS will only accept the following combinations:
+[AWS Fargate Documentation, Allowed CPU and memory values (Task Definitions)](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size)
 
-- `0.25 vCPU` - 0.5 GB, 1 GB, 2 GB
-- `0.5 vCPU` - 1 GB, 2 GB, 3 GB, 4 GB
-- `1 vCPU` - 2 GB, 3 GB, 4 GB, 5 GB, 6 GB, 7 GB, 8 GB
-- `2 vCPU` - Between 4 GB and 16 GB in 1-GB increments
-- `4 vCPU` - Between 8 GB and 30 GB in 1-GB increments
+##### Summary of format:
 
-Do not include the vCPU or GB suffix. For example:
+- Values are represented as 1024:1 GB or CPU.
+- Do not include the vCPU or GB suffix.
+- 1 CPU can go to a max of 6 GB of memory. 2 CPU's are required to go higher.
+
+##### Example configuration:
 
 ```yaml
-- remoteBuildMemory: 2
-- remoteBuildCpu: 0.5
+- cloudRunnerMemory: 4096
+- cloudRunnerCpu: 1024
 ```
-
-This information may go out of date if AWS update this. Please find the latest documentation at the reference link below.
-
-_Reference:_
-[AWS Fargate Documentation, Task Definitions, Task CPU and memory](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html#fargate-task-defs)
 
 ### Example build step
 
 ```yaml
-- uses: game-ci/unity-builder@v2
+- uses: game-ci/unity-builder@cloud-runner-develop
   id: aws-fargate-unity-build
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -81,6 +64,8 @@ _Reference:_
     AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
   with:
     remoteBuildCluster: aws
+    cloudRunnerMemory: 4096
+    cloudRunnerCpu: 1024
     projectPath: ${{ matrix.projectPath }}
     unityVersion: ${{ matrix.unityVersion }}
     targetPlatform: ${{ matrix.targetPlatform }}
