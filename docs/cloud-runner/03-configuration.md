@@ -15,3 +15,17 @@ Add the following parameters to the build step described in the [builder section
 - `awsStackName` (should be the name you gave the base stack in aws)
 - `remoteBuildMemory` (the memory the build container should be given)
 - `remoteBuildCpu` (the CPU units the build container should be given)
+
+### Release branch configuration
+
+#### Develop branch
+
+```yaml
+- uses: game-ci/unity-builder@cloud-runner-develop
+```
+
+#### Stable branch
+
+```yaml
+- uses: game-ci/unity-builder@cloud-runner-stable
+```

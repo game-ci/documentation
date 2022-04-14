@@ -15,10 +15,12 @@ For Unity projects the available disk size is quite small. You may experience an
 
 | Release Status                         | Platform               |
 | -------------------------------------- | ---------------------- |
-| ✔️ is supported                        | **Kuberenets "K8s"\*** |
-| ✔️ is supported                        | **AWS**                |
+| ✔️ experimental release                | **Kuberenets "K8s"\*** |
+| ✔️ preview release                     | **AWS**                |
 | ⚠ Depedent on custom depdency override | **GCP**                |
 | ⚠ Depedent on custom depdency override | **Azure**              |
+
+experimental > preview > full release
 
 \*_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
 _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
@@ -34,6 +36,30 @@ For GitHub users you can consider this solution OR use Cloud Runner.
 
 ## Releases
 
-## Features
+All cloud runner releases are currently packaged and released with game-ci's unity-builder module:
+https://github.com/game-ci/unity-builder/releases
+
+History up to latest open incoming changes for release can be found here:
+https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+cloud+runner
+
+Link to release branches configuration section
+
+## Development Roadmap
+
+| What                                  | Status      | Why                                                                             |
+| ------------------------------------- | ----------- | ------------------------------------------------------------------------------- |
+| preview feedback gathering            | in-progress | Gather feedback from commmunity on experience using cloud runner.               |
+| preview beginner friendly pass        | in-progress | A pass over cloud runner's APIs and usability for the preview release stage.    |
+| preview garbage collection guarentees | todo        | Support for strong garbage collection guarentees.                               |
+| custom dependency                     | started     | Support creating, checking the health of and cleaning up a custom depdency.     |
+| custom logging                        | todo        | Support extensible logging to your own loggin service.                          |
+| performance benchmark                 | todo        | Benchmark cloud runner on a variety of project sizes.                           |
+| better git sha driven support         | todo        | Target very specific points in git history.                                     |
+| support for uncommitted changes       | todo        | Run automated jobs without having to commit, discover errors early.             |
+| warm starts and push hooks            | todo        | Do not have to wait for cloud runner to spin up a new machine.                  |
+| better storage engine to support      | todo        | Share libraries to speed up import between local machines<->automated machines. |
+| cache entire repo                     | todo        | Currently only supports caching LFS and Unity Library folder.                   |
+| editor integration                    | todo        | Direct integration into the Unity editor to run containerized cloud jobs.       |
+| better artifact handling              | todo        | Better extensibility and support for artifact handling.                         |
 
 ## Contributions

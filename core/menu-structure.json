@@ -129,13 +129,24 @@
             "type": "file"
           }
         },
-        "custom-dependency": {
-          "name": "Custom dependency",
+        "garbage-collection": {
+          "name": "Garbage collection",
           "meta": {
             "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/06-custom-dependency.md",
-            "permalinkPath": "cloud-runner/advanced-topics/custom-dependency",
-            "path": "cloud-runner/advanced-topics/custom-dependency",
+            "absolutePath": "cloud-runner/05-advanced-topics/06-garbage-collection.md",
+            "permalinkPath": "cloud-runner/advanced-topics/garbage-collection",
+            "path": "cloud-runner/advanced-topics/garbage-collection",
+            "order": 6,
+            "type": "file"
+          }
+        },
+        "generic-depdency-hooks": {
+          "name": "Generic depdency hooks",
+          "meta": {
+            "version": null,
+            "absolutePath": "cloud-runner/05-advanced-topics/06-generic-depdency-hooks.md",
+            "permalinkPath": "cloud-runner/advanced-topics/generic-depdency-hooks",
+            "path": "cloud-runner/advanced-topics/generic-depdency-hooks",
             "order": 6,
             "type": "file"
           }
