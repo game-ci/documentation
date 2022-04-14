@@ -1,5 +1,74 @@
 {
   "docs": {
+    "cloud-runner": {
+      "meta": {
+        "path": "cloud-runner",
+        "order": 99,
+        "type": "folder"
+      },
+      "introduction": {
+        "name": "Introduction",
+        "meta": {
+          "version": null,
+          "absolutePath": "cloud-runner/01-introduction.md",
+          "permalinkPath": "cloud-runner/introduction",
+          "path": "cloud-runner/introduction",
+          "order": 1,
+          "type": "file"
+        }
+      },
+      "command-line": {
+        "name": "Command line",
+        "meta": {
+          "version": null,
+          "absolutePath": "cloud-runner/02-command-line.md",
+          "permalinkPath": "cloud-runner/command-line",
+          "path": "cloud-runner/command-line",
+          "order": 2,
+          "type": "file"
+        }
+      },
+      "advanced-configuration": {
+        "name": "Advanced configuration",
+        "meta": {
+          "version": null,
+          "absolutePath": "cloud-runner/03-advanced-configuration.md",
+          "permalinkPath": "cloud-runner/advanced-configuration",
+          "path": "cloud-runner/advanced-configuration",
+          "order": 3,
+          "type": "file"
+        }
+      },
+      "getting-started": {
+        "meta": {
+          "path": "cloud-runner/getting-started",
+          "order": 99,
+          "type": "folder"
+        },
+        "aws": {
+          "name": "Aws",
+          "meta": {
+            "version": null,
+            "absolutePath": "cloud-runner/getting-started/aws.md",
+            "permalinkPath": "cloud-runner/getting-started/aws",
+            "path": "cloud-runner/getting-started/aws",
+            "order": 99,
+            "type": "file"
+          }
+        },
+        "kuberentes": {
+          "name": "Kuberentes",
+          "meta": {
+            "version": null,
+            "absolutePath": "cloud-runner/getting-started/kuberentes.md",
+            "permalinkPath": "cloud-runner/getting-started/kuberentes",
+            "path": "cloud-runner/getting-started/kuberentes",
+            "order": 99,
+            "type": "file"
+          }
+        }
+      }
+    },
     "docker": {
       "meta": {
         "path": "docker",
@@ -201,17 +270,6 @@
               "permalinkPath": "github/v2/returning-a-license",
               "path": "github/returning-a-license",
               "order": 5,
-              "type": "file"
-            }
-          },
-          "remote-builder": {
-            "name": "Remote builder",
-            "meta": {
-              "version": "v2",
-              "absolutePath": "github/v2/06-remote-builder.md",
-              "permalinkPath": "github/v2/remote-builder",
-              "path": "github/remote-builder",
-              "order": 6,
               "type": "file"
             }
           },

@@ -54,6 +54,12 @@ const MenuStructureSidebar = () => {
           title="Troubleshooting"
           icon={<AiOutlineQuestionCircle />}
         />
+        <VersionedSubMenu
+          key="cloud-runner"
+          section="cloud-runner"
+          title="Cloud Runner"
+          icon={<AiOutlineQuestionCircle />}
+        />
       </Menu>
     </Sider>
   );
