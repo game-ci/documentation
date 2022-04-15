@@ -10,4 +10,4 @@ When running any unity workload you must provide valid unity credentials. In add
 
 `game-ci -h` or `game-ci --help`
 
-`game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD"` --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""
+`game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""`
