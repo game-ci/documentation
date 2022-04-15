@@ -6,171 +6,185 @@
         "order": 99,
         "type": "folder"
       },
-      "introduction": {
-        "name": "Introduction",
+      "<versions>": {
         "meta": {
-          "version": null,
-          "absolutePath": "cloud-runner/01-introduction.md",
-          "permalinkPath": "cloud-runner/introduction",
-          "path": "cloud-runner/introduction",
-          "order": 1,
-          "type": "file"
-        }
-      },
-      "getting-started": {
-        "meta": {
-          "path": "cloud-runner/getting-started",
-          "order": 2,
-          "type": "folder"
+          "currentVersion": "v0",
+          "path": "cloud-runner",
+          "type": "identifier"
         },
-        "aws": {
-          "name": "Aws",
+        "v0": {
           "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/02-getting-started/aws.md",
-            "permalinkPath": "cloud-runner/getting-started/aws",
-            "path": "cloud-runner/getting-started/aws",
+            "path": "cloud-runner",
             "order": 99,
-            "type": "file"
-          }
-        },
-        "kuberentes": {
-          "name": "Kuberentes",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/02-getting-started/kuberentes.md",
-            "permalinkPath": "cloud-runner/getting-started/kuberentes",
-            "path": "cloud-runner/getting-started/kuberentes",
-            "order": 99,
-            "type": "file"
-          }
-        }
-      },
-      "configuration": {
-        "name": "Configuration",
-        "meta": {
-          "version": null,
-          "absolutePath": "cloud-runner/03-configuration.md",
-          "permalinkPath": "cloud-runner/configuration",
-          "path": "cloud-runner/configuration",
-          "order": 3,
-          "type": "file"
-        }
-      },
-      "command-line": {
-        "name": "Command line",
-        "meta": {
-          "version": null,
-          "absolutePath": "cloud-runner/04-command-line.md",
-          "permalinkPath": "cloud-runner/command-line",
-          "path": "cloud-runner/command-line",
-          "order": 4,
-          "type": "file"
-        }
-      },
-      "advanced-topics": {
-        "meta": {
-          "path": "cloud-runner/advanced-topics",
-          "order": 5,
-          "type": "folder"
-        },
-        "caching": {
-          "name": "Caching",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/01-caching.md",
-            "permalinkPath": "cloud-runner/advanced-topics/caching",
-            "path": "cloud-runner/advanced-topics/caching",
-            "order": 1,
-            "type": "file"
-          }
-        },
-        "performance": {
-          "name": "Performance",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/02-performance.md",
-            "permalinkPath": "cloud-runner/advanced-topics/performance",
-            "path": "cloud-runner/advanced-topics/performance",
-            "order": 2,
-            "type": "file"
-          }
-        },
-        "hooks": {
-          "name": "Hooks",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/03-hooks.md",
-            "permalinkPath": "cloud-runner/advanced-topics/hooks",
-            "path": "cloud-runner/advanced-topics/hooks",
-            "order": 3,
-            "type": "file"
-          }
-        },
-        "custom-steps": {
-          "name": "Custom steps",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/04-custom-steps.md",
-            "permalinkPath": "cloud-runner/advanced-topics/custom-steps",
-            "path": "cloud-runner/advanced-topics/custom-steps",
-            "order": 4,
-            "type": "file"
-          }
-        },
-        "input-override": {
-          "name": "Input override",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/05-input-override.md",
-            "permalinkPath": "cloud-runner/advanced-topics/input-override",
-            "path": "cloud-runner/advanced-topics/input-override",
-            "order": 5,
-            "type": "file"
-          }
-        },
-        "garbage-collection": {
-          "name": "Garbage collection",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/06-garbage-collection.md",
-            "permalinkPath": "cloud-runner/advanced-topics/garbage-collection",
-            "path": "cloud-runner/advanced-topics/garbage-collection",
-            "order": 6,
-            "type": "file"
-          }
-        },
-        "generic-depdency-hooks": {
-          "name": "Generic depdency hooks",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/06-generic-depdency-hooks.md",
-            "permalinkPath": "cloud-runner/advanced-topics/generic-depdency-hooks",
-            "path": "cloud-runner/advanced-topics/generic-depdency-hooks",
-            "order": 6,
-            "type": "file"
-          }
-        },
-        "secrets-and-secruity": {
-          "name": "Secrets and secruity",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/07-secrets-and-secruity.md",
-            "permalinkPath": "cloud-runner/advanced-topics/secrets-and-secruity",
-            "path": "cloud-runner/advanced-topics/secrets-and-secruity",
-            "order": 7,
-            "type": "file"
-          }
-        },
-        "logging": {
-          "name": "Logging",
-          "meta": {
-            "version": null,
-            "absolutePath": "cloud-runner/05-advanced-topics/08-logging.md",
-            "permalinkPath": "cloud-runner/advanced-topics/logging",
-            "path": "cloud-runner/advanced-topics/logging",
-            "order": 8,
-            "type": "file"
+            "type": "version"
+          },
+          "introduction": {
+            "name": "Introduction",
+            "meta": {
+              "version": "v0",
+              "absolutePath": "cloud-runner/v0/01-introduction.md",
+              "permalinkPath": "cloud-runner/v0/introduction",
+              "path": "cloud-runner/introduction",
+              "order": 1,
+              "type": "file"
+            }
+          },
+          "getting-started": {
+            "meta": {
+              "path": "cloud-runner/getting-started",
+              "order": 2,
+              "type": "folder"
+            },
+            "aws": {
+              "name": "Aws",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/02-getting-started/aws.md",
+                "permalinkPath": "cloud-runner/v0/getting-started/aws",
+                "path": "cloud-runner/getting-started/aws",
+                "order": 99,
+                "type": "file"
+              }
+            },
+            "kuberentes": {
+              "name": "Kuberentes",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/02-getting-started/kuberentes.md",
+                "permalinkPath": "cloud-runner/v0/getting-started/kuberentes",
+                "path": "cloud-runner/getting-started/kuberentes",
+                "order": 99,
+                "type": "file"
+              }
+            }
+          },
+          "configuration": {
+            "name": "Configuration",
+            "meta": {
+              "version": "v0",
+              "absolutePath": "cloud-runner/v0/03-configuration.md",
+              "permalinkPath": "cloud-runner/v0/configuration",
+              "path": "cloud-runner/configuration",
+              "order": 3,
+              "type": "file"
+            }
+          },
+          "command-line": {
+            "name": "Command line",
+            "meta": {
+              "version": "v0",
+              "absolutePath": "cloud-runner/v0/04-command-line.md",
+              "permalinkPath": "cloud-runner/v0/command-line",
+              "path": "cloud-runner/command-line",
+              "order": 4,
+              "type": "file"
+            }
+          },
+          "advanced-topics": {
+            "meta": {
+              "path": "cloud-runner/advanced-topics",
+              "order": 5,
+              "type": "folder"
+            },
+            "caching": {
+              "name": "Caching",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/01-caching.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/caching",
+                "path": "cloud-runner/advanced-topics/caching",
+                "order": 1,
+                "type": "file"
+              }
+            },
+            "performance": {
+              "name": "Performance",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/02-performance.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/performance",
+                "path": "cloud-runner/advanced-topics/performance",
+                "order": 2,
+                "type": "file"
+              }
+            },
+            "hooks": {
+              "name": "Hooks",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/03-hooks.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/hooks",
+                "path": "cloud-runner/advanced-topics/hooks",
+                "order": 3,
+                "type": "file"
+              }
+            },
+            "custom-steps": {
+              "name": "Custom steps",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/04-custom-steps.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/custom-steps",
+                "path": "cloud-runner/advanced-topics/custom-steps",
+                "order": 4,
+                "type": "file"
+              }
+            },
+            "input-override": {
+              "name": "Input override",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/05-input-override.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/input-override",
+                "path": "cloud-runner/advanced-topics/input-override",
+                "order": 5,
+                "type": "file"
+              }
+            },
+            "garbage-collection": {
+              "name": "Garbage collection",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/06-garbage-collection.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/garbage-collection",
+                "path": "cloud-runner/advanced-topics/garbage-collection",
+                "order": 6,
+                "type": "file"
+              }
+            },
+            "generic-depdency-hooks": {
+              "name": "Generic depdency hooks",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/06-generic-depdency-hooks.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/generic-depdency-hooks",
+                "path": "cloud-runner/advanced-topics/generic-depdency-hooks",
+                "order": 6,
+                "type": "file"
+              }
+            },
+            "secrets-and-secruity": {
+              "name": "Secrets and secruity",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/07-secrets-and-secruity.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/secrets-and-secruity",
+                "path": "cloud-runner/advanced-topics/secrets-and-secruity",
+                "order": 7,
+                "type": "file"
+              }
+            },
+            "logging": {
+              "name": "Logging",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/08-logging.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/logging",
+                "path": "cloud-runner/advanced-topics/logging",
+                "order": 8,
+                "type": "file"
+              }
+            }
           }
         }
       }
