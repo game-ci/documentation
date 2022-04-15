@@ -1,20 +1,20 @@
 {
   "docs": {
-    "cloud-runner": {
+    "cloud-runner-(preview)": {
       "meta": {
-        "path": "cloud-runner",
+        "path": "cloud-runner-(preview)",
         "order": 99,
         "type": "folder"
       },
       "<versions>": {
         "meta": {
           "currentVersion": "v0",
-          "path": "cloud-runner",
+          "path": "cloud-runner-(preview)",
           "type": "identifier"
         },
         "v0": {
           "meta": {
-            "path": "cloud-runner",
+            "path": "cloud-runner-(preview)",
             "order": 99,
             "type": "version"
           },
@@ -22,16 +22,16 @@
             "name": "Introduction",
             "meta": {
               "version": "v0",
-              "absolutePath": "cloud-runner/v0/01-introduction.md",
-              "permalinkPath": "cloud-runner/v0/introduction",
-              "path": "cloud-runner/introduction",
+              "absolutePath": "cloud-runner-(preview)/v0/01-introduction.md",
+              "permalinkPath": "cloud-runner-(preview)/v0/introduction",
+              "path": "cloud-runner-(preview)/introduction",
               "order": 1,
               "type": "file"
             }
           },
           "getting-started": {
             "meta": {
-              "path": "cloud-runner/getting-started",
+              "path": "cloud-runner-(preview)/getting-started",
               "order": 2,
               "type": "folder"
             },
@@ -39,9 +39,9 @@
               "name": "Aws",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/02-getting-started/aws.md",
-                "permalinkPath": "cloud-runner/v0/getting-started/aws",
-                "path": "cloud-runner/getting-started/aws",
+                "absolutePath": "cloud-runner-(preview)/v0/02-getting-started/aws.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/getting-started/aws",
+                "path": "cloud-runner-(preview)/getting-started/aws",
                 "order": 99,
                 "type": "file"
               }
@@ -50,9 +50,9 @@
               "name": "Kuberentes",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/02-getting-started/kuberentes.md",
-                "permalinkPath": "cloud-runner/v0/getting-started/kuberentes",
-                "path": "cloud-runner/getting-started/kuberentes",
+                "absolutePath": "cloud-runner-(preview)/v0/02-getting-started/kuberentes.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/getting-started/kuberentes",
+                "path": "cloud-runner-(preview)/getting-started/kuberentes",
                 "order": 99,
                 "type": "file"
               }
@@ -62,9 +62,9 @@
             "name": "Configuration",
             "meta": {
               "version": "v0",
-              "absolutePath": "cloud-runner/v0/03-configuration.md",
-              "permalinkPath": "cloud-runner/v0/configuration",
-              "path": "cloud-runner/configuration",
+              "absolutePath": "cloud-runner-(preview)/v0/03-configuration.md",
+              "permalinkPath": "cloud-runner-(preview)/v0/configuration",
+              "path": "cloud-runner-(preview)/configuration",
               "order": 3,
               "type": "file"
             }
@@ -73,16 +73,16 @@
             "name": "Command line",
             "meta": {
               "version": "v0",
-              "absolutePath": "cloud-runner/v0/04-command-line.md",
-              "permalinkPath": "cloud-runner/v0/command-line",
-              "path": "cloud-runner/command-line",
+              "absolutePath": "cloud-runner-(preview)/v0/04-command-line.md",
+              "permalinkPath": "cloud-runner-(preview)/v0/command-line",
+              "path": "cloud-runner-(preview)/command-line",
               "order": 4,
               "type": "file"
             }
           },
           "advanced-topics": {
             "meta": {
-              "path": "cloud-runner/advanced-topics",
+              "path": "cloud-runner-(preview)/advanced-topics",
               "order": 5,
               "type": "folder"
             },
@@ -90,9 +90,9 @@
               "name": "Caching",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/01-caching.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/caching",
-                "path": "cloud-runner/advanced-topics/caching",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/01-caching.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/caching",
+                "path": "cloud-runner-(preview)/advanced-topics/caching",
                 "order": 1,
                 "type": "file"
               }
@@ -101,9 +101,9 @@
               "name": "Performance",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/02-performance.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/performance",
-                "path": "cloud-runner/advanced-topics/performance",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/02-performance.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/performance",
+                "path": "cloud-runner-(preview)/advanced-topics/performance",
                 "order": 2,
                 "type": "file"
               }
@@ -112,9 +112,9 @@
               "name": "Hooks",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/03-hooks.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/hooks",
-                "path": "cloud-runner/advanced-topics/hooks",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/03-hooks.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/hooks",
+                "path": "cloud-runner-(preview)/advanced-topics/hooks",
                 "order": 3,
                 "type": "file"
               }
@@ -123,9 +123,9 @@
               "name": "Custom steps",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/04-custom-steps.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/custom-steps",
-                "path": "cloud-runner/advanced-topics/custom-steps",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/04-custom-steps.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/custom-steps",
+                "path": "cloud-runner-(preview)/advanced-topics/custom-steps",
                 "order": 4,
                 "type": "file"
               }
@@ -134,9 +134,9 @@
               "name": "Input override",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/05-input-override.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/input-override",
-                "path": "cloud-runner/advanced-topics/input-override",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/05-input-override.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/input-override",
+                "path": "cloud-runner-(preview)/advanced-topics/input-override",
                 "order": 5,
                 "type": "file"
               }
@@ -145,9 +145,9 @@
               "name": "Garbage collection",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/06-garbage-collection.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/garbage-collection",
-                "path": "cloud-runner/advanced-topics/garbage-collection",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/06-garbage-collection.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/garbage-collection",
+                "path": "cloud-runner-(preview)/advanced-topics/garbage-collection",
                 "order": 6,
                 "type": "file"
               }
@@ -156,9 +156,9 @@
               "name": "Generic depdency hooks",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/06-generic-depdency-hooks.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/generic-depdency-hooks",
-                "path": "cloud-runner/advanced-topics/generic-depdency-hooks",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/06-generic-depdency-hooks.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/generic-depdency-hooks",
+                "path": "cloud-runner-(preview)/advanced-topics/generic-depdency-hooks",
                 "order": 6,
                 "type": "file"
               }
@@ -167,9 +167,9 @@
               "name": "Secrets and secruity",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/07-secrets-and-secruity.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/secrets-and-secruity",
-                "path": "cloud-runner/advanced-topics/secrets-and-secruity",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/07-secrets-and-secruity.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/secrets-and-secruity",
+                "path": "cloud-runner-(preview)/advanced-topics/secrets-and-secruity",
                 "order": 7,
                 "type": "file"
               }
@@ -178,9 +178,9 @@
               "name": "Logging",
               "meta": {
                 "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/08-logging.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/logging",
-                "path": "cloud-runner/advanced-topics/logging",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/08-logging.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/logging",
+                "path": "cloud-runner-(preview)/advanced-topics/logging",
                 "order": 8,
                 "type": "file"
               }
