@@ -74,6 +74,8 @@ Link to release branches configuration section
 
 ## Feedback form
 
+https://forms.gle/3Wg1gGf9FnZ72RiJ9
+
 ## Contributions
 
 Source contributors welcome.
