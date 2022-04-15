@@ -11,11 +11,7 @@ Setup the following as `env` variables for the GitHub build step:
 
 - `kubeConfig` (should be encoded as base64)
 
-### GitHub Access Token
-
-Link to configuration page
-
-### Build Step Parameters
+### Standard configuration
 
 Link to configuration page
 

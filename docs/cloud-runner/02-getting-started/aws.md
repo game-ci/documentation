@@ -16,11 +16,7 @@ Setup the following as `env` variables for the GitHub build step:
 _Note:_
 _This enables us to access AWS resources from Unity Builder._
 
-### GitHub Access Token
-
-Link to configuration page
-
-### Build Step Parameters
+### Standard configuration
 
 Link to configuration page
 
