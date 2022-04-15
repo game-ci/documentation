@@ -14,7 +14,7 @@ For Unity projects the available disk size is quite small. You may experience an
 
 ### Supported Cloud Provider Platforms
 
-Cloud Runner overall feature release status: `preview`
+Cloud Runner overall release status: `preview`
 
 | Release Status                         | Platform               |
 | -------------------------------------- | ---------------------- |
