@@ -73,3 +73,7 @@ Link to release branches configuration section
 | azure                                 | todo        |                                                                                          |
 
 ## Contributions
+
+Source contributors welcome.
+
+Donations welcome.
