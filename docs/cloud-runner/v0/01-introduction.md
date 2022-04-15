@@ -64,10 +64,12 @@ Link to release branches configuration section
 | cache entire repo                     | todo        | Currently only supports caching LFS and Unity Library folder.                            |
 | editor integration                    | todo        | Direct integration into the Unity editor to run containerized cloud jobs.                |
 | editor tracked mode                   | todo        | Game CI will run as a sidecar to your unity editor, building and validating any changes. |
-| network game features                 | todo        |                                                                                          |
+| network game features                 | todo        | Quick deploy simulation server, relay or headless client. Quick host.                    |
 | better unity test framework support   | todo        |                                                                                          |
 | better performance test support       | todo        |                                                                                          |
 | better rendering support              | todo        | Automate screenshots, video and remote control clients.                                  |
 | better artifact handling              | todo        | Better extensibility and support for artifact handling.                                  |
+| gcp run                               | todo        |                                                                                          |
+| azure                                 | todo        |                                                                                          |
 
 ## Contributions
