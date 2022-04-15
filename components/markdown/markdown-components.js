@@ -7,7 +7,6 @@ import { List, ListItem } from './components/list';
 import HeadingWithAnchor from './components/heading-with-anchor';
 
 export default {
-  table: 'table',
   h1: ({ node, children, ...props }) => (
     <HeadingWithAnchor level={1} {...props}>
       {children}
