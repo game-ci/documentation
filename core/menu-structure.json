@@ -184,6 +184,17 @@
                 "order": 8,
                 "type": "file"
               }
+            },
+            "github-ephemeral-runners": {
+              "name": "Github ephemeral runners",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner-(preview)/v0/05-advanced-topics/09-github-ephemeral-runners.md",
+                "permalinkPath": "cloud-runner-(preview)/v0/advanced-topics/github-ephemeral-runners",
+                "path": "cloud-runner-(preview)/advanced-topics/github-ephemeral-runners",
+                "order": 9,
+                "type": "file"
+              }
             }
           }
         }

@@ -1,6 +1,7 @@
 import Article from '@/components/markdown/components/article';
 import ReactMarkdown from 'react-markdown';
 import PropTypes, { InferProps } from 'prop-types';
+import remarkGfm from 'remark-gfm';
 import components from './markdown-components';
 import EditOnGithubLink from '../pages/docs/edit-on-github-link';
 
@@ -18,7 +19,9 @@ const MarkdownRenderer = ({ document, meta }: InferProps<typeof propTypes>) => {
       <sub>{metaInformation}</sub>
       <Article>
         {/* @ts-ignore // todo - fix type properly */}
-        <ReactMarkdown components={components}>{document}</ReactMarkdown>
+        <ReactMarkdown components={components} remarkPlugins={[remarkGfm]}>
+          {document}
+        </ReactMarkdown>
       </Article>
       <EditOnGithubLink />
     </div>
