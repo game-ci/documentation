@@ -33,8 +33,7 @@ Do not include the vCPU or GB suffix. For example:
 ### Example build step
 
 ```yaml
- - name: Cloud Runner Build Test
-  uses: ./
+- uses: game-ci/unity-builder@cloud-runner-develop
   id: k8s-unity-build
   timeout-minutes: 30
   env:
@@ -52,8 +51,7 @@ Do not include the vCPU or GB suffix. For example:
 Currently kuberentes builds do not save their persistent volumes beyond a cloud runner job, so you may want to export the results to cloud storage e.g:
 
 ```yaml
-- name: Cloud Runner Build Test
-  uses: ./
+- uses: game-ci/unity-builder@cloud-runner-develop
   id: k8s-unity-build
   timeout-minutes: 30
   with:

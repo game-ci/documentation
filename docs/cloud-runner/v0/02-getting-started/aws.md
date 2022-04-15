@@ -58,4 +58,38 @@ There are some limitations to the CPU and Memory parameters. AWS will only accep
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+Currently aws builds do not save their persistent contents beyond a cloud runner job, so you may want to export the results to cloud storage e.g:
+
+```yaml
+- uses: game-ci/unity-builder@cloud-runner-develop
+  id: aws-fargate-unity-build
+  timeout-minutes: 25
+  with:
+    cloudRunnerCluster: aws
+    versioning: None
+    projectPath: ${{ matrix.projectPath }}
+    unityVersion: ${{ matrix.unityVersion }}
+    targetPlatform: ${{ matrix.targetPlatform }}
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
+    postBuildSteps: |
+      - name: upload
+        image: amazon/aws-cli
+        commands: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
+          aws configure set region $AWS_DEFAULT_REGION --profile default
+          aws s3 ls
+          aws s3 ls game-ci-test-storage
+          ls /data/cache/$CACHE_KEY
+          ls /data/cache/$CACHE_KEY/build
+          aws s3 cp /data/cache/$CACHE_KEY/build/build-$BUILD_GUID.zip s3://game-ci-test-storage/$CACHE_KEY/build-$BUILD_GUID.zip
+        secrets:
+        - name: awsAccessKeyId
+          value: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        - name: awsSecretAccessKey
+          value: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        - name: awsDefaultRegion
+          value: eu-west-2
+```
+
 A full workflow example can be seen in builder's [test workflow](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/aws-tests.yml).
