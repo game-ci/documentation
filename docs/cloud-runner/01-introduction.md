@@ -2,10 +2,11 @@
 
 ## What is it?
 
-**Cloud Runner enables you to send your project to a "Cloud Provider" such as AWS or GCP. Using native cloud services from the provider where possible or Kubernetes as a framework.**
+**Cloud Runner enables you to send your project to a "Cloud Provider" such as AWS or GCP. Using native cloud services (such as AWS Fargate) or Kubernetes.**
 
 1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
+3. Run custom jobs and extend the system for any workload.
 
 GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
 
