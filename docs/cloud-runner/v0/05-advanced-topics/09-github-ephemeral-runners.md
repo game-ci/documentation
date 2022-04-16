@@ -19,9 +19,6 @@
         commands: |
           export DEBIAN_FRONTEND=noninteractive
           export RUNNER_ALLOW_RUNASROOT="1"
-          mkdir -p $BUILD_GUID
-          cd $BUILD_GUID
-          echo $PWD
           apt-get update
           apt-get install -qy unzip curl libdigest-sha-perl apt-transport-https libicu-dev
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -32,6 +29,9 @@
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
           aws configure set region $AWS_DEFAULT_REGION --profile default
           aws s3 ls
+          mkdir -p $BUILD_GUID
+          cd $BUILD_GUID
+          echo $PWD
           mkdir actions-runner && cd actions-runner
           curl -o actions-runner-linux-x64-2.289.2.tar.gz -L https://github.com/actions/runner/releases/download/v2.289.2/actions-runner-linux-x64-2.289.2.tar.gz
           echo "7ba89bb75397896a76e98197633c087a9499d4c1db7603f21910e135b0d0a238  actions-runner-linux-x64-2.289.2.tar.gz" | shasum -a 256 -c
