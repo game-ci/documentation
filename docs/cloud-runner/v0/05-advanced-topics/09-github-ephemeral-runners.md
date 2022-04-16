@@ -21,9 +21,7 @@
           export RUNNER_ALLOW_RUNASROOT="1"
           apt-get update
           apt-get install -qy unzip curl libdigest-sha-perl apt-transport-https libicu-dev
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          ./aws/install
+          [ ! -f awscliv2.zip ] && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install
           aws --version
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
