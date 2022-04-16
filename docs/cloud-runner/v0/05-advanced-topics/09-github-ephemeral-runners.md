@@ -17,8 +17,12 @@
       - name: upload
         image: ubuntu
         commands: |
-          apt-get update
           export DEBIAN_FRONTEND=noninteractive
+          export RUNNER_ALLOW_RUNASROOT="1"
+          mkdir -p $BUILD_GUID
+          cd $BUILD_GUID
+          echo $PWD
+          apt-get update
           apt-get install -qy unzip curl libdigest-sha-perl apt-transport-https libicu-dev
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
@@ -32,9 +36,8 @@
           curl -o actions-runner-linux-x64-2.289.2.tar.gz -L https://github.com/actions/runner/releases/download/v2.289.2/actions-runner-linux-x64-2.289.2.tar.gz
           echo "7ba89bb75397896a76e98197633c087a9499d4c1db7603f21910e135b0d0a238  actions-runner-linux-x64-2.289.2.tar.gz" | shasum -a 256 -c
           tar xzf ./actions-runner-linux-x64-2.289.2.tar.gz
-          export RUNNER_ALLOW_RUNASROOT="1"
-          ./config.sh --url https://github.com/frostebite/FPS.GameClient --token ${{your token}} --ephemeral
-          echo "cloud runner stop watching job" # this causes cloud runner to stop streaming logs and skip all cleanup so the job remains running.
+          ./config.sh --url https://github.com/frostebite/FPS.GameClient --token <your token here from add runner menu> --ephemeral
+          echo "cloud runner stop watching job"
           ./run.sh
         secrets:
         - name: awsAccessKeyId
