@@ -1,6 +1,6 @@
 # Deploy to Google Play
 
-This guide is intended to help with automating Android builds to upload to the Play Store. If you are planning to use an alternate distribution method, such as a third-party beta test service or manually sideloading an APK, you do not need this guide. Setting up the [unity-builder](https://game.ci/docs/github/builder) action with a `targetPlatform` of `Android` should produce a functioning APK. However, if you are intending to distribute your game on the Play Store, either for public distribution or a beta track, this guide is for you.
+This guide is intended to help with automating Android builds to upload to the Play Store. If you just need to produce an APK, the [unity-builder](https://game.ci/docs/github/builder) action will do that. However, if you intend to distribute your game on the Play Store, either for public distribution or a beta track, this guide is for you.
 
 ### 1- Install Fastlane
 
@@ -96,8 +96,6 @@ If you would like to upload to other tracks (namely, `alpha` or `beta`), you can
 ### 6- Add jobs to your GitHub workflow
 
 The following workflow establishes two jobs. The first builds your game into an AAB file, and the second uploads that generated bundle to the Play Store.
-
-If you instead intend to manually distribute your game outside the Play Store as an APK, remove the `androidAppBundle` flag from the `with` section of the `game-ci/unity-builder@v2` action in the workflow. You can also remove the `androidKeystoreName`, `androidKeystoreBase64`, `androidKeyStorePass`, `androidKeyaliasName`, and `androidKeyaliasPass` properties. From there, you'll want to remove the entire `releaseToGooglePlay` job. If you just want to download the APK, it will be available in the "artifacts" section of a completed workflow run, or you can add a new job that performs whatever custom upload logic you'd like.
 
 ```yaml
 # .github/workflows/main.yml
