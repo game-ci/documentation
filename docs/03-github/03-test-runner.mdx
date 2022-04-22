@@ -221,11 +221,12 @@ Options for configuring code coverage, this configures the `-coverageOptions`
 parameter described unity's CodeCoverage documentation:
 [Using Code Coverage in batchmode](https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/CoverageBatchmode.html).
 
-By default, the coverage is configured to generate an HTML report with additional metrics.
+By default, this parameter is configured to generate an HTML report with additional metrics.
 This should be fine for most projects, but the webpage report can be quite large for projects
-with hundreds or thousands of large files. to disable the webpage report, remove the `generateHtmlReport`
-option from the coverage options. It is also recommended to add path or assembly filters for
-larger projects to keep the size of the report smaller if possible.
+with hundreds or thousands of large files.
+
+_**required:** `false`_
+_**default:** `generateAdditionalMetrics;generateHtmlReport;generateBadgeReport`_
 
 #### useHostNetwork
 
@@ -320,9 +321,15 @@ jobs:
           artifactsPath: ${{ matrix.testMode }}-artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
+          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+MyScripts'
       - uses: actions/upload-artifact@v2
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Coverage results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.coveragePath }}
 ```
