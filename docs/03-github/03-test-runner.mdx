@@ -4,6 +4,9 @@ Running your test suite in an automated workflow helps increase certainty when m
 
 Use [Unity - Test runner](https://github.com/marketplace/actions/unity-test-runner) to run your Unity tests.
 
+_Optional_ to include test coverage, use
+[Unity Code Coverage](https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/index.html)
+
 ## Basic setup
 
 By default, the test runner will run both `playmode` and `editmode` tests.
@@ -103,6 +106,24 @@ You can specify a different `artifactsPath` in the test runner and reference thi
     path: ${{ steps.myTestStep.outputs.artifactsPath }}
 ```
 
+### Getting coverage results
+
+The results for the test code coverage are stored in the folder `CodeCoverage` and the path
+can be read by the step's `outputs.coveragePath`. These coverage options can be configured
+as part of the test and by default will create an XML and HTML web page reports.
+
+```yaml
+- uses: actions/upload-artifact@v2
+  if: always()
+  with:
+    name: Coverage results
+    path: ${{ steps.myTestStep.outputs.coveragePath }}
+```
+
+The coverage results will be generated for whatever tests were selected to run.
+If both `editmode` and `playmode` are selected, then the results will have the
+combined coverage of both test modes.
+
 ## Caching
 
 In order to make test runs (and builds) faster,
@@ -193,6 +214,18 @@ In this folder a folder will be created for every test mode.
 
 _**required:** `false`_
 _**default:** `artifacts`_
+
+### coverageOptions
+
+Options for configuring code coverage, this configures the `-coverageOptions`
+parameter described unity's CodeCoverage documentation:
+[Using Code Coverage in batchmode](https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/CoverageBatchmode.html).
+
+By default, the coverage is configured to generate an HTML report with additional metrics.
+This should be fine for most projects, but the webpage report can be quite large for projects
+with hundreds or thousands of large files. to disable the webpage report, remove the `generateHtmlReport`
+option from the coverage options. It is also recommended to add path or assembly filters for
+larger projects to keep the size of the report smaller if possible.
 
 #### useHostNetwork
 
