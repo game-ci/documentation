@@ -124,9 +124,17 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Docs',
+                label: 'Welcome to GameCI',
                 to: '/docs/intro',
               },
+              {
+                label: 'Getting Started with Github',
+                to: '/docs/github/getting-started',
+              },
+              {
+                label: 'Getting Started with Gitlab',
+                to: '/docs/gitlab/getting-started',
+              }
             ],
           },
           {
@@ -150,6 +158,14 @@ const config = {
                 label: 'GitHub',
                 href: 'https://github.com/game-ci/',
               },
+              {
+                label: 'GameCI on OpenCollective',
+                href: 'https://opencollective.com/game-ci',
+              },
+              {
+                label: 'Gitlab',
+                href: 'https://gitlab.com/game-ci',
+              }
             ],
           },
         ],
