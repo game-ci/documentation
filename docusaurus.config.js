@@ -138,6 +138,7 @@ const config = {
               },
             ],
           },
+
           {
             title: 'More',
             items: [
@@ -165,20 +166,6 @@ const config = {
         ],
       },
     }),
-  plugins: [
-    [
-      '@docusaurus/plugin-client-redirects',
-      {
-        redirects: [
-          // /docs/oldDoc -> /docs/newDoc
-          {
-            from: '/discord',
-            to: 'https://discord.com/invite/WyPN5r9',
-          },
-        ],
-      },
-    ],
-  ],
 };
 
 module.exports = config;
