@@ -20,5 +20,4 @@ Follow the development on [GitHub](https://github.com/game-ci/documentation).
 />
 
 
-[//]: # (TODO: add /discord link back)
 Join the discussion on [Discord](https://game.ci/discord).
