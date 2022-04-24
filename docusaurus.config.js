@@ -26,11 +26,11 @@ const config = {
           // Please change this to your repo.
           editUrl: 'https://github.com/game-ci/documentation/tree/main/docs',
         },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl: 'https://github.com/game-ci/documentation/tree/main/blog',
-        },
+        // blog: {
+        //   showReadingTime: true,
+        //   // Please change this to your repo.
+        //   editUrl: 'https://github.com/game-ci/documentation/tree/main/blog',
+        // },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
@@ -54,7 +54,7 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          // {to: '/blog', label: 'Blog', position: 'left'},
           {
             label: 'Source code',
             position: 'right',
@@ -142,10 +142,10 @@ const config = {
           {
             title: 'More',
             items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
+              // {
+              //   label: 'Blog',
+              //   to: '/blog',
+              // },
               {
                 label: 'GitHub',
                 href: 'https://github.com/game-ci/',
