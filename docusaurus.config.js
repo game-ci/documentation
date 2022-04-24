@@ -134,7 +134,7 @@ const config = {
             items: [
               {
                 label: 'Discord',
-                href: 'https://game.ci/dicsord',
+                href: 'https://game.ci/discord',
               },
             ],
           },
