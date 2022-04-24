@@ -38,7 +38,7 @@ Instead, create a Repository Secret in your GitHub repository by going to Settin
 
 ### 3- Generate an upload key and keystore
 
-Distributing an app via the Google Play store requires uploading an unsigned Android App Bundle (AAB) file and letting Google codesign your app for you using Play App Signing. In order to do this, you need to create an upload signing key, which you will then sign your app with.
+Distributing an app via the Google Play Store requires uploading an unsigned Android App Bundle (AAB) file and letting Google codesign your app for you using Play App Signing. In order to do this, you need to create an upload signing key, which you will then sign your app with.
 
 In Unity, while Android is your selected build platform, open Player Settings. Under "Publishing Settings", click the "Keystore Manager" button to open the keystore manager. Click the "Keystore" dropdown, and then "Create New" > "Anywhere" to create a new keystore file. You can select any file location, just note where it is.
 
@@ -68,16 +68,14 @@ Before you can programmatically deploy any release that is not a "Draft" release
 
 At this point, your Google Play Console app listing should be ready to accept programmatic uploads, but you still need to configure Fastlane. Within your project directory, create a directory called `fastlane`, and then create two files within that directory, `Appfile` and `Fastfile`.
 
-```ruby
-# fastlane/Appfile
+```ruby title="fastlane/Appfile"
 for_platform :android do
   package_name(ENV["ANDROID_PACKAGE_NAME"])
   json_key_file(ENV["GOOGLE_PLAY_KEY_FILE_PATH"])
 end
 ```
 
-```ruby
-# fastlane/Fastfile
+```ruby title="fastlane/Fastfile"
 platform :android do
   desc "Upload a new Android version to the production Google Play Store"
   lane :production do
@@ -169,4 +167,14 @@ On your project's GitHub repo page, add a number of Repository Secrets by going 
 - **GOOGLE_PLAY_KEY_FILE**: The contents of the Google Account Service .json file from step 2
 - **ANDROID_PACKAGE_NAME**: Your application package name (e.g com.company.application)
 
-If you get build failures around the keystore being invalid, _please_ confirm that your keystore base64, alias, and two passwords are correct, as that is a common source of failure. If you want to double-check your keystore has been correctly encoded as valid base64, you can locally recreate your keystore by manually running `cat [keystore file] | base64 --decode > user.keystore`, swapping in the name of a text file containing the base64 value. This will create a new keystore that you can attempt to manually build from in Unity. On Windows, this would be `[Text.Encoding]::Utf8.GetString([Convert]::FromBase64String('base 64 value')) | Out-File -FilePath .\user.keystore`
+If you get build failures around the keystore being invalid, _please_ confirm that your keystore base64, alias, and two passwords are correct, as that is a common source of failure. If you want to double-check your keystore has been correctly encoded as valid base64, you can locally recreate your keystore by manually running:
+
+```bash
+cat [keystore file] | base64 --decode > user.keystore`
+```
+
+swapping in the name of a text file containing the base64 value. This will create a new keystore that you can attempt to manually build from in Unity. On Windows, this would be:
+
+```powershell
+[Text.Encoding]::Utf8.GetString([Convert]::FromBase64String('base 64 value')) | Out-File -FilePath .\user.keystore
+```

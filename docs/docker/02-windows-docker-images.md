@@ -24,7 +24,7 @@ Microsoft doesn't permit publishing images with VS Build tools [`discussion`](ht
 
 _Add to the system registry (in a container) path and version to Windows SDK_
 
-```pwsh
+```powershell
 $windowsSdkDirectory = "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0"
 
 New-Item -Path $windowsSdkDirectory -Force | Out-Null
@@ -52,14 +52,14 @@ _Mount list of volumes_
 _Gitlab runner config.toml example_
 
 ```toml
-...
+#...
 volumes = [
   "C:\\Program Files (x86)\\Windows Kits:C:\\Program Files (x86)\\Windows Kits",
   "C:\\Program Files (x86)\\Microsoft Visual Studio:C:\\Program Files (x86)\\Microsoft Visual Studio",
   "C:\\Program Files\\Microsoft Visual Studio:C:\\Program Files\\Microsoft Visual Studio",
   "C:\\ProgramData\\Microsoft\\VisualStudio:C:\\ProgramData\\Microsoft\\VisualStudio"
 ]
-...
+#...
 ```
 
 ### Licenses are not valid between containers runs
@@ -72,7 +72,7 @@ The simplest way is to write a couple of scripts (copied from [`Unity3d docs`](h
 
 **Note**: Path to Unity3d is `C:\Program Files\Unity\Hub\Editor\{UNITY_EDITOR_VERSION}\Editor\Unity.exe`
 
-```pwsh
+```powershell
 try {
   build.ps1
 } finally {
@@ -91,12 +91,12 @@ Default docker-for-windows settings are very resource-mean. It uses a single cor
 **config.toml**
 
 ```toml
-...
+#...
 [runners.docker]
   cpus = "12"
   memory = "13g"
   hostname = "dockerImage"
-...
+#...
 ```
 
 **Note:** `hostname` doesn't influence the performance, but one day can help with license association to a machine
@@ -131,7 +131,7 @@ The base image `windowsservercore` is too old and has some outdated packages. On
 
 The best option here is to replace it with something more recent
 
-```pwsh
+```powershell
 # Manually remove an old ssh-agent service
 sc.exe delete ssh-agent
 choco install openssh -params '"/SSHAgentFeature"' --no-progress -y
