@@ -1,8 +1,17 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # Dependencies
 /node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
 
 # Production
 /build
+/.search/*
+!/.search/.gitkeep
 
 # Generated files
 .docusaurus
@@ -19,4 +28,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.env
+.DS_Store
+.idea
+.vscode
+.vercel
