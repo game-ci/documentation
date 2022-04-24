@@ -46,8 +46,10 @@ Any subsequent steps assume you have read the above.
 
 Unity Actions are using
 [game-ci/docker](https://github.com/game-ci/docker/)
-since `unity-builder` version 2. Any version in this
-[list](/docs/docker/versions) can be used.
+since `unity-builder` version 2. 
+
+[//]: # (TODO: fix link to /docs/docker/versions)
+[//]: # (Any version in this list [list]&#40;/docs/docker/versions&#41; can be used.)
 
 ## Video Tutorial
 
