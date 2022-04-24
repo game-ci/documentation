@@ -24,7 +24,7 @@ It's generally considered good practice to use the same Unity version for your C
 
 ## Video tutorial
 
-https://www.youtube-nocookie.com/embed/k0NcedDzEqA
+<iframe src="https://www.youtube-nocookie.com/embed/k0NcedDzEqA" frameborder="0" allowfullscreen width="100%" height="600"></iframe>
 
 ## Setting up gitlab-ci for your Unity project
 

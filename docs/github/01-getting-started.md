@@ -53,7 +53,7 @@ since `unity-builder` version 2.
 
 ## Video Tutorial
 
-https://www.youtube-nocookie.com/embed/M2BZr02uai0
+<iframe src="//www.youtube-nocookie.com/embed/M2BZr02uai0" frameborder="0" allowfullscreen width="100%" height="600"></iframe>
 
 ## Workflow examples
 
