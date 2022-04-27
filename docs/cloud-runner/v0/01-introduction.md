@@ -27,7 +27,7 @@ For GitHub users you can consider this solution OR use Cloud Runner.
 
 Cloud Runner overall release status: `preview`
 
-```yaml
+```md
 | Release Status                         | Platform               |
 | -------------------------------------- | ---------------------- |
 | ✔️ experimental release                | **Kuberenets "K8s"\*** |
@@ -55,7 +55,7 @@ Link to release branches configuration section
 
 Major changes/epics:
 
-```yaml
+```md
 | What                                  | Status      | Why                                                                 |
 | ------------------------------------- | ----------- | ------------------------------------------------------------------- |
 | preview feedback gathering            | in-progress | Gather feedback on experience using cloud runner.                   |
