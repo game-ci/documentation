@@ -152,28 +152,6 @@
                 "type": "file"
               }
             },
-            "generic-depdency-hooks": {
-              "name": "Generic depdency hooks",
-              "meta": {
-                "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/06-generic-depdency-hooks.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/generic-depdency-hooks",
-                "path": "cloud-runner/advanced-topics/generic-depdency-hooks",
-                "order": 6,
-                "type": "file"
-              }
-            },
-            "secrets-and-secruity": {
-              "name": "Secrets and secruity",
-              "meta": {
-                "version": "v0",
-                "absolutePath": "cloud-runner/v0/05-advanced-topics/07-secrets-and-secruity.md",
-                "permalinkPath": "cloud-runner/v0/advanced-topics/secrets-and-secruity",
-                "path": "cloud-runner/advanced-topics/secrets-and-secruity",
-                "order": 7,
-                "type": "file"
-              }
-            },
             "logging": {
               "name": "Logging",
               "meta": {
@@ -181,6 +159,17 @@
                 "absolutePath": "cloud-runner/v0/05-advanced-topics/08-logging.md",
                 "permalinkPath": "cloud-runner/v0/advanced-topics/logging",
                 "path": "cloud-runner/advanced-topics/logging",
+                "order": 8,
+                "type": "file"
+              }
+            },
+            "secrets": {
+              "name": "Secrets",
+              "meta": {
+                "version": "v0",
+                "absolutePath": "cloud-runner/v0/05-advanced-topics/08-secrets.md",
+                "permalinkPath": "cloud-runner/v0/advanced-topics/secrets",
+                "path": "cloud-runner/advanced-topics/secrets",
                 "order": 8,
                 "type": "file"
               }
