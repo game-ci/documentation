@@ -56,28 +56,28 @@ Link to release branches configuration section
 Major changes/epics:
 
 ```yaml
-| What                                  | Status      | Why                                                                                      |
-| ------------------------------------- | ----------- | ---------------------------------------------------------------------------------------- |
-| preview feedback gathering            | in-progress | Gather feedback from commmunity on experience using cloud runner.                        |
-| preview beginner friendly pass        | in-progress | A pass over cloud runner's APIs and usability for the preview release stage.             |
-| preview garbage collection guarentees | todo        | Support for strong garbage collection guarentees.                                        |
-| custom dependency                     | started     | Support creating, checking the health of and cleaning up a custom depdency.              |
-| custom logging                        | todo        | Support extensible logging to your own loggin service.                                   |
-| performance benchmark                 | todo        | Benchmark cloud runner on a variety of project sizes.                                    |
-| better git sha driven support         | todo        | Target very specific points in git history.                                              |
-| support for uncommitted changes       | todo        | Run automated jobs without having to commit, discover errors early.                      |
-| warm starts and push hooks            | todo        | Do not have to wait for cloud runner to spin up a new machine.                           |
-| better storage engine to support      | todo        | Share libraries to speed up import between local machines<->automated machines.          |
-| cache entire repo                     | todo        | Currently only supports caching LFS and Unity Library folder.                            |
-| editor integration                    | todo        | Direct integration into the Unity editor to run containerized cloud jobs.                |
-| editor tracked mode                   | todo        | Game CI will run as a sidecar to your unity editor, building and validating any changes. |
-| network game features                 | todo        | Quick deploy simulation server, relay or headless client. Quick host.                    |
-| better unity test framework support   | todo        |                                                                                          |
-| better performance test support       | todo        |                                                                                          |
-| better rendering support              | todo        | Automate screenshots, video and remote control clients.                                  |
-| better artifact handling              | todo        | Better extensibility and support for artifact handling.                                  |
-| GCP Run                               | todo        |                                                                                          |
-| Azure                                 | todo        |                                                                                          |
+| What                                  | Status      | Why                                                                 |
+| ------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| preview feedback gathering            | in-progress | Gather feedback on experience using cloud runner.                   |
+| preview beginner friendly pass        | in-progress | Iteration on UX for cloud runner's APIs and usability.              |
+| preview garbage collection guarentees | todo        | Support for strong garbage collection guarentees.                   |
+| Resilience hooks                      | started     | Retry, startup and cleanup hooks.                                   |
+| custom logging                        | todo        | Support extensible logging to your own loggin service.              |
+| performance benchmark                 | todo        | Benchmark cloud runner on a variety of project sizes.               |
+| better git sha driven support         | todo        | Target very specific points in git history.                         |
+| support for uncommitted changes       | todo        | Run automated jobs without having to commit, discover errors early. |
+| warm starts and push hooks            | todo        | Do not have to wait for cloud runner to spin up a new machine.      |
+| better storage engine to support      | todo        | Share Unity import cache between local and runners.                 |
+| cache entire repo                     | todo        | Currently only supports caching LFS and Unity Library folder.       |
+| editor integration                    | todo        | Integration into Unity to run cloud workloads.                      |
+| stream editor changes                 | todo        | Game CI will stream any local changes to a build machine.           |
+| network game features                 | todo        | Quick deploy simulation server, relay or headless client.           |
+| better unity test framework support   | todo        |                                                                     |
+| better performance test support       | todo        |                                                                     |
+| better rendering support              | todo        | Automate screenshots, video and remote control clients.             |
+| better artifact handling              | todo        | Better extensibility and support for artifact handling.             |
+| GCP Run                               | todo        |                                                                     |
+| Azure                                 | todo        |                                                                     |
 ```
 
 Minor changes, tweaks and bugs:

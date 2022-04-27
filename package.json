@@ -54,7 +54,6 @@
     "react-visibility-sensor": "^5.1.1",
     "reactfire": "^3.0.0-rc.0",
     "redux": "^4.0.5",
-    "remark-gfm": "^3.0.1",
     "sass": "^1.32.8",
     "tsconfig-paths": "^3.9.0"
   },
