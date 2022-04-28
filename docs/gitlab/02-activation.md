@@ -54,7 +54,7 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    -logFile /dev/stdout \
    -batchmode \
    -nographics \
-   -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
+   -username 'YOUR_UNITY_USERNAME' -password 'YOUR_UNITY_PASSWORD'
    ```
 
 4. Wait for output that looks like this:
