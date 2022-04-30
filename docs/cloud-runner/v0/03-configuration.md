@@ -29,4 +29,4 @@ Add the following parameters to the build step described in the [builder section
 
 ### Detailed information on configuration can also be found in the action.yml defintion for the github action
 
-https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml
+[https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
