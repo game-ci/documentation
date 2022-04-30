@@ -12,7 +12,7 @@
 
 Game CI maintains a set of docker images that can be used to run workloads in many scenarios. Game CI also provides specific GitHub actions for running workflows on GitHub.
 
-### Main Use Cases
+### Use Cases
 
 #### Large GitHub Projects
 
