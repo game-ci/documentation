@@ -1,4 +1,4 @@
-## custom hook model
+## Custom Hooks
 
 ```yaml
 - commands: |

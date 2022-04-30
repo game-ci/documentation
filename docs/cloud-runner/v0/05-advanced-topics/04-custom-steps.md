@@ -1,4 +1,4 @@
-## custom step model
+## Custom Steps
 
 ```yaml
 - name: upload

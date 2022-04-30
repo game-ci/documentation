@@ -1,8 +1,10 @@
-# Kubernetes
+# Logging
+
+## Kubernetes
 
 - Native kuberentes logging api
 
-# AWS
+## AWS
 
 - Fargate log to Cloud Watch
 - Subscription from Cloud Watch to Kinesis
