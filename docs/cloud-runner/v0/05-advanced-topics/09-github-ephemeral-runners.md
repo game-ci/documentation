@@ -106,7 +106,6 @@ boot-game-ci-cloud-runner:
 post-job-message:
   runs-on: ubuntu-latest
   needs: [boot-game-ci-cloud-runner, boot-self-hosted-runner]
-  if: always()
   steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
