@@ -42,7 +42,7 @@
 | simple performance metrics for aws | todo   |                                                       |
 ```
 
-## Iteration 4 - "Advanced workflows for Unity to use and manage remote workloads"
+## Iteration 4 - Advanced workflows for Unity to use and manage remote workloads
 
 ```md
 | What                              | Status | Why                                                                 |
