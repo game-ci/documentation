@@ -9,7 +9,7 @@ Currently (development)
 ```bash
 git clone https://github.com/game-ci/unity-builder.git
 yarn install
-yarn run
+yarn run -m {mode} {... other command line parameters}
 ```
 
 Planned (just run with no previous install via)
