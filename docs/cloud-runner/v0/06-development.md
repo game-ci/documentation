@@ -1,51 +1,79 @@
 # Development Roadmap
 
+## Iteration 0 - "Quality of life"
+
 ```md
-Iteration 0
-| What | Status | Why |
-| ----------------------------------- | ----------- | ------------------------------------------------------------- |
-| preview feedback gathering | in-progress | Gather feedback on experience using cloud runner. |
-| preview beginner friendly | in-progress | Iteration on UX for cloud runner APIs and usability. |
-| track target git reference by sha | todo | Target very specific points in git history. |
-| cache entire working directory | todo | Currently only supports caching LFS and Unity Library folder. |
-| better unity test framework support | todo | |
-| garbage collection guarentees | todo | Support for strong garbage collection guarentees. |
+| What                                | Status      | Why                                                  |
+| ----------------------------------- | ----------- | ---------------------------------------------------- |
+| preview feedback gathering          | in-progress | Gather feedback on experience using cloud runner.    |
+| preview beginner friendly           | in-progress | Iteration on UX for cloud runner APIs and usability. |
+| better unity test framework support | todo        |                                                      |
+| garbage collection guarentees       | todo        | Support for strong garbage collection guarentees.    |
+| better cli options for inspection   | todo        |                                                      |
+```
 
-Iteration 2
-| What | Status | Why |
-| ---- | ------ | --- |
+## Iteration 2 - "Advanced caching"
 
-Iteration 3
-| What | Status | Why |
-| ------------------------ | ------ | ------------------------------------------------------- |
-| better artifact handling | todo | Better extensibility and support for artifact handling. |
+```md
+| What                               | Status | Why                                                           |
+| ---------------------------------- | ------ | ------------------------------------------------------------- |
+| cache entire working directory     | todo   | Currently only supports caching LFS and Unity Library folder. |
+| skip cache duplicates by hash      |        |                                                               |
+| configurable tar compression       |        |                                                               |
+| skip to existing working directory |        |                                                               |
+| unity incremental build caching    |        |                                                               |
+```
 
-Iteration 4
-| What | Status | Why |
+## Iteration 3 - GPU Workloads and capabilities for Cloud Runner
+
+```md
+| What                                         | Status | Why                                                     |
 | -------------------------------------------- | ------ | ------------------------------------------------------- |
-| Automate rendering with GPU provider support | todo | Automate screenshots, video and remote control clients. |
+| Automate rendering with GPU provider support | todo   | Automate screenshots, video and remote control clients. |
+```
 
-Iteration 5
-| What | Status | Why |
-| ------------------------------- | ------ | ----------------------------------------------------- |
-| better performance test support | todo | |
-| performance benchmark | todo | Benchmark cloud runner on a variety of project sizes. |
+## Iteration 4 - Simple controlled performance
 
-Iteration 6
-| What | Status | Why |
-| ---------------------------- | ------ | ------------------------------------------------------------------- |
-| editor integration | todo | Integration into Unity to run cloud workloads. |
-| stream editor changes | todo | Game CI will stream any local changes to a build machine. |
-| send uncommitted git changes | todo | Run automated jobs without having to commit, discover errors early. |
-| warm starts and push hooks | todo | Do not have to wait for cloud runner to spin up a new machine. |
+```md
+| What                               | Status | Why                                                   |
+| ---------------------------------- | ------ | ----------------------------------------------------- |
+| better performance test support    | todo   |                                                       |
+| performance benchmark / sample     | todo   | Benchmark cloud runner on a variety of project sizes. |
+| simple performance metrics for aws |        |                                                       |
+```
 
-Backlog
-| What | Status | Why |
-| --------------------- | ------ | --------------------------------------------------------- |
-| Resilience hooks | todo | Retry, startup and cleanup hooks. |
-| custom logging | todo | Support extensible logging to your own loggin service. |
-| custom storage engine | todo | Share Unity import cache between local and runners. |
-| network game features | todo | Quick deploy simulation server, relay or headless client. |
+## Iteration 5 - "Advanced workflows for Unity to use and manage remote workloads"
+
+```md
+| What                              | Status | Why                                                                 |
+| --------------------------------- | ------ | ------------------------------------------------------------------- |
+| editor integration                | todo   | Integration into Unity to run cloud workloads.                      |
+| stream editor changes             | todo   | Game CI will stream any local changes to a build machine.           |
+| send uncommitted git changes      | todo   | Run automated jobs without having to commit, discover errors early. |
+| warm starts and push hooks        | todo   | Do not have to wait for cloud runner to spin up a new machine.      |
+| track target git reference by sha | todo   | Target very specific points in git history.                         |
+```
+
+## Backlog
+
+```md
+| What                                             | Status | Why                                                       |
+| ------------------------------------------------ | ------ | --------------------------------------------------------- |
+| Resilience hooks                                 | todo   | Retry, startup and cleanup hooks.                         |
+| custom logging                                   | todo   | Support extensible logging to your own loggin service.    |
+| custom storage engine                            | todo   | Share Unity import cache between local and runners.       |
+| better artifact handling                         | todo   | Better extensibility and support for artifact handling.   |
+| network game features                            | todo   | Quick deploy simulation server, relay or headless client. |
+| remote control sample                            |        |                                                           |
+| Cleaned up debug/prod                            |        |                                                           |
+| Custom cloud runner docker image                 |        |                                                           |
+| Infographics for cloud runner docs               |        |                                                           |
+| detect and warn about impending binary conflicts |        |                                                           |
+| Test coverage for hooks and steps                |        |                                                           |
+| Multiplayer test sample                          |        |                                                           |
+| Code report / project report                     |        |                                                           |
+| Kuberenetes Rook support                         |        |                                                           |
+| Custom provider sample                           | todo   |                                                           |
 ```
 
 You can find a more granular roadmap pinned in the "#cloud-runner" discord channel:
