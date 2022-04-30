@@ -1,6 +1,6 @@
 # Development Roadmap
 
-## Iteration 0 - "Quality of life"
+## Iteration 0 - Quality of life
 
 ```md
 | What                                | Status      | Why                                                  |
@@ -12,7 +12,7 @@
 | better cli options for inspection   | todo        |                                                      |
 ```
 
-## Iteration 2 - "Advanced caching"
+## Iteration 2 - Advanced caching
 
 ```md
 | What                               | Status | Why                                                           |
@@ -23,8 +23,6 @@
 | skip to existing working directory | todo   |                                                               |
 | unity incremental build caching    | todo   |                                                               |
 ```
-
-\_ \_
 
 ## Iteration 3 - GPU Workloads and capabilities for Cloud Runner
 
