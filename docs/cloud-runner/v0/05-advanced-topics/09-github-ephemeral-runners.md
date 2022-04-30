@@ -6,17 +6,6 @@ boot-self-hosted-runner:
   outputs:
     BUILD_GUID: ${{ steps.start-runner.outputs.BUILD_GUID }}
   steps:
-    - name: Actions for Discord
-      uses: Ilshidur/action-discord@0.3.2
-      env:
-        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        DISCORD_USERNAME: FPS.GameClient.Bot.${{ github.workflow }}.EphemeralJobs
-      with:
-        args: |
-          🧩 Area of Operations: [Run Number: {{ GITHUB_RUN_NUMBER }}]({{GITHUB_SERVER_URL}}/{{GITHUB_REPOSITORY}}/actions/runs/{{GITHUB_RUN_ID}})
-          _ _
-          🛠️ **Starting automated workflow from source** Branch:`{{ GITHUB_REF_NAME }}` Commit Message:`${{ github.event.head_commit.message }}` ♻️ 
-          _ _
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
