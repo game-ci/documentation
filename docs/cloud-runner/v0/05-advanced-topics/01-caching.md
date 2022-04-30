@@ -2,14 +2,12 @@
 
 ## What is cached now
 
-- full LFS files
+- LFS files
 - Unity Library folder
 
 ## Development roadmap
 
-- Full project files/repo caching
-
-## Preview release stage notes (will fix)
-
-- Always pushes an update to cache after build
+- Full project working directory support
+- Selectively skip caching when hashed cache selection doesn't change
+- `tar` supports various types of compression. This will be exposed as an option in the Cloud Runner API.
 - Branch is used as cache key, new branch always misses cache once
