@@ -12,9 +12,12 @@ Primarily Cloud Runner is useful for game development because it supports large 
 
 However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
-## Do you need cloud runner or plain game-ci?
+## When to use cloud runner or plain game-ci?
 
-Game CI maintains a set of docker images that can be used to run workloads in many scenarios. Game CI also provides specific GitHub actions for running workflows on GitHub.
+Game CI maintains a set of docker images that can be used to run workloads in many scenarios.
+
+Game CI also provides specific GitHub actions for running workflows on GitHub. And a similar workflow for running Game CI on GitLab and Circle CI.
+_All of these options use the build server resources provided by those systems, this can be a constraint or very convenient_
 
 ### Use Cases
 
