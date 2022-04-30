@@ -1,5 +1,10 @@
 # Configuration
 
+### Configuration definition yaml
+
+All parameters and descriptions are listed here:
+[https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
+
 ### GitHub Access Token
 
 Include the following variable in the `with` section of the builder step:
@@ -23,6 +28,9 @@ _This enables us to get the repository from the AWS build machine._
 - uses: game-ci/unity-builder@cloud-runner-stable
 ```
 
-### Configuration definition yaml
+### Provider Configuration
+You must specify the Cloud Provider to use via the parameter `cloudRunnerCluster`.
 
-[https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
+You can see further details about the requirements  of each in the getting started topics for each provider:
+(Getting Started - AWS)[/getting-start/aws]
+(Getting Started - Kubernetes)[/getting-start/kubernetes]
