@@ -1,9 +1,12 @@
-import BuildFailureDetails from '@site/src/components/docs/versions/build-failure-details';
-import DockerImageLinkOrRetryButton from '@site/src/components/docs/versions/docker-image-link-or-retry-button';
-import Spinner from '@site/src/components/reusable/spinner';
+import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
-import DataTable from "@site/src/components/DataTable/DataTable";
+import { Table, Tooltip } from 'antd';
+import Spinner from "@site/src/components/reusable/spinner";
+import DockerImageLinkOrRetryButton
+  from "@site/src/components/docs/versions/docker-image-link-or-retry-button";
+import BuildFailureDetails from "@site/src/components/docs/versions/build-failure-details";
+// import styles from './builds.module.scss';
 
 interface RepoVersionInfo {
   version: string;
@@ -47,11 +50,9 @@ const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props
           case 'published':
             return icon;
           case 'failed':
-            // return <Tooltip title={record.failure?.reason}>{icon}</Tooltip>;
-            return <span>{icon}{record.failure?.reason}</span>
+            return <Tooltip title={record.failure?.reason}>{icon}</Tooltip>;
           case 'started':
-            // return <Tooltip title="Build has started">{icon}</Tooltip>;
-            return <span>Build has started {icon}</span>
+            return <Tooltip title="Build has started">{icon}</Tooltip>;
           default:
             return value;
         }
@@ -112,8 +113,7 @@ const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props
       sorter: (a, b) => a.buildInfo.repoVersion.localeCompare(b.buildInfo.repoVersion, 'en-GB'),
       ellipsis: true,
     },
-  // ] as ColumnsType<any>;
-  ];
+  ] as ColumnsType<any>;
 
   const expandable = {
     rowExpandable: () => true,
@@ -129,21 +129,17 @@ const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props
     ),
   };
 
-  //<PesterDataTable
-  //   columns={columns}
-  //   data={ articles }
-  // />
   return (
-    <DataTable
+    <Table
       {...props}
       key={ciJobId}
-      data={data}
+      dataSource={data}
       columns={columns}
-      // sticky
-      // rowKey={(row) => row.NO_ID_FIELD}
+      sticky
+      rowKey={(row) => row.NO_ID_FIELD}
       // rowClassName={() => styles.stickyRow}
-      // expandable={expandable}
-      // pagination={false}
+      expandable={expandable}
+      pagination={false}
     />
   );
 };

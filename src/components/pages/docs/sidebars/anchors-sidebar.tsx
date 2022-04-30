@@ -1,4 +1,4 @@
-import AnchorView from '@site/src/components/markdown/components/anchor-view';
+import AnchorView from '@/components/markdown/components/anchor-view';
 import { Layout } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';

@@ -4,7 +4,6 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './index.module.css';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -33,7 +32,7 @@ export default function Home(): JSX.Element {
       description="The fastest and easiest way to automatically test and build your game projects">
       <HomepageHeader />
       <main>
-        <HomepageFeatures />
+        {/*<HomepageFeatures />*/}
       </main>
     </Layout>
   );

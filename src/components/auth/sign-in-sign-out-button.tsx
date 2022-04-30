@@ -1,4 +1,5 @@
-import * as firebase from 'firebase/app';
+import { Button } from 'antd';
+import firebase from 'firebase/app';
 import { useState } from 'react';
 import { AiOutlineClose, AiTwotoneLock } from 'react-icons/all';
 import { useAuth, AuthCheck } from 'reactfire';
@@ -40,18 +41,17 @@ const SignInSignOutButton = (props) => {
   };
 
   return (
-    <button
+    <Button
       {...props}
-      className={`${props.className} ${isLoading ? 'loading' : ''}`}
       onClick={auth.currentUser ? signOut : signIn}
+      loading={isLoading}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <AuthCheck fallback={<AiTwotoneLock />}>
         {isHovered ? <AiOutlineClose color="#ff4d4f" /> : <AiTwotoneLock color="#52c41a" />}
       </AuthCheck>
-    </button>
-
+    </Button>
   );
 };
 

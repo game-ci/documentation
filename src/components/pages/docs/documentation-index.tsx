@@ -1,7 +1,7 @@
-import DocumentationPage from '@site/src/components/pages/docs/documentation-page';
+import DocumentationPage from '@/components/pages/docs/documentation-page';
 import Link from 'next/link';
 import { IoLogoDiscord, IoLogoGithub } from 'react-icons/all';
-import Header from '@site/src/components/pages/home/header';
+import Header from '@/components/pages/home/header';
 
 export default function DocumentationIndex() {
   return (

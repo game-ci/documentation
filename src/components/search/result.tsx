@@ -2,7 +2,7 @@ import { Tag } from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Highlight } from 'react-instantsearch-dom';
-import config from '@site/src/core/config';
+import config from '@/core/config';
 
 const Result = ({ hit }) => {
   const { docsPath } = config;

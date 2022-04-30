@@ -1,3 +1,4 @@
+import { Collapse } from 'antd';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import UnityVersion from "@site/src/components/docs/versions/unity-version";
@@ -68,20 +69,20 @@ const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
       {failures.length > 0 && (
         <>
           <h3>Current failures</h3>
-          {/*<Collapse accordion style={{ marginBottom: 24 }}>*/}
+          <Collapse accordion style={{ marginBottom: 24 }}>
             {failures.map((version) => (
               <UnityVersion key={version.NO_ID_FIELD} data={version} />
             ))}
-          {/*</Collapse>*/}
+          </Collapse>
         </>
       )}
 
       <h3>All versions</h3>
-      {/*<Collapse accordion>*/}
+      <Collapse accordion>
         {isLoading
           ? loading
           : data.map((version) => <UnityVersion key={version.NO_ID_FIELD} data={version} />)}
-      {/*</Collapse>*/}
+      </Collapse>
     </main>
   );
 };

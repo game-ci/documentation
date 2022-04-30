@@ -49,22 +49,15 @@ const DockerImageLinkOrRetryButton = ({ record }: Props) => {
 
   return (
     <SimpleAuthCheck fallback={<span />} requiredClaims={{ admin: true }}>
-      {/*<Tooltip title={`Delete tag "${imageTag}" then click this retry button.`}>*/}
-      {/*  <button*/}
-      {/*    type="button"*/}
-      {/*    onClick={onClick}*/}
-      {/*    style={{ padding: 0, border: 0, outline: 0, cursor: 'pointer' }}*/}
-      {/*  >*/}
-      {/*    <HiOutlineRefresh color={retryRequested ? 'orange' : 'red'} />*/}
-      {/*  </button>*/}
-      {/*</Tooltip>*/}
-      <button
-        type="button"
-        onClick={onClick}
-        style={{ padding: 0, border: 0, outline: 0, cursor: 'pointer' }}
-      >
-        <HiOutlineRefresh color={retryRequested ? 'orange' : 'red'} />
-      </button>
+      <Tooltip title={`Delete tag "${imageTag}" then click this retry button.`}>
+        <button
+          type="button"
+          onClick={onClick}
+          style={{ padding: 0, border: 0, outline: 0, cursor: 'pointer' }}
+        >
+          <HiOutlineRefresh color={retryRequested ? 'orange' : 'red'} />
+        </button>
+      </Tooltip>
     </SimpleAuthCheck>
   );
 };

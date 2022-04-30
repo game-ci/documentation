@@ -1,5 +1,5 @@
-import Section from '@site/src/components/pages/home/section/section';
-import FadeIntoView from '@site/src/components/reusable/animations/fade-into-view';
+import Section from '@/components/pages/home/section/section';
+import FadeIntoView from '@/components/reusable/animations/fade-into-view';
 import React, { createRef } from 'react';
 import { Typography } from 'antd';
 import GameCiLogo from '../../../../assets/images/game-ci-brand-logo-wordmark.svg';

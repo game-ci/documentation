@@ -1,4 +1,4 @@
-import Section from '@site/src/components/pages/home/section/section';
+import Section from '@/components/pages/home/section/section';
 import React from 'react';
 import { Typography } from 'antd';
 

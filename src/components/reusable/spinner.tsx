@@ -1,8 +1,7 @@
 import React from 'react';
 import { AiOutlineLoading3Quarters, FaSpinner } from 'react-icons/all';
+import {ThreeDots} from "@site/src/components/reusable/spinner/three-dots";
 // import styles from './spinner.module.scss';
-import { css } from "@emotion/react";
-import ClipLoader from "react-spinners/ClipLoader";
 
 interface Props {
   type: 'spin' | 'pulse' | 'slow' | 'dots';
@@ -11,13 +10,13 @@ interface Props {
 const Spinner = ({ type }: Props) => {
   switch (type) {
     case 'pulse':
-      return 
+      return <FaSpinner />;
     case 'spin':
-      return 
+      return <AiOutlineLoading3Quarters />;
     case 'slow':
-      return 
+      return <AiOutlineLoading3Quarters />;
     case 'dots':
-      return 
+      return <ThreeDots color="green" height={14} width={14} />;
     default:
       throw new Error(`Spinner of type ${type} is not implemented.`);
   }

@@ -1,9 +1,9 @@
-// import SignInSignOutButton from '@site/src/components/auth/sign-in-sign-out-button';
 import SignInSignOutButton from "@site/src/components/auth/sign-in-sign-out-button";
+import { Select } from 'antd';
 import React, { useState } from 'react';
 import UnityVersions from './unity-versions';
 
-// const { Option } = Select;
+const { Option } = Select;
 
 interface Props {
   versions: { [key: string]: any }[];
@@ -19,17 +19,17 @@ const ImageVersions = ({ versions }: Props) => {
 
       <div style={{ paddingBottom: 8 }}>
         <span>Docker repo version: </span>
-        {/*<Select defaultValue={selectedVersion} onChange={setSelectedVersion} loading={isLoading}>*/}
-        {/*  {versions.map((version) => {*/}
-        {/*    const { NO_ID_FIELD: id } = version;*/}
+        <Select defaultValue={selectedVersion} onChange={setSelectedVersion} loading={isLoading}>
+          {versions.map((version) => {
+            const { NO_ID_FIELD: id } = version;
 
-        {/*    return (*/}
-        {/*      <Option key={id} value={id}>*/}
-        {/*        {id}*/}
-        {/*      </Option>*/}
-        {/*    );*/}
-        {/*  })}*/}
-        {/*</Select>*/}
+            return (
+              <Option key={id} value={id}>
+                {id}
+              </Option>
+            );
+          })}
+        </Select>
         <SignInSignOutButton style={{ float: 'right' }} />
       </div>
 

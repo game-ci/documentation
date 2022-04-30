@@ -1,4 +1,4 @@
-import { PageContext } from '@site/src/components/context/page-context';
+import { PageContext } from '@/components/context/page-context';
 import { Button } from 'antd';
 import { AiOutlineGithub } from 'react-icons/all';
 import { useContext } from 'react';

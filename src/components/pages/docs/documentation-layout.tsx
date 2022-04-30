@@ -1,4 +1,4 @@
-import BaseLayout from '@site/src/components/layout/base-layout';
+import BaseLayout from '@/components/layout/base-layout';
 import type { ReactNodeLike } from 'prop-types';
 import { Layout } from 'antd';
 import Breadcrumb from '../../layout/main/breadcrumb';

@@ -1,6 +1,6 @@
-import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
-import { useNotification } from '@site/src/core/hooks/use-notification';
 import React, { useState } from 'react';
+import {useNotification} from "@site/src/core/hooks/use-notification";
+import {SimpleAuthCheck} from "@site/src/components/auth/safe-auth-check";
 
 interface Props {
   changeSet: string;
@@ -11,10 +11,10 @@ const ShowAndCopyChangeSetHashButton = ({ changeSet }: Props) => {
   // const clipboard = useClipboard();
   const notify = useNotification();
 
-  const onCopyChangeSet = async (event) => {
-    event.stopPropagation();
-    // await clipboard.write(changeSet, () => notify.info({ message: 'Change hash was copied' }));
-  };
+  // const onCopyChangeSet = async (event) => {
+  //   event.stopPropagation();
+  //   await clipboard.write(changeSet, () => notify.info({ message: 'Change hash was copied' }));
+  // };
 
   return (
     <SimpleAuthCheck fallback={<span />} requiredClaims={{ admin: true }}>
@@ -30,7 +30,7 @@ const ShowAndCopyChangeSetHashButton = ({ changeSet }: Props) => {
             }}
             onMouseEnter={() => setHoverHash(true)}
             onMouseLeave={() => setHoverHash(false)}
-            onClick={(event) => onCopyChangeSet(event)}
+            // onClick={(event) => onCopyChangeSet(event)}
           >
             {changeSet}
           </button>

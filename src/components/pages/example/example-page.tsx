@@ -1,4 +1,4 @@
-import DocumentationPage from '@site/src/components/pages/docs/documentation-page';
+import DocumentationPage from '@/components/pages/docs/documentation-page';
 import Link from 'next/link';
 import { Form, Select, InputNumber, Switch, Slider, Button, Typography } from 'antd';
 import { AiFillSmile } from 'react-icons/all';

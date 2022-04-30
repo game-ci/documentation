@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
-import MarkdownRenderer from '@site/src/components/markdown/markdown-renderer';
-import { PageContext } from '@site/src/components/context/page-context';
+import MarkdownRenderer from '@/components/markdown/markdown-renderer';
+import { PageContext } from '@/components/context/page-context';
 import { ReactNodeLike } from 'prop-types';
 import DocumentationLayout from './documentation-layout';
 import MenuStructureSidebar from './sidebars/menu-structure-sidebar';
