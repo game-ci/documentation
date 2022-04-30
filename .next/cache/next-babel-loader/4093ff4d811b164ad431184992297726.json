@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { readFileSync } from 'fs';\nexport default function readFile(pathToFile) {\n  const entry = readFileSync(pathToFile);\n  return entry.toString();\n}","map":null,"metadata":{},"sourceType":"module"}

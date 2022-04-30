@@ -1,0 +1,1 @@
+{"ast":null,"code":"export default function redirect(context, url) {\n  var res = context.res;\n\n  if (res) {\n    res.writeHead(307, {\n      Location: url\n    });\n    res.end();\n  }\n\n  return {};\n}","map":null,"metadata":{},"sourceType":"module"}

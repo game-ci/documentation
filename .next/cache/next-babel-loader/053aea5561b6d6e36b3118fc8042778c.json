@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { combineReducers } from 'redux';\nimport { selectedVersionSlice } from './selected-version-slice';\nexport const versionsReducer = combineReducers({\n  selected: selectedVersionSlice.reducer\n});\nexport const versionsSaga = () => {};","map":null,"metadata":{},"sourceType":"module"}

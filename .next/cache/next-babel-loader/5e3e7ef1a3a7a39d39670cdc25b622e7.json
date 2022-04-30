@@ -1,0 +1,1 @@
+{"ast":null,"code":"var isServer = function isServer() {\n  return false;\n};\n\nexport default isServer;","map":null,"metadata":{},"sourceType":"module"}

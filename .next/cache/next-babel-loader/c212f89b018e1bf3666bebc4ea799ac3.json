@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { jsx as _jsx } from \"react/jsx-runtime\";\n\nconst LoadingText = ({\n  children\n}) => /*#__PURE__*/_jsx(\"div\", {\n  style: {\n    padding: '0 24px'\n  },\n  children: children\n});\n\nexport default LoadingText;","map":null,"metadata":{},"sourceType":"module"}

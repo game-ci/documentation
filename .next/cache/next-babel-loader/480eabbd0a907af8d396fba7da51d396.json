@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createContext } from 'react';\nimport menuStructure from '@/core/menu-structure.json';\nconst defaultContext = {\n  menuStructure\n};\nconst MenuContext = /*#__PURE__*/createContext(defaultContext);\nMenuContext.displayName = 'MenuContext';\nexport default MenuContext;","map":null,"metadata":{},"sourceType":"module"}

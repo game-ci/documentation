@@ -1,0 +1,18 @@
+exports.ids = [4];
+exports.modules = {
+
+/***/ "./docs/cloud-runner/v0/04-command-line.md":
+/*!*************************************************!*\
+  !*** ./docs/cloud-runner/v0/04-command-line.md ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("# Cloud Runner Command Line Support\n\nYou can install Game CI locally and start cloud runner jobs from the command line or by integrating your own tools.\n\n# Install\n\nCurrently (development)\n\n```bash\ngit clone https://github.com/game-ci/unity-builder.git\nyarn install\nyarn run -m {mode} {... other command line parameters}\n```\n\nPlanned (just run with no previous install via)\n\n```bash\ndpx game-ci build\n```\n\n# List commands and input\n\n`game-ci -h` or `game-ci --help`\n\n# Configuration\n\nWhen running any unity workload you must provide valid unity credentials. In addition to any other credentials this is already quite a lot of input. For this reason, it is common to use the command line mode with input override (link here). This enables you to provide a command to pull input, with this approach you can create a file to store credentials or pull from a secret manager.\n\n`game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand=\"gcloud secrets versions access 1 --secret=\\\"{0}\\\"\"`\n");
+
+/***/ })
+
+};;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9kb2NzL2Nsb3VkLXJ1bm5lci92MC8wNC1jb21tYW5kLWxpbmUubWQiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7QUFBQTtBQUFlLGtXQUFtUyxLQUFLLEVBQUUsa0NBQWtDLGl2QkFBaXZCLEVBQUUsVUFBVSxFIiwiZmlsZSI6IjQuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCBcIiMgQ2xvdWQgUnVubmVyIENvbW1hbmQgTGluZSBTdXBwb3J0XFxuXFxuWW91IGNhbiBpbnN0YWxsIEdhbWUgQ0kgbG9jYWxseSBhbmQgc3RhcnQgY2xvdWQgcnVubmVyIGpvYnMgZnJvbSB0aGUgY29tbWFuZCBsaW5lIG9yIGJ5IGludGVncmF0aW5nIHlvdXIgb3duIHRvb2xzLlxcblxcbiMgSW5zdGFsbFxcblxcbkN1cnJlbnRseSAoZGV2ZWxvcG1lbnQpXFxuXFxuYGBgYmFzaFxcbmdpdCBjbG9uZSBodHRwczovL2dpdGh1Yi5jb20vZ2FtZS1jaS91bml0eS1idWlsZGVyLmdpdFxcbnlhcm4gaW5zdGFsbFxcbnlhcm4gcnVuIC1tIHttb2RlfSB7Li4uIG90aGVyIGNvbW1hbmQgbGluZSBwYXJhbWV0ZXJzfVxcbmBgYFxcblxcblBsYW5uZWQgKGp1c3QgcnVuIHdpdGggbm8gcHJldmlvdXMgaW5zdGFsbCB2aWEpXFxuXFxuYGBgYmFzaFxcbmRweCBnYW1lLWNpIGJ1aWxkXFxuYGBgXFxuXFxuIyBMaXN0IGNvbW1hbmRzIGFuZCBpbnB1dFxcblxcbmBnYW1lLWNpIC1oYCBvciBgZ2FtZS1jaSAtLWhlbHBgXFxuXFxuIyBDb25maWd1cmF0aW9uXFxuXFxuV2hlbiBydW5uaW5nIGFueSB1bml0eSB3b3JrbG9hZCB5b3UgbXVzdCBwcm92aWRlIHZhbGlkIHVuaXR5IGNyZWRlbnRpYWxzLiBJbiBhZGRpdGlvbiB0byBhbnkgb3RoZXIgY3JlZGVudGlhbHMgdGhpcyBpcyBhbHJlYWR5IHF1aXRlIGEgbG90IG9mIGlucHV0LiBGb3IgdGhpcyByZWFzb24sIGl0IGlzIGNvbW1vbiB0byB1c2UgdGhlIGNvbW1hbmQgbGluZSBtb2RlIHdpdGggaW5wdXQgb3ZlcnJpZGUgKGxpbmsgaGVyZSkuIFRoaXMgZW5hYmxlcyB5b3UgdG8gcHJvdmlkZSBhIGNvbW1hbmQgdG8gcHVsbCBpbnB1dCwgd2l0aCB0aGlzIGFwcHJvYWNoIHlvdSBjYW4gY3JlYXRlIGEgZmlsZSB0byBzdG9yZSBjcmVkZW50aWFscyBvciBwdWxsIGZyb20gYSBzZWNyZXQgbWFuYWdlci5cXG5cXG5gZ2FtZS1jaSAtbSBjbGkgLS1wb3B1bGF0ZU92ZXJyaWRlIHRydWUgLS1yZWFkSW5wdXRGcm9tT3ZlcnJpZGVMaXN0IFVOSVRZX0VNQUlMLFVOSVRZX1NFUklBTCxVTklUWV9QQVNTV09SRCAtLXJlYWRJbnB1dE92ZXJyaWRlQ29tbWFuZD1cXFwiZ2Nsb3VkIHNlY3JldHMgdmVyc2lvbnMgYWNjZXNzIDEgLS1zZWNyZXQ9XFxcXFxcXCJ7MH1cXFxcXFxcIlxcXCJgXFxuXCI7Il0sInNvdXJjZVJvb3QiOiIifQ==

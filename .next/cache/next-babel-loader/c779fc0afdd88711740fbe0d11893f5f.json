@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const sleep = async ms => {\n  return new Promise(resolve => setTimeout(resolve, ms));\n};","map":null,"metadata":{},"sourceType":"module"}

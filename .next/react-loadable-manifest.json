@@ -1,0 +1,110 @@
+{
+  "./dev/noop": [
+    {
+      "id": "./node_modules/next/dist/client/dev/noop.js",
+      "file": "static/chunks/0.js"
+    }
+  ],
+  "firebase/analytics": [
+    {
+      "id": "./node_modules/@firebase/analytics/dist/index.esm.js",
+      "file": "static/chunks/analytics.js"
+    },
+    {
+      "id": "./node_modules/@firebase/installations/dist/index.esm.js",
+      "file": "static/chunks/analytics.js"
+    },
+    {
+      "id": "./node_modules/firebase/analytics/dist/index.esm.js",
+      "file": "static/chunks/analytics.js"
+    },
+    {
+      "id": "./node_modules/idb/build/idb.js",
+      "file": "static/chunks/analytics.js"
+    }
+  ],
+  "firebase/database": [
+    {
+      "id": "./node_modules/@firebase/database/dist/index.esm.js",
+      "file": "static/chunks/database.js"
+    },
+    {
+      "id": "./node_modules/firebase/database/dist/index.esm.js",
+      "file": "static/chunks/database.js"
+    }
+  ],
+  "firebase/functions": [
+    {
+      "id": "./node_modules/@firebase/functions/dist/index.esm.js",
+      "file": "static/chunks/functions.js"
+    },
+    {
+      "id": "./node_modules/firebase/functions/dist/index.esm.js",
+      "file": "static/chunks/functions.js"
+    }
+  ],
+  "firebase/messaging": [
+    {
+      "id": "./node_modules/@firebase/installations/dist/index.esm.js",
+      "file": "static/chunks/messaging.js"
+    },
+    {
+      "id": "./node_modules/@firebase/messaging/dist/index.esm.js",
+      "file": "static/chunks/messaging.js"
+    },
+    {
+      "id": "./node_modules/firebase/messaging/dist/index.esm.js",
+      "file": "static/chunks/messaging.js"
+    },
+    {
+      "id": "./node_modules/idb/build/idb.js",
+      "file": "static/chunks/messaging.js"
+    }
+  ],
+  "firebase/performance": [
+    {
+      "id": "./node_modules/@firebase/installations/dist/index.esm.js",
+      "file": "static/chunks/performance.js"
+    },
+    {
+      "id": "./node_modules/@firebase/performance/dist/index.esm.js",
+      "file": "static/chunks/performance.js"
+    },
+    {
+      "id": "./node_modules/firebase/performance/dist/index.esm.js",
+      "file": "static/chunks/performance.js"
+    },
+    {
+      "id": "./node_modules/idb/build/idb.js",
+      "file": "static/chunks/performance.js"
+    }
+  ],
+  "firebase/remote-config": [
+    {
+      "id": "./node_modules/@firebase/installations/dist/index.esm.js",
+      "file": "static/chunks/remoteConfig.js"
+    },
+    {
+      "id": "./node_modules/@firebase/remote-config/dist/index.esm.js",
+      "file": "static/chunks/remoteConfig.js"
+    },
+    {
+      "id": "./node_modules/firebase/remote-config/dist/index.esm.js",
+      "file": "static/chunks/remoteConfig.js"
+    },
+    {
+      "id": "./node_modules/idb/build/idb.js",
+      "file": "static/chunks/remoteConfig.js"
+    }
+  ],
+  "firebase/storage": [
+    {
+      "id": "./node_modules/@firebase/storage/dist/index.esm.js",
+      "file": "static/chunks/storage.js"
+    },
+    {
+      "id": "./node_modules/firebase/storage/dist/index.esm.js",
+      "file": "static/chunks/storage.js"
+    }
+  ]
+}

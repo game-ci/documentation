@@ -1,0 +1,18 @@
+exports.ids = [10];
+exports.modules = {
+
+/***/ "./docs/cloud-runner/v0/05-advanced-topics/06-garbage-collection.md":
+/*!**************************************************************************!*\
+  !*** ./docs/cloud-runner/v0/05-advanced-topics/06-garbage-collection.md ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("# Concept\n\nCloud Runner creates, manages and destroys cloud workloads you request. Resources have to be created.\n\nIt is always possible a resource doesn't get deleted by cloud runner. Even if the chance is small, we want to consider the risk of a cloud bill growing unexpectedly seriously.\n\nThat is the only way to ensure a tool is safe and trustworthy for the broadast range of people.\n\n# Garbage collection guarentees now (preview releease)\n\nCloud Runner runs the workload and cleans up the resources. It does not expect to be interrupted. A failure within the cloud task will not cause a failure to collect garbage.\n\nIf you cancel a task, the resources will not be cleaned up.\n\n# Garbage collection guarentees will be provided (by end of preview release stage)\n\nCloud runner will collect the garbage when it next cleans up. There will be utility functions to clean up directly.\n\n# Garbage collection guaretnees we could offer (but maybe shouldn't?)\n\nCloud runner can schedule cron jobs to independently guarentee shutdown (already possible via custom hooks).\n\n# Garbage collection utilities\n\nList garbage collection\n(link to cli)\n");
+
+/***/ })
+
+};;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9kb2NzL2Nsb3VkLXJ1bm5lci92MC8wNS1hZHZhbmNlZC10b3BpY3MvMDYtZ2FyYmFnZS1jb2xsZWN0aW9uLm1kIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUE7QUFBZSx3c0NBQXlvQyxFIiwiZmlsZSI6IjEwLmpzIiwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGRlZmF1bHQgXCIjIENvbmNlcHRcXG5cXG5DbG91ZCBSdW5uZXIgY3JlYXRlcywgbWFuYWdlcyBhbmQgZGVzdHJveXMgY2xvdWQgd29ya2xvYWRzIHlvdSByZXF1ZXN0LiBSZXNvdXJjZXMgaGF2ZSB0byBiZSBjcmVhdGVkLlxcblxcbkl0IGlzIGFsd2F5cyBwb3NzaWJsZSBhIHJlc291cmNlIGRvZXNuJ3QgZ2V0IGRlbGV0ZWQgYnkgY2xvdWQgcnVubmVyLiBFdmVuIGlmIHRoZSBjaGFuY2UgaXMgc21hbGwsIHdlIHdhbnQgdG8gY29uc2lkZXIgdGhlIHJpc2sgb2YgYSBjbG91ZCBiaWxsIGdyb3dpbmcgdW5leHBlY3RlZGx5IHNlcmlvdXNseS5cXG5cXG5UaGF0IGlzIHRoZSBvbmx5IHdheSB0byBlbnN1cmUgYSB0b29sIGlzIHNhZmUgYW5kIHRydXN0d29ydGh5IGZvciB0aGUgYnJvYWRhc3QgcmFuZ2Ugb2YgcGVvcGxlLlxcblxcbiMgR2FyYmFnZSBjb2xsZWN0aW9uIGd1YXJlbnRlZXMgbm93IChwcmV2aWV3IHJlbGVlYXNlKVxcblxcbkNsb3VkIFJ1bm5lciBydW5zIHRoZSB3b3JrbG9hZCBhbmQgY2xlYW5zIHVwIHRoZSByZXNvdXJjZXMuIEl0IGRvZXMgbm90IGV4cGVjdCB0byBiZSBpbnRlcnJ1cHRlZC4gQSBmYWlsdXJlIHdpdGhpbiB0aGUgY2xvdWQgdGFzayB3aWxsIG5vdCBjYXVzZSBhIGZhaWx1cmUgdG8gY29sbGVjdCBnYXJiYWdlLlxcblxcbklmIHlvdSBjYW5jZWwgYSB0YXNrLCB0aGUgcmVzb3VyY2VzIHdpbGwgbm90IGJlIGNsZWFuZWQgdXAuXFxuXFxuIyBHYXJiYWdlIGNvbGxlY3Rpb24gZ3VhcmVudGVlcyB3aWxsIGJlIHByb3ZpZGVkIChieSBlbmQgb2YgcHJldmlldyByZWxlYXNlIHN0YWdlKVxcblxcbkNsb3VkIHJ1bm5lciB3aWxsIGNvbGxlY3QgdGhlIGdhcmJhZ2Ugd2hlbiBpdCBuZXh0IGNsZWFucyB1cC4gVGhlcmUgd2lsbCBiZSB1dGlsaXR5IGZ1bmN0aW9ucyB0byBjbGVhbiB1cCBkaXJlY3RseS5cXG5cXG4jIEdhcmJhZ2UgY29sbGVjdGlvbiBndWFyZXRuZWVzIHdlIGNvdWxkIG9mZmVyIChidXQgbWF5YmUgc2hvdWxkbid0PylcXG5cXG5DbG91ZCBydW5uZXIgY2FuIHNjaGVkdWxlIGNyb24gam9icyB0byBpbmRlcGVuZGVudGx5IGd1YXJlbnRlZSBzaHV0ZG93biAoYWxyZWFkeSBwb3NzaWJsZSB2aWEgY3VzdG9tIGhvb2tzKS5cXG5cXG4jIEdhcmJhZ2UgY29sbGVjdGlvbiB1dGlsaXRpZXNcXG5cXG5MaXN0IGdhcmJhZ2UgY29sbGVjdGlvblxcbihsaW5rIHRvIGNsaSlcXG5cIjsiXSwic291cmNlUm9vdCI6IiJ9

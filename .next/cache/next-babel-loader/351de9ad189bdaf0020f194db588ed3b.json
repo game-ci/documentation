@@ -1,0 +1,1 @@
+{"ast":null,"code":"import ExamplePage from '@/components/pages/example/example-page';\nexport default ExamplePage;","map":null,"metadata":{},"sourceType":"module"}

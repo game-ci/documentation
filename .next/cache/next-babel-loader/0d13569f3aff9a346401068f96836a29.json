@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { combineReducers } from 'redux';\nimport { counterSlice } from './counter/counter-slice';\nimport { versionsReducer } from './versions';\nexport const reducer = combineReducers({\n  counter: counterSlice,\n  versions: versionsReducer\n});\nexport const saga = () => {};","map":null,"metadata":{},"sourceType":"module"}

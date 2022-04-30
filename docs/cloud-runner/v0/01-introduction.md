@@ -8,6 +8,10 @@
 2. Scale up to much larger numbers of builds easily and fully on demand.
 3. Run custom jobs and extend the system for any workload.
 
+Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.
+
+However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your game itself to run workloads.
+
 ## Do you need cloud runner or plain game-ci?
 
 Game CI maintains a set of docker images that can be used to run workloads in many scenarios. Game CI also provides specific GitHub actions for running workflows on GitHub.
@@ -16,7 +20,7 @@ Game CI maintains a set of docker images that can be used to run workloads in ma
 
 #### Sending Builds to the cloud
 
-You may want to take advantage of cloud resources for lots of reasons (scale, speed, cost, flexibility) or may want to start remote builds from the command line without slowing down your development machine. Cloud Runner can also help in these cases.
+You may want to take advantage of cloud resources for lots of reasons (scale, speed, cost, flexibility) or may want to start remote builds from the command line without slowing down your development machine. Cloud Runner can help you do this.
 
 This may be a preference, more effecient or you may want to use systems that struggle to handle large game development projects (GitHub being a good example).
 

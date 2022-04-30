@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { useRouter } from 'next/router';\nexport function useTopLevelRoute() {\n  var _useRouter = useRouter(),\n      asPath = _useRouter.asPath;\n\n  var parts = asPath.replace(/^\\//, '').split('/');\n  return \"/\".concat(parts[0]);\n}","map":null,"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import algoliasearch from 'algoliasearch';\nimport config from '@/core/config';\nexport var client = algoliasearch(config.search.applicationId, config.search.publicApiKey);\nexport var indexName = config.search.index;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import DocumentationIndex from '@/components/pages/docs/documentation-index';\nexport default DocumentationIndex;","map":null,"metadata":{},"sourceType":"module"}

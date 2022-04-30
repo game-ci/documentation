@@ -1,0 +1,18 @@
+exports.ids = [39];
+exports.modules = {
+
+/***/ "./docs/introduction/getting-started.md":
+/*!**********************************************!*\
+  !*** ./docs/introduction/getting-started.md ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("# Getting started\r\n\r\nThe term for automatically testing, building, and deploying your project is Continuous Integration, or CI for short.\r\n\r\nThe configuration for CI, we commonly call a CI-workflow.\r\n\r\nTo get started creating your workflow, you need 3 things:\r\n\r\n- A Unity project\r\n- A Git host (GitHub, GitLab, your private server, etc.)\r\n- A CI system (GitHub Actions, GitLab pipelines, CircleCI, TravisCI, Jenkins, etc.)\r\n\r\n## Preparing the project\r\n\r\n**Create a repository** on your chosen Git host and follow their instructions to commit and push your project.\r\n\r\nBe sure to **ignore any automatically generated files**, by adding the reference [.gitignore](https://github.com/github/gitignore/blob/master/Unity.gitignore) file to the root of your project.\r\n\r\nTo **ensure large files are handled correctly** (in [LFS](https://git-lfs.github.com/)), you can add our reference [.gitattributes](https://gist.github.com/webbertakken/ff250a0d5e59a8aae961c2e509c07fbc) file to the root of your project.\r\n\r\nYou are now **ready** to create a workflow! Choose the CI system you chose in the menu on the left.\r\n");
+
+/***/ })
+
+};;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9kb2NzL2ludHJvZHVjdGlvbi9nZXR0aW5nLXN0YXJ0ZWQubWQiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7QUFBQTtBQUFlLDZyQ0FBOG5DLEUiLCJmaWxlIjoiMzkuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCBcIiMgR2V0dGluZyBzdGFydGVkXFxyXFxuXFxyXFxuVGhlIHRlcm0gZm9yIGF1dG9tYXRpY2FsbHkgdGVzdGluZywgYnVpbGRpbmcsIGFuZCBkZXBsb3lpbmcgeW91ciBwcm9qZWN0IGlzIENvbnRpbnVvdXMgSW50ZWdyYXRpb24sIG9yIENJIGZvciBzaG9ydC5cXHJcXG5cXHJcXG5UaGUgY29uZmlndXJhdGlvbiBmb3IgQ0ksIHdlIGNvbW1vbmx5IGNhbGwgYSBDSS13b3JrZmxvdy5cXHJcXG5cXHJcXG5UbyBnZXQgc3RhcnRlZCBjcmVhdGluZyB5b3VyIHdvcmtmbG93LCB5b3UgbmVlZCAzIHRoaW5nczpcXHJcXG5cXHJcXG4tIEEgVW5pdHkgcHJvamVjdFxcclxcbi0gQSBHaXQgaG9zdCAoR2l0SHViLCBHaXRMYWIsIHlvdXIgcHJpdmF0ZSBzZXJ2ZXIsIGV0Yy4pXFxyXFxuLSBBIENJIHN5c3RlbSAoR2l0SHViIEFjdGlvbnMsIEdpdExhYiBwaXBlbGluZXMsIENpcmNsZUNJLCBUcmF2aXNDSSwgSmVua2lucywgZXRjLilcXHJcXG5cXHJcXG4jIyBQcmVwYXJpbmcgdGhlIHByb2plY3RcXHJcXG5cXHJcXG4qKkNyZWF0ZSBhIHJlcG9zaXRvcnkqKiBvbiB5b3VyIGNob3NlbiBHaXQgaG9zdCBhbmQgZm9sbG93IHRoZWlyIGluc3RydWN0aW9ucyB0byBjb21taXQgYW5kIHB1c2ggeW91ciBwcm9qZWN0LlxcclxcblxcclxcbkJlIHN1cmUgdG8gKippZ25vcmUgYW55IGF1dG9tYXRpY2FsbHkgZ2VuZXJhdGVkIGZpbGVzKiosIGJ5IGFkZGluZyB0aGUgcmVmZXJlbmNlIFsuZ2l0aWdub3JlXShodHRwczovL2dpdGh1Yi5jb20vZ2l0aHViL2dpdGlnbm9yZS9ibG9iL21hc3Rlci9Vbml0eS5naXRpZ25vcmUpIGZpbGUgdG8gdGhlIHJvb3Qgb2YgeW91ciBwcm9qZWN0LlxcclxcblxcclxcblRvICoqZW5zdXJlIGxhcmdlIGZpbGVzIGFyZSBoYW5kbGVkIGNvcnJlY3RseSoqIChpbiBbTEZTXShodHRwczovL2dpdC1sZnMuZ2l0aHViLmNvbS8pKSwgeW91IGNhbiBhZGQgb3VyIHJlZmVyZW5jZSBbLmdpdGF0dHJpYnV0ZXNdKGh0dHBzOi8vZ2lzdC5naXRodWIuY29tL3dlYmJlcnRha2tlbi9mZjI1MGEwZDVlNTlhOGFhZTk2MWMyZTUwOWMwN2ZiYykgZmlsZSB0byB0aGUgcm9vdCBvZiB5b3VyIHByb2plY3QuXFxyXFxuXFxyXFxuWW91IGFyZSBub3cgKipyZWFkeSoqIHRvIGNyZWF0ZSBhIHdvcmtmbG93ISBDaG9vc2UgdGhlIENJIHN5c3RlbSB5b3UgY2hvc2UgaW4gdGhlIG1lbnUgb24gdGhlIGxlZnQuXFxyXFxuXCI7Il0sInNvdXJjZVJvb3QiOiIifQ==
