@@ -13,7 +13,7 @@ Iteration 0
 
 Iteration 2
 | What | Status | Why |
-| ---------------------------- | ------ | ------------------------------------------------------------------- |
+| ---- | ------ | --- |
 
 Iteration 3
 | What | Status | Why |
@@ -41,7 +41,7 @@ Iteration 6
 
 Backlog
 | What | Status | Why |
-| ------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| --------------------- | ------ | --------------------------------------------------------- |
 | Resilience hooks | todo | Retry, startup and cleanup hooks. |
 | custom logging | todo | Support extensible logging to your own loggin service. |
 | custom storage engine | todo | Share Unity import cache between local and runners. |
