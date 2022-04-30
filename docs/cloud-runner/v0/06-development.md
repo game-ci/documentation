@@ -79,7 +79,7 @@
 ```
 
 Minor changes, suggestions and bugs are tracked as GitHub issues:
-[Here](https://github.com/game-ci/unity-builder/labels/cloud-runner)
+[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
 
 # Feedback form
 
