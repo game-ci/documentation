@@ -56,7 +56,7 @@ _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier aut
 ## Cloud Runner Releases
 
 All cloud runner releases are currently packaged and released with game-ci's unity-builder module:
-[Game CI Releases](https://github.com/game-ci/unity-builder/releases)
+[Game CI Releases - GitHub](https://github.com/game-ci/unity-builder/releases)
 
 History up to latest open incoming changes for release can be found here:
 [Cloud Runner PRs - GitHub](https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+cloud+runner)
