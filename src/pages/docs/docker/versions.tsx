@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { FirebaseAppProvider } from 'reactfire';
 
+// import "antd/dist/antd.css";
 // import '../assets/styles/antd-custom.less';
 // import 'highlight.js/styles/dracula.css';
 import config from "@site/src/core/config";
@@ -33,6 +34,5 @@ export default function VersionsPage(): JSX.Element {
         </IconContext.Provider>
       </FirebaseAppProvider>
     </Provider>
-
   );
 }
