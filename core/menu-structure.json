@@ -185,6 +185,17 @@
                 "type": "file"
               }
             }
+          },
+          "development": {
+            "name": "Development",
+            "meta": {
+              "version": "v0",
+              "absolutePath": "cloud-runner/v0/06-development",
+              "permalinkPath": "cloud-runner/v0/development",
+              "path": "cloud-runner/development",
+              "order": 6,
+              "type": "file"
+            }
           }
         }
       }
