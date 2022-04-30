@@ -18,11 +18,13 @@
 | What                               | Status | Why                                                           |
 | ---------------------------------- | ------ | ------------------------------------------------------------- |
 | cache entire working directory     | todo   | Currently only supports caching LFS and Unity Library folder. |
-| skip cache duplicates by hash      |        |                                                               |
-| configurable tar compression       |        |                                                               |
-| skip to existing working directory |        |                                                               |
-| unity incremental build caching    |        |                                                               |
+| skip cache duplicates by hash      | todo   |                                                               |
+| configurable tar compression       | todo   |                                                               |
+| skip to existing working directory | todo   |                                                               |
+| unity incremental build caching    | todo   |                                                               |
 ```
+
+\_ \_
 
 ## Iteration 3 - GPU Workloads and capabilities for Cloud Runner
 
@@ -39,7 +41,7 @@
 | ---------------------------------- | ------ | ----------------------------------------------------- |
 | better performance test support    | todo   |                                                       |
 | performance benchmark / sample     | todo   | Benchmark cloud runner on a variety of project sizes. |
-| simple performance metrics for aws |        |                                                       |
+| simple performance metrics for aws | todo   |                                                       |
 ```
 
 ## Iteration 5 - "Advanced workflows for Unity to use and manage remote workloads"
@@ -64,15 +66,15 @@
 | custom storage engine                            | todo   | Share Unity import cache between local and runners.       |
 | better artifact handling                         | todo   | Better extensibility and support for artifact handling.   |
 | network game features                            | todo   | Quick deploy simulation server, relay or headless client. |
-| remote control sample                            |        |                                                           |
-| Cleaned up debug/prod                            |        |                                                           |
-| Custom cloud runner docker image                 |        |                                                           |
-| Infographics for cloud runner docs               |        |                                                           |
-| detect and warn about impending binary conflicts |        |                                                           |
-| Test coverage for hooks and steps                |        |                                                           |
-| Multiplayer test sample                          |        |                                                           |
-| Code report / project report                     |        |                                                           |
-| Kuberenetes Rook support                         |        |                                                           |
+| remote control sample                            | todo   |                                                           |
+| Cleaned up debug/prod                            | todo   |                                                           |
+| Custom cloud runner docker image                 | todo   |                                                           |
+| Infographics for cloud runner docs               | todo   |                                                           |
+| detect and warn about impending binary conflicts | todo   |                                                           |
+| Test coverage for hooks and steps                | todo   |                                                           |
+| Multiplayer test sample                          | todo   |                                                           |
+| Code report / project report                     | todo   |                                                           |
+| Kuberenetes Rook support                         | todo   |                                                           |
 | Custom provider sample                           | todo   |                                                           |
 ```
 
