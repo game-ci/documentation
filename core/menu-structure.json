@@ -190,7 +190,7 @@
             "name": "Development",
             "meta": {
               "version": "v0",
-              "absolutePath": "cloud-runner/v0/06-development",
+              "absolutePath": "cloud-runner/v0/06-development.md",
               "permalinkPath": "cloud-runner/v0/development",
               "path": "cloud-runner/development",
               "order": 6,
