@@ -1,4 +1,4 @@
-Create a self-hosted cloud runner in an initial job:
+**Create a self-hosted cloud runner in an initial job:**
 
 ```yaml
 boot-self-hosted-runner:
@@ -58,7 +58,7 @@ boot-self-hosted-runner:
             secrets: []
 ```
 
-Run the build in the job:
+**Run the build in the job:**
 
 ```yaml
 boot-game-ci-cloud-runner:
@@ -111,7 +111,7 @@ boot-game-ci-cloud-runner:
               value: eu-west-2
 ```
 
-Download and deploy results:
+**Download and deploy results:**
 
 ```yaml
 post-job-message:

@@ -16,7 +16,7 @@ Game CI maintains a set of docker images that can be used to run workloads in ma
 
 #### Large GitHub Projects
 
-GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
+GitHub Actions by default run on build machines provided by GitHub. You can see info about the specifications of the build machines [Here](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
 
 For Unity projects the available disk size is quite small. You may experience an error related to running out of disk space. You may also want to run the build on a server with more memory or processing resources.
 
@@ -56,10 +56,10 @@ _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier aut
 ## Cloud Runner Releases
 
 All cloud runner releases are currently packaged and released with game-ci's unity-builder module:
-https://github.com/game-ci/unity-builder/releases
+[Game CI Releases](https://github.com/game-ci/unity-builder/releases)
 
 History up to latest open incoming changes for release can be found here:
-https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+cloud+runner
+[Cloud Runner PRs - GitHub](https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+cloud+runner)
 
 Link to release branches configuration section
 
@@ -91,17 +91,17 @@ Link to release branches configuration section
 ```
 
 You can find a more granular roadmap pinned in the "#cloud-runner" discord channel:
-[https://discord.com/channels/710946343828455455/789631903157583923/967524784659398748](Here)
+[Here](https://discord.com/channels/710946343828455455/789631903157583923/967524784659398748)
 
 Minor changes, suggestions and bugs are tracked as GitHub issues:
-[https://github.com/game-ci/unity-builder/labels/cloud-runner](Here)
+[Here](https://github.com/game-ci/unity-builder/labels/cloud-runner)
 
 ## Feedback form
 
-https://forms.gle/3Wg1gGf9FnZ72RiJ9
+[Feedback Form](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
 
 ## Contributions
 
-Source contributors welcome.
+Source contributors are welcome via PR. You can always discuss a suggestion on discord.
 
 Donations welcome.
