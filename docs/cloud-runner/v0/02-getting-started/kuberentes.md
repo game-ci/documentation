@@ -39,7 +39,7 @@ Do not include the vCPU or GB suffix. For example:
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
-    remoteBuildCluster: aws
+    remoteBuildCluster: k8s
     cloudRunnerMemory: 4096
     cloudRunnerCpu: 1024
     projectPath: ${{ matrix.projectPath }}
