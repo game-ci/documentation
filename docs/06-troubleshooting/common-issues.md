@@ -1,4 +1,4 @@
-# Troubleshooting
+# Common issues
 
 Below you'll find a collection of answers to commonly reported problems.
 

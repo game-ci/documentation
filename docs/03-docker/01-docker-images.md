@@ -47,7 +47,7 @@ That's why:
 
 We are looking to include MacOS as a base image "in the future", which is mostly dependent on contributions from the community.
 
-If you are looking to generate IL2CPP builds for MacOS, you can do so via [Github Actions](/docs/github/getting-started#il2cpp-example) without a docker container.
+If you are looking to generate IL2CPP builds for MacOS, you can do so via [Github Actions](/docs/04-github/getting-started#il2cpp-example) without a docker container.
 
 #### Concurrent builds on Windows and MacOS
 
