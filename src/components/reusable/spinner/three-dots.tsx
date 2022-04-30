@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * @see https://bit.dev/mhnpd/react-loader-spinner/three-dots
  * @licence: MIT
