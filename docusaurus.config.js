@@ -69,7 +69,8 @@ const config = {
         title: 'GameCI',
         logo: {
           alt: 'GameCI Logo',
-          src: 'assets/images/game-ci-brand-logo-wordmark.svg',
+          src: 'assets/images/game-ci-brand-logo-wordmark-light.svg',
+          srcDark: 'assets/images/game-ci-brand-logo-wordmark.svg',
         },
         items: [
           {
