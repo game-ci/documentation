@@ -64,7 +64,8 @@
 | custom storage engine                            | todo   | Share Unity import cache between local and runners.       |
 | better artifact handling                         | todo   | Better extensibility and support for artifact handling.   |
 | network game features                            | todo   | Quick deploy simulation server, relay or headless client. |
-| remote control sample                            | todo   |                                                           |
+| interactive cloud runner                         | todo   |                                                           |
+| scriptable custom provider                       | todo   |                                                           |
 | Cleaned up debug/prod                            | todo   |                                                           |
 | Custom cloud runner docker image                 | todo   |                                                           |
 | Infographics for cloud runner docs               | todo   |                                                           |
