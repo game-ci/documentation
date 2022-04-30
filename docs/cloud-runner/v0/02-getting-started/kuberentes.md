@@ -1,4 +1,4 @@
-# Getting Started AWS
+# Getting Started Kubernetes
 
 ### Requirements
 
