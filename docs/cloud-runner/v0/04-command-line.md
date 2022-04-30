@@ -9,10 +9,10 @@ Currently (development)
 ```bash
 git clone https://github.com/game-ci/unity-builder.git
 yarn install
-yarn run -m {mode} {... other command line parameters}
+yarn run -m {mode} --projectPath {Your project path} {... other command line parameters}
 ```
 
-Planned (just run with no previous install via)
+Planned (just run)
 
 ```bash
 dpx game-ci build

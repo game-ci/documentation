@@ -67,4 +67,4 @@ All cloud runner releases are currently packaged and released with game-ci's uni
 History up to latest open incoming changes for release can be found here:
 [Cloud Runner PRs - GitHub](https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+cloud+runner)
 
-You can see further information about configuring the release version on the [Configuration](configuration)
+You can see further information about configuring the release version on the [Configuration](configuration) page.
