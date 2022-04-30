@@ -7,12 +7,6 @@ Include the following variable in the `with` section of the builder step:
 _Note:_
 _This enables us to get the repository from the AWS build machine._
 
-### Build Step Parameters
-
-Add the following parameters to the build step described in the [builder section](builder):
-
-- `cloudRunnerCluster`
-
 ### Release branch configuration
 
 #### Develop branch
