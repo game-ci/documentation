@@ -1,3 +1,5 @@
+# Configuration
+
 ### GitHub Access Token
 
 Include the following variable in the `with` section of the builder step:
