@@ -20,6 +20,28 @@ const store = configureStore({reducer});
 
 export default function VersionsPage(): JSX.Element {
   const {siteConfig} = useDocusaurusContext();
+
+  const addCssToHead = () => {
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/antd/dist/antd.css';
+    document.head.appendChild(css);
+  };
+
+  const removeCssFromHead = () => {
+    const css = document.querySelector('link[href="https://unpkg.com/antd/dist/antd.css"]');
+    if (css) {
+      css.remove();
+    }
+  };
+
+  React.useEffect(() => {
+    addCssToHead();
+    return () => {
+      removeCssFromHead();
+    };
+  }, []);
+
   return (
     <Provider store={store}>
       <FirebaseAppProvider firebaseConfig={config.firebase}>
