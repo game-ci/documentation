@@ -1,4 +1,4 @@
-# Concept
+# Garbage Collection
 
 Cloud Runner creates, manages and destroys cloud workloads you request. Resources have to be created.
 
