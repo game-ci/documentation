@@ -1,4 +1,4 @@
-{
+const data = {
   "docs": {
     "docker": {
       "meta": {
@@ -387,3 +387,6 @@
     }
   }
 }
+
+
+export default data;

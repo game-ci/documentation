@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import menuStructure from '@/core/menu-structure.json';
+import menuStructure from '@site/src/core/menu-structure';
 
 const defaultContext = { menuStructure };
 

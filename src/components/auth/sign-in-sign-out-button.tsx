@@ -1,5 +1,6 @@
 import { Button } from 'antd';
 import firebase from 'firebase/app';
+import React from 'react';
 import { useState } from 'react';
 import { AiOutlineClose, AiTwotoneLock } from 'react-icons/all';
 import { useAuth, AuthCheck } from 'reactfire';
