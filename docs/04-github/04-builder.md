@@ -9,7 +9,7 @@ to automatically build Unity projects for different platforms.
 
 #### Credentials
 
-Make sure you have set up these variables in the [activation step](/docs/04-github/activation):
+Make sure you have set up these variables in the [activation step](/docs/github/activation):
 
 - `UNITY_EMAIL` (the email address for your Unity account)
 - `UNITY_PASSWORD` (the password that you use to login to Unity)
@@ -28,7 +28,7 @@ Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 Personal licenses require a one-time manual activation step.
 
 Make sure you
-[acquire and activate](/docs/04-github/activation)
+[acquire and activate](/docs/github/activation)
 your license file and add it as a secret.
 
 Then, define the build step as follows:
@@ -488,4 +488,4 @@ jobs:
 
 ## Next steps
 
-You can find more workflow examples in [Getting Started](/docs/04-github/getting-started#workflow-examples).
+You can find more workflow examples in [Getting Started](/docs/github/getting-started#workflow-examples).

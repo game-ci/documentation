@@ -59,7 +59,7 @@ since `unity-builder` version 2.
 
 Below are workflow examples displaying various levels of complexity.
 
-It is **recommended** to start from the [Simple Example](/docs/04-github/getting-started#simple-example) and work your way down the page.
+It is **recommended** to start from the [Simple Example](/docs/github/getting-started#simple-example) and work your way down the page.
 
 ### Simple example
 
