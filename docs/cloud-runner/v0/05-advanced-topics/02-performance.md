@@ -17,3 +17,4 @@ Caching is used to speed up git clones, Unity imports and builds and can be exte
 See [Caching](caching).
 
 ## Provider Platform's impact
+The different Cloud Runner providers all offer different guarenetees and performance for handling your workloads.
