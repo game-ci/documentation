@@ -21,6 +21,6 @@ _This enables us to get the repository from the AWS build machine._
 - uses: game-ci/unity-builder@cloud-runner-stable
 ```
 
-### Detailed information on configuration can also be found in the action.yml defintion for the github action
+### Configuration Yaml
 
 [https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
