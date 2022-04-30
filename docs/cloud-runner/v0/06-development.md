@@ -1,6 +1,6 @@
 # Development Roadmap
 
-## Iteration 0 - Quality of life
+## Iteration 0 - Quality Of Life
 
 ```md
 | What                                | Status      | Why                                                  |
@@ -12,7 +12,7 @@
 | better cli options for inspection   | todo        |                                                      |
 ```
 
-## Iteration 1 - Advanced caching
+## Iteration 1 - Advanced Caching
 
 ```md
 | What                               | Status | Why                                                           |
@@ -24,7 +24,7 @@
 | unity incremental build caching    | todo   |                                                               |
 ```
 
-## Iteration 2 - GPU Workloads and capabilities for Cloud Runner
+## Iteration 2 - GPU Workloads And Capabilities
 
 ```md
 | What                                         | Status | Why                                                     |
@@ -32,7 +32,7 @@
 | Automate rendering with GPU provider support | todo   | Automate screenshots, video and remote control clients. |
 ```
 
-## Iteration 3 - Simple controlled performance
+## Iteration 3 - Simple Performance Management
 
 ```md
 | What                               | Status | Why                                                   |
@@ -42,7 +42,7 @@
 | simple performance metrics for aws | todo   |                                                       |
 ```
 
-## Iteration 4 - Advanced workflows for Unity to use and manage remote workloads
+## Iteration 4 - Advanced Cloud Runner Workflows For Unity
 
 ```md
 | What                              | Status | Why                                                                 |
