@@ -78,9 +78,6 @@
 | Custom provider sample                           | todo   |                                                           |
 ```
 
-You can find a more granular roadmap pinned in the "#cloud-runner" discord channel:
-[Here](https://discord.com/channels/710946343828455455/789631903157583923/967524784659398748)
-
 Minor changes, suggestions and bugs are tracked as GitHub issues:
 [Here](https://github.com/game-ci/unity-builder/labels/cloud-runner)
 
