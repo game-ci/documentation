@@ -10,7 +10,7 @@
 
 Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.
 
-However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your game itself to run workloads.
+However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
 ## Do you need cloud runner or plain game-ci?
 
