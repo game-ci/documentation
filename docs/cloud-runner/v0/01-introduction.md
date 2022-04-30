@@ -65,8 +65,6 @@ Link to release branches configuration section
 
 ## Development Roadmap
 
-Major changes/epics:
-
 ```md
 | What                                  | Status      | Why                                                                 |
 | ------------------------------------- | ----------- | ------------------------------------------------------------------- |
@@ -92,8 +90,11 @@ Major changes/epics:
 | Azure                                 | todo        |                                                                     |
 ```
 
-Minor changes, tweaks and bugs:
-https://github.com/game-ci/unity-builder/labels/cloud-runner
+You can find a more granular roadmap pinned in the "#cloud-runner" discord channel:
+[https://discord.com/channels/710946343828455455/789631903157583923/967524784659398748](Here)
+
+Minor changes, suggestions and bugs are tracked as GitHub issues:
+[https://github.com/game-ci/unity-builder/labels/cloud-runner](Here)
 
 ## Feedback form
 
