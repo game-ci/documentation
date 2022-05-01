@@ -22,8 +22,9 @@ Refer to [Configuration page](../configuration) or the [example below](#example)
 - `2 vCPU` - Between 4 GB and 16 GB in 1-GB increments
 - `4 vCPU` - Between 8 GB and 30 GB in 1-GB increments
 
-Do not include the vCPU or GB suffix. For example:
+Do not include the vCPU or GB suffix.
 
+#### Valid CPU and Memory Values
 ```yaml
 - remoteBuildMemory: 2
 - remoteBuildCpu: 0.5
