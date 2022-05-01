@@ -33,6 +33,7 @@ game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,U
 ```
 
 ## Garbage Collection
+### AWS
 ```bash
 aws-list-stacks
 ```
