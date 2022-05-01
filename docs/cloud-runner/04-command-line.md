@@ -31,3 +31,20 @@ This enables you to provide a command to pull input, e.g you can pull from a fil
 ```bash
 game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""
 ```
+
+## Garbage Collection
+```bash
+aws-list-stacks
+```
+```bash
+aws-list-tasks
+```
+```bash
+aws-garbage-collect
+```
+```bash
+aws-garbage-collect-all
+```
+```bash
+aws-garbage-collect-all-1d-older
+```
