@@ -9,18 +9,21 @@ Currently (development)
 ```bash
 git clone https://github.com/game-ci/unity-builder.git
 yarn install
-yarn run -m cli --projectPath {Your project path} {... other command line parameters}
+yarn run -m {mode parameter} --projectPath {Your project path} {... other command line parameters}
 ```
 
-Planned (does not work)
+# Main Commands/Modes Parameter
+- Default: `cli` (runs a standard build workflow)
+- [Garbage Collection Modes](#garbage-collection)
 
+# Help
+_You can run `game-ci -h` or `game-ci --help` to List all modes and paramters with descriptions_
+
+# Planned (does not work)
+We plan to offer support for Game CI via Deno. This will enable fast, typescript native runtime and you will be able to access this via the following:
 ```bash
 dpx game-ci build
 ```
-
-# List commands and input
-
-`game-ci -h` or `game-ci --help`
 
 # Input Override Feature
 
