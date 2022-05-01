@@ -63,6 +63,8 @@ Currently kuberentes builds do not save their persistent volumes beyond a cloud 
     projectPath: test-project
     unityVersion: ${{ matrix.unityVersion }}
     versioning: None
+    # Currently kuberentes builds do not save their persistent volumes beyond a cloud runner job.
+    # So, you may want to export the results to cloud storage with a postBuildStep as follows:
     postBuildSteps: |
       - name: upload
         image: amazon/aws-cli
@@ -83,3 +85,4 @@ Currently kuberentes builds do not save their persistent volumes beyond a cloud 
         - name: awsDefaultRegion
           value: eu-west-2
 ```
+_[Custom Steps](../advanced-topics/custom-steps)_
