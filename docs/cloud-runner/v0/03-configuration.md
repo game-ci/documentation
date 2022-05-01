@@ -32,6 +32,9 @@ _GitHub Action examples to pull from the required release branch_
 ### Provider Configuration
 You must specify the Cloud Provider to use via the parameter `cloudRunnerCluster`.
 
+Valid options:
+- aws - [Getting Started - AWS](/getting-start/aws)
+- k8s - [Getting Started - Kubernetes](/getting-start/kubernetes)
+
 You can see further details about the requirements  of each in the getting started topics for each provider:
-[Getting Started - AWS](/getting-start/aws)
-[Getting Started - Kubernetes](/getting-start/kubernetes)
+
