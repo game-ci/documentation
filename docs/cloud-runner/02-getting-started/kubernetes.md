@@ -1,4 +1,4 @@
-# Getting Started Kubernetes
+# Kubernetes
 
 ## Requirements
 
