@@ -12,7 +12,7 @@ Setup the following as `env` variables for the GitHub build step:
 - `kubeConfig` (should be encoded as base64)
 
 ## Standard configuration
-Refer to [Configuration page](configuration) or the [example below](.#example).
+Refer to [Configuration page](configuration) or the [example below](./#example).
 
 ### Allowed CPU/Memory combinations
 
