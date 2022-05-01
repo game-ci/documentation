@@ -12,8 +12,13 @@ Primarily Cloud Runner is useful for game development because it supports large 
 However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
 
-## Supported Cloud Provider Platforms
+## Supported Cloud Runner Platforms
 Cloud Runner is "in active development" ⚠️🔨
+
+Minor changes, suggestions and bugs are tracked as GitHub issues:
+[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
+
+You can explore the [development roadmap documentation page](documentation).
 
 Cloud Runner overall release status: `preview`
 This means some APIs may change, features are still being added but the minimum feature set works and is stable.
