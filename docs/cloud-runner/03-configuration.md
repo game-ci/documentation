@@ -1,15 +1,10 @@
 # Configuration
-
 ### Configuration definition yaml
-
 All parameters and descriptions are listed here:
-
-[https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
+- [https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
 
 ### GitHub Access Token
-
 Include the following variable in the `with` section of the builder step:
-
 - `githubToken` (should be a GitHub access token with permission to get repositories)
 
 _Note:_
