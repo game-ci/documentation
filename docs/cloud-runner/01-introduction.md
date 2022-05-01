@@ -13,8 +13,14 @@ However, you could easily extend the system to run other tools and workloads. Cl
 
 
 ## Supported Cloud Provider Platforms
+Cloud Runner is "in active development" ⚠️🔨
 
 Cloud Runner overall release status: `preview`
+This means some APIs may change, features are still being added but the minimum feature set works and is stable.
+
+Release Stages: `experimental` ➡️ `preview` ➡️ `full release`
+
+You must use a provider with Cloud Runner, each provider's release status is described below. This indicates the stability and support for cloud runner features.
 
 ```md
 | Platform   | Release Status          |
@@ -25,7 +31,6 @@ Cloud Runner overall release status: `preview`
 | Azure      | ⚠ Considered            |
 ```
 
-`experimental` ➡️ `preview` ➡️ `full release`
 
 _Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
 _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
