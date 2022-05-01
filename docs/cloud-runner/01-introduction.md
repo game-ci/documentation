@@ -25,7 +25,7 @@ Cloud Runner overall release status: `preview`
 | Azure      | ⚠ Considered            |
 ```
 
-experimental > preview > full release
+`experimental` ➡️ `preview` ➡️ `full release`
 
 _Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
 _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
