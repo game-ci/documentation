@@ -9,7 +9,7 @@ Currently (development)
 ```bash
 git clone https://github.com/game-ci/unity-builder.git
 yarn install
-yarn run -m {mode parameter} --projectPath {Your project path} {... other command line parameters}
+yarn run cli -m {mode parameter} --projectPath {Your project path} {... other command line parameters}
 ```
 
 # Main Commands/Modes Parameter
