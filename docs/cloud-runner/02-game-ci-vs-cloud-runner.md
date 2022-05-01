@@ -15,9 +15,7 @@ This may be a preference, more effecient or you may want to use systems that str
 
 #### Large GitHub Projects
 
-GitHub Actions by default run on build machines provided by GitHub. See information about the specifications of the build machines [https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
-
-For Unity projects the available disk size is quite small. You may experience an error related to running out of disk space. You may also want to run the build on a server with more memory or processing resources.
+GitHub Actions by default run on [build machines provided by GitHub](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners). For Unity projects the available disk size is quite small. You may experience an error related to running out of disk space. You may also want to run the build on a server with more memory or processing resources.
 
 #### "GitHub self-hosted runners" vs Game CI Cloud Runner
 
