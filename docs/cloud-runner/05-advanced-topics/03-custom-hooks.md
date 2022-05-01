@@ -1,15 +1,9 @@
 ## Custom Hooks
 
 ```yaml
-- commands: |
-    echo "hello world!"
-  name: example hook
+- name: example hook
   hook: # Options: before, after or all
     - before
+  commands: |
+    echo "hello world!"
 ```
-
-Extra hooks
-
-- should retry hook
-- init hook
-- cleanup hook
