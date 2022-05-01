@@ -16,7 +16,7 @@ Setup the following as `env` variables for the GitHub build step:
 _Note:_
 _This enables us to access AWS resources from Unity Builder._
 
-### Standard configuration
+### Configuration for AWS Cloud Runner Jobs
 
 Link to configuration page
 
