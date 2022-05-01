@@ -1,6 +1,6 @@
 const data = {
   "docs": {
-    "cloud-runner": {
+    "Cloud Runner": {
       "meta": {
         "name": "Cloud Runner",
         "path": "cloud-runner",
@@ -82,7 +82,7 @@ const data = {
               "type": "file"
             }
           },
-          "advanced-topics": {
+          "Advanced Topics": {
             "meta": {
               "path": "cloud-runner/advanced-topics",
               "order": 5,
