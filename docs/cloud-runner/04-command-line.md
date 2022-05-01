@@ -1,6 +1,6 @@
 # Command Line
 
-You can install Game CI locally and start cloud runner jobs from the command line or by integrating your own tools.
+You can install Game CI locally and start cloud runner jobs from the command line or by integrating your own tools. All parameters in [Configuration](configuration) can be specified as command line input fields.
 
 # Install
 
@@ -26,7 +26,7 @@ dpx game-ci build
 
 When running any unity workload you must provide many parameters, such as all of the unity authentication and cloud provider settings. To make this easier you can use the [input override](advanced-topics/input-override). 
 
-This enables you to provide a command to pull input, you can pull from a file or from a secret manager.
+This enables you to provide a command to pull input, e.g you can pull from a file or from a secret manager.
 
 ```bash
 game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""
