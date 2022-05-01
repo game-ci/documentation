@@ -1,4 +1,4 @@
-# Cloud runner vs plain game-ci
+# Cloud Runner vs Standard Game-CI
 
 Game CI maintains a set of docker images that can be used to run workloads in many scenarios.
 
