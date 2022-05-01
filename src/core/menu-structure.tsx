@@ -30,7 +30,7 @@ const data = {
               "type": "file"
             }
           },
-          "getting-started": {
+          "Getting Started": {
             "meta": {
               "name": "Getting Started",
               "path": "cloud-runner/getting-started",
