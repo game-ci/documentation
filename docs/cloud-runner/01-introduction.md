@@ -37,13 +37,13 @@ You must use a provider with Cloud Runner, each provider's release status is des
 ```
 
 ```md
-| Git Platform                  | Release Status       |
-| ----------------------------- | -------------------- |
-| GitHub                        | ✔️ preview release |
-| GitLab                        | ✔️ preview release |
-| Command Line                  | ✔️ preview release |
-| Any generic Git platform      | ✔️ preview release |
-| All generic Git automation/Ci | ✔️ preview release |
+| Git Platform          | Release Status       |
+| --------------------- | -------------------- |
+| GitHub                | ✔️ preview release |
+| GitLab                | ✔️ preview release |
+| Command Line          | ✔️ preview release |
+| Any Git repository    | ✔️ preview release |
+| Any Git automation/Ci | ✔️ preview release |
 ```
 
 
