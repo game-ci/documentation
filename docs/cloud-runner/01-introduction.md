@@ -36,6 +36,9 @@ You must use a provider with Cloud Runner, each provider's release status is des
 | GCP                     | ⚠ Considered             |
 | Azure                   | ⚠ Considered             |
 ```
+_Note for Kuberentes support:_
+_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
+_Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
 
 ```md
 | Git Platform          | Release Status       |
@@ -47,9 +50,6 @@ You must use a provider with Cloud Runner, each provider's release status is des
 | Any Git automation/Ci | ✔️ preview release |
 ```
 
-
-_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
-_Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
 
 ## Cloud Runner Releases
 
