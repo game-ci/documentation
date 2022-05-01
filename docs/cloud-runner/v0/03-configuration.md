@@ -32,5 +32,5 @@ _This enables us to get the repository from the AWS build machine._
 You must specify the Cloud Provider to use via the parameter `cloudRunnerCluster`.
 
 You can see further details about the requirements  of each in the getting started topics for each provider:
-(Getting Started - AWS)[/getting-start/aws]
-(Getting Started - Kubernetes)[/getting-start/kubernetes]
+[Getting Started - AWS](/getting-start/aws)
+[Getting Started - Kubernetes](/getting-start/kubernetes)
