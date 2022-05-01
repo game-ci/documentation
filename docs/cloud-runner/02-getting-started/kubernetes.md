@@ -66,3 +66,5 @@ Do not include the vCPU or GB suffix. For example:
           value: eu-west-2
 ```
 _[Custom Steps](../advanced-topics/custom-steps)_
+
+A full workflow example can be seen in builder's [Cloud Runner GitHub sourcecode for AWS Pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/cloud-runner-k8s-pipeline.yml).
