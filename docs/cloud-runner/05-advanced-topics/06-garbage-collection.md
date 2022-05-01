@@ -6,15 +6,15 @@ It is always possible a resource doesn't get deleted by cloud runner. Even if th
 
 That is the only way to ensure a tool is safe and trustworthy for the broadast range of people.
 
-# preview release - Garbage collection guarentees now
+# preview release - Garbage collection guarentees
 
 Cloud Runner runs the workload and cleans up the resources. It does not expect to be interrupted. A failure within the cloud task will not cause a failure to collect garbage.
 
 If you cancel a task, the resources will not be cleaned up.
 
-# full release - Garbage collection guarentees will be provided
+# Full Release - Garbage Collection Huarentees (Not available yet)
 Cloud runner will collect the garbage when it next cleans up. There will be utility functions to clean up directly.
 Optional via configuration: Cloud runner can schedule cron jobs to independently guarentee shutdown (already possible via custom hooks).
 
-# Garbage collection utilities
+# Garbage Collection Functions
 [Command Line Garbage Collection Utilities](../command-line#garbage-collection)
