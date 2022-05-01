@@ -1,4 +1,4 @@
-## Custom Hooks
+# Custom Hooks
 
 ```yaml
 - name: example hook
