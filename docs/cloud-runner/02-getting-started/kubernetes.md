@@ -1,21 +1,20 @@
 # Getting Started Kubernetes
 
-### Requirements
+## Requirements
 
 - You must have a Kuberentes cluster setup and ready that supports persistent volumes.
 - Create a kubeconfig and encode it as base64.
 
-### K8s Credentials
+## K8s Credentials
 
 Setup the following as `env` variables for the GitHub build step:
 
 - `kubeConfig` (should be encoded as base64)
 
-### Standard configuration
+## Standard configuration
+Refer to [Configuration page](configuration) or the [example below](.#example).
 
-Link to configuration page
-
-#### Allowed CPU/Memory combinations
+### Allowed CPU/Memory combinations
 
 - `0.25 vCPU` - 0.5 GB, 1 GB, 2 GB
 - `0.5 vCPU` - 1 GB, 2 GB, 3 GB, 4 GB
@@ -30,26 +29,7 @@ Do not include the vCPU or GB suffix. For example:
 - remoteBuildCpu: 0.5
 ```
 
-### Example build step
-
-```yaml
-- uses: game-ci/unity-builder@cloud-runner-develop
-  id: k8s-unity-build
-  timeout-minutes: 30
-  env:
-    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  with:
-    remoteBuildCluster: k8s
-    cloudRunnerMemory: 4096
-    cloudRunnerCpu: 1024
-    projectPath: ${{ matrix.projectPath }}
-    unityVersion: ${{ matrix.unityVersion }}
-    targetPlatform: ${{ matrix.targetPlatform }}
-    githubToken: ${{ secrets.GITHUB_TOKEN }}
-```
-
-Currently kuberentes builds do not save their persistent volumes beyond a cloud runner job, so you may want to export the results to cloud storage e.g:
-
+### Example
 ```yaml
 - uses: game-ci/unity-builder@cloud-runner-develop
   id: k8s-unity-build
