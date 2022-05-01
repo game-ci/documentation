@@ -36,5 +36,3 @@ Valid options:
 - aws - [Getting Started - AWS](/getting-start/aws)
 - k8s - [Getting Started - Kubernetes](/getting-start/kubernetes)
 
-You can see further details about the requirements  of each in the getting started topics for each provider:
-

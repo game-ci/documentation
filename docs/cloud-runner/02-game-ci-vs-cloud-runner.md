@@ -1,17 +1,3 @@
-# Introduction
-
-## Concept - What does cloud runner do
-
-**Cloud Runner enables you to send your project to a "Cloud Provider" such as AWS or GCP. Using native cloud services (such as AWS Fargate) or Kubernetes.**
-The benefits include: 
-1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
-2. Scale up to much larger numbers of builds easily and fully on demand.
-3. Run custom jobs and extend the system for any workload.
-
-Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.
-
-However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
-
 ## When to use cloud runner or plain game-ci?
 
 Game CI maintains a set of docker images that can be used to run workloads in many scenarios.
@@ -40,31 +26,3 @@ _GitHub users can consider: [GitHub self-hosted runners](https://docs.github.com
 _Cloud Runner can run itself as an ephemeral self hosted job to minimize your github actions runner usage, with the drawback of some extra startup time at the start of your workflow. Cloud Runner is better if you don't have a server setup or don't want to manage or maintain your own build server._
 
 _Self-hosted runners are best used when you already have a server available, running 24/7 that you can setup as a runner. And you're happy to maintain and keep that server available and running._
-
-## Supported Cloud Provider Platforms
-
-Cloud Runner overall release status: `preview`
-
-```md
-| Platform   | Release Status          |
-| ---------- | ----------------------- |
-| Kubernetes | ✔️ experimental release |
-| AWS        | ✔️ preview release      |
-| GCP        | ⚠ Considered            |
-| Azure      | ⚠ Considered            |
-```
-
-experimental > preview > full release
-
-\*_Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
-_Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
-
-## Cloud Runner Releases
-
-All cloud runner releases are currently packaged and released with game-ci's unity-builder module:
-[Game CI Releases - GitHub](https://github.com/game-ci/unity-builder/releases)
-
-History up to latest open incoming changes for release can be found here:
-[Cloud Runner PRs - GitHub](https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+cloud+runner)
-
-You can see further information about configuring the release version on the [Configuration](configuration) page.
