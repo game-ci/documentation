@@ -1,6 +1,6 @@
 const data = {
   "docs": {
-    "cloud-runner": {
+    "Cloud Runner": {
       "meta": {
         "path": "cloud-runner",
         "order": 99,
