@@ -12,7 +12,7 @@ yarn install
 yarn run -m cli --projectPath {Your project path} {... other command line parameters}
 ```
 
-Planned (just run)
+Planned (does not work)
 
 ```bash
 dpx game-ci build
