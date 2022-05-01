@@ -11,10 +11,10 @@ Setup the following as `env` variables for the GitHub build step:
 
 - `kubeConfig` (should be encoded as base64)
 
-## Configuration for Kubernetes Cloud Runner Jobs
+## Configuration For Kubernetes Cloud Runner Jobs
 Refer to [Configuration page](../configuration) or the [example below](#example).
 
-### Allowed CPU/Memory combinations
+### Allowed CPU/Memory Combinations
 
 - `0.25 vCPU` - 0.5 GB, 1 GB, 2 GB
 - `0.5 vCPU` - 1 GB, 2 GB, 3 GB, 4 GB

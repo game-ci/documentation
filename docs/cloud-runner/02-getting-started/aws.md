@@ -26,20 +26,20 @@ If you're using GitHub you can use a GitHub Action:
 _Note:_
 _This enables Cloud Runner access AWS._
 
-## Configuration for AWS Cloud Runner Jobs
+## Configuration For AWS Cloud Runner Jobs
 Refer to [Configuration page](../configuration) or the [example below](#example).
 
-### Allowed CPU/Memory combinations
+### Allowed CPU/Memory Combinations
 
 There are some limitations to the CPU and Memory parameters. AWS will only accept the following combinations:
 [AWS Fargate Documentation, Allowed CPU and memory values (Task Definitions)](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size)
 
-#### Summary of format:
+#### Summary Of Format
 - Values are represented as 1024:1 GB or CPU.
 - Do not include the vCPU or GB suffix.
 - 1 CPU can go to a max of 6 GB of memory. 2 CPU's are required to go higher.
 
-#### Example configuration:
+#### Valid CPU and Memory Values
 
 ```yaml
 - cloudRunnerMemory: 4096
