@@ -5,15 +5,15 @@ Game CI maintains a set of docker images that can be used to run workloads in ma
 Game CI also provides specific GitHub actions for running workflows on GitHub. And a similar workflow for running Game CI on GitLab and Circle CI.
 _All of these options use the build server resources provided by those systems, this can be a constraint or very convenient depending on the size of your project and the workloads you need to run._
 
-## Use Cases
+# Use Cases
 
-### Sending Builds to the cloud
+## Sending Builds to the cloud
 
 You may want to take advantage of cloud resources for lots of reasons (scale, speed, cost, flexibility) or may want to start remote builds from the command line without slowing down your development machine. Cloud Runner can help you do this.
 
 This may be a preference, more effecient or you may want to use systems that struggle to handle large game development projects (GitHub being a good example).
 
-#### Large GitHub Projects
+### Large GitHub Projects
 
 GitHub Actions by default run on [build machines provided by GitHub](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners). For Unity projects the available disk size is quite small. You may experience an error related to running out of disk space. You may also want to run the build on a server with more memory or processing resources.
 
