@@ -32,6 +32,7 @@ const data = {
           },
           "getting-started": {
             "meta": {
+              "name": "G",
               "path": "cloud-runner/getting-started",
               "order": 2,
               "type": "folder"
