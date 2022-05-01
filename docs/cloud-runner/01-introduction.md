@@ -20,15 +20,22 @@ This means some APIs may change, features are still being added but the minimum 
 
 Release Stages: `experimental` ➡️ `preview` ➡️ `full release`
 
-You must use a provider with Cloud Runner, each provider's release status is described below. This indicates the stability and support for cloud runner features.
+You must use a provider with Cloud Runner, each provider's release status is described below. This indicates the stability and support for cloud runner features and workflows.
 
 ```md
-| Platform   | Release Status          |
-| ---------- | ----------------------- |
-| Kubernetes | ✔️ experimental release |
-| AWS        | ✔️ preview release      |
-| GCP        | ⚠ Considered            |
-| Azure      | ⚠ Considered            |
+| Cloud Provider Platform | Release Status            |
+| ----------------------- | ------------------------- |
+| Kubernetes              | ✔️ experimental release |
+| AWS                     | ✔️ preview release      |
+| GCP                     | ⚠ Considered             |
+| Azure                   | ⚠ Considered             |
+```
+
+```md
+| Git Platform | Release Status            |
+| ------------ | ------------------------- |
+| GitHub       | ✔️ experimental release |
+| GitLab       | ✔️ experimental release |
 ```
 
 
