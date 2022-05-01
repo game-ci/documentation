@@ -24,7 +24,7 @@ dpx game-ci build
 
 # Input Override Feature
 
-When running any unity workload you must provide many parameters, such as all of the unity authentication and cloud provider settings. To make this easier you can use the [input override](advanced-topics/input-override#example). 
+When running any unity workload many parameters are required (e.g all unity authentication and cloud provider settings). To make this easier you can use [the input override feature](advanced-topics/input-override#example) to shorten commands signficantly. 
 
 This enables you to provide a command to pull input, e.g you can pull from a file or from a secret manager.
 
