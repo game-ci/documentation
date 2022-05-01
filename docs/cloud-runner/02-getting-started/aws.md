@@ -7,14 +7,24 @@
 
 ## AWS Credentials
 
-Setup the following as `env` variables for the GitHub build step:
+Setup the following as `env` variables for cloud runner to use:
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_DEFAULT_REGION` (should be the same AWS region as the base stack e.g `eu-west-2`)
 
+If you're using GitHub you can use a GitHub Action:
+```yaml
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v1
+  with:
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: eu-west-2
+```
+
 _Note:_
-_This enables us to access AWS resources from Unity Builder._
+_This enables Cloud Runner access AWS._
 
 ## Configuration for AWS Cloud Runner Jobs
 Refer to [Configuration page](../configuration) or the [example below](#example).
