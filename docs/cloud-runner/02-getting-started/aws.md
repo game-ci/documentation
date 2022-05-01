@@ -17,7 +17,7 @@ _Note:_
 _This enables us to access AWS resources from Unity Builder._
 
 ## Configuration for AWS Cloud Runner Jobs
-Refer to [Configuration page](configuration) or the [example below](./#example).
+Refer to [Configuration page](../configuration) or the [example below](./#example).
 
 ### Allowed CPU/Memory combinations
 
