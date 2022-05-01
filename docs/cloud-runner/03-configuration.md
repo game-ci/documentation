@@ -33,6 +33,6 @@ _GitHub Action examples to pull from the required release branch_
 You must specify the Cloud Provider to use via the parameter `cloudRunnerCluster`.
 
 Valid options:
-- aws - [Getting Started - AWS](getting-started/aws)
-- k8s - [Getting Started - Kubernetes](getting-started/kubernetes)
+- `aws` [Getting Started - AWS](getting-started/aws)
+- `k8s` [Getting Started - Kubernetes](getting-started/kubernetes)
 
