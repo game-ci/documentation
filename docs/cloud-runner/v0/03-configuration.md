@@ -15,6 +15,7 @@ _Note:_
 _This enables us to get the repository from the AWS build machine._
 
 ### Release branch configuration
+_GitHub Action examples to pull from the required release branch_
 
 #### Develop branch
 
