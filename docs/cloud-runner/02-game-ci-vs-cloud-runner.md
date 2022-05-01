@@ -1,4 +1,4 @@
-# When to use cloud runner or plain game-ci?
+# Cloud runner vs plain game-ci
 
 Game CI maintains a set of docker images that can be used to run workloads in many scenarios.
 
