@@ -17,7 +17,7 @@ yarn run cli -m {mode parameter} --projectPath {Your project path} {... other co
 - [Garbage Collection Modes](#garbage-collection)
 
 # Help
-_You can run `game-ci -h` or `game-ci --help` to List all modes and paramters with descriptions_
+_You can run `yarn run cli -h` or `yarn run cli --help` to List all modes and paramters with descriptions_
 
 # Planned (does not work)
 We plan to offer support for Game CI via Deno. This will enable fast, typescript native runtime and you will be able to access this via the following:
@@ -32,7 +32,7 @@ When running any unity workload many parameters are required (e.g all unity auth
 This enables you to provide a command to pull input, e.g you can pull from a file or from a secret manager.
 
 ```bash
-game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""
+yarn run cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""
 ```
 
 
