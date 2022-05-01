@@ -7,6 +7,6 @@ game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,U
 ```
 
 ## Required Parameters
+- `populateOverride` - Must be true to run the commands.
 - `readInputFromOverrideList` - Comma separated list of parameters to read from override command.
 - `readInputOverrideCommand` - A command line command to run (The command is formatted to replace "{0}" with the parameter parameter name).
-- `populateOverride` - Must be true to run the commands.
