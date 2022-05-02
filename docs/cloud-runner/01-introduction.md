@@ -26,9 +26,8 @@ You must use a provider with Cloud Runner, each provider's release status is des
 
 ### Community
 __Share your feedback with us!__
-[__Discord Channel__](https://discord.com/channels/710946343828455455/789631903157583923)
-
-[__Feedback Form__](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
+ - [__Discord Channel__](https://discord.com/channels/710946343828455455/789631903157583923)
+ - [__Feedback Form__](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
 
 ### Supported Cloud Runner Platforms
 Minor changes, 💬suggestions and 🐛bugs are tracked as GitHub issues:
