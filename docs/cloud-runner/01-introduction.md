@@ -25,9 +25,10 @@ Release Stages: `experimental` ➡️ `preview` ➡️ `full release`
 You must use a provider with Cloud Runner, each provider's release status is described below. This indicates the stability and support for cloud runner features and workflows.
 
 ### Development
+_Cloud Runner is actively maintained and kept stable by an open source community._
+
 💬suggestions, 🐛bugs and ↕️Minor changes are tracked as GitHub issues:
  - [Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
-_Cloud Runner is actively maintained and kept stable by an open source community._
 
 You can also explore the [development roadmap page](development).
 
