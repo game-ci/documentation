@@ -1,7 +1,10 @@
 # Introduction
 ## Concept - What Does Cloud Runner Do
 
-Cloud Runner enables you to send your project to a Cloud Provider such as AWS or GCP. 
+**Cloud Runner enables you to send your project to run workflows on a Cloud Provider such as AWS or GCP, most commonly to build and test your project.** 
+
+**Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.**
+However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
 Cloud Runner uses git to track and transfer your projects and uses native cloud services such as AWS Fargate or Kubernetes to run your jobs.
 
@@ -10,10 +13,6 @@ The benefits include:
 2. Scale up to much larger numbers of builds easily and fully on demand.
 3. Run custom jobs and extend the system for any workload.
 4. Cloud Runner creates resources on-demand, it costs you nothing while you don't use it.
-
-**Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.
-
-However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
 ## Cloud Runner Release Status
 Cloud Runner is "in active development" ⚠️🔨
