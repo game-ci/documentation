@@ -6,7 +6,7 @@
 **Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.**
 However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
-Cloud Runner uses ![](https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png =15x15)git to track and transfer your projects and uses native cloud services such as AWS Fargate or Kubernetes to run your jobs.
+Cloud Runner uses ![](./pic/pic1_50.png =100x20)<img src="https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png" height="15" /> git to track and transfer your projects and uses native cloud services such as AWS Fargate or Kubernetes to run your jobs.
 
 The benefits include: 
 1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
