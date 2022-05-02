@@ -30,10 +30,6 @@ __Share your feedback with us!__
  - [__Feedback Form__](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
 
 ### Supported Cloud Runner Platforms
-Minor changes, 💬suggestions and 🐛bugs are tracked as GitHub issues:
-[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
-
-You can also explore the [development roadmap page](development).
 
 ```md
 | Cloud Provider Platform | Release Status            |
