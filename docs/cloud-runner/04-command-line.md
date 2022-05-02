@@ -11,7 +11,7 @@ git clone https://github.com/game-ci/unity-builder.git
 yarn install
 yarn run cli -m {mode parameter} --projectPath {Your project path} {... other command line parameters}
 ```
-# Planned (does not work)
+# Planned (does not work currently)
 We plan to offer support for Game CI via Deno. This will enable fast, typescript native runtime and you will be able to access this via the following:
 ```bash
 dpx game-ci build
