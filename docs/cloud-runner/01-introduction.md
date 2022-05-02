@@ -15,7 +15,7 @@ The benefits include:
 4. Cloud Runner creates resources on-demand, it costs you nothing while you don't use it.
 
 ## Cloud Runner Release Status
-Cloud Runner is "in active development" ⚠️🔨
+Cloud Runner is in "active development" ⚠️🔨
 
 Cloud Runner overall release status: `preview`
 This means some APIs may change, features are still being added but the minimum feature set works and is stable.
