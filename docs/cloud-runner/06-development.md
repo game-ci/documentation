@@ -64,24 +64,25 @@
 ## Backlog
 
 ```md
-| What                                             | Status | Why                                                       |
-| ------------------------------------------------ | ------ | --------------------------------------------------------- |
-| Resilience hooks                                 | todo   | Retry, startup and cleanup hooks.                         |
-| custom logging                                   | todo   | Support extensible logging to your own loggin service.    |
-| custom storage engine                            | todo   | Share Unity import cache between local and runners.       |
-| better artifact handling                         | todo   | Better extensibility and support for artifact handling.   |
-| network game features                            | todo   | Quick deploy simulation server, relay or headless client. |
-| interactive cloud runner                         | todo   |                                                           |
-| scriptable custom provider                       | todo   |                                                           |
-| Cleaned up debug/prod                            | todo   |                                                           |
-| Custom cloud runner docker image                 | todo   |                                                           |
-| Infographics for cloud runner docs               | todo   |                                                           |
-| detect and warn about impending binary conflicts | todo   |                                                           |
-| Test coverage for hooks and steps                | todo   |                                                           |
-| Multiplayer test sample                          | todo   |                                                           |
-| Code coverage report / project report            | todo   |                                                           |
-| Kuberenetes Rook support                         | todo   |                                                           |
-| Custom provider sample                           | todo   |                                                           |
+| What                                  | Status | Why                                                       |
+| ------------------------------------- | ------ | --------------------------------------------------------- |
+| resilience hooks                      | todo   | Retry, startup and cleanup hooks.                         |
+| custom logging                        | todo   | Support extensible logging to your own loggin service.    |
+| custom storage engine                 | todo   | Share Unity import cache between local and runners.       |
+| better artifact handling              | todo   | Better extensibility and support for artifact handling.   |
+| network game features                 | todo   | Quick deploy simulation server, relay or headless client. |
+| interactive cloud runner              | todo   |                                                           |
+| scriptable custom provider            | todo   |                                                           |
+| cleaned up debug/prod                 | todo   |                                                           |
+| custom cloud runner docker image      | todo   |                                                           |
+| infographics for cloud runner docs    | todo   |                                                           |
+| detect incoming binary conflicts      | todo   |                                                           |
+| test coverage for hooks and steps     | todo   |                                                           |
+| multiplayer test sample               | todo   |                                                           |
+| code coverage report / project report | todo   |                                                           |
+| kuberenetes Rook support              | todo   |                                                           |
+| custom provider sample                | todo   |                                                           |
+| easily find all error lines in a log  | todo   |                                                           |
 ```
 
 Minor changes, suggestions and bugs are tracked as GitHub issues:
