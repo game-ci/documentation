@@ -1,7 +1,7 @@
 # Introduction
 ## Concept - What does cloud runner do
 
-**Cloud Runner enables you to send your project to a "Cloud Provider" such as AWS or GCP. Using native cloud services (such as AWS Fargate) or Kubernetes.**
+**Cloud Runner enables you to send your project to a Cloud Provider such as AWS or GCP. Using native cloud services such as AWS Fargate or Kubernetes.**
 
 The benefits include: 
 1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
