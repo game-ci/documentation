@@ -20,7 +20,7 @@ dpx game-ci build
 # Help
 _You can run `yarn run cli -h` or `yarn run cli --help` to List all modes and paramters with descriptions_
 
-# Main Commands/Modes Parameter
+# Main Command Parameters
 - Default: `cli` (runs a standard build workflow)
 - [Garbage Collection Modes](#garbage-collection)
 
