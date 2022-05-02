@@ -1,9 +1,9 @@
-# GitHub Self-Hosted Ephemeral Runners
+# Nested GitHub Self-Hosted Runners
 
 **Create a self-hosted cloud runner in an initial job:**
 
 ```yaml
-boot-self-hosted-runner:
+boot-build:
   runs-on: ubuntu-latest
   outputs:
     BUILD_GUID: ${{ steps.start-runner.outputs.BUILD_GUID }}
@@ -52,11 +52,11 @@ boot-self-hosted-runner:
 **Run the build in the job:**
 
 ```yaml
-boot-game-ci-cloud-runner:
+run-build:
   runs-on:
     - self-hosted
-    - ${{ needs.boot-self-hosted-runner.outputs.BUILD_GUID }}
-  needs: boot-self-hosted-runner
+    - ${{ needs.boot-build.outputs.BUILD_GUID }}
+  needs: boot-build
   steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -107,7 +107,7 @@ boot-game-ci-cloud-runner:
 ```yaml
 post-job-message:
   runs-on: ubuntu-latest
-  needs: [boot-game-ci-cloud-runner, boot-self-hosted-runner]
+  needs: [run-build, boot-build]
   steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -116,14 +116,14 @@ post-job-message:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-2
     - run: |
-        aws s3 cp s3://game-ci-test-storage/${{ steps.aws-fargate-unity-build.outputs.CACHE_KEY }}/build-${{ steps.aws-fargate-unity-build.outputs.BUILD_GUID }}.tar build-${{ steps.aws-fargate-unity-build.outputs.BUILD_GUID }}.tar
+        aws s3 cp s3://game-ci-test-storage/${{ needs.run-build.outputs.CACHE_KEY }}/build-${{ needs.run-build.outputs.BUILD_GUID }}.tar build-${{ needs.run-build.outputs.BUILD_GUID }}.tar
         mkdir build
-        tar -xf build-${{ steps.aws-fargate-unity-build.outputs.BUILD_GUID }}.tar -C build
+        tar -xf build-${{ needs.run-build.outputs.BUILD_GUID }}.tar -C build
         ls build
     - uses: actions/upload-artifact@v2
       with:
         name: AWS Build (${{ matrix.targetPlatform }})
-        path: build-${{ steps.aws-fargate-unity-build.outputs.BUILD_GUID }}.tar
+        path: build-${{ needs.run-build.outputs.BUILD_GUID }}.tar
         retention-days: 14
     - name: Steam - Deploy
       uses: game-ci/steam-deploy@main

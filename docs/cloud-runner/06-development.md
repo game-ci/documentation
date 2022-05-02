@@ -3,16 +3,41 @@
 ## Iteration 0 - Quality Of Life
 
 ```md
-| What                                | Status      | Why                                                  |
-| ----------------------------------- | ----------- | ---------------------------------------------------- |
-| preview feedback gathering          | in-progress | Gather feedback on experience using cloud runner.    |
-| preview beginner friendly           | in-progress | Iteration on UX for cloud runner APIs and usability. |
-| better unity test framework support | todo        |                                                      |
-| garbage collection guarentees       | todo        | Support for strong garbage collection guarentees.    |
-| better cli options for inspection   | todo        |                                                      |
+| What                                                        | Status      | Why                                                   |
+| ----------------------------------------------------------- | ----------- | ----------------------------------------------------- |
+| preview feedback gathering                                  | in-progress | Gather feedback on experience using cloud runner.     |
+| documentation, simplify Apis and review usability           | in-progress | To deliver Game CI's mission to be beginner friendly. |
+| extract log stream following behaviour                      | in-progress | Iteration on UX for cloud runner APIs and usability.  |
+| better cli options for inspection                           | in-progress |                                                       |
+| garbage collection guarentees                               | todo        | Support for strong garbage collection guarentees.     |
+| built-in integration for Unity test framework               | todo        |                                                       |
+| built-in integration for steam deploy                       | todo        |                                                       |
+| extract cloud runner input options into encapsulated object | todo        |                                                       |
+| nested github self-hosted runner sample for game-ci                         | in-progress |                                                       |
 ```
 
-## Iteration 1 - Advanced Caching
+## Iteration 1 - GPU Workloads And Capabilities
+
+```md
+| What                                         | Status      | Why                                                     |
+| -------------------------------------------- | ----------- | ------------------------------------------------------- |
+| Automate rendering with GPU provider support | todo        | Automate screenshots, video and remote control clients. |
+| preview beginner friendly                    | in-progress | Make it easier to build new providers.                  |
+| Aws EC2 Gpu Instance                         | todo        |                                                         |
+| Gcp Compute Gpu Instance                     | todo        |                                                         |
+```
+
+## Iteration 2 - Simple Performance Management
+
+```md
+| What                               | Status | Why                                                   |
+| ---------------------------------- | ------ | ----------------------------------------------------- |
+| better performance test support    | todo   |                                                       |
+| performance benchmark / sample     | todo   | Benchmark cloud runner on a variety of project sizes. |
+| simple performance metrics for aws | todo   |                                                       |
+```
+
+## Iteration 3 - Advanced Caching
 
 ```md
 | What                               | Status | Why                                                           |
@@ -22,24 +47,6 @@
 | configurable tar compression       | todo   |                                                               |
 | skip to existing working directory | todo   |                                                               |
 | unity incremental build caching    | todo   |                                                               |
-```
-
-## Iteration 2 - GPU Workloads And Capabilities
-
-```md
-| What                                         | Status | Why                                                     |
-| -------------------------------------------- | ------ | ------------------------------------------------------- |
-| Automate rendering with GPU provider support | todo   | Automate screenshots, video and remote control clients. |
-```
-
-## Iteration 3 - Simple Performance Management
-
-```md
-| What                               | Status | Why                                                   |
-| ---------------------------------- | ------ | ----------------------------------------------------- |
-| better performance test support    | todo   |                                                       |
-| performance benchmark / sample     | todo   | Benchmark cloud runner on a variety of project sizes. |
-| simple performance metrics for aws | todo   |                                                       |
 ```
 
 ## Iteration 4 - Advanced Cloud Runner Workflows For Unity
@@ -72,7 +79,7 @@
 | detect and warn about impending binary conflicts | todo   |                                                           |
 | Test coverage for hooks and steps                | todo   |                                                           |
 | Multiplayer test sample                          | todo   |                                                           |
-| Code report / project report                     | todo   |                                                           |
+| Code coverage report / project report            | todo   |                                                           |
 | Kuberenetes Rook support                         | todo   |                                                           |
 | Custom provider sample                           | todo   |                                                           |
 ```
