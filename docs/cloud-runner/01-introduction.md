@@ -27,7 +27,7 @@ You must use a provider with Cloud Runner, each provider's release status is des
 ### Development
 ↕️Minor changes, 💬suggestions and 🐛bugs are tracked as GitHub issues:
  - [Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
-__
+_Cloud Runner is actively maintained and kept stable._
 
 You can also explore the [development roadmap page](development).
 
