@@ -1,25 +1,22 @@
 # Introduction
-## Concept - What does cloud runner do
+## Concept - What Does Cloud Runner Do
 
-**Cloud Runner enables you to send your project to a Cloud Provider such as AWS or GCP. Using native cloud services such as AWS Fargate or Kubernetes.**
+Cloud Runner enables you to send your project to a Cloud Provider such as AWS or GCP. 
+
+Cloud Runner uses git to track and transfer your projects and uses native cloud services such as AWS Fargate or Kubernetes to run your jobs.
 
 The benefits include: 
 1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 3. Run custom jobs and extend the system for any workload.
+4. Cloud Runner creates resources on-demand, it costs you nothing while you don't use it.
 
-Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.
+**Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.
 
 However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
-
-## Supported Cloud Runner Platforms
+## Cloud Runner Release Status
 Cloud Runner is "in active development" ⚠️🔨
-
-Minor changes, 💬suggestions and 🐛bugs are tracked as GitHub issues:
-[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
-
-You can also explore the [development roadmap page](development).
 
 Cloud Runner overall release status: `preview`
 This means some APIs may change, features are still being added but the minimum feature set works and is stable.
@@ -27,6 +24,18 @@ This means some APIs may change, features are still being added but the minimum 
 Release Stages: `experimental` ➡️ `preview` ➡️ `full release`
 
 You must use a provider with Cloud Runner, each provider's release status is described below. This indicates the stability and support for cloud runner features and workflows.
+
+### Community
+__Share your feedback with us!__
+[__Discord Channel__](https://discord.com/channels/710946343828455455/789631903157583923)
+
+[__Feedback Form__](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
+
+### Supported Cloud Runner Platforms
+Minor changes, 💬suggestions and 🐛bugs are tracked as GitHub issues:
+[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
+
+You can also explore the [development roadmap page](development).
 
 ```md
 | Cloud Provider Platform | Release Status            |
@@ -49,8 +58,8 @@ _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier aut
 | Any Git repository    | ✔️ preview release |
 | Any Git automation/Ci | ✔️ preview release |
 ```
-## Cloud Runner Releases
 
+## Releases
 All cloud runner releases are currently packaged and released with game-ci's unity-builder module:
 [Game CI Releases - GitHub](https://github.com/game-ci/unity-builder/releases)
 
@@ -59,6 +68,3 @@ History up to latest open incoming changes for release can be found here:
 
 You can see further information about configuring the release version on the [Configuration](configuration) page.
 
-# Feedback form
-
-[Feedback Form](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
