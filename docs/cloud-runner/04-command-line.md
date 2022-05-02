@@ -24,7 +24,7 @@ _You can run `yarn run cli -h` or `yarn run cli --help` to List all modes and pa
 - Default: `cli` (runs a standard build workflow)
 - [Garbage Collection Modes](#garbage-collection)
 
-# Avoiding specifying long commands
+# Avoiding long parameters for commands
 You can avoid specifying lots of command line input for credentials (e.g all unity authentication and cloud provider settings) by using environment variables or [the input override feature](advanced-topics/input-override#example) to shorten commands signficantly. 
 
 This enables you to provide a command to pull input, e.g you can pull from a file or from a secret manager.
