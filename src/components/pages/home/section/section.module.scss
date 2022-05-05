@@ -1,0 +1,47 @@
+.section {
+  width: 100%;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10vh 10vw;
+
+  .title {
+    width: 70vmin;
+    text-align: center;
+  }
+}
+
+.openingSection {
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(180deg, var(--ifm-navbar-background-color), var(--brand-secondary));
+  user-select: none;
+  padding: 0;
+
+  .logo {
+    height: 50vmin;
+    width: 50vmin;
+  }
+
+  .title {
+    color: var(ifm-navbar-background-link-color);
+    font-size: 3.5vmin;
+  }
+}
+
+.ourVisionSection {
+  min-height: 100vh;
+
+  :global(.ant-typography) {
+    color: var(--brand-primary-brighter);
+  }
+}
+
+.visualRepresentationOfWhatWeDoSection {
+  background: var(--brand-secondary);
+
+  :global(.ant-typography) {
+    color: var(--brand-tertiary);
+  }
+}

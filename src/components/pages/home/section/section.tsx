@@ -2,7 +2,7 @@ import { ReactNodeLike } from 'prop-types';
 import React, { ForwardedRef } from 'react';
 import cx from 'classnames';
 
-import styles from './section-module.scss';
+import styles from './section.module.scss';
 
 interface SectionProps {
   className?: string;
