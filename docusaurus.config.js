@@ -17,6 +17,7 @@ const config = {
   projectName: 'documentation', // Usually your repo name.
 
   plugins: [
+    'docusaurus-plugin-sass',
     async function tailwindcss(context, options) {
       return {
         name: "docusaurus-tailwindcss",

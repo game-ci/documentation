@@ -1,11 +1,5 @@
-import Section from '@/components/pages/home/section/section';
-import FadeIntoView from '@/components/reusable/animations/fade-into-view';
 import React from 'react';
-import { Typography, Card, Col, Row } from 'antd';
-
-import styles from './section-module.scss';
-
-const { Title } = Typography;
+import Section from "@site/src/components/pages/home/section/section";
 
 const cards = [
   {
@@ -88,31 +82,22 @@ const cards = [
 ];
 
 const ThePerksSection = () => {
-  const column = { xs: 24, sm: 24, md: 12, lg: 12, xl: 8, xxl: 8 };
   return (
-    <Section className={styles.thePerksSection}>
-      <Title level={2} className={styles.title}>
-        The perks of GameCI
-      </Title>
+    <Section>
+      <h2 className="text-center text-5xl font-bold mb-10">The perks</h2>
 
-      <Row gutter={[24, 16]} align="stretch" justify="space-around">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((card, index) => (
-          <Col key={card.title} {...column}>
-            <FadeIntoView className={styles.cardAnimator} delay={index * 100}>
-              <Card
-                className={styles.card}
-                title={
-                  <Title level={4} className={styles.cardTitle}>
-                    {card.title}
-                  </Title>
-                }
-              >
-                {card.content}
-              </Card>
-            </FadeIntoView>
-          </Col>
+          <div className="block p-6 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              {card.title}
+            </h5>
+            <p className="font-normal text-gray-700 dark:text-gray-400">
+              {card.content}
+            </p>
+          </div>
         ))}
-      </Row>
+      </div>
     </Section>
   );
 };

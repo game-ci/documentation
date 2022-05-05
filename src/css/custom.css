@@ -7,7 +7,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #356450;
@@ -17,6 +16,9 @@
   --ifm-color-primary-light: #3a6e58;
   --ifm-color-primary-lighter: #3d735c;
   --ifm-color-primary-lightest: #458268;
+  --brand-primary: rgb(61, 192, 148);
+  --brand-secondary: rgb(233, 224, 255);
+  --brand-tertiary: rgb(240, 242, 245);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -31,6 +33,9 @@
   --ifm-background-color: #363344;
   --ifm-navbar-link-color: #ffffff;
   --ifm-navbar-background-color: #373445;
+  --brand-primary: rgb(61, 192, 148);
+  --brand-secondary: rgb(55, 52, 69);
+  --brand-tertiary: rgb(240, 242, 245);
 }
 
 .docusaurus-highlight-code-line {
@@ -46,4 +51,9 @@
 
 .footer {
   --ifm-footer-background-color: #373445;
+}
+
+/* Revert svg css change from tailwindcss to prevent anchor svg to create an endline */
+svg {
+  display: initial;
 }
