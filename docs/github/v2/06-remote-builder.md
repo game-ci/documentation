@@ -44,7 +44,7 @@ Remote Builder is better if you don't have a server setup or don't want to manag
 
 ### Create base stack on AWS CloudFormation
 
-1. Open [this link](https://raw.githubusercontent.com/game-ci/unity-builder/main/dist/cloud-formations/base-setup.yml), right-click and save as a yaml file locally (filename doesn't matter, must end with .yaml).
+1. Open [this link](https://raw.githubusercontent.com/game-ci/unity-builder/main/dist/cloud-formations/cloudformation-stack-ttl.yml), right-click and save as a yaml file locally (filename doesn't matter, must end with .yaml).
 2. Open AWS console, navigate to the CloudFormation service.
 3. Select the option to create a new stack.
 4. Locate the section where you can upload a template. Upload the file you downloaded in step 1. The default values for all other fields will work, usually I name the stack something like `game-ci-base`.
