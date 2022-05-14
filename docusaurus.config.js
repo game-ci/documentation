@@ -37,6 +37,15 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          lastVersion: 'current',
+          versions: {
+            current: {
+              label: 'v2.0.0 (current)',
+            },
+            1: {
+              label: 'v1.0.0 (old github docs)',
+            },
+          },
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/game-ci/documentation/tree/main/docs',
@@ -100,6 +109,12 @@ const config = {
               label: 'Docs',
             },
             // {to: '/blog', label: 'Blog', position: 'left'},
+            {
+              type: 'docsVersionDropdown',
+              position: 'right',
+              // dropdownItemsAfter: [{to: '/versions', label: 'All versions'}],
+              // dropdownActiveClassDisabled: true,
+            },
             {
               label: 'Source code',
               position: 'right',
