@@ -65,7 +65,7 @@ const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
   }
 
   return (
-    <main style={{ paddingTop: 24 }}>
+    <main>
       {failures.length > 0 && (
         <>
           <h3>Current failures</h3>

@@ -17,7 +17,7 @@ const ImageVersions = ({ versions }: Props) => {
     <main>
       <h1>Versions</h1>
 
-      <div style={{ paddingBottom: 8 }}>
+      <div>
         <span>Docker repo version: </span>
         <Select defaultValue={selectedVersion} onChange={setSelectedVersion} loading={isLoading}>
           {versions.map((version) => {

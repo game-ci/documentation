@@ -45,3 +45,9 @@
     color: var(--brand-tertiary);
   }
 }
+
+.versionsSection {
+  min-height: 100vh;
+  display: block;
+  background: var(--ifm-background-color);
+}

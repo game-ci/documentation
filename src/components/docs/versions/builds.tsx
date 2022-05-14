@@ -135,7 +135,7 @@ const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props
       key={ciJobId}
       dataSource={data}
       columns={columns}
-      sticky
+      // sticky
       rowKey={(row) => row.NO_ID_FIELD}
       // rowClassName={() => styles.stickyRow}
       expandable={expandable}

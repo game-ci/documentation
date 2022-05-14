@@ -1,4 +1,5 @@
 import React, { useReducer } from 'react';
+import CodeBlock from '@theme/CodeBlock';
 
 interface Props {
   ciJob;
@@ -49,28 +50,42 @@ const BuildFailureDetails = ({
   // }, []);
 
   const { changeSet } = editorVersionInfo;
-  const command =
-    `docker build . --file ./editor/Dockerfile -t editor ` +
-    `--build-arg=version=${editorVersion} ` +
-    `--build-arg=changeSet=${changeSet} ` +
-    `--build-arg=module=${targetPlatform}`;
+  const buildCommand = `git clone git@github.com:game-ci/docker.git
+cd docker
+docker build . \\
+  --file ./images/${baseOs}/editor/Dockerfile -t unityci-editor:${editorVersion}-${targetPlatform} \\
+  --build-arg=version=${editorVersion} \\
+  --build-arg=changeSet=${changeSet} \\
+  --build-arg=module=${targetPlatform}`;
+
+  const pullCommand = `docker pull unityci/editor:${baseOs}-${editorVersion}-${targetPlatform}-${major}.${minor}.${patch}`;
 
   return (
     <div {...rest}>
-      <h4>CI Job</h4>
-      <pre>{JSON.stringify(ciJob, null, 2)}</pre>
+      <h4>CI Job identification</h4>
+      <CodeBlock language="json">
+        {JSON.stringify(ciJob, null, 2)}
+      </CodeBlock>
       <br />
       <h4>Commands</h4>
-      <p>To manually build for debugging:</p>
-      ```powershell
-      {[command]}
-      ```
+      <p>Build the docker image locally for debugging:</p>
+      <CodeBlock language="bash">
+        {buildCommand}
+      </CodeBlock>
+      <p>Pull this docker image:</p>
+      <CodeBlock language="bash">
+        {pullCommand}
+      </CodeBlock>
       <br />
-      <h4>Associated tags</h4>
-      <pre>{JSON.stringify(tags, null, 2)}</pre>
+      <h4>Associated tags on docker hub</h4>
+      <CodeBlock language="json">
+        {JSON.stringify(tags, null, 2)}
+      </CodeBlock>
       <br />
-      <h4>CI Build</h4>
-      <pre>{JSON.stringify(ciBuild, null, 2)}</pre>
+      <h4>CI Build details</h4>
+      <CodeBlock language="json">
+        {JSON.stringify(ciBuild, null, 2)}
+      </CodeBlock>
     </div>
   );
 };
