@@ -215,17 +215,17 @@ const config = {
                 //   to: '/blog',
                 // },
                 {
-                  label: 'GitHub',
+                  label: 'GameCI on GitHub',
                   href: 'https://github.com/game-ci/',
+                },
+                {
+                  label: 'GameCI on Gitlab',
+                  href: 'https://gitlab.com/game-ci',
                 },
                 {
                   label: 'GameCI on OpenCollective',
                   href: 'https://opencollective.com/game-ci',
                 },
-                {
-                  label: 'Gitlab',
-                  href: 'https://gitlab.com/game-ci',
-                }
               ],
             },
           ],
