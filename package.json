@@ -18,9 +18,9 @@
     "node": "16.x"
   },
   "dependencies": {
-    "@docusaurus/core": "2.0.0-beta.18",
-    "@docusaurus/module-type-aliases": "2.0.0-beta.18",
-    "@docusaurus/preset-classic": "2.0.0-beta.18",
+    "@docusaurus/core": "^2.0.0-beta.20",
+    "@docusaurus/module-type-aliases": "^2.0.0-beta.20",
+    "@docusaurus/preset-classic": "^2.0.0-beta.20",
     "@mdx-js/react": "^1.6.22",
     "@reduxjs/toolkit": "^1.8.1",
     "@tsconfig/docusaurus": "^1.0.5",
