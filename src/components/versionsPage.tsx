@@ -1,6 +1,4 @@
 import React from 'react';
-import Layout from '@theme/Layout';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Versions from "@site/src/components/docs/versions/versions";
 
 import 'firebase/auth';
@@ -24,7 +22,6 @@ function VersionsAntdWrapper() {
   const antdDarkTheme = "https://unpkg.com/antd/dist/antd.dark.css";
 
   const {isDarkTheme} = useColorMode();
-
 
   const addCssToHead = () => {
     const css = document.createElement('link');
@@ -54,20 +51,13 @@ function VersionsAntdWrapper() {
 }
 
 export default function VersionsPage(): JSX.Element {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Provider store={store}>
       <FirebaseAppProvider firebaseConfig={config.firebase}>
         <IconContext.Provider value={{ className: 'anticon' }}>
-          <Layout
-            title={`${siteConfig.title} - Docker images versions`}
-            description="Docker images versions">
-            <main>
-              <Section className={styles.versionsSection}>
-                <VersionsAntdWrapper />
-              </Section>
-            </main>
-          </Layout>
+          <div className={styles.versionsSection}>
+            <VersionsAntdWrapper />
+          </div>
         </IconContext.Provider>
       </FirebaseAppProvider>
     </Provider>
