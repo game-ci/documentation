@@ -50,13 +50,23 @@ const BuildFailureDetails = ({
   // }, []);
 
   const { changeSet } = editorVersionInfo;
-  const buildCommand = `git clone git@github.com:game-ci/docker.git
+  const buildCommand = `#!/usr/bin/env bash
+git clone git@github.com:game-ci/docker.git
 cd docker
+
+editor_version=${editorVersion}
+change_set=${changeSet}
+base_os=${baseOs}
+target_platform=${targetPlatform}
+image_name=unityci-editor:$editor_version-$target_platform
+
 docker build . \\
-  --file ./images/${baseOs}/editor/Dockerfile -t unityci-editor:${editorVersion}-${targetPlatform} \\
-  --build-arg=version=${editorVersion} \\
-  --build-arg=changeSet=${changeSet} \\
-  --build-arg=module=${targetPlatform}`;
+  --file ./images/$base_os/editor/Dockerfile \\
+  -t $image_name \\
+  --build-arg=version=$editor_version \\
+  --build-arg=changeSet=$change_set \\
+  --build-arg=module=$target_platform
+`;
 
   const pullCommand = `docker pull unityci/editor:${baseOs}-${editorVersion}-${targetPlatform}-${major}.${minor}.${patch}`;
 
