@@ -4,14 +4,14 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
-import ThePerksSection from "@site/src/components/pages/home/section/the-perks-section";
-import OpeningSection from "@site/src/components/pages/home/section/opening-section";
+import ThePerksSection from '@site/src/components/pages/home/section/the-perks-section';
+import OpeningSection from '@site/src/components/pages/home/section/opening-section';
 
 function HomepageHeader() {
-  let buttonClasses = "py-4 px-6 mx-3 bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+  const buttonClasses =
+    'py-4 px-6 mx-3 bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg';
 
   return (
-
     <div className="bg-white dark:bg-gray-800 ">
       <div className="text-center w-full mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
         <h2 className="text-3xl font-extrabold text-black dark:text-white sm:text-4xl">
@@ -34,15 +34,16 @@ function HomepageHeader() {
 }
 
 export default function Home(): JSX.Element {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="The fastest and easiest way to automatically test and build your game projects">
+      description="The fastest and easiest way to automatically test and build your game projects"
+    >
       <main>
-        <OpeningSection/>
-        <HomepageHeader/>
-        <ThePerksSection/>
+        <OpeningSection />
+        <HomepageHeader />
+        <ThePerksSection />
       </main>
     </Layout>
   );

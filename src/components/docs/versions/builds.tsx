@@ -2,10 +2,9 @@ import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import { Table, Tooltip } from 'antd';
-import Spinner from "@site/src/components/reusable/spinner";
-import DockerImageLinkOrRetryButton
-  from "@site/src/components/docs/versions/docker-image-link-or-retry-button";
-import BuildFailureDetails from "@site/src/components/docs/versions/build-failure-details";
+import Spinner from '@site/src/components/reusable/spinner';
+import DockerImageLinkOrRetryButton from '@site/src/components/docs/versions/docker-image-link-or-retry-button';
+import BuildFailureDetails from '@site/src/components/docs/versions/build-failure-details';
 // import styles from './builds.module.scss';
 
 interface RepoVersionInfo {

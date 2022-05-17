@@ -1,7 +1,7 @@
 # GameCI
 
 Documentation for open source GameCI projects. You can find the `.md` files inside the [docs](./docs) folder.
-The live version is available on [game.ci](https://game.ci). This website is built using 
+The live version is available on [game.ci](https://game.ci). This website is built using
 [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 
 ### Installation

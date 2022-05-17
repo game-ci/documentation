@@ -1,7 +1,7 @@
 import { Collapse } from 'antd';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
-import UnityVersion from "@site/src/components/docs/versions/unity-version";
+import UnityVersion from '@site/src/components/docs/versions/unity-version';
 
 interface Props {
   selectedRepoVersion: string | undefined;

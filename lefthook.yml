@@ -27,10 +27,7 @@ pre-commit:
     format code:
       glob: '*.{js,jsx,ts,tsx}'
       exclude: '.docusaurus/|build/'
-      run: |
-        yarn prettier --write {staged_files} &&
-        yarn eslint {staged_files} &&
-        git add {staged_files}
+      run: yarn prettier --write {staged_files} && yarn eslint {staged_files} && git add {staged_files}
     #    run tests:
     #      glob: '*.{js,jsx,ts,tsx}'
     #      exclude: '.docusaurus/|build/'

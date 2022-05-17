@@ -9,7 +9,8 @@
   z-index: 4;
 }
 
-.panel:global(.ant-collapse-item) :global(.ant-collapse-content .ant-table-header.ant-table-sticky-header) {
+.panel:global(.ant-collapse-item)
+  :global(.ant-collapse-content .ant-table-header.ant-table-sticky-header) {
   position: sticky;
   top: 45px !important; /* 46 from collapse header -1 for buggy border in dark mode */
 }

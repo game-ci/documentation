@@ -1,11 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import menuStructure from '@site/src/core/menu-structure';
 
 export const selectedVersionSlice = createSlice({
   name: 'version',
-  initialState: {
-    selectedVersion: {menuStructure},
-  },
+  initialState: {},
   reducers: {
     updateSelection: (state, action) => {
       const { section, selection } = action.payload;

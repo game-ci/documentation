@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNotification } from '@site/src/core/hooks/use-notification';
 import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
 import { useClipboard } from '@site/src/core/hooks/use-clipboard';
-import { Renderable, ValueOrFunction } from 'react-hot-toast/dist/core/types';
 import Spinner from '@site/src/components/reusable/spinner';
 
 interface Props {

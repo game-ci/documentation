@@ -73,29 +73,19 @@ docker build . \\
   return (
     <div {...rest}>
       <h4>CI Job identification</h4>
-      <CodeBlock language="json">
-        {JSON.stringify(ciJob, null, 2)}
-      </CodeBlock>
+      <CodeBlock language="json">{JSON.stringify(ciJob, null, 2)}</CodeBlock>
       <br />
       <h4>Commands</h4>
       <p>Build the docker image locally for debugging:</p>
-      <CodeBlock language="bash">
-        {buildCommand}
-      </CodeBlock>
+      <CodeBlock language="bash">{buildCommand}</CodeBlock>
       <p>Pull this docker image:</p>
-      <CodeBlock language="bash">
-        {pullCommand}
-      </CodeBlock>
+      <CodeBlock language="bash">{pullCommand}</CodeBlock>
       <br />
       <h4>Associated tags on docker hub</h4>
-      <CodeBlock language="json">
-        {JSON.stringify(tags, null, 2)}
-      </CodeBlock>
+      <CodeBlock language="json">{JSON.stringify(tags, null, 2)}</CodeBlock>
       <br />
       <h4>CI Build details</h4>
-      <CodeBlock language="json">
-        {JSON.stringify(ciBuild, null, 2)}
-      </CodeBlock>
+      <CodeBlock language="json">{JSON.stringify(ciBuild, null, 2)}</CodeBlock>
     </div>
   );
 };

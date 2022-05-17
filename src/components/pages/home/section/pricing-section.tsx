@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from 'antd';
 
+import Section from '@site/src/components/pages/home/section/section';
 import styles from './section.module.scss';
-import Section from "@site/src/components/pages/home/section/section";
 
 const { Title } = Typography;
 

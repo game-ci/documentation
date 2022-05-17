@@ -47,7 +47,7 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
   deployToSteam:
-    needs: [ buildForWindowsAndLinux ]
+    needs: [buildForWindowsAndLinux]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -63,7 +63,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: Build-StandaloneLinux64
-          path: build/StandaloneLinux64      
+          path: build/StandaloneLinux64
       - uses: game-ci/steam-deploy@v1
         with:
           username: ${{ secrets.STEAM_USERNAME }}
@@ -83,14 +83,15 @@ jobs:
 
 - **STEAM_USERNAME**: The username of the Steam Build Account that you created in step 1.
 - **STEAM_PASSWORD**: The password of the Steam Build Account that you created in step 1.
-- **STEAM_CONFIG_VDF**, **STEAM_SSFN_FILE_NAME**, and **STEAM_SSFN_FILE_CONTENTS**: See the step "Setup Steam Authentication" below. 
+- **STEAM_CONFIG_VDF**, **STEAM_SSFN_FILE_NAME**, and **STEAM_SSFN_FILE_CONTENTS**: See the step "Setup Steam Authentication" below.
 - **STEAM_APP_ID**: The identifier of your app on steam. You can find it on your [dashboard](https://partner.steamgames.com/dashboard).
 
 ### 4. Setup Steam Authentication
 
-Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard. 
-This means that simply using username and password isn't enough to authenticate with Steam. 
+Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard.
+This means that simply using username and password isn't enough to authenticate with Steam.
 However, it is possible to go through the MFA process only once by setting up GitHub Secrets for configVdf, ssfnFileName, and ssfnFileContents with these steps:
+
 1. Install [Valve's offical steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your local machine. All following steps will also be done on your local machine.
 1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
 1. Validate that the MFA process is complete by running `steamcmd +login <username> <password> +quit` again. It should not ask for the MFA code again.
@@ -104,7 +105,7 @@ You can configure these to better match your use case.
 
 #### buildDescription
 
-The identifier for this specific build, which helps you identify it in steam. 
+The identifier for this specific build, which helps you identify it in steam.
 
 It is recommended to use the semantic version of the build for this.
 
@@ -131,4 +132,3 @@ If your firstDepotId is 125000 then, regardless of the used appId, the depots 12
 The branch within steam that this build will be automatically put live on.
 
 Note that the `default` branch [has been observed to not work](https://github.com/game-ci/steam-deploy/issues/19) as a release branch, presumably because it is potentially dangerous.
-
