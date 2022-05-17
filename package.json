@@ -1,8 +1,13 @@
 {
   "name": "game-ci",
   "version": "0.0.0",
+  "description": "Website for projects within the GameCI group",
   "private": true,
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
+    "prepare": "lefthook install && npx husky uninstall -y",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
@@ -12,10 +17,9 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
+    "lint": "prettier --write . --loglevel=warn && eslint . --quiet --fix",
+    "eslint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "typecheck": "tsc"
-  },
-  "engines": {
-    "node": "16.x"
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-beta.20",
@@ -45,6 +49,24 @@
     "sass": "^1.51.0",
     "tailwindcss": "^3.0.24",
     "typescript": "^4.6.3"
+  },
+  "devDependencies": {
+    "@arkweid/lefthook": "^0.7.7",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-import-resolver-typescript": "^2.3.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-unicorn": "^27.0.0",
+    "prettier": "^2.6.2"
   },
   "browserslist": {
     "production": [
