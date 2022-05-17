@@ -18,23 +18,24 @@ pre-commit:
   commands:
     format documents:
       glob: '*.{md,mdx}'
-      exclude: '.docusaurus/'
+      exclude: '.docusaurus/|build/'
       run: yarn prettier --write {staged_files}
     format configs:
       glob: '*.{json,yml,yaml}'
-      exclude: '.docusaurus/'
+      exclude: '.docusaurus/|build/'
       run: yarn prettier --write {staged_files}
     format code:
       glob: '*.{js,jsx,ts,tsx}'
-      exclude: '.docusaurus/'
+      exclude: '.docusaurus/|build/'
       run: |
         yarn prettier --write {staged_files} &&
         yarn eslint {staged_files} &&
         git add {staged_files}
-    run tests:
-      glob: '*.{js,jsx,ts,tsx}'
-      exclude: '.docusaurus/'
-      run: yarn jest --passWithNoTests --findRelatedTests {staged_files}
+    #    run tests:
+    #      glob: '*.{js,jsx,ts,tsx}'
+    #      exclude: '.docusaurus/|build/'
+    #      run: yarn jest --passWithNoTests --findRelatedTests {staged_files}
     make shell script executable:
       glob: '*.sh'
+      exclude: '.docusaurus/|build/'
       run: git update-index --chmod=+x {staged_files}
