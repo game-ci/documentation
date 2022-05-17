@@ -4,13 +4,26 @@ import React from 'react';
  * @see https://bit.dev/mhnpd/react-loader-spinner/three-dots
  * @licence: MIT
  */
-export const ThreeDots = (svg) => (
+
+type RGB = `rgb(${number}, ${number}, ${number})`;
+type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`;
+type HEX = `#${string}`;
+
+type Color = RGB | RGBA | HEX;
+
+interface Props {
+  width: number;
+  height: number;
+  color: Color;
+}
+
+export const ThreeDots = ({ width, height, color }: Props) => (
   <svg
-    width={svg.width}
-    height={svg.height}
+    width={width}
+    height={height}
     viewBox="0 0 120 30"
     xmlns="http://www.w3.org/2000/svg"
-    fill={svg.color}
+    fill={color}
   >
     <circle cx="15" cy="15" r="15">
       <animate
