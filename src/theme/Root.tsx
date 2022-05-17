@@ -7,6 +7,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { FirebaseAppProvider } from 'reactfire';
 import config from '@site/src/core/config';
 import { reducer } from '@site/src/logic';
+import { Toaster } from 'react-hot-toast';
 
 const store = configureStore({ reducer });
 
@@ -19,7 +20,10 @@ function Root({ children }: Props): JSX.Element {
     <Provider store={store}>
       <FirebaseAppProvider firebaseConfig={config.firebase}>
         {/* Todo - Remove anticon className when removing AntDesign */}
-        <IconContext.Provider value={{ className: 'anticon' }}>{children}</IconContext.Provider>
+        <IconContext.Provider value={{ className: 'anticon' }}>
+          <Toaster />
+          {children}
+        </IconContext.Provider>
       </FirebaseAppProvider>
     </Provider>
   );

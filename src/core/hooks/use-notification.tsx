@@ -1,17 +1,18 @@
-import {toast} from "react-hot-toast";
+import toast from 'react-hot-toast';
 
+/**
+ * Requires <Toaster /> to be included in the root of the app.
+ */
 export function useNotification() {
-  const notify = (type, {message, description}) => {
-    toast[type]({
-      message,
-      description,
-    });
-  };
+  const { success, error, loading, promise, dismiss, remove, custom } = toast;
 
   return {
-    success: (props) => notify('success', props),
-    info: (props) => notify('info', props),
-    warning: (props) => notify('warning', props),
-    error: (props) => notify('error', props),
+    success,
+    error,
+    loading,
+    promise,
+    dismiss,
+    remove,
+    custom,
   };
 }

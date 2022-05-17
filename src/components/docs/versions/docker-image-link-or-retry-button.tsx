@@ -2,8 +2,10 @@ import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
 import DockerImageLink from '@site/src/components/docs/versions/docker-image-link';
 import { useAuthenticatedEndpoint } from '@site/src/core/hooks/use-authenticated-endpoint';
 import { useNotification } from '@site/src/core/hooks/use-notification';
+import { Tooltip } from 'antd';
 import React, { useState } from 'react';
 import { HiOutlineRefresh } from 'react-icons/all';
+import Spinner from '@site/src/components/reusable/spinner';
 
 interface Props {
   record: {
@@ -39,11 +41,13 @@ const DockerImageLinkOrRetryButton = ({ record }: Props) => {
   const onClick = async () => {
     try {
       setRetryRequested(true);
-      const result = await retryBuild();
-      notify.success(result);
-    } catch (error) {
+      await notify.promise(retryBuild(), {
+        loading: <Spinner type="spin" />,
+        success: (message) => message,
+        error: (error) => error.message,
+      });
+    } catch {
       setRetryRequested(false);
-      notify.error(error);
     }
   };
 

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import {useNotification} from "@site/src/core/hooks/use-notification";
-import {SimpleAuthCheck} from "@site/src/components/auth/safe-auth-check";
+import { useNotification } from '@site/src/core/hooks/use-notification';
+import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
+import { useClipboard } from '@site/src/core/hooks/use-clipboard';
+import { Renderable, ValueOrFunction } from 'react-hot-toast/dist/core/types';
+import Spinner from '@site/src/components/reusable/spinner';
 
 interface Props {
   changeSet: string;
@@ -8,13 +11,17 @@ interface Props {
 
 const ShowAndCopyChangeSetHashButton = ({ changeSet }: Props) => {
   const [hoverHash, setHoverHash] = useState<boolean>(false);
-  // const clipboard = useClipboard();
+  const clipboard = useClipboard();
   const notify = useNotification();
 
-  // const onCopyChangeSet = async (event) => {
-  //   event.stopPropagation();
-  //   await clipboard.write(changeSet, () => notify.info({ message: 'Change hash was copied' }));
-  // };
+  const onCopyChangeSet = async (event) => {
+    event.stopPropagation();
+    await notify.promise(clipboard.write(changeSet), {
+      loading: <Spinner type="spin" />,
+      success: 'Copied to clipboard',
+      error: 'Your browser does not support copying to clipboard',
+    });
+  };
 
   return (
     <SimpleAuthCheck fallback={<span />} requiredClaims={{ admin: true }}>
@@ -30,7 +37,7 @@ const ShowAndCopyChangeSetHashButton = ({ changeSet }: Props) => {
             }}
             onMouseEnter={() => setHoverHash(true)}
             onMouseLeave={() => setHoverHash(false)}
-            // onClick={(event) => onCopyChangeSet(event)}
+            onClick={(event) => onCopyChangeSet(event)}
           >
             {changeSet}
           </button>
