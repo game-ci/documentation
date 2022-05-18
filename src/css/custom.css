@@ -52,8 +52,3 @@
 .footer {
   --ifm-footer-background-color: #373445;
 }
-
-/* Revert svg css change from tailwindcss to prevent anchor svg to create an endline */
-svg {
-  display: initial;
-}
