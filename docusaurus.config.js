@@ -136,12 +136,12 @@ const config = {
           },
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/game-ci/documentation/tree/main/docs',
+          editUrl: 'https://github.com/game-ci/documentation/tree/main/',
         },
         // blog: {
         //   showReadingTime: true,
         //   // Please change this to your repo.
-        //   editUrl: 'https://github.com/game-ci/documentation/tree/main/blog',
+        //   editUrl: 'https://github.com/game-ci/documentation/tree/main/',
         // },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
