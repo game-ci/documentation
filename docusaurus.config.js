@@ -4,86 +4,7 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
-
-const darkCodeTheme = {
-  plain: {
-    color: '#F8F8F2',
-    backgroundColor: '#282A36',
-  },
-  styles: [
-    {
-      types: ['comment', 'prolog', 'doctype', 'cdata'],
-      style: {
-        color: 'rgb(98, 114, 164)',
-      },
-    },
-    {
-      types: ['namespace'],
-      style: {
-        opacity: 0.7,
-      },
-    },
-    {
-      types: ['string', 'attr-value'],
-      style: {
-        color: 'rgb(241, 250, 140)',
-      },
-    },
-    {
-      types: ['punctuation', 'operator'],
-      style: {
-        color: 'rgb(248, 248, 242)',
-      },
-    },
-    {
-      types: [
-        'entity',
-        'url',
-        'symbol',
-        'number',
-        'boolean',
-        'variable',
-        'constant',
-        'property',
-        'regex',
-        'inserted',
-      ],
-      style: {
-        color: 'rgb(189, 147, 249)',
-      },
-    },
-    {
-      types: ['atrule', 'function'],
-      style: {
-        color: 'rgb(139, 233, 253)',
-      },
-    },
-    {
-      types: ['keyword', 'attr-name', 'selector'],
-      style: {
-        color: 'rgb(255, 121, 198)',
-      },
-    },
-    {
-      types: ['deleted', 'tag'],
-      style: {
-        color: 'rgb(255, 85, 85)',
-      },
-    },
-    {
-      types: ['function-variable'],
-      style: {
-        color: 'rgb(255, 184, 108)',
-      },
-    },
-    {
-      types: ['tag', 'selector', 'keyword'],
-      style: {
-        color: 'rgb(80, 250, 123)',
-      },
-    },
-  ],
-};
+const darkCodeTheme = require('./src/dracula-custom-code-theme');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -98,7 +19,14 @@ const config = {
   projectName: 'documentation', // Usually your repo name.
 
   plugins: [
-    'docusaurus-plugin-sass',
+    ['docusaurus-plugin-sass', {}],
+    [
+      'docusaurus-gtm-plugin',
+      {
+        id: 'GTM-5CRN6W9',
+        enabled: true,
+      },
+    ],
     async function tailwindcss(context, options) {
       return {
         name: 'docusaurus-tailwindcss',
@@ -129,12 +57,12 @@ const config = {
           },
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/game-ci/documentation/tree/main/docs',
+          editUrl: 'https://github.com/game-ci/documentation/tree/main/',
         },
         // blog: {
         //   showReadingTime: true,
         //   // Please change this to your repo.
-        //   editUrl: 'https://github.com/game-ci/documentation/tree/main/blog',
+        //   editUrl: 'https://github.com/game-ci/documentation/tree/main/',
         // },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -153,10 +81,10 @@ const config = {
       },
       algolia: {
         // The application ID provided by Algolia
-        appId: 'BH4D9OD16A',
+        appId: 'E57FOT37U9',
 
         // Public API key: it is safe to commit it
-        apiKey: 'd085b783b0341babb98dc7fdc6a2a8be',
+        apiKey: '1df02f65283b9c1c95637a3a0d8a024a',
 
         indexName: 'game',
 
