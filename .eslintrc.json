@@ -67,6 +67,17 @@
     // From experience, named exports are almost always desired. I got tired of this rule
     "import/prefer-default-export": "off",
     // Firebase requires importing each module that's used
-    "import/no-duplicates": "off"
+    "import/no-duplicates": "off",
+    // Allow camelCase and PascalCase (kebab-case for md files)
+    "unicorn/filename-case": [
+      "error",
+      {
+        "cases": {
+          "camelCase": true,
+          "pascalCase": true,
+          "kebabCase": true
+        }
+      }
+    ]
   }
 }

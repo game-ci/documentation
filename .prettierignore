@@ -1,2 +1,14 @@
+# Node
 **/node_modules/**
+
+# Legacy - Keep this for a while, since people might still have this folder
 **/.next/**
+
+# Docusaurus
+.docusaurus/**
+build/**
+
+# Use stylelint instead
+*.less
+*.css
+*.scss

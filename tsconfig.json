@@ -1,26 +1,7 @@
 {
+  // This file is not used in compilation. It is here just for a nice editor experience.
+  "extends": "@tsconfig/docusaurus/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "paths": {
-      "@/components/*": ["components/*"],
-      "@/core/*": ["core/*"],
-      "@/logic/*": ["logic/*"],
-      "@/tools/*": ["tools/*"]
-    }
-  },
-  "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "@types/**/*", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+    "baseUrl": "."
+  }
 }

@@ -1,0 +1,20 @@
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
+.pulse {
+  animation: spin 1s steps(8) infinite;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.slowSpin {
+  animation: spin 2s linear infinite;
+}
