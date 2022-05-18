@@ -35,21 +35,16 @@ _**Note:** all steps will be explained in the next chapters._
 
 ## Support
 
-#### First time using GitHub Actions?
+### First time using GitHub Actions?
 
 Read the official documentation on how to setup a
 [workflow](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/configuring-a-workflow).
 
 Any subsequent steps assume you have read the above.
 
-#### Supported Unity versions
+### Supported Unity versions
 
-Unity Actions are using
-[game-ci/docker](https://github.com/game-ci/docker/)
-since `unity-builder` version 2.
-
-[//]: # 'TODO: fix link to /docs/docker/versions'
-[//]: # 'Any version in this list [list](/docs/docker/versions) can be used.'
+Unity Actions are using [game-ci/docker](https://github.com/game-ci/docker/) since `unity-builder` version 2. Any version in this list [list](/docs/docker/versions) can be used.
 
 ## Video Tutorial
 

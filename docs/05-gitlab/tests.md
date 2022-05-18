@@ -14,4 +14,5 @@ Tests can be found here:
 
 ## Code coverage support
 
-**TODO**, but we have support for this in example project. Let's not forget to update this section accordingly :)
+This was implemented here in the example project:  
+[unity3d-gitlab-ci-example!42](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/merge_requests/42)

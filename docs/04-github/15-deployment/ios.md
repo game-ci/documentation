@@ -27,8 +27,7 @@ gem install bundler
 
 From there, create a file called `Gemfile` in the root of your git repository with following content:
 
-```ruby
-# Gemfile
+```ruby title="Gemfile"
 source "https://rubygems.org"
 gem "fastlane"
 ```
@@ -70,9 +69,7 @@ Go to https://appstoreconnect.apple.com/access/users and log in. Go to the "Keys
 
 At this point, you will have a private git repository that contains new valid codesigning identities and certificates. From here, you need to configure Fastlane to know how to build your Xcode project. Within your project directory, create a directory called `fastlane`, and then create two files within that directory, `Appfile` and `Fastfile`.
 
-```ruby
-# fastlane/Appfile
-
+```ruby title="fastlane/Appfile"
 for_platform :ios do
   app_identifier(ENV['IOS_BUNDLE_ID'])
 
@@ -84,9 +81,7 @@ for_platform :ios do
 end
 ```
 
-```ruby
-# fastlane/Fastfile
-
+```ruby title="fastlane/Fastfile"
 platform :ios do
 
   desc "Deliver a new Release build to the App Store"
@@ -185,8 +180,7 @@ Please note that Apple will aggressively rate-limit you if you try to upload bui
 
 There are two options for how to set up the two-phase build, depending on whether or not your project uses IL2CPP as its scripting backend. If your project does **not** rely on IL2CPP, you can build your Unity project on Linux before switching over to a Mac runner to build the generated Xcode project. Because Linux execution time is cheaper than Mac execution time when using GitHub Actions hosted runners, this will be cheaper, and is what you should most likely do if you do not require IL2CPP support.
 
-```yaml
-# .github/workflows/main.yml
+```yaml title=".github/workflows/main.yml"
 jobs:
   buildForiOSPlatform:
     name: Build for iOS
@@ -253,8 +247,7 @@ jobs:
 
 If your project does require IL2CPP, you will need to run your Unity build on a Mac runner. This allows your workflow to be slightly simpler, as you can run both builds on the same runner, but it may be more expensive.
 
-```yaml
-# .github/workflows/main.yml
+```yaml title=".github/workflows/main.yml"
 jobs:
   buildForiOSAndReleaseToAppStore:
     name: Build for iOS and Release to the App Store

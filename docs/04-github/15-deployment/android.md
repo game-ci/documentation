@@ -16,8 +16,7 @@ gem install bundler
 
 From there, create a file called `Gemfile` in the root of your git repository with following content:
 
-```ruby
-# Gemfile
+```ruby title="Gemfile"
 source "https://rubygems.org"
 gem "fastlane"
 ```
@@ -95,8 +94,7 @@ If you would like to upload to other tracks (namely, `alpha` or `beta`), you can
 
 The following workflow establishes two jobs. The first builds your game into an AAB file, and the second uploads that generated bundle to the Play Store.
 
-```yaml
-# .github/workflows/main.yml
+```yaml title=".github/workflows/main.yml"
 jobs:
   buildForAndroidPlatform:
     name: Build For Android Platform

@@ -10,7 +10,7 @@ See [the docs](https://partner.steamgames.com/doc/sdk/uploading#Build_Account).
 
 ### 2. Add jobs to main.yml
 
-```yaml
+```yaml title=".github/workflows/main.yml"
 jobs:
   buildForWindowsAndLinux:
     name: Build for ${{ matrix.targetPlatform }}
