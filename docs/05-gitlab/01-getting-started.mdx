@@ -1,4 +1,4 @@
-import ReactPlayer from 'react-player';
+import Video from '../../src/components/video/video';
 
 # Getting started
 
@@ -26,7 +26,7 @@ It's generally considered good practice to use the same Unity version for your C
 
 ## Video tutorial
 
-<ReactPlayer url='https://www.youtube-nocookie.com/embed/k0NcedDzEqA' />
+<Video url="https://www.youtube-nocookie.com/embed/k0NcedDzEqA" />
 
 ## Setting up gitlab-ci for your Unity project
 
@@ -41,14 +41,14 @@ It's generally considered good practice to use the same Unity version for your C
 1. Clone [the unity3d-gitlab-ci-example project](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/)
 1. Copy [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml) to the root of your repository, [`Assets/Scripts/Editor/BuildCommand.cs`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/Assets/Scripts/Editor/BuildCommand.cs) and [`ci` folder](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/ci) to your project:
 
-   Assuming you've cloned the example project in the parent folder of your project, and your Unity project is at the root of your repository, execute these commands from the root folder of your project:
+Assuming you've cloned the example project in the parent folder of your project, and your Unity project is at the root of your repository, execute these commands from the root folder of your project:
 
-   ```bash
-   mkdir -p Assets/Scripts/Editor/
-   cp ../unity3d-gitlab-ci-example/.gitlab-ci.yml ./
-   cp -r ../unity3d-gitlab-ci-example/ci ./
-   cp ../unity3d-gitlab-ci-example/Assets/Scripts/Editor/BuildCommand.cs ./Assets/Scripts/Editor/
-   ```
+```bash
+mkdir -p Assets/Scripts/Editor/
+cp ../unity3d-gitlab-ci-example/.gitlab-ci.yml ./
+cp -r ../unity3d-gitlab-ci-example/ci ./
+cp ../unity3d-gitlab-ci-example/Assets/Scripts/Editor/BuildCommand.cs ./Assets/Scripts/Editor/
+```
 
 1. Open and edit the [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml) you copied to your project and update [the variables](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml#L7-13) with the versions you need. Your Unity project version can be found in `ProjectSettings/ProjectVersion.txt`.
 1. If your Unity project is not at the root of your repository, also update UNITY_DIR variable.
