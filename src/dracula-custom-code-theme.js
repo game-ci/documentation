@@ -23,12 +23,6 @@ module.exports = {
       },
     },
     {
-      types: ['punctuation', 'operator'],
-      style: {
-        color: 'rgb(248, 248, 242)',
-      },
-    },
-    {
       types: [
         'entity',
         'url',
@@ -52,7 +46,7 @@ module.exports = {
       },
     },
     {
-      types: ['keyword', 'attr-name', 'selector'],
+      types: ['punctuation', 'operator', 'keyword', 'attr-name', 'selector'],
       style: {
         color: 'rgb(255, 121, 198)',
       },
