@@ -4,7 +4,86 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+
+const darkCodeTheme = {
+  plain: {
+    color: '#F8F8F2',
+    backgroundColor: '#282A36',
+  },
+  styles: [
+    {
+      types: ['comment', 'prolog', 'doctype', 'cdata'],
+      style: {
+        color: 'rgb(98, 114, 164)',
+      },
+    },
+    {
+      types: ['namespace'],
+      style: {
+        opacity: 0.7,
+      },
+    },
+    {
+      types: ['string', 'attr-value'],
+      style: {
+        color: 'rgb(241, 250, 140)',
+      },
+    },
+    {
+      types: ['punctuation', 'operator'],
+      style: {
+        color: 'rgb(248, 248, 242)',
+      },
+    },
+    {
+      types: [
+        'entity',
+        'url',
+        'symbol',
+        'number',
+        'boolean',
+        'variable',
+        'constant',
+        'property',
+        'regex',
+        'inserted',
+      ],
+      style: {
+        color: 'rgb(189, 147, 249)',
+      },
+    },
+    {
+      types: ['atrule', 'function'],
+      style: {
+        color: 'rgb(139, 233, 253)',
+      },
+    },
+    {
+      types: ['keyword', 'attr-name', 'selector'],
+      style: {
+        color: 'rgb(255, 121, 198)',
+      },
+    },
+    {
+      types: ['deleted', 'tag'],
+      style: {
+        color: 'rgb(255, 85, 85)',
+      },
+    },
+    {
+      types: ['function-variable'],
+      style: {
+        color: 'rgb(255, 184, 108)',
+      },
+    },
+    {
+      types: ['tag', 'selector', 'keyword'],
+      style: {
+        color: 'rgb(80, 250, 123)',
+      },
+    },
+  ],
+};
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
