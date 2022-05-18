@@ -3,8 +3,8 @@ import { Typography } from 'antd';
 import GameCiLogo from '@site/static/assets/images/game-ci-brand-logo-wordmark.svg';
 import GameCiLogoLight from '@site/static/assets/images/game-ci-brand-logo-wordmark-light.svg';
 import { useColorMode } from '@docusaurus/theme-common';
-
 import Section from '@site/src/components/pages/home/section/section';
+import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 import styles from './section.module.scss';
 
 const { Title } = Typography;
@@ -23,26 +23,32 @@ const OpeningSection = () => {
 
   return (
     <Section ref={ref} className={styles.openingSection}>
-      <Logo className={styles.logo} />
+      <FadeIntoView>
+        <Logo className={styles.logo} />
+      </FadeIntoView>
 
-      <Title level={1} className={styles.title}>
-        The fastest and <strong>easiest</strong> way to automatically test and build your game
-        projects
-      </Title>
+      <FadeIntoView delay={150}>
+        <Title level={1} className={styles.title}>
+          The fastest and <strong>easiest</strong> way to automatically test and build your game
+          projects
+        </Title>
+      </FadeIntoView>
 
-      <button
-        type="button"
-        onClick={scrollToNextSection}
-        style={{
-          marginTop: '15vh',
-          fontSize: '7vmin',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        ⇩
-      </button>
+      <FadeIntoView delay={300}>
+        <button
+          type="button"
+          onClick={scrollToNextSection}
+          style={{
+            marginTop: '15vh',
+            fontSize: '7vmin',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          ⇩
+        </button>
+      </FadeIntoView>
     </Section>
   );
 };
