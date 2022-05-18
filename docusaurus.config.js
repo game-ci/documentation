@@ -98,7 +98,14 @@ const config = {
   projectName: 'documentation', // Usually your repo name.
 
   plugins: [
-    'docusaurus-plugin-sass',
+    ['docusaurus-plugin-sass', {}],
+    [
+      'docusaurus-gtm-plugin',
+      {
+        id: 'GTM-5CRN6W9',
+        enabled: true,
+      },
+    ],
     async function tailwindcss(context, options) {
       return {
         name: 'docusaurus-tailwindcss',
