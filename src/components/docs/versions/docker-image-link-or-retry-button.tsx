@@ -5,7 +5,7 @@ import { useNotification } from '@site/src/core/hooks/use-notification';
 import { Tooltip } from 'antd';
 import React, { useState } from 'react';
 import { HiOutlineRefresh } from 'react-icons/all';
-import Spinner from '@site/src/components/reusable/spinner';
+import Spinner from '@site/src/components/molecules/spinner';
 
 interface Props {
   record: {

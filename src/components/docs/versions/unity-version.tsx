@@ -1,10 +1,9 @@
 import Builds from '@site/src/components/docs/versions/builds';
 import DateTime from '@site/src/components/docs/versions/date-time';
 import ShowAndCopyChangeSetHashButton from '@site/src/components/docs/versions/show-and-copy-change-set-hash-button';
-import Spinner from '@site/src/components/reusable/spinner';
+import Spinner from '@site/src/components/molecules/spinner';
 import React from 'react';
 import { Collapse } from 'antd';
-// import styles from './unity-version.module.scss';
 
 const { Panel } = Collapse;
 

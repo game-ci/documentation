@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNotification } from '@site/src/core/hooks/use-notification';
 import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
 import { useClipboard } from '@site/src/core/hooks/use-clipboard';
-import Spinner from '@site/src/components/reusable/spinner';
+import Spinner from '@site/src/components/molecules/spinner';
 
 interface Props {
   changeSet: string;
