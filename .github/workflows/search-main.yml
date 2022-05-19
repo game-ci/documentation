@@ -1,22 +1,22 @@
 name: Vercel -> Algolia Crawler (main)
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   algolia_recrawl:
-    name: Algolia Recrawl
+    name: Algolia recrawl
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Vercel-MAIN => Algolia crawler creation and recrawl on preview (Main branch)
+      - name: Vercel-Main => Algolia crawler creation and recrawl on preview (Main branch)
         uses: algolia/algoliasearch-crawler-github-actions@v1
         id: crawler_push
         with:
-          crawler-user-id: ${{ secrets.ALGOLIA_CRAWLER_USER_ID }}
-          crawler-api-key: ${{ secrets.ALGOLIA_CRAWLER_API_KEY }}
-          algolia-app-id: E57FOT37U9
-          algolia-api-key: ${{ secrets.ALGOLIA_APP_API_KEY }}
+          crawler-user-id: '${{ secrets.ALGOLIA_CRAWLER_USER_ID }}'
+          crawler-api-key: '${{ secrets.ALGOLIA_CRAWLER_API_KEY }}'
+          algolia-app-id: 'E57FOT37U9'
+          algolia-api-key: '${{ secrets.ALGOLIA_APP_API_KEY }}'
           site-url: 'https://algoliasearch-crawler-github-actions.vercel.app/'
           override-config: true
