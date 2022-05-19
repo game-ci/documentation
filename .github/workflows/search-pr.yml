@@ -17,12 +17,12 @@ jobs:
         with:
           token: ${{ github.token }}
       - name: Vercel-PR => Algolia crawler creation and recrawl on preview (Pull Request)
-        uses: algolia/algoliasearch-crawler-github-actions@v1
+        uses: webbertakken/algoliasearch-crawler-github-actions@4f4c4db12be599fbc3f407ff6d608461c09a8f6a
         id: crawler_pr
         with:
-          crawler-user-id: '${{ secrets.ALGOLIA_CRAWLER_USER_ID }}'
-          crawler-api-key: '${{ secrets.ALGOLIA_CRAWLER_API_KEY }}'
+          crawler-user-id: ${{ secrets.ALGOLIA_CRAWLER_USER_ID }}
+          crawler-api-key: ${{ secrets.ALGOLIA_CRAWLER_API_KEY }}
           algolia-app-id: 'E57FOT37U9'
-          algolia-api-key: '${{ secrets.ALGOLIA_APP_API_KEY }}'
+          algolia-api-key: ${{ secrets.ALGOLIA_APP_API_KEY }}
           site-url: '${{ steps.deployment.outputs.deployment }}'
           override-config: true
