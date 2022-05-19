@@ -25,7 +25,7 @@
   }
 
   .title {
-    color: var(ifm-navbar-background-link-color);
+    color: var(--ifm-navbar-background-link-color);
     font-size: 3.5vmin;
   }
 }
@@ -46,8 +46,15 @@
   }
 }
 
-.versionsSection {
-  min-height: 100vh;
-  display: block;
-  background: var(--ifm-background-color);
+.thePerksSection {}
+
+.codeExamplesSection {
+  background: var(--brand-primary);
+  color: var(--ifm-navbar-background-color);
 }
+
+.whoIsUsingGameCiSection {}
+
+.pricingSection {}
+
+.gallerySection {}
