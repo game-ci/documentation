@@ -3,7 +3,7 @@
 
 **Cloud Runner enables you to run build and test workflows in the cloud, right from GitHub actions. Builder will automatically provision an environment at a Cloud Provider such as GCP and AWS. It will then send the project to be built and/or tested depending on your workflow configuration.** 
 
-**Primarily Cloud Runner is useful for game development because it supports large projects. Cloud Runner has first class support for the Unity game engine.**
+**Cloud Runner is especially useful for game development because it supports large projects. Cloud Runner provides first class support for the Unity game engine.**
 However, you could easily extend the system to run other tools and workloads. Cloud Runner can even use your projects to run workloads.
 
 Cloud Runner uses git to track and transfer your projects and uses native cloud services such as AWS Fargate or Kubernetes to run your jobs.
