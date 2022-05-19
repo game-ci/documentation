@@ -12,7 +12,7 @@ The benefits include:
 1. Extended options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 3. Run custom jobs and extend the system for any workload.
-4. Cloud Runner creates resources on-demand, it costs you nothing while you don't use it.
+4. Create resources on-demand, we have made an effort to make sure that it costs you nothing while there are no builds running (no guarantees).
 
 ## Cloud Runner Release Status
 Cloud Runner is in "active development" ⚠️🔨
