@@ -9,7 +9,7 @@ However, you could easily extend the system to run other tools and workloads. Cl
 Cloud Runner uses git to track and transfer your projects and uses native cloud services such as AWS Fargate and Kubernetes to run your jobs.
 
 The benefits include: 
-1. Larger options and more control over disk size, memory and CPU. You can build projects of almost any size.
+1. Extended options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 3. Run custom jobs and extend the system for any workload.
 4. Cloud Runner creates resources on-demand, it costs you nothing while you don't use it.
