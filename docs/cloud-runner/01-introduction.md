@@ -8,11 +8,18 @@ However, you could easily extend the system to run other tools and workloads. Cl
 
 Cloud Runner uses git to track and transfer your projects and uses native cloud services such as AWS Fargate and Kubernetes to run your jobs.
 
-The benefits include: 
+## Why cloud runner?
 1. Extended options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 3. Run custom jobs and extend the system for any workload.
 4. Create resources on-demand, we have made an effort to make sure that it costs you nothing while there are no builds running (no guarantees).
+
+## Why not cloud runner?
+1. You already have servers running you can use for capacity.
+2. You strongly prefer to avoid any delay in your pipeline. 
+    A) Although speed of CI pipelines is an important metric, there are real challenges for game development pipelines. 
+    B) This solution prefers ease of use, scalability, throughput and flexibility to maxiumum speed. 
+    C) Faster solutions would all involve self-hosted hardware with an immediate local cache of the large project files and working directory. 
 
 ## Cloud Runner Release Status
 Cloud Runner is in "active development" ⚠️🔨
