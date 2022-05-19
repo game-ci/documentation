@@ -15,11 +15,12 @@ Cloud Runner uses git to track and transfer your projects and uses native cloud 
 4. Create resources on-demand, we have made an effort to make sure that it costs you nothing while there are no builds running (no guarantees).
 
 ## Why not cloud runner?
-1. You already have servers running you can use for capacity.
-2. You strongly prefer to avoid any delay in your pipeline. 
-    A) Although speed of CI pipelines is an important metric, there are real challenges for game development pipelines. 
-    B) This solution prefers ease of use, scalability, throughput and flexibility to maxiumum speed. 
-    C) Faster solutions would all involve self-hosted hardware with an immediate local cache of the large project files and working directory. 
+1. Your project is small in size. Below 5GB Cloud Runner should not be needed.
+2. You already have servers running you can use for capacity.
+3. You strongly prefer to avoid any delay in your pipeline. 
+- Although speed of CI pipelines is an important metric, there are real challenges for game development pipelines. 
+- This solution prefers ease of use, scalability, throughput and flexibility to maxiumum speed. 
+- Faster solutions would all involve self-hosted hardware with an immediate local cache of the large project files and working directory. 
 
 ## Cloud Runner Release Status
 Cloud Runner is in "active development" ⚠️🔨
