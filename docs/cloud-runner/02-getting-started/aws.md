@@ -1,0 +1,84 @@
+# AWS
+
+## Requirements
+
+- You must have an AWS account setup and ready to create resources.
+- Create a service account and generate an AWS access key and key id.
+
+## AWS Credentials
+
+Setup the following as `env` variables for cloud runner to use:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_DEFAULT_REGION` (should be the same AWS region as the base stack e.g `eu-west-2`)
+
+If you're using GitHub you can use a GitHub Action:
+```yaml
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v1
+  with:
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: eu-west-2
+```
+
+_Note:_
+_This enables Cloud Runner access AWS._
+
+## Configuration For AWS Cloud Runner Jobs
+Refer to [Configuration page](../configuration) or the [example below](#example).
+
+### Allowed CPU/Memory Combinations
+
+There are some limitations to the CPU and Memory parameters. AWS will only accept the following combinations:
+[AWS Fargate Documentation, Allowed CPU and memory values (Task Definitions)](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size)
+
+#### Summary Of Format
+- Values are represented as 1024:1 GB or CPU.
+- Do not include the vCPU or GB suffix.
+- 1 CPU can go to a max of 6 GB of memory. 2 CPU's are required to go higher.
+
+#### Valid CPU and Memory Values
+
+```yaml
+- cloudRunnerMemory: 4096
+- cloudRunnerCpu: 1024
+```
+
+## Example
+```yaml
+- uses: game-ci/unity-builder@cloud-runner-develop
+  id: aws-fargate-unity-build
+  timeout-minutes: 25
+  with:
+    cloudRunnerCluster: aws
+    versioning: None
+    projectPath: ${{ matrix.projectPath }}
+    unityVersion: ${{ matrix.unityVersion }}
+    targetPlatform: ${{ matrix.targetPlatform }}
+    githubToken: ${{ secrets.GITHUB_TOKEN }}
+    # You may want to export your builds somewhere external so you can access them outside of Cloud Runner jobs via the postBuildSteps:
+    postBuildSteps: |
+      - name: upload
+        image: amazon/aws-cli
+        commands: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
+          aws configure set region $AWS_DEFAULT_REGION --profile default
+          aws s3 ls
+          aws s3 ls game-ci-test-storage
+          ls /data/cache/$CACHE_KEY
+          ls /data/cache/$CACHE_KEY/build
+          aws s3 cp /data/cache/$CACHE_KEY/build/build-$BUILD_GUID.zip s3://game-ci-test-storage/$CACHE_KEY/build-$BUILD_GUID.zip
+        secrets:
+        - name: awsAccessKeyId
+          value: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        - name: awsSecretAccessKey
+          value: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        - name: awsDefaultRegion
+          value: eu-west-2
+```
+_[Custom Steps](../advanced-topics/custom-steps)_
+
+A full workflow example can be seen in builder's [Cloud Runner GitHub sourcecode for AWS Pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/cloud-runner-aws-pipeline.yml).
