@@ -1,5 +1,9 @@
 # Development
 
+## GitHub Issues
+Minor changes, suggestions and bugs are tracked as GitHub issues:
+[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
+
 ## Iteration 0 - Quality Of Life
 
 ```md
@@ -84,13 +88,3 @@
 | custom provider sample                | todo   |                                                           |
 | easily find all error lines in a log  | todo   |                                                           |
 ```
-
-Minor changes, suggestions and bugs are tracked as GitHub issues:
-[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
-
-
-# Contributions
-
-Source contributors are welcome via PR. You can always discuss a suggestion on discord.
-
-Donations welcome.
