@@ -21,10 +21,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.20",
-    "@docusaurus/module-type-aliases": "^2.0.0-beta.20",
-    "@docusaurus/preset-classic": "^2.0.0-beta.20",
-    "@docusaurus/theme-common": "^2.0.0-beta.20",
+    "@docusaurus/core": "^0.0.0-5035",
+    "@docusaurus/module-type-aliases": "^0.0.0-5035",
+    "@docusaurus/preset-classic": "^0.0.0-5035",
+    "@docusaurus/theme-common": "^0.0.0-5035",
     "@mdx-js/react": "^1.6.22",
     "@reduxjs/toolkit": "^1.8.1",
     "@tsconfig/docusaurus": "^1.0.5",
