@@ -12,6 +12,7 @@ Setup the following as `env` variables for the GitHub build step:
 - `kubeConfig` (should be encoded as base64)
 
 ## Configuration For Kubernetes Cloud Runner Jobs
+
 Refer to [Configuration page](../configuration) or the [example below](#example).
 
 ### Allowed CPU/Memory Combinations
@@ -25,12 +26,14 @@ Refer to [Configuration page](../configuration) or the [example below](#example)
 Do not include the vCPU or GB suffix.
 
 #### Valid CPU and Memory Values
+
 ```yaml
 - remoteBuildMemory: 2
 - remoteBuildCpu: 0.5
 ```
 
 ### Example
+
 ```yaml
 - uses: game-ci/unity-builder@cloud-runner-develop
   id: k8s-unity-build
@@ -66,6 +69,7 @@ Do not include the vCPU or GB suffix.
         - name: awsDefaultRegion
           value: eu-west-2
 ```
+
 _[Custom Steps](../advanced-topics/custom-steps)_
 
 A full workflow example can be seen in builder's [Cloud Runner GitHub sourcecode for AWS Pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/cloud-runner-k8s-pipeline.yml).

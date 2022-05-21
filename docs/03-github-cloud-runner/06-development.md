@@ -1,6 +1,7 @@
 # Development
 
 ## GitHub Issues
+
 Minor changes, suggestions and bugs are tracked as GitHub issues:
 [Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
 
@@ -17,7 +18,7 @@ Minor changes, suggestions and bugs are tracked as GitHub issues:
 | built-in integration for Unity test framework               | todo        |                                                       |
 | built-in integration for steam deploy                       | todo        |                                                       |
 | extract cloud runner input options into encapsulated object | todo        |                                                       |
-| nested github self-hosted runner sample for game-ci                         | in-progress |                                                       |
+| nested github self-hosted runner sample for game-ci         | in-progress |                                                       |
 ```
 
 ## Iteration 1 - GPU Workloads And Capabilities
