@@ -112,7 +112,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'introduction/index',
             position: 'left',
             label: 'Docs',
           },
@@ -193,7 +193,7 @@ const config = {
             items: [
               {
                 label: 'Welcome to GameCI',
-                to: '/docs/intro',
+                to: '/docs/introduction/index',
               },
               {
                 label: 'Getting Started with Github',

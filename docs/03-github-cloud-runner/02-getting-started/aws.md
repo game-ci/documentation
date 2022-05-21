@@ -14,6 +14,7 @@ Setup the following as `env` variables for cloud runner to use:
 - `AWS_DEFAULT_REGION` (should be the same AWS region as the base stack e.g `eu-west-2`)
 
 If you're using GitHub you can use a GitHub Action:
+
 ```yaml
 - name: Configure AWS Credentials
   uses: aws-actions/configure-aws-credentials@v1
@@ -27,6 +28,7 @@ _Note:_
 _This enables Cloud Runner access AWS._
 
 ## Configuration For AWS Cloud Runner Jobs
+
 Refer to [Configuration page](../configuration) or the [example below](#example).
 
 ### Allowed CPU/Memory Combinations
@@ -35,6 +37,7 @@ There are some limitations to the CPU and Memory parameters. AWS will only accep
 [AWS Fargate Documentation, Allowed CPU and memory values (Task Definitions)](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size)
 
 #### Summary Of Format
+
 - Values are represented as 1024:1 GB or CPU.
 - Do not include the vCPU or GB suffix.
 - 1 CPU can go to a max of 6 GB of memory. 2 CPU's are required to go higher.
@@ -47,6 +50,7 @@ There are some limitations to the CPU and Memory parameters. AWS will only accep
 ```
 
 ## Example
+
 ```yaml
 - uses: game-ci/unity-builder@cloud-runner-develop
   id: aws-fargate-unity-build
@@ -79,6 +83,7 @@ There are some limitations to the CPU and Memory parameters. AWS will only accep
         - name: awsDefaultRegion
           value: eu-west-2
 ```
+
 _[Custom Steps](../advanced-topics/custom-steps)_
 
 A full workflow example can be seen in builder's [Cloud Runner GitHub sourcecode for AWS Pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/cloud-runner-aws-pipeline.yml).

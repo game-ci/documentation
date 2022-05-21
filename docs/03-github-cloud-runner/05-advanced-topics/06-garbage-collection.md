@@ -13,8 +13,10 @@ Cloud Runner runs the workload and cleans up the resources. It does not expect t
 If you cancel a task, the resources will not be cleaned up.
 
 # Full Release - Garbage Collection (Not available yet)
+
 Cloud runner will collect the garbage when it next cleans up. There will be utility functions to clean up directly.
 Optional via configuration: Cloud runner can schedule cron jobs to independently guarentee shutdown (already possible via custom hooks).
 
 # Garbage Collection - Command Line Functions
+
 [Command Line Garbage Collection Utilities](../command-line#garbage-collection)

@@ -1,30 +1,34 @@
 # Introduction
+
 ## Concept - What Does Cloud Runner Do
 
-**Cloud Runner enables you to run, build and test workflows in the cloud, right from GitHub actions. Builder will automatically provision an environment at a Cloud Provider such as GCP and AWS. It will then send the project to be built and/or tested depending on your workflow configuration.** 
+**Cloud Runner enables you to run, build and test workflows in the cloud, right from GitHub actions. Builder will automatically provision an environment at a Cloud Provider such as GCP and AWS. It will then send the project to be built and/or tested depending on your workflow configuration.**
 
 **Cloud Runner is especially useful for game development because it supports large projects. Cloud Runner provides first class support for the Unity game engine.**
 
 Cloud Runner uses git to track and transfer your projects and uses native cloud services such as AWS Fargate and Kubernetes to run your jobs. Other version control systems are not actively supported.
 
 ## Why cloud runner?
+
 1. Extended options and more control over disk size, memory and CPU. You can build projects of almost any size.
 2. Scale up to much larger numbers of builds easily and fully on demand.
 3. Run custom jobs and extend the system for any workload.
 4. Create resources on-demand, we have made an effort to make sure that it costs you nothing while there are no builds running (no guarantees).
 
 ## Why not cloud runner?
+
 1. Your project is small in size. Below 5GB Cloud Runner should not be needed.
 2. You already have servers running you can use for capacity.
-3. You strongly prefer to avoid the addition of time to your pipeline, slowing down results. 
+3. You strongly prefer to avoid the addition of time to your pipeline, slowing down results.
 
-Although the speed of a CI pipelines is an important metric to consider, there are real challenges for game development pipelines. 
+Although the speed of a CI pipelines is an important metric to consider, there are real challenges for game development pipelines.
 
-This solution prefers convenience, ease of use, scalability, throughput and flexibility. 
+This solution prefers convenience, ease of use, scalability, throughput and flexibility.
 
 Faster solutions exist, but would all involve self-hosted hardware with an immediate local cache of the large project files and working directory and a dedicated server.
 
 ## Cloud Runner Release Status
+
 Cloud Runner is in "active development" ⚠️🔨
 
 Cloud Runner overall release status: `preview`
@@ -35,34 +39,40 @@ Release Stages: `experimental` ➡️ `preview` ➡️ `full release`
 You must use a provider with Cloud Runner, each provider's release status is described below. This indicates the stability and support for cloud runner features and workflows.
 
 ### Development
+
 _Cloud Runner is actively maintained and kept stable by the Game CI open source project contributors._
 
 💬suggestions, 🐛bugs and ↕️Minor changes are tracked as GitHub issues:
- - [Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
+
+- [Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/cloud-runner)
 
 You can also explore the [development roadmap page](development).
 
 ### Community
-__Share your feedback with us!__
- - [__Discord Channel__](https://discord.com/channels/710946343828455455/789631903157583923)
- - [__Feedback Form__](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
+
+**Share your feedback with us!**
+
+- [**Discord Channel**](https://discord.com/channels/710946343828455455/789631903157583923)
+- [**Feedback Form**](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
 
 ### Supported Cloud Runner Platforms
+
 ```md
-| Cloud Provider Platform | Release Status            |
-| ----------------------- | ------------------------- |
+| Cloud Provider Platform | Release Status          |
+| ----------------------- | ----------------------- |
 | Kubernetes              | ✔️ experimental release |
 | AWS                     | ✔️ preview release      |
-| GCP                     | ⚠ Considered             |
-| Azure                   | ⚠ Considered             |
+| GCP                     | ⚠ Considered            |
+| Azure                   | ⚠ Considered            |
 ```
+
 _Note for Kuberentes support:_
 _Usually the cluster needs to be up and running at all times, as starting up a cluster is slow._
 _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier automatically while not in use._
 
 ```md
-| Git Platform          | Release Status       |
-| --------------------- | -------------------- |
+| Git Platform          | Release Status     |
+| --------------------- | ------------------ |
 | GitHub                | ✔️ preview release |
 | GitLab                | ✔️ preview release |
 | Command Line          | ✔️ preview release |
@@ -71,6 +81,7 @@ _Use Google Cloud's Kubernetes Autopilot you can scale down to the free tier aut
 ```
 
 ## Releases
+
 All cloud runner releases are currently packaged and released with game-ci's unity-builder module:
 [Game CI Releases - GitHub](https://github.com/game-ci/unity-builder/releases)
 
