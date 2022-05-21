@@ -121,8 +121,11 @@ as part of the test and by default will create an XML and HTML web page reports.
 ```
 
 The coverage results will be generated for whatever tests were selected to run.
-If both `editmode` and `playmode` are selected, then the results will have the
-combined coverage of both test modes.
+If both `editmode` and `playmode` are selected by using `all`, then the results
+will have the combined coverage of both test modes.
+
+_Note_ Coverage results are generated with root permission so to move or edit
+the output in later steps you may need to use elevated permissions such as `sudo`.
 
 ## Caching
 
