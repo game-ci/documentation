@@ -229,7 +229,7 @@ This should be fine for most projects, but the webpage report can be quite large
 with hundreds or thousands of large files.
 
 You can add arguments for `assemblyFilters` to specify an assembly to filter files that results are generated for.
-This is commonly used to ignore test files or external libraries. See the 
+This is commonly used to ignore test files or external libraries. See the
 [Using Code Coverage in batchmode](https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/CoverageBatchmode.html).
 For example, you can add the argument `assemblyFilters:+MyScripts` to only include files in the namespace `MyScripts`.
 
@@ -329,7 +329,6 @@ jobs:
           artifactsPath: ${{ matrix.testMode }}-artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
-          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport'
       - uses: actions/upload-artifact@v2
         if: always()
         with:
