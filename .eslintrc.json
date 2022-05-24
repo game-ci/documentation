@@ -22,7 +22,7 @@
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["@typescript-eslint", "react", "jsx-a11y", "import", "jest", "unicorn", "prettier"],
+  "plugins": ["react", "jsx-a11y", "import", "jest", "unicorn", "prettier"],
   "settings": {
     "react": { "version": "detect" },
     "import/resolver": { "typescript": {} }
