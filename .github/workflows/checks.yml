@@ -50,3 +50,5 @@ jobs:
       - run: yarn
       - run: yarn test --coverage
       - run: bash <(curl -s https://codecov.io/bash)
+        env:
+          CODECOV_TOKEN: '2f2eb890-30e2-4724-83eb-7633832cf0de'
