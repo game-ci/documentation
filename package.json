@@ -23,7 +23,7 @@
     "verify": "concurrently yarn:verify:formatting yarn:verify:code-styles yarn:typecheck",
     "verify:formatting": "prettier --check .",
     "verify:code-styles": "eslint .",
-    "typecheck": "tsc"
+    "typecheck": "tsc --skipLibCheck"
   },
   "dependencies": {
     "@docusaurus/core": "^0.0.0-5035",
