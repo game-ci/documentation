@@ -1,16 +1,16 @@
 # Getting started
 
-Unity Actions provide the fastest and **easiest** way to automatically test and build any Unity project.
+Unity Actions provide the fastest and **easiest** way to automatically test and build any Unity
+project.
 
-There are a few parts to setting up a workflow. Steps may slightly differ depending on each license type.
+There are a few parts to setting up a workflow. Steps may slightly differ depending on each license
+type.
 
 ## Mental model
 
 #### Overall steps
 
-1. Understand how
-   [Github Actions](https://docs.github.com/en/actions)
-   work.
+1. Understand how [Github Actions](https://docs.github.com/en/actions) work.
 2. Configure a license for Unity.
 3. Set up a workflow for your project.
 4. Result: Merge pull requests with more confidence.
@@ -19,16 +19,14 @@ There are a few parts to setting up a workflow. Steps may slightly differ depend
 
 Setting up a workflow is easy!
 
-Create a file called `.github/workflows/main.yml` in your repository and configure the following steps;
+Create a file called `.github/workflows/main.yml` in your repository and configure the following
+steps;
 
-1. Checkout your repository using
-   [Checkout](https://github.com/marketplace/actions/checkout).
-2. Cache Unity Library folder using
-   [Cache](https://github.com/marketplace/actions/cache).
+1. Checkout your repository using [Checkout](https://github.com/marketplace/actions/checkout).
+2. Cache Unity Library folder using [Cache](https://github.com/marketplace/actions/cache).
 3. Configure your test job using
    [Test Runner](https://github.com/marketplace/actions/unity-test-runner).
-4. Configure your build job using
-   [Builder](https://github.com/marketplace/actions/unity-builder).
+4. Configure your build job using [Builder](https://github.com/marketplace/actions/unity-builder).
 5. Deploy your application.
 
 _**Note:** all steps will be explained in the next chapters._
@@ -44,15 +42,12 @@ Any subsequent steps assume you have read the above.
 
 #### Supported versions
 
-Unity Actions are based on the
-[unity3d](https://gitlab.com/game-ci/unity3d)
-images from
-[GabLeRoux](https://github.com/GabLeRoux).
-Any version in the
-[list](https://hub.docker.com/r/gableroux/unity3d/tags)
-can be used to test and build projects.
+Unity Actions are based on the [unity3d](https://gitlab.com/game-ci/unity3d) images from
+[GabLeRoux](https://github.com/GabLeRoux). Any version in the
+[list](https://hub.docker.com/r/gableroux/unity3d/tags) can be used to test and build projects.
 
-It's generally considered good practice to use the same Unity version for Unity Actions as you do to develop your project.
+It's generally considered good practice to use the same Unity version for Unity Actions as you do to
+develop your project.
 
 ## Simple example
 
@@ -111,8 +106,7 @@ jobs:
 
 ## Advanced example
 
-To get an idea of how to create a more advanced workflows,
-have a look at the example below.
+To get an idea of how to create a more advanced workflows, have a look at the example below.
 
 > _Note: this repository tests this workflow_
 

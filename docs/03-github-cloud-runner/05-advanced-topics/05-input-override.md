@@ -1,6 +1,9 @@
 # Input Override
 
-When running any unity workload you must provide valid unity credentials. In addition to any other credentials this is already quite a lot of input. For this reason, it is common to use the command line mode with input override (link here). This enables you to provide a command to pull input, with this approach you can create a file to store credentials or pull from a secret manager.
+When running any unity workload you must provide valid unity credentials. In addition to any other
+credentials this is already quite a lot of input. For this reason, it is common to use the command
+line mode with input override (link here). This enables you to provide a command to pull input, with
+this approach you can create a file to store credentials or pull from a secret manager.
 
 ## Example
 
@@ -12,4 +15,5 @@ game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,U
 
 - `populateOverride` - Must be true to run the commands.
 - `readInputFromOverrideList` - Comma separated list of parameters to read from override command.
-- `readInputOverrideCommand` - A command line command to run (The command is formatted to replace "{0}" with the parameter parameter name).
+- `readInputOverrideCommand` - A command line command to run (The command is formatted to replace
+  "{0}" with the parameter parameter name).

@@ -25,26 +25,31 @@ brew install fastlane
    1. Fill the field `Signing Team ID`
    1. Ensure `Automatically Sign` is unchecked
    1. iOS Provisioning Profile
-      1. `ProfileID`: `match AppStore your_bundle_identifier` _Replace `your_bundle_identifier` by yours_
+      1. `ProfileID`: `match AppStore your_bundle_identifier` _Replace `your_bundle_identifier` by
+         yours_
       1. `ProfileType`: `Distribution`
 
 ## XCode project
 
 Make a first iOS build using your mac from Unity, that will create an xcode project.  
 Ensure you target the same path as the CI.  
-Ex: if you let `BUILD_NAME: ExampleProjectName` in `.gitlab-ci.yml`, your xcode project must be at the root of the following path: `.\Builds\iOS\ExampleProjectName\`
+Ex: if you let `BUILD_NAME: ExampleProjectName` in `.gitlab-ci.yml`, your xcode project must be at
+the root of the following path: `.\Builds\iOS\ExampleProjectName\`
 
 ## App on portal
 
-Make sure that you have setup your app on the Apple Developer Portal and the App Store Connect or use [fastlane produce](https://docs.fastlane.tools/actions/produce/) to create it.
+Make sure that you have setup your app on the Apple Developer Portal and the App Store Connect or
+use [fastlane produce](https://docs.fastlane.tools/actions/produce/) to create it.
 
 ## Fastlane initialization
 
-Open the terminal at the same path then run `fastlane init`, follow instructions to generate Appfile and default Fastfile.
+Open the terminal at the same path then run `fastlane init`, follow instructions to generate Appfile
+and default Fastfile.
 
 ## Provisioning profile
 
-Run `fastlane match init`, follow instructions, select `appstore` provisioning profile type. ([Documentation](https://docs.fastlane.tools/actions/match/))
+Run `fastlane match init`, follow instructions, select `appstore` provisioning profile type.
+([Documentation](https://docs.fastlane.tools/actions/match/))
 
 ## Make lane
 
@@ -66,7 +71,8 @@ platform :ios do
 end
 ```
 
-Note about `upload_to_testflight`: Change "Team" to your internal tester or remove `(groups:["Team"])` if you want set manually who can test the build
+Note about `upload_to_testflight`: Change "Team" to your internal tester or remove
+`(groups:["Team"])` if you want set manually who can test the build
 
 ### Related documentation
 
@@ -114,9 +120,11 @@ sudo chmod +x /usr/local/bin/gitlab-runner
 
 - [Source (if you would like to check)](https://docs.gitlab.com/runner/install/osx.html)
 
-Go to your project gitlab page, then go to `settings` -> `CI/CD` -> `Runners` -> `Specitic Runners` -> `Set up a specific Runner manually` -> take note of the token
+Go to your project gitlab page, then go to `settings` -> `CI/CD` -> `Runners` -> `Specitic Runners`
+-> `Set up a specific Runner manually` -> take note of the token
 
-[Follow these instructions](https://docs.gitlab.com/runner/register/index.html) to register your mac as a gitlab-runner for your specific project.  
+[Follow these instructions](https://docs.gitlab.com/runner/register/index.html) to register your mac
+as a gitlab-runner for your specific project.  
 Follow **macOS** instructions **without** sudo command for registration.
 
 - Tags: set `mac,ios`
@@ -132,4 +140,5 @@ gitlab-runner start
 
 Runner is installed and will be run after a system reboot.
 
-Now, you can uncomment the job `build-and-deploy-ios` in `.gitlab-ci.yml` to make the app build and deployement work.
+Now, you can uncomment the job `build-and-deploy-ios` in `.gitlab-ci.yml` to make the app build and
+deployement work.
