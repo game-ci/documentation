@@ -1,0 +1,54 @@
+name: 👩‍💻
+
+on:
+  push: { branches: [main] }
+  pull_request: {}
+
+jobs:
+  codeFormatting:
+    name: Code formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
+      - run: yarn
+      - run: yarn verify:formatting
+  codeStyles:
+    name: Code styles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
+      - run: yarn
+      - run: yarn verify:code-styles
+  types:
+    name: Types check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
+      - run: yarn
+      - run: yarn typecheck
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
+      - run: yarn
+      - run: yarn test --coverage
+      - run: bash <(curl -s https://codecov.io/bash)
+        env:
+          CODECOV_TOKEN: '2f2eb890-30e2-4724-83eb-7633832cf0de'

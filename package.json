@@ -4,6 +4,8 @@
   "description": "Website for projects within the GameCI group",
   "private": true,
   "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">= 1.22.4",
     "node": "16.x"
   },
   "scripts": {
@@ -17,8 +19,14 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "lint": "prettier --write . --loglevel=warn && eslint . --quiet --fix",
-    "typecheck": "tsc"
+    "lint": "concurrently yarn:lint:formatting yarn:lint:code-styles",
+    "lint:formatting": "prettier --write .",
+    "lint:code-styles": "eslint --fix .",
+    "verify": "concurrently yarn:verify:formatting yarn:verify:code-styles yarn:typecheck",
+    "verify:formatting": "prettier --check .",
+    "verify:code-styles": "eslint .",
+    "test": "jest --passWithNoTests",
+    "typecheck": "tsc --skipLibCheck"
   },
   "dependencies": {
     "@docusaurus/core": "^0.0.0-5035",
@@ -57,8 +65,11 @@
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.7",
-    "@typescript-eslint/eslint-plugin": "^5.25.0",
+    "@testing-library/react": "^13.2.0",
+    "@types/jest": "^27.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.25.0",
+    "concurrently": "^7.2.1",
     "eslint": "^7.19.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
@@ -66,11 +77,14 @@
     "eslint-import-resolver-typescript": "^2.3.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^26.2.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-unicorn": "^27.0.0",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
     "prettier": "^2.6.2"
   },
   "browserslist": {

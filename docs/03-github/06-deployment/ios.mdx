@@ -178,7 +178,6 @@ This workflow builds your app and submits it to Apple for App Store release. If 
 
 Please note that Apple will aggressively rate-limit you if you try to upload builds too frequently. We recommend you configure any workflow that submits to the App Store or TestFlight to be manually triggered, or otherwise make sure it won't automatically run more than a few times a day.
 
-
 ```yaml title=".github/workflows/main.yml"
 jobs:
   buildForiOSPlatform:

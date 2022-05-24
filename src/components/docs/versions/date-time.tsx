@@ -4,7 +4,7 @@ interface Props {
   utcSeconds: number;
 }
 
-const options = {
+const options: Intl.DateTimeFormatOptions = {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
