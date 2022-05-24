@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
       - run: yarn
       - run: yarn verify:formatting
   codeStyles:
@@ -23,6 +24,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
       - run: yarn
       - run: yarn verify:code-styles
   types:
@@ -33,6 +35,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
       - run: yarn
       - run: yarn typecheck
   tests:
@@ -43,6 +46,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
+      - uses: c-hive/gha-yarn-cache@v2
       - run: yarn
       - run: yarn test --coverage
       - run: bash <(curl -s https://codecov.io/bash)
