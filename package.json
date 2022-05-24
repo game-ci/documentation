@@ -23,6 +23,7 @@
     "verify": "concurrently yarn:verify:formatting yarn:verify:code-styles yarn:typecheck",
     "verify:formatting": "prettier --check .",
     "verify:code-styles": "eslint .",
+    "test": "jest --passWithNoTests",
     "typecheck": "tsc --skipLibCheck"
   },
   "dependencies": {
@@ -62,7 +63,9 @@
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.7",
-    "@typescript-eslint/eslint-plugin": "^5.25.0",
+    "@testing-library/react": "^13.2.0",
+    "@types/jest": "^27.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.25.0",
     "concurrently": "^7.2.1",
     "eslint": "^7.19.0",
@@ -72,11 +75,14 @@
     "eslint-import-resolver-typescript": "^2.3.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^26.2.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-unicorn": "^27.0.0",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
     "prettier": "^2.6.2"
   },
   "browserslist": {

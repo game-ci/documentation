@@ -6,7 +6,7 @@ on:
 
 jobs:
   codeFormatting:
-    name: Formatting (prettier)
+    name: Code formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,7 +16,7 @@ jobs:
       - run: yarn
       - run: yarn verify:formatting
   codeStyles:
-    name: Code styles (eslint)
+    name: Code styles
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -26,7 +26,7 @@ jobs:
       - run: yarn
       - run: yarn verify:code-styles
   types:
-    name: Types (typescript)
+    name: Types check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
