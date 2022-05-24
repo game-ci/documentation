@@ -17,7 +17,12 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "lint": "prettier --write . --loglevel=warn && eslint . --quiet --fix",
+    "lint": "concurrently yarn:lint:formatting yarn:lint:code-styles",
+    "lint:formatting": "prettier --write .",
+    "lint:code-styles": "eslint --fix .",
+    "verify": "concurrently yarn:verify:formatting yarn:verify:code-styles yarn:typecheck",
+    "verify:formatting": "prettier --check .",
+    "verify:code-styles": "eslint .",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -59,6 +64,7 @@
     "@arkweid/lefthook": "^0.7.7",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
+    "concurrently": "^7.2.1",
     "eslint": "^7.19.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",

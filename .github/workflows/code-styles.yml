@@ -1,0 +1,48 @@
+name: 👩‍💻
+
+on:
+  push: { branches: [main] }
+  pull_request: {}
+
+jobs:
+  codeFormatting:
+    name: Formatting (prettier)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: yarn
+      - run: yarn verify:formatting
+  codeStyles:
+    name: Code styles (eslint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: yarn
+      - run: yarn verify:code-styles
+  types:
+    name: Types (typescript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: yarn
+      - run: yarn typecheck
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: yarn
+      - run: yarn test --coverage
+      - run: bash <(curl -s https://codecov.io/bash)

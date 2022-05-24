@@ -8,6 +8,9 @@
 .docusaurus/**
 build/**
 
+# Tests
+coverage/**
+
 # Use stylelint instead
 *.less
 *.css
