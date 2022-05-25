@@ -18,7 +18,7 @@ built using Xcode on a Mac. In order to upload your app to the App Store, TestFl
 third-party beta distribution service, you will first need to build it in Xcode and then code-sign
 it.
 
-### 1- Install Fastlane
+### 1. Install Fastlane
 
 [Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate
 building, codesigning, and uploading iOS apps, and is the easiest way to deploy your Unity project
@@ -51,7 +51,7 @@ project.
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
-### 2- Create and store Codesigning Certificates
+### 2. Create and store Codesigning Certificates
 
 Codesigning your iOS app for distribution requires an Apple developer or distribution certificate.
 Traditionally, allowing multiple developers on a team to build the same app (or allowing builds on a
@@ -96,7 +96,7 @@ bundle exec fastlane match development
 bundle exec fastlane match appstore
 ```
 
-### 3- Generate an App Store Connect API Key
+### 3. Generate an App Store Connect API Key
 
 In order for Fastlane Match to fetch and validate your codesigning certificates, it needs to
 authenticate you with Apple. All Apple IDs now require two-factor authentication to be enabled,
@@ -112,7 +112,7 @@ been generated, click the "Download API key" link, which will download a file. N
 this once. Later on in this guide, you will need the "key ID" from the table row for your
 newly-generated key, the "issuer ID" displayed at the top of the page, and the downloaded .p8 file.
 
-### 4- Configure Fastlane to build
+### 4. Configure Fastlane to build
 
 At this point, you will have a private git repository that contains new valid codesigning identities
 and certificates. From here, you need to configure Fastlane to know how to build your Xcode project.
@@ -222,7 +222,7 @@ new `xcworkspace` instead of the old `xcodeproj`:
     )
 ```
 
-### 4- Add jobs to your GitHub Actions workflow
+### 5. Add jobs to your GitHub Actions workflow
 
 Building for iOS is a two-step build process. When Unity builds your project for iOS, it generates
 an Xcode project, which then must be built and code-signed in Xcode via Fastlane.
@@ -303,7 +303,7 @@ jobs:
           name: build-iOS
 ```
 
-### 5- Add secrets to your GitHub repo
+### 6. Add secrets to your GitHub repo
 
 On your project's GitHub repo page, add a number of Repository Secrets by going to Settings ->
 Secrets and clicking the "New repository secret" button in the top-right.
@@ -325,7 +325,7 @@ Secrets and clicking the "New repository secret" button in the top-right.
   downloaded, starting with `-----BEGIN PRIVATE KEY-----` and ending with
   `-----END PRIVATE KEY-----`.
 
-### 6- Confirming your Unity and App Store Connect settings
+### 7. Confirming your Unity and App Store Connect settings
 
 At this point, if you have previously set up your app for manual iOS builds and TestFlight/App Store
 distribution, your GitHub Actions workflow will likely complete successfully. If that is not the
