@@ -13,7 +13,7 @@ It is important to be familiar with the manual process, as automating this proce
 
 When you build your Unity project for iOS, Unity will produce an Xcode project that needs to be built using Xcode on a Mac. In order to upload your app to the App Store, TestFlight, or a third-party beta distribution service, you will first need to build it in Xcode and then code-sign it.
 
-### 1- Install Fastlane
+### 1. Install Fastlane
 
 [Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate building, codesigning, and uploading iOS apps, and is the easiest way to deploy your Unity project to iOS.
 
@@ -36,7 +36,7 @@ Then run `bundle install`. This will create an additional `Gemfile.lock` file in
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
-### 2- Create and store Codesigning Certificates
+### 2. Create and store Codesigning Certificates
 
 Codesigning your iOS app for distribution requires an Apple developer or distribution certificate. Traditionally, allowing multiple developers on a team to build the same app (or allowing builds on a cloud CI system) requires you to either manually share a `.p12` file across all machines that will build the project, or set up a different codesigning identity for each developer or shared build machine. Updating all of these identities and certificates whenever changes are necessary can be a pain point.
 
@@ -57,7 +57,7 @@ bundle exec fastlane match development
 bundle exec fastlane match appstore
 ```
 
-### 3- Generate an App Store Connect API Key
+### 3. Generate an App Store Connect API Key
 
 In order for Fastlane Match to fetch and validate your codesigning certificates, it needs to authenticate you with Apple. All Apple IDs now require two-factor authentication to be enabled, which means you need to manually enter a 2FA code when logging in. This is fine if you're running match locally on your own machine, but is a problem on an automated CI system.
 
@@ -65,7 +65,7 @@ To work around this, you will need to generate an App Store Connect API key, whi
 
 Go to https://appstoreconnect.apple.com/access/users and log in. Go to the "Keys" tab and click the plus sign (+) to generate a new set of keys. Enter a name and select "Developer" access. Once it's been generated, click the "Download API key" link, which will download a file. Note you can only do this once. Later on in this guide, you will need the "key ID" from the table row for your newly-generated key, the "issuer ID" displayed at the top of the page, and the downloaded .p8 file.
 
-### 4- Configure Fastlane to build
+### 4. Configure Fastlane to build
 
 At this point, you will have a private git repository that contains new valid codesigning identities and certificates. From here, you need to configure Fastlane to know how to build your Xcode project. Within your project directory, create a directory called `fastlane`, and then create two files within that directory, `Appfile` and `Fastfile`.
 
@@ -170,7 +170,7 @@ Then change the [`build_app`](http://docs.fastlane.tools/actions/build_app/#buil
     )
 ```
 
-### 4- Add jobs to your GitHub Actions workflow
+### 5. Add jobs to your GitHub Actions workflow
 
 Building for iOS is a two-step build process. When Unity builds your project for iOS, it generates an Xcode project, which then must be built and code-signed in Xcode via Fastlane.
 
@@ -243,7 +243,7 @@ jobs:
           name: build-iOS
 ```
 
-### 5- Add secrets to your GitHub repo
+### 6. Add secrets to your GitHub repo
 
 On your project's GitHub repo page, add a number of Repository Secrets by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right.
 
@@ -255,7 +255,7 @@ On your project's GitHub repo page, add a number of Repository Secrets by going 
 - **MATCH_PASSWORD**: The password you set when configuring Fastlane Match.
 - **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Your App Store Connect API keys from the previous step. `APPSTORE_KEY_ID` is the "Key ID" from the table row, `APPSTORE_ISSUER_ID` is your issuer ID from the top of the page, and `APPSTORE_P8` is the entire contents of the `.p8` file you downloaded, starting with `-----BEGIN PRIVATE KEY-----` and ending with `-----END PRIVATE KEY-----`.
 
-### 6- Confirming your Unity and App Store Connect settings
+### 7. Confirming your Unity and App Store Connect settings
 
 At this point, if you have previously set up your app for manual iOS builds and TestFlight/App Store distribution, your GitHub Actions workflow will likely complete successfully. If that is not the case, there are a few more steps to finish setup.
 
