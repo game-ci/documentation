@@ -2,7 +2,7 @@
 
 This guide is intended to help with automating Android builds to upload to the Play Store. If you just need to produce an APK, the [unity-builder](https://game.ci/docs/github/builder) action will do that. However, if you intend to distribute your game on the Play Store, either for public distribution or a beta track, this guide is for you.
 
-### 1- Install Fastlane
+### 1. Install Fastlane
 
 [Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate building and submitting your Android apps to Google, and is the easiest way to deploy your Unity project to Android for Play Store distribution.
 
@@ -25,7 +25,7 @@ Then run `bundle install`. This will create an additional `Gemfile.lock` file in
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
-### 2- Create a Google Play Service Account
+### 2. Create a Google Play Service Account
 
 To programmatically access the Google Play Console, you will need a dedicated Google Play service account with API access.
 
@@ -35,7 +35,7 @@ After the last step, it will tell you to test the connection to the Google Play 
 
 Instead, create a Repository Secret in your GitHub repository by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right. It should be titled `GOOGLE_PLAY_KEY_FILE` and its value should be the plaintext contents of the downloaded JSON file.
 
-### 3- Generate an upload key and keystore
+### 3. Generate an upload key and keystore
 
 Distributing an app via the Google Play Store requires uploading an unsigned Android App Bundle (AAB) file and letting Google codesign your app for you using Play App Signing. In order to do this, you need to create an upload signing key, which you will then sign your app with.
 
@@ -53,7 +53,7 @@ Begin by base64-encoding the contents of your `.keystore` file. On a Linux or Ma
 
 Add four Repository Secrets in your GitHub repository by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right. `ANDROID_KEYSTORE_BASE64` should contain the base64'd version of your keystore file's contents, and `ANDROID_KEYSTORE_PASS`, `ANDROID_KEYALIAS_NAME`, and `ANDROID_KEYALIAS_PASS` should contain your keystore's password, alias name, and alias password respectively. If you followed the instructions above, the keystore password and alias password will be the same.
 
-### 4- Manually upload a build to Google Play
+### 4. Manually upload a build to Google Play
 
 In order to automate submission to the Google Play store, Google requires you to have already manually uploaded a version of your app to the Google Play Console. You also need to get your app out of the "Draft" status if you want to deploy anything but draft releases.
 
@@ -63,7 +63,7 @@ In the Google Play Console, select "Internal Testing" from the left-side menu (o
 
 Before you can programmatically deploy any release that is not a "Draft" release, you'll need to manually submit your app for review at least once to get it out of "Draft" status. Depending on where you are in the game production lifecycle, you may not want to this during initial setup, but be aware this is something you will need to do before you can use GameCI to release new live updates to a production build.
 
-### 5- Set up Fastlane
+### 5. Set up Fastlane
 
 At this point, your Google Play Console app listing should be ready to accept programmatic uploads, but you still need to configure Fastlane. Within your project directory, create a directory called `fastlane`, and then create two files within that directory, `Appfile` and `Fastfile`.
 
@@ -90,7 +90,7 @@ end
 
 If you would like to upload to other tracks (namely, `alpha` or `beta`), you can create additional lanes that look the same as the `:production` and `:internal` lanes except for the name and `track` parameter. Additionally, if you want to create draft releases (which will be necessary until you've manually pushed at least one build through the manual submission process), you will want to switch `release_status` from `completed` to `draft`.
 
-### 6- Add jobs to your GitHub workflow
+### 6. Add jobs to your GitHub workflow
 
 The following workflow establishes two jobs. The first builds your game into an AAB file, and the second uploads that generated bundle to the Play Store.
 
@@ -154,7 +154,7 @@ jobs:
           name: build-Android
 ```
 
-### 5- Add secrets to your Github repo
+### 7. Add secrets to your Github repo
 
 On your project's GitHub repo page, add a number of Repository Secrets by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right.
 
