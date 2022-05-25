@@ -8,21 +8,19 @@ complicated.
 
 > -- **Note:** Make sure you do all these steps carefully.
 >
-> -- **Note:** You need a Mac environment for doing these steps. A Mac is also recommended for
-> debugging any issues with this workflow.
+> -- **Note:** If you use GitHub Actions and Fastlane to generate your certificates, you will not need a Mac encironment, but a Mac is still recommended for debugging any issues with this workflow.
 
 ### Conceptual overview
 
-When you build your Unity project for iOS, Unity will produce an Xcode project that needs to be
-built using Xcode on a Mac. In order to upload your app to the App Store, TestFlight, or a
-third-party beta distribution service, you will first need to build it in Xcode and then code-sign
-it.
+This guide walks you through two separate processes: setting up codesigning for your game, and then building it.
+
+When you build your Unity project for iOS, Unity will produce an Xcode project that needs to be built using Xcode on a Mac. In order to upload your app to the App Store, TestFlight, or a third-party beta distribution service, you will first need to build it in Xcode and then code-sign it.
+
+We will be using a tool called [Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) to facilitate building, codesigning, and uploading your iOS build. 
+
+The base `fastlane` tool will manage using Xcode to build your project and directly upload those builds to Apple. The [Fastlane Match](https://docs.fastlane.tools/actions/match/) tool will generate and manage your code-signing identities and certificates for you, interacting directly with Apple via API and then storing your codesigning identities and certificates securely in a private git repo.
 
 ### 1. Install Fastlane
-
-[Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate
-building, codesigning, and uploading iOS apps, and is the easiest way to deploy your Unity project
-to iOS.
 
 To configure Fastlane for your GitHub Actions workflow runners, you will need to locally set up a
 `Gemfile` and `Fastfile` within your project. A `Gemfile` specifies what Ruby dependencies are
@@ -44,46 +42,147 @@ content:
 ```ruby title="Gemfile"
 source "https://rubygems.org"
 gem "fastlane"
+gem 'fastlane-plugin-github_action', git: "https://github.com/joshdholtz/fastlane-plugin-github_action" # The published gem is missing necessary changes, so we need to link directly to the git repo
 ```
 
-Then run `bundle install`. This will create an additional `Gemfile.lock` file in the root of your
-project.
+If you prefer to manually generate certificates using Match from the command-line on a local Mac instead of handling everything through GitHub Actions, you can omit the last `fastlane-plugin-github-action` line.
+
+Run `bundle install`. This will create an additional `Gemfile.lock` file in the root of your project.
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
-### 2. Create and store Codesigning Certificates
+### 2. Generate an App Store Connect API Key
 
-Codesigning your iOS app for distribution requires an Apple developer or distribution certificate.
-Traditionally, allowing multiple developers on a team to build the same app (or allowing builds on a
-cloud CI system) requires you to either manually share a `.p12` file across all machines that will
-build the project, or set up a different codesigning identity for each developer or shared build
-machine. Updating all of these identities and certificates whenever changes are necessary can be a
-pain point.
+In order for Fastlane Match to fetch and validate your codesigning certificates, it needs to authenticate you with Apple. All Apple IDs now require two-factor authentication to be enabled, which means you need to manually enter a 2FA code when logging in. This is fine if you're running match locally on your own machine, but is a problem on an automated CI system.
 
-Fastlane includes a tool called [Fastlane Match](https://docs.fastlane.tools/actions/match/) to
-simplify this process. It will store all of your codesigning identities and certificates securely on
-the cloud (typically in a private git repo, although you may opt to use a Google Cloud Storage or
-Amazon S3 bucket), and automatically download the correct certificates whenever Fastlane executes an
-Xcode build in any environment. Additionally, it can automatically manage your certificates and
-identities for you, interacting directly with Apple's APIs instead of requiring you to create and
-manage certificates through the developer portal.
+To work around this, you will need to generate an App Store Connect API key, which match can use to authenticate you with Apple without manual 2FA input while running on CI. 
 
-The Match setup described below is a common workflow that is likely to be a good fit for many GameCI
-users. However, there are a number of different ways you can set up Match, and we recommend reading
-the Match [documentation](https://docs.fastlane.tools/actions/match/) and
-[codesigning guide](https://codesigning.guide) in their entirety.
+While not required, it is recommended you use a separate Apple ID just for CI purposes. Create one if you haven't already.
 
-If you do not already have a single shared Apple ID to be used by all developers and on all CI
-environments, create a new one.
+Next, go to https://appstoreconnect.apple.com/access/users and log in. Go to the "Keys" tab and click the plus sign (+) to generate a new set of keys. Enter a name and select "Developer" access. Once it's been generated, click the "Download API key" link, which will download a file. Note you can only download this once. 
 
-If your Apple Developer account is messy and has lots of invalid, expired, or Xcode-managed profiles
-and certificates, you may **optionally** want to use Match to initially clean out your old developer
-portal by running `bundle exec fastlane match development` and
-`bundle exec fastlane match production`. **This will delete Apple codesigning identities and
-certificates and may break any existing workflows. It is NOT recommended if your project shares an
-Apple Developer account with other projects or teams at your company.**
+Create three new Repository Secrets in your project GitHub repo by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right. Use the following names and values:
 
-Next, create a private git repository to store your certificates.
+- **APPSTORE_KEY_ID** should contain the "Key ID" from the table row
+- **APPSTORE_ISSUER_ID** is your issuer ID from the top of the page
+- **APPSTORE_P8** is the entire contents of the `.p8` file you downloaded, starting with `-----BEGIN PRIVATE KEY-----` and ending with `-----END PRIVATE KEY-----`
+
+### 3. Prepare to use Fastlane Match
+
+It's worth noting that the Match setup we are configuring uses a common workflow that is likely to be a good fit for many GameCI users. However, there are a number of different ways you can set up Match, and we recommend reading the Match [documentation](https://docs.fastlane.tools/actions/match/) and [codesigning guide](https://codesigning.guide) in their entirety.
+
+First, create a private GitHub repository to store your certificates.
+
+If your Apple Developer account is messy and has lots of invalid, expired, or Xcode-managed profiles and certificates, you may **optionally** want to use Match to initially clean out your old developer portal by running `bundle exec fastlane match development` and `bundle exec fastlane match production` on a local Mac. **This will delete Apple codesigning identities and certificates and may break any existing workflows. It is NOT recommended if your project shares an Apple Developer account with other projects or teams at your company.**
+
+### 4. Manage codesigning with GitHub Actions
+This section will configure GitHub Actions to manually generate your code-signing identities and certificates and store them in your private git repo. If you prefer to manually manage your certificates from the command-line, skip this section. 
+
+Within your project directory, create a directory called `fastlane`, and then create a file in that directory called `Fastfile`.
+
+```ruby title="fastlane/Fastfile"
+
+org, repo = (ENV["GITHUB_REPOSITORY"]||"").split("/")
+match_org, match_repo = (ENV["MATCH_REPOSITORY"]||"").split("/")
+
+platform :ios do
+  lane :init_ci do
+    github_action(
+      api_token: ENV["GH_PAT"],
+      org: org,
+      repo: repo,
+      match_org: match_org,
+      match_repo: match_repo,
+      writable_deploy_key: true
+    )
+  end
+end
+```
+
+When Fastlane initially sets up your repo and certificates, it will generate a deploy token that allows programmatic write access to your Match repo, and store that token as a Repository Secret in your project repo. In order for our script to do that, you will need to first generate a GitHub Personal Access Token. Go to https://github.com/settings/tokens, click "Generate new token". It needs all "repo" permissions. Give it a suitable name, as well as choosing if you want your token to expire. After doing this and clicking "Generate token", GitHub will show you your token. 
+
+In your project repo, add a Repository Secrets by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right. Call it `GH_PAT`, and set the value to the personal access token you just generated.
+
+Create two more Repository Secrets. One should be called `MATCH_REPOSITORY` and contain the the private GitHub repository you've created to use with Fastlane Match, in the format `organization/repository`. The second should be called `MATCH_PASSWORD`, and contain a password to encrypt the Match repo. It's recommended you use a team password manager or similar shared secure keystore to both generate and store this password.
+
+Next, create the following two GitHub Actions workflows.
+
+```yaml title=".github/workflows/ios_setup.yml"
+name: iOS One-Time Setup
+
+on: workflow_dispatch
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true 
+
+      - name: Build iOS
+        shell: bash
+        run: |
+          bundle exec fastlane init_ci
+        env:
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }} # Raw .p8 value
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
+          MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}    
+```
+
+```yaml title=".github/workflows/generate_certs.yml"
+name: Generate iOS Certs
+
+on:
+  workflow_run:
+    workflows: ["iOS One-Time Setup"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  generate_certs:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true 
+
+      - name: Build iOS
+        shell: bash
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "${MATCH_DEPLOY_KEY}"
+          bundle exec fastlane sync_certificates
+        env:
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }} # Raw .p8 value
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          
+          BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
+          MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}
+          MATCH_DEPLOY_KEY: ${{ secrets.MATCH_DEPLOY_KEY }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+```
+The first workflow will set up your Match repository. It creates a deploy key in that repo, and stores it in your main repo, so that future GitHub Actions are capable of programmatically pushing changes to that git repo.
+
+The second one fetches your certificates with Apple, and stores any updates in your private Match git repo. This will run automatically after you run the first workflow, but it also can be manually re-run when your initial certificates expire a year or two after generation.
+
+Go to the "Actions" tab in your GitHub repository, and manually run the "iOS One-Time Setup" action by selecting it from the list on the left, clicking the "Run Workflow" button, and then clicking the next "Run Workflow" button after confirming the branch is correct. This will run both of those two workflows, configuring your Match git repository and then generating certificates with Apple.
+
+### 4b. Manage codesigning manually on your Mac
+If you followed the previous set of instructions in step 4, skip to the next section. If you would prefer to manually manage your certificates from the command-line instead of using Match via GitHub Actions, do the following.
 
 From the command-line on your Mac, run the following to generate new Development and Distribution
 certificates. It will ask you for the Apple ID and password of your new shared Apple ID, the URL of
@@ -96,28 +195,9 @@ bundle exec fastlane match development
 bundle exec fastlane match appstore
 ```
 
-### 3. Generate an App Store Connect API Key
+### 5. Configure Fastlane to build
 
-In order for Fastlane Match to fetch and validate your codesigning certificates, it needs to
-authenticate you with Apple. All Apple IDs now require two-factor authentication to be enabled,
-which means you need to manually enter a 2FA code when logging in. This is fine if you're running
-match locally on your own machine, but is a problem on an automated CI system.
-
-To work around this, you will need to generate an App Store Connect API key, which match can use to
-authenticate you with Apple without manual 2FA input while running on CI.
-
-Go to https://appstoreconnect.apple.com/access/users and log in. Go to the "Keys" tab and click the
-plus sign (+) to generate a new set of keys. Enter a name and select "Developer" access. Once it's
-been generated, click the "Download API key" link, which will download a file. Note you can only do
-this once. Later on in this guide, you will need the "key ID" from the table row for your
-newly-generated key, the "issuer ID" displayed at the top of the page, and the downloaded .p8 file.
-
-### 4. Configure Fastlane to build
-
-At this point, you will have a private git repository that contains new valid codesigning identities
-and certificates. From here, you need to configure Fastlane to know how to build your Xcode project.
-Within your project directory, create a directory called `fastlane`, and then create two files
-within that directory, `Appfile` and `Fastfile`.
+At this point, you will have a private git repository that contains new valid codesigning identities and certificates. From here, you need to configure Fastlane to know how to build your Xcode project. Create a new file within the `fastlane` folder called `Appfile`, and either create or replace the contents of the `Fastfile` you may have created in a previous step.
 
 ```ruby title="fastlane/Appfile"
 for_platform :ios do
@@ -132,7 +212,20 @@ end
 ```
 
 ```ruby title="fastlane/Fastfile"
+org, repo = (ENV["GITHUB_REPOSITORY"]||"").split("/")
+match_org, match_repo = (ENV["MATCH_REPOSITORY"]||"").split("/")
+
 platform :ios do
+  lane :init_ci do
+    github_action(
+      api_token: ENV["GH_PAT"],
+      org: org,
+      repo: repo,
+      match_org: match_org,
+      match_repo: match_repo,
+      writable_deploy_key: true
+    )
+  end
 
   desc "Deliver a new Release build to the App Store"
   lane :release do
@@ -166,8 +259,7 @@ platform :ios do
     match(
       type: 'appstore',
       storage_mode: 'git',
-      git_url: ENV['MATCH_URL'],
-      git_basic_authorization: Base64.strict_encode64("#{ENV['APPLE_CONNECT_EMAIL']}:#{ENV['MATCH_PERSONAL_ACCESS_TOKEN']}"),
+      git_url: "git@github.com:#{match_org}/#{match_repo}.git",,
       app_identifier: ENV['IOS_BUNDLE_ID']
     )
 
@@ -222,7 +314,7 @@ new `xcworkspace` instead of the old `xcodeproj`:
     )
 ```
 
-### 5. Add jobs to your GitHub Actions workflow
+### 6. Add jobs to your GitHub Actions workflow
 
 Building for iOS is a two-step build process. When Unity builds your project for iOS, it generates
 an Xcode project, which then must be built and code-signed in Xcode via Fastlane.
@@ -280,8 +372,7 @@ jobs:
           APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
-          MATCH_URL: ${{ secrets.MATCH_URL }}
-          MATCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.MATCH_PERSONAL_ACCESS_TOKEN }}
+          MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
@@ -303,7 +394,7 @@ jobs:
           name: build-iOS
 ```
 
-### 6. Add secrets to your GitHub repo
+### 7. Add secrets to your GitHub repo
 
 On your project's GitHub repo page, add a number of Repository Secrets by going to Settings ->
 Secrets and clicking the "New repository secret" button in the top-right.
@@ -311,21 +402,9 @@ Secrets and clicking the "New repository secret" button in the top-right.
 - **APPLE_CONNECT_EMAIL**: Apple Connect email (if using our recommendation to create a single
   shared developer Apple ID for Fastlane Match, this will be the same as `APPLE_DEVELOPER_EMAIL`)
 - **APPLE_DEVELOPER_EMAIL**: Your Apple ID
-- **APPLE_TEAM_ID**: Team Id from your
-  [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
-- **MATCH_URL**: Https url for the private git repo to which `fastlane match appstore` uploaded
-  certificates.
-- **MATCH_PERSONAL_ACCESS_TOKEN**: GitHub
-  [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-  with full repo access to MATCH_URL
-- **MATCH_PASSWORD**: The password you set when configuring Fastlane Match.
-- **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Your App Store Connect API keys from the
-  previous step. `APPSTORE_KEY_ID` is the "Key ID" from the table row, `APPSTORE_ISSUER_ID` is your
-  issuer ID from the top of the page, and `APPSTORE_P8` is the entire contents of the `.p8` file you
-  downloaded, starting with `-----BEGIN PRIVATE KEY-----` and ending with
-  `-----END PRIVATE KEY-----`.
+- **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
 
-### 7. Confirming your Unity and App Store Connect settings
+### 8. Confirming your Unity and App Store Connect settings
 
 At this point, if you have previously set up your app for manual iOS builds and TestFlight/App Store
 distribution, your GitHub Actions workflow will likely complete successfully. If that is not the
