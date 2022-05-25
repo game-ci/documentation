@@ -1,8 +1,12 @@
 # Windows docker images
 
-Windows images are used for some features available only in windows. The main reason is usually building an IL2CPP version of the application.
+Windows images are used for some features available only in windows. The main reason is usually
+building an IL2CPP version of the application.
 
-To build applications effectively in terms of build time, the very base image is a .NET framework 4.8. It's cached on GitHub actions runners and we truly need .NET. The base Windows image can be found in [https://github.com/game-ci/docker](https://github.com/game-ci/docker/blob/main/images/windows/base/Dockerfile)
+To build applications effectively in terms of build time, the very base image is a .NET framework
+4.8. It's cached on GitHub actions runners and we truly need .NET. The base Windows image can be
+found in
+[https://github.com/game-ci/docker](https://github.com/game-ci/docker/blob/main/images/windows/base/Dockerfile)
 
 ## Features
 
@@ -13,10 +17,16 @@ To build applications effectively in terms of build time, the very base image is
 
 ### Microsoft does not allow redistribution of Visual Studio build tools
 
-Microsoft doesn't permit publishing images with VS Build tools [`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844) so aren't we allowed to do that. Building windows IL2CPP project in pure editor images leads to exceptions claiming that "C++ code builder" nor "Windows 10 SDK" are installed. There are two options to avoid this obstacle
+Microsoft doesn't permit publishing images with VS Build tools
+[`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844) so
+aren't we allowed to do that. Building windows IL2CPP project in pure editor images leads to
+exceptions claiming that "C++ code builder" nor "Windows 10 SDK" are installed. There are two
+options to avoid this obstacle
 
-1. Inject/mount Microsoft Visual Studio with VC++ and Windows 10 SDK from the host system into the container during runtime.
-2. Installs vctools, e.g. `choco install visualstudio2017-workload-vctools --no-progress -y` and push it to a private docker registry
+1. Inject/mount Microsoft Visual Studio with VC++ and Windows 10 SDK from the host system into the
+   container during runtime.
+2. Installs vctools, e.g. `choco install visualstudio2017-workload-vctools --no-progress -y` and
+   push it to a private docker registry
 
 ### Injecting VC++ into the image
 
@@ -64,13 +74,19 @@ volumes = [
 
 ### Licenses are not valid between containers runs
 
-This behaviour is different to Ubuntu containers where it's possible to use a single licence for even a few different runners.
+This behaviour is different to Ubuntu containers where it's possible to use a single licence for
+even a few different runners.
 
-In Windows, it's necessary to acquire a license every time and return it after a building process. License files for every run are identical apart from the last four symbols of the machine hash code. This restriction has not been solved yet
+In Windows, it's necessary to acquire a license every time and return it after a building process.
+License files for every run are identical apart from the last four symbols of the machine hash code.
+This restriction has not been solved yet
 
-The simplest way is to write a couple of scripts (copied from [`Unity3d docs`](https://docs.unity3d.com/Manual/ManagingYourUnityLicense.html)) and wrap it to the try-finally block
+The simplest way is to write a couple of scripts (copied from
+[`Unity3d docs`](https://docs.unity3d.com/Manual/ManagingYourUnityLicense.html)) and wrap it to the
+try-finally block
 
-**Note**: Path to Unity3d is `C:\Program Files\Unity\Hub\Editor\{UNITY_EDITOR_VERSION}\Editor\Unity.exe`
+**Note**: Path to Unity3d is
+`C:\Program Files\Unity\Hub\Editor\{UNITY_EDITOR_VERSION}\Editor\Unity.exe`
 
 ```powershell
 try {
@@ -84,9 +100,12 @@ try {
 
 ### Gitlab doesn't have (or has few) shared docker-windows runners
 
-There is no other option right now, but [use a private runner](https://docs.gitlab.com/runner/install/). Please, set the `docker-windows` type of the runner
+There is no other option right now, but
+[use a private runner](https://docs.gitlab.com/runner/install/). Please, set the `docker-windows`
+type of the runner
 
-Default docker-for-windows settings are very resource-mean. It uses a single core and 1Gb of RAM. That's why the custom configuration is highly recommended
+Default docker-for-windows settings are very resource-mean. It uses a single core and 1Gb of RAM.
+That's why the custom configuration is highly recommended
 
 **config.toml**
 
@@ -99,7 +118,8 @@ Default docker-for-windows settings are very resource-mean. It uses a single cor
 #...
 ```
 
-**Note:** `hostname` doesn't influence the performance, but one day can help with license association to a machine
+**Note:** `hostname` doesn't influence the performance, but one day can help with license
+association to a machine
 
 ### Default shell for Gitlab-runner is PowerShell Core
 
@@ -127,7 +147,9 @@ Then push it to a docker registry. Installing `pwsh` during a pipeline doesn't h
 
 ### Git-ssh dependency package checkout fails
 
-The base image `windowsservercore` is too old and has some outdated packages. One of them, `OpenSSH` has [a bug](https://github.com/PowerShell/Win32-OpenSSH/issues/1263) that breaks the remote repository signature check.
+The base image `windowsservercore` is too old and has some outdated packages. One of them, `OpenSSH`
+has [a bug](https://github.com/PowerShell/Win32-OpenSSH/issues/1263) that breaks the remote
+repository signature check.
 
 The best option here is to replace it with something more recent
 
@@ -138,4 +160,5 @@ choco install openssh -params '"/SSHAgentFeature"' --no-progress -y
 $env:GIT_SSH="C:\Program Files\OpenSSH-Win64\ssh.exe"
 ```
 
-**Note:** `ssh-add` must be used from a different location, `C:\Program Files\OpenSSH-Win64\ssh-add.exe`
+**Note:** `ssh-add` must be used from a different location,
+`C:\Program Files\OpenSSH-Win64\ssh-add.exe`

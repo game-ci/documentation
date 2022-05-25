@@ -2,7 +2,8 @@
 
 Running your test suite in an automated workflow helps increase certainty when merging.
 
-Use [Unity - Test runner](https://github.com/marketplace/actions/unity-test-runner) to run your Unity tests.
+Use [Unity - Test runner](https://github.com/marketplace/actions/unity-test-runner) to run your
+Unity tests.
 
 _Optional_ to include test coverage, use
 [Unity - Code Coverage](https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/index.html)
@@ -18,8 +19,8 @@ Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 Personal licenses require a one-time manual activation step.
 
 Make sure you
-[acquire and activate](https://github.com/marketplace/actions/unity-request-activation-file)
-your license file and add it as a secret.
+[acquire and activate](https://github.com/marketplace/actions/unity-request-activation-file) your
+license file and add it as a secret.
 
 Then, define the test step as follows:
 
@@ -57,10 +58,13 @@ That is all you need to test your project.
 
 ## Viewing test results
 
-The test results can be viewed from a [GitHub Status Check](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-status-checks).
+The test results can be viewed from a
+[GitHub Status Check](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-status-checks).
 
-To get this functionality, simply provide the [GitHub Token](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret)
-in order to view the tests results from [a check run](https://docs.github.com/en/rest/guides/getting-started-with-the-checks-api#about-check-runs).
+To get this functionality, simply provide the
+[GitHub Token](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret)
+in order to view the tests results from
+[a check run](https://docs.github.com/en/rest/guides/getting-started-with-the-checks-api#about-check-runs).
 
 ```yaml
 - uses: game-ci/unity-test-runner@v2
@@ -68,7 +72,8 @@ in order to view the tests results from [a check run](https://docs.github.com/en
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-If you choose not to provide the `githubToken`, you may still upload the artifacts in order to access them.
+If you choose not to provide the `githubToken`, you may still upload the artifacts in order to
+access them.
 
 ## Storing test results
 
@@ -91,7 +96,8 @@ Test results can now be downloaded as `Artifacts` in the `Actions` tab.
 
 #### Specifying artifacts folder
 
-You can specify a different `artifactsPath` in the test runner and reference this path using the `id` of the test step.
+You can specify a different `artifactsPath` in the test runner and reference this path using the
+`id` of the test step.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v2
@@ -108,9 +114,9 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 
 ### Getting coverage results
 
-The results for the test code coverage are stored in the folder `CodeCoverage` and the path
-can be read by the step's `outputs.coveragePath`. These coverage options can be configured
-as part of the test and by default will create an XML and HTML web page reports.
+The results for the test code coverage are stored in the folder `CodeCoverage` and the path can be
+read by the step's `outputs.coveragePath`. These coverage options can be configured as part of the
+test and by default will create an XML and HTML web page reports.
 
 ```yaml
 - uses: actions/upload-artifact@v2
@@ -120,21 +126,19 @@ as part of the test and by default will create an XML and HTML web page reports.
     path: ${{ steps.myTestStep.outputs.coveragePath }}
 ```
 
-The coverage results will be generated for whatever tests were selected to run.
-If both `editmode` and `playmode` are selected by using `all`, then the results
-will have the combined coverage of both test modes.
+The coverage results will be generated for whatever tests were selected to run. If both `editmode`
+and `playmode` are selected by using `all`, then the results will have the combined coverage of both
+test modes.
 
-_Note_ Coverage results are generated with root permission so to move or edit
-the output in later steps you may need to use elevated permissions such as `sudo`.
+_Note_ Coverage results are generated with root permission so to move or edit the output in later
+steps you may need to use elevated permissions such as `sudo`.
 
 ## Caching
 
-In order to make test runs (and builds) faster,
-you can cache Library files from previous runs.
+In order to make test runs (and builds) faster, you can cache Library files from previous runs.
 
 To do so, simply add Github Actions' official
-[cache action](https://github.com/marketplace/actions/cache)
-before any unity steps.
+[cache action](https://github.com/marketplace/actions/cache) before any unity steps.
 
 ```yaml
 - uses: actions/cache@v2
@@ -154,11 +158,10 @@ Below options can be specified under `with:` for the `unity-test-runner` action.
 
 #### unityVersion
 
-Version of Unity to use for testing the project.
-Use "auto" to get from your ProjectSettings/ProjectVersion.txt
+Version of Unity to use for testing the project. Use "auto" to get from your
+ProjectSettings/ProjectVersion.txt
 
-_**required:** `false`_
-_**default:** `auto`_
+_**required:** `false`_ _**default:** `auto`_
 
 #### customImage
 
@@ -170,22 +173,22 @@ Specific docker image that should be used for testing the project.
     customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### projectPath
 
-Specify the path to your Unity project to be tested.
-The path should be relative to the root of your project.
+Specify the path to your Unity project to be tested. The path should be relative to the root of your
+project.
 
-_**required:** `false`_
-_**default:** `<your project root>`_
+_**required:** `false`_ _**default:** `<your project root>`_
 
 #### customParameters
 
 Custom parameters to configure the test runner.
 
-For example, you may refer to the [Unity Test Framework command line arguments](https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/reference-command-line.html) for options that could help with configuring your tests.
+For example, you may refer to the
+[Unity Test Framework command line arguments](https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/reference-command-line.html)
+for options that could help with configuring your tests.
 
 Parameters must start with a hyphen (`-`) and may be followed by a value (without hyphen).
 
@@ -197,8 +200,7 @@ Parameters without a value will be considered booleans (with a value of true).
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
 ```
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### testMode
 
@@ -206,8 +208,7 @@ The type of tests to be run by the test runner.
 
 Options are: `All`, `PlayMode`, and `EditMode`.
 
-_**required:** `false`_
-_**default:** `All`_
+_**required:** `false`_ _**default:** `All`_
 
 #### artifactsPath
 
@@ -215,29 +216,29 @@ Path where the test results should be stored.
 
 In this folder a folder will be created for every test mode.
 
-_**required:** `false`_
-_**default:** `artifacts`_
+_**required:** `false`_ _**default:** `artifacts`_
 
 ### coverageOptions
 
-Options for configuring code coverage, this configures the `-coverageOptions`
-parameter described unity's CodeCoverage documentation:
+Options for configuring code coverage, this configures the `-coverageOptions` parameter described
+unity's CodeCoverage documentation:
 [Using Code Coverage in batchmode](https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/CoverageBatchmode.html).
 
-By default, this parameter is configured to generate an HTML report with additional metrics.
-This should be fine for most projects, but the webpage report can be quite large for projects
-with hundreds or thousands of large files.
+By default, this parameter is configured to generate an HTML report with additional metrics. This
+should be fine for most projects, but the webpage report can be quite large for projects with
+hundreds or thousands of large files.
 
-You can add arguments for `assemblyFilters` to specify an assembly to filter files that results are generated for.
-This is commonly used to ignore test files or external libraries. See the
+You can add arguments for `assemblyFilters` to specify an assembly to filter files that results are
+generated for. This is commonly used to ignore test files or external libraries. See the
 [Using Code Coverage in batchmode](https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/CoverageBatchmode.html).
-For example, you can add the argument `assemblyFilters:+my.assembly.*` to only include files in the assemblies that match `+my.assembly.*`,
-the `*` is a wildcard. This will require making an assembly definition to manage scripts, see Unity's documentation on
+For example, you can add the argument `assemblyFilters:+my.assembly.*` to only include files in the
+assemblies that match `+my.assembly.*`, the `*` is a wildcard. This will require making an assembly
+definition to manage scripts, see Unity's documentation on
 [Assembly definitions](https://docs.unity3d.com/2022.2/Documentation/Manual/ScriptCompilationAssemblyDefinitionFiles.html)
 for how to create and manage assembly definitions.
 
-_**required:** `false`_
-_**default:** `generateAdditionalMetrics;generateHtmlReport;generateBadgeReport`_
+_**required:** `false`_ _**default:**
+`generateAdditionalMetrics;generateHtmlReport;generateBadgeReport`_
 
 #### useHostNetwork
 
@@ -247,8 +248,7 @@ This is useful if Unity needs to access a local server that was started as part 
 
 Options are: "true", "false"
 
-_**required:** `false`_
-_**default:** `false`_
+_**required:** `false`_ _**default:** `false`_
 
 #### sshAgent
 
@@ -256,8 +256,7 @@ SSH Agent path to forward to the container.
 
 This is useful if your manifest has a dependency on a private GitHub repo.
 
-_**required:** `false`_
-_**default:** ``_
+_**required:** `false`_ _**default:** ``_
 
 #### gitPrivateToken
 
@@ -265,31 +264,32 @@ GitHub Private Access Token (PAT) to pull from GitHub.
 
 This is useful if your manifest has a dependency on a private GitHub repo.
 
-_**required:** `false`_
-_**default:** ``_
+_**required:** `false`_ _**default:** ``_
 
 #### githubToken
 
-Token to authorize access to the GitHub REST API. If provided, a check run will be created with the test results.
+Token to authorize access to the GitHub REST API. If provided, a check run will be created with the
+test results.
 
-It is recommended to use `githubToken: ${{ secrets.GITHUB_TOKEN }}`,
-but creating the check from [a fork of your repo](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#permissions-for-the-github_token)
-may require using a [Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token#creating-a-token).
+It is recommended to use `githubToken: ${{ secrets.GITHUB_TOKEN }}`, but creating the check from
+[a fork of your repo](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#permissions-for-the-github_token)
+may require using a
+[Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token#creating-a-token).
 
-Reference the [GitHub Checks API docs](https://docs.github.com/en/rest/reference/checks)
-for details on [creating CI tests with the Checks API](https://docs.github.com/en/developers/apps/creating-ci-tests-with-the-checks-api).
+Reference the [GitHub Checks API docs](https://docs.github.com/en/rest/reference/checks) for details
+on
+[creating CI tests with the Checks API](https://docs.github.com/en/developers/apps/creating-ci-tests-with-the-checks-api).
 
-_**required:** `false`_
-_**default:** ``_
+_**required:** `false`_ _**default:** ``_
 
 #### checkName
 
 Name for the check run that is created when a github token is provided.
 
-It may be useful to customize the check name if, for example, you have a job matrix with multiple unity versions.
+It may be useful to customize the check name if, for example, you have a job matrix with multiple
+unity versions.
 
-_**required:** `false`_
-_**default:** `Test Results`_
+_**required:** `false`_ _**default:** `Test Results`_
 
 ## Complete example
 

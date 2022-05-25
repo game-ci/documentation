@@ -1,56 +1,95 @@
 # Deploy to the App Store
 
-This guide is intended to help with automating iOS builds and uploads to the App Store.
-This guide assumes that you already have experience with [using Xcode for distribution](https://developer.apple.com/documentation/xcode/preparing-your-app-for-distribution).
-It is important to be familiar with the manual process, as automating this process can be complicated.
+This guide is intended to help with automating iOS builds and uploads to the App Store. This guide
+assumes that you already have experience with
+[using Xcode for distribution](https://developer.apple.com/documentation/xcode/preparing-your-app-for-distribution).
+It is important to be familiar with the manual process, as automating this process can be
+complicated.
 
 > -- **Note:** Make sure you do all these steps carefully.
 >
-> -- **Note:** You need a Mac environment for doing these steps.
-> A Mac is also recommended for debugging any issues with this workflow.
+> -- **Note:** You need a Mac environment for doing these steps. A Mac is also recommended for
+> debugging any issues with this workflow.
 
 ### Conceptual overview
 
-When you build your Unity project for iOS, Unity will produce an Xcode project that needs to be built using Xcode on a Mac. In order to upload your app to the App Store, TestFlight, or a third-party beta distribution service, you will first need to build it in Xcode and then code-sign it.
+When you build your Unity project for iOS, Unity will produce an Xcode project that needs to be
+built using Xcode on a Mac. In order to upload your app to the App Store, TestFlight, or a
+third-party beta distribution service, you will first need to build it in Xcode and then code-sign
+it.
 
 ### 1. Install Fastlane
 
-[Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate building, codesigning, and uploading iOS apps, and is the easiest way to deploy your Unity project to iOS.
+[Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate
+building, codesigning, and uploading iOS apps, and is the easiest way to deploy your Unity project
+to iOS.
 
-To configure Fastlane for your GitHub Actions workflow runners, you will need to locally set up a `Gemfile` and `Fastfile` within your project. A `Gemfile` specifies what Ruby dependencies are needed to set up and run Fastlane (which is written in Ruby), and a `Fastfile` will be how you configure your iOS build settings. We will set up the `Gemfile` now, and the `Fastfile` in a later step.
+To configure Fastlane for your GitHub Actions workflow runners, you will need to locally set up a
+`Gemfile` and `Fastfile` within your project. A `Gemfile` specifies what Ruby dependencies are
+needed to set up and run Fastlane (which is written in Ruby), and a `Fastfile` will be how you
+configure your iOS build settings. We will set up the `Gemfile` now, and the `Fastfile` in a later
+step.
 
-You will need your local machine to have [Ruby](https://www.ruby-lang.org/en/documentation/installation/) installed, as well as Bundler. If you have Ruby installed but are unsure if you have Bundler, you can run the following to install it:
+You will need your local machine to have
+[Ruby](https://www.ruby-lang.org/en/documentation/installation/) installed, as well as Bundler. If
+you have Ruby installed but are unsure if you have Bundler, you can run the following to install it:
 
 ```bash
 gem install bundler
 ```
 
-From there, create a file called `Gemfile` in the root of your git repository with following content:
+From there, create a file called `Gemfile` in the root of your git repository with following
+content:
 
 ```ruby title="Gemfile"
 source "https://rubygems.org"
 gem "fastlane"
 ```
 
-Then run `bundle install`. This will create an additional `Gemfile.lock` file in the root of your project.
+Then run `bundle install`. This will create an additional `Gemfile.lock` file in the root of your
+project.
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
 ### 2. Create and store Codesigning Certificates
 
-Codesigning your iOS app for distribution requires an Apple developer or distribution certificate. Traditionally, allowing multiple developers on a team to build the same app (or allowing builds on a cloud CI system) requires you to either manually share a `.p12` file across all machines that will build the project, or set up a different codesigning identity for each developer or shared build machine. Updating all of these identities and certificates whenever changes are necessary can be a pain point.
+Codesigning your iOS app for distribution requires an Apple developer or distribution certificate.
+Traditionally, allowing multiple developers on a team to build the same app (or allowing builds on a
+cloud CI system) requires you to either manually share a `.p12` file across all machines that will
+build the project, or set up a different codesigning identity for each developer or shared build
+machine. Updating all of these identities and certificates whenever changes are necessary can be a
+pain point.
 
-Fastlane includes a tool called [Fastlane Match](https://docs.fastlane.tools/actions/match/) to simplify this process. It will store all of your codesigning identities and certificates securely on the cloud (typically in a private git repo, although you may opt to use a Google Cloud Storage or Amazon S3 bucket), and automatically download the correct certificates whenever Fastlane executes an Xcode build in any environment. Additionally, it can automatically manage your certificates and identities for you, interacting directly with Apple's APIs instead of requiring you to create and manage certificates through the developer portal.
+Fastlane includes a tool called [Fastlane Match](https://docs.fastlane.tools/actions/match/) to
+simplify this process. It will store all of your codesigning identities and certificates securely on
+the cloud (typically in a private git repo, although you may opt to use a Google Cloud Storage or
+Amazon S3 bucket), and automatically download the correct certificates whenever Fastlane executes an
+Xcode build in any environment. Additionally, it can automatically manage your certificates and
+identities for you, interacting directly with Apple's APIs instead of requiring you to create and
+manage certificates through the developer portal.
 
-The Match setup described below is a common workflow that is likely to be a good fit for many GameCI users. However, there are a number of different ways you can set up Match, and we recommend reading the Match [documentation](https://docs.fastlane.tools/actions/match/) and [codesigning guide](https://codesigning.guide) in their entirety.
+The Match setup described below is a common workflow that is likely to be a good fit for many GameCI
+users. However, there are a number of different ways you can set up Match, and we recommend reading
+the Match [documentation](https://docs.fastlane.tools/actions/match/) and
+[codesigning guide](https://codesigning.guide) in their entirety.
 
-If you do not already have a single shared Apple ID to be used by all developers and on all CI environments, create a new one.
+If you do not already have a single shared Apple ID to be used by all developers and on all CI
+environments, create a new one.
 
-If your Apple Developer account is messy and has lots of invalid, expired, or Xcode-managed profiles and certificates, you may **optionally** want to use Match to initially clean out your old developer portal by running `bundle exec fastlane match development` and `bundle exec fastlane match production`. **This will delete Apple codesigning identities and certificates and may break any existing workflows. It is NOT recommended if your project shares an Apple Developer account with other projects or teams at your company.**
+If your Apple Developer account is messy and has lots of invalid, expired, or Xcode-managed profiles
+and certificates, you may **optionally** want to use Match to initially clean out your old developer
+portal by running `bundle exec fastlane match development` and
+`bundle exec fastlane match production`. **This will delete Apple codesigning identities and
+certificates and may break any existing workflows. It is NOT recommended if your project shares an
+Apple Developer account with other projects or teams at your company.**
 
 Next, create a private git repository to store your certificates.
 
-From the command-line on your Mac, run the following to generate new Development and Distribution certificates. It will ask you for the Apple ID and password of your new shared Apple ID, the URL of the git repository you have just created, and a password to encrypt the contents of the git repo. You will need to use this password later; it's recommended you use a team-wide password manager or similar shared secure keystore to both generate and store this password.
+From the command-line on your Mac, run the following to generate new Development and Distribution
+certificates. It will ask you for the Apple ID and password of your new shared Apple ID, the URL of
+the git repository you have just created, and a password to encrypt the contents of the git repo.
+You will need to use this password later; it's recommended you use a team-wide password manager or
+similar shared secure keystore to both generate and store this password.
 
 ```bash
 bundle exec fastlane match development
@@ -59,15 +98,26 @@ bundle exec fastlane match appstore
 
 ### 3. Generate an App Store Connect API Key
 
-In order for Fastlane Match to fetch and validate your codesigning certificates, it needs to authenticate you with Apple. All Apple IDs now require two-factor authentication to be enabled, which means you need to manually enter a 2FA code when logging in. This is fine if you're running match locally on your own machine, but is a problem on an automated CI system.
+In order for Fastlane Match to fetch and validate your codesigning certificates, it needs to
+authenticate you with Apple. All Apple IDs now require two-factor authentication to be enabled,
+which means you need to manually enter a 2FA code when logging in. This is fine if you're running
+match locally on your own machine, but is a problem on an automated CI system.
 
-To work around this, you will need to generate an App Store Connect API key, which match can use to authenticate you with Apple without manual 2FA input while running on CI.
+To work around this, you will need to generate an App Store Connect API key, which match can use to
+authenticate you with Apple without manual 2FA input while running on CI.
 
-Go to https://appstoreconnect.apple.com/access/users and log in. Go to the "Keys" tab and click the plus sign (+) to generate a new set of keys. Enter a name and select "Developer" access. Once it's been generated, click the "Download API key" link, which will download a file. Note you can only do this once. Later on in this guide, you will need the "key ID" from the table row for your newly-generated key, the "issuer ID" displayed at the top of the page, and the downloaded .p8 file.
+Go to https://appstoreconnect.apple.com/access/users and log in. Go to the "Keys" tab and click the
+plus sign (+) to generate a new set of keys. Enter a name and select "Developer" access. Once it's
+been generated, click the "Download API key" link, which will download a file. Note you can only do
+this once. Later on in this guide, you will need the "key ID" from the table row for your
+newly-generated key, the "issuer ID" displayed at the top of the page, and the downloaded .p8 file.
 
 ### 4. Configure Fastlane to build
 
-At this point, you will have a private git repository that contains new valid codesigning identities and certificates. From here, you need to configure Fastlane to know how to build your Xcode project. Within your project directory, create a directory called `fastlane`, and then create two files within that directory, `Appfile` and `Fastfile`.
+At this point, you will have a private git repository that contains new valid codesigning identities
+and certificates. From here, you need to configure Fastlane to know how to build your Xcode project.
+Within your project directory, create a directory called `fastlane`, and then create two files
+within that directory, `Appfile` and `Fastfile`.
 
 ```ruby title="fastlane/Appfile"
 for_platform :ios do
@@ -148,8 +198,8 @@ platform :ios do
 end
 ```
 
-> -- **Note:** If you add libraries that need `Podfile` (e.g. Firebase) to your project,
-> add this line to the beginning of your build step (the block of code starting with `lane :build do`):
+> -- **Note:** If you add libraries that need `Podfile` (e.g. Firebase) to your project, add this
+> line to the beginning of your build step (the block of code starting with `lane :build do`):
 
 ```ruby
     cocoapods(
@@ -160,7 +210,9 @@ end
 
 This will install pods and generate the `xcworkspace` for you.
 
-Then change the [`build_app`](http://docs.fastlane.tools/actions/build_app/#build_app) (alias: [`gym`](https://docs.fastlane.tools/actions/gym/)) step at the end of this build phase to use the new `xcworkspace` instead of the old `xcodeproj`:
+Then change the [`build_app`](http://docs.fastlane.tools/actions/build_app/#build_app) (alias:
+[`gym`](https://docs.fastlane.tools/actions/gym/)) step at the end of this build phase to use the
+new `xcworkspace` instead of the old `xcodeproj`:
 
 ```ruby
     build_app( #alias: gym
@@ -172,11 +224,19 @@ Then change the [`build_app`](http://docs.fastlane.tools/actions/build_app/#buil
 
 ### 5. Add jobs to your GitHub Actions workflow
 
-Building for iOS is a two-step build process. When Unity builds your project for iOS, it generates an Xcode project, which then must be built and code-signed in Xcode via Fastlane.
+Building for iOS is a two-step build process. When Unity builds your project for iOS, it generates
+an Xcode project, which then must be built and code-signed in Xcode via Fastlane.
 
-This workflow builds your app and submits it to Apple for App Store release. If you want to submit your app for TestFlight distribution, you can create a job that is identical except it runs `bundle exec fastlane beta` instead of `bundle exec fastlane release` during the "Fix File Permissions and Run Fastlane" step. You can build your iOS app without uploading it (e.g. to confirm it builds successfully, or as a preparation step before uploading to an alternative distribution service) by instead running `bundle exec fastlane build`.
+This workflow builds your app and submits it to Apple for App Store release. If you want to submit
+your app for TestFlight distribution, you can create a job that is identical except it runs
+`bundle exec fastlane beta` instead of `bundle exec fastlane release` during the "Fix File
+Permissions and Run Fastlane" step. You can build your iOS app without uploading it (e.g. to confirm
+it builds successfully, or as a preparation step before uploading to an alternative distribution
+service) by instead running `bundle exec fastlane build`.
 
-Please note that Apple will aggressively rate-limit you if you try to upload builds too frequently. We recommend you configure any workflow that submits to the App Store or TestFlight to be manually triggered, or otherwise make sure it won't automatically run more than a few times a day.
+Please note that Apple will aggressively rate-limit you if you try to upload builds too frequently.
+We recommend you configure any workflow that submits to the App Store or TestFlight to be manually
+triggered, or otherwise make sure it won't automatically run more than a few times a day.
 
 ```yaml title=".github/workflows/main.yml"
 jobs:
@@ -245,20 +305,43 @@ jobs:
 
 ### 6. Add secrets to your GitHub repo
 
-On your project's GitHub repo page, add a number of Repository Secrets by going to Settings -> Secrets and clicking the "New repository secret" button in the top-right.
+On your project's GitHub repo page, add a number of Repository Secrets by going to Settings ->
+Secrets and clicking the "New repository secret" button in the top-right.
 
-- **APPLE_CONNECT_EMAIL**: Apple Connect email (if using our recommendation to create a single shared developer Apple ID for Fastlane Match, this will be the same as `APPLE_DEVELOPER_EMAIL`)
+- **APPLE_CONNECT_EMAIL**: Apple Connect email (if using our recommendation to create a single
+  shared developer Apple ID for Fastlane Match, this will be the same as `APPLE_DEVELOPER_EMAIL`)
 - **APPLE_DEVELOPER_EMAIL**: Your Apple ID
-- **APPLE_TEAM_ID**: Team Id from your [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
-- **MATCH_URL**: Https url for the private git repo to which `fastlane match appstore` uploaded certificates.
-- **MATCH_PERSONAL_ACCESS_TOKEN**: GitHub [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with full repo access to MATCH_URL
+- **APPLE_TEAM_ID**: Team Id from your
+  [Apple Developer Account - Membership Details](https://developer.apple.com/account/#/membership/)
+- **MATCH_URL**: Https url for the private git repo to which `fastlane match appstore` uploaded
+  certificates.
+- **MATCH_PERSONAL_ACCESS_TOKEN**: GitHub
+  [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+  with full repo access to MATCH_URL
 - **MATCH_PASSWORD**: The password you set when configuring Fastlane Match.
-- **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Your App Store Connect API keys from the previous step. `APPSTORE_KEY_ID` is the "Key ID" from the table row, `APPSTORE_ISSUER_ID` is your issuer ID from the top of the page, and `APPSTORE_P8` is the entire contents of the `.p8` file you downloaded, starting with `-----BEGIN PRIVATE KEY-----` and ending with `-----END PRIVATE KEY-----`.
+- **APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_P8**: Your App Store Connect API keys from the
+  previous step. `APPSTORE_KEY_ID` is the "Key ID" from the table row, `APPSTORE_ISSUER_ID` is your
+  issuer ID from the top of the page, and `APPSTORE_P8` is the entire contents of the `.p8` file you
+  downloaded, starting with `-----BEGIN PRIVATE KEY-----` and ending with
+  `-----END PRIVATE KEY-----`.
 
 ### 7. Confirming your Unity and App Store Connect settings
 
-At this point, if you have previously set up your app for manual iOS builds and TestFlight/App Store distribution, your GitHub Actions workflow will likely complete successfully. If that is not the case, there are a few more steps to finish setup.
+At this point, if you have previously set up your app for manual iOS builds and TestFlight/App Store
+distribution, your GitHub Actions workflow will likely complete successfully. If that is not the
+case, there are a few more steps to finish setup.
 
-In Unity, you will need to ensure that your [application icon(s)](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#icon) are set, as applications without the correct icons will generate an error while uploading to TestFlight. Additionally, set your Bundle Identifier and Signing Team ID in the [iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#Identification). The bundle identifier needs to be the same as you have set for the `IOS_BUNDLE_ID` repository secret. If you don't know your Signing Team ID, you can find it by going to https://developer.apple.com/account/#!/membership while logged in, and it will be the "Team ID" listed.
+In Unity, you will need to ensure that your
+[application icon(s)](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#icon) are set, as
+applications without the correct icons will generate an error while uploading to TestFlight.
+Additionally, set your Bundle Identifier and Signing Team ID in the
+[iOS Player settings - Identification settings](https://docs.unity3d.com/Manual/class-PlayerSettingsiOS.html#Identification).
+The bundle identifier needs to be the same as you have set for the `IOS_BUNDLE_ID` repository
+secret. If you don't know your Signing Team ID, you can find it by going to
+https://developer.apple.com/account/#!/membership while logged in, and it will be the "Team ID"
+listed.
 
-In order to upload a build to Apple, an entry for your app needs to exist in your team's [App Store Connect](https://appstoreconnect.apple.com/). From the App Store Connect homepage, select "My Apps", and create or confirm the existence of an App with the same bundle identifier you are using in your Unity build settings and the `IOS_BUNDLE_ID` GitHub repository secret.
+In order to upload a build to Apple, an entry for your app needs to exist in your team's
+[App Store Connect](https://appstoreconnect.apple.com/). From the App Store Connect homepage, select
+"My Apps", and create or confirm the existence of an App with the same bundle identifier you are
+using in your Unity build settings and the `IOS_BUNDLE_ID` GitHub repository secret.

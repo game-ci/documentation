@@ -12,12 +12,16 @@ webbertakken:
 
 frostebite:
   name: Mark D. "Fisher"
-  title: Lead game developer @bossastudios, former product manager @unity3d, arma modder. Game ai, networking, terrain
+  title:
+    Lead game developer @bossastudios, former product manager @unity3d, arma modder. Game ai,
+    networking, terrain
   url: https://www.bossastudios.com/
   image_url: https://images.opencollective.com/frostebite/b35bd63/avatar/256.png
 
 davidmfinol:
   name: David Finol
-  title: Lead developer @bossastudios, former product manager @unity3d, arma modder. Game ai, networking, terrain
+  title:
+    Lead developer @bossastudios, former product manager @unity3d, arma modder. Game ai, networking,
+    terrain
   url: https://github.com/davidmfinol
   image_url: https://github.com/davidmfinol.png

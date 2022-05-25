@@ -24,8 +24,7 @@ If you're using GitHub you can use a GitHub Action:
     aws-region: eu-west-2
 ```
 
-_Note:_
-_This enables Cloud Runner access AWS._
+_Note:_ _This enables Cloud Runner access AWS._
 
 ## Configuration For AWS Cloud Runner Jobs
 
@@ -33,7 +32,8 @@ Refer to [Configuration page](../configuration) or the [example below](#example)
 
 ### Allowed CPU/Memory Combinations
 
-There are some limitations to the CPU and Memory parameters. AWS will only accept the following combinations:
+There are some limitations to the CPU and Memory parameters. AWS will only accept the following
+combinations:
 [AWS Fargate Documentation, Allowed CPU and memory values (Task Definitions)](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size)
 
 #### Summary Of Format
@@ -86,4 +86,5 @@ There are some limitations to the CPU and Memory parameters. AWS will only accep
 
 _[Custom Steps](../advanced-topics/custom-steps)_
 
-A full workflow example can be seen in builder's [Cloud Runner GitHub sourcecode for AWS Pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/cloud-runner-aws-pipeline.yml).
+A full workflow example can be seen in builder's
+[Cloud Runner GitHub sourcecode for AWS Pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/cloud-runner-aws-pipeline.yml).

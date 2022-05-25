@@ -27,7 +27,8 @@ Make sure your branch is clean and all files are indeed present:
 - All packages listed;
 - No pre-build steps that change your project differently from how that happens locally;
 
-A good way to verify this, is to (locally) clone the Unity project in a new folder and run the build from there.
+A good way to verify this, is to (locally) clone the Unity project in a new folder and run the build
+from there.
 
 ### Gradle error
 
@@ -48,13 +49,16 @@ There are 2 possible solutions:
 
 ### 'Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼' during manual activation
 
-When activating a license on [license.unity3d.com](https://license.unity3d.com/), you may encounter the following error message:
+When activating a license on [license.unity3d.com](https://license.unity3d.com/), you may encounter
+the following error message:
 
 > Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼
 
 Here's Unity's workaround:
 
-> Unfortunately, this is a known issue our end. The relevant team are in the process of working on a fix as we speak, in the meantime there is a workaround. Try renaming the `alf` file with a command to convert characters on it with a `iconv` command.
+> Unfortunately, this is a known issue our end. The relevant team are in the process of working on a
+> fix as we speak, in the meantime there is a workaround. Try renaming the `alf` file with a command
+> to convert characters on it with a `iconv` command.
 
 #### Solution
 
@@ -65,6 +69,8 @@ iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf
 
 ### I use my google account to login to Unity, how do I get my username and password?
 
-If you are using google account you can have some issue with activating unity. You just need to go on the unity website, settings, security and change your password. Then use your google email and your new password and it will work just fine ;)
+If you are using google account you can have some issue with activating unity. You just need to go
+on the unity website, settings, security and change your password. Then use your google email and
+your new password and it will work just fine ;)
 
 [Source](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/149)

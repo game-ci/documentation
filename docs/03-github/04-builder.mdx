@@ -1,9 +1,10 @@
 # Builder
 
-Building the project as part of a workflow may help to create mind-space and focus on the project itself.
+Building the project as part of a workflow may help to create mind-space and focus on the project
+itself.
 
-Use [Unity - Builder](https://github.com/marketplace/actions/unity-builder)
-to automatically build Unity projects for different platforms.
+Use [Unity - Builder](https://github.com/marketplace/actions/unity-builder) to automatically build
+Unity projects for different platforms.
 
 ## Basic setup
 
@@ -14,10 +15,12 @@ Make sure you have set up these variables in the [activation step](/docs/github/
 - `UNITY_EMAIL` (the email address for your Unity account)
 - `UNITY_PASSWORD` (the password that you use to login to Unity)
 
-NOTE: Issues have been observed when using a `UNITY_PASSWORD` with special characters.
-It is recommended to use a password without any special characters (mixed-case alphanumeric characters only).
+NOTE: Issues have been observed when using a `UNITY_PASSWORD` with special characters. It is
+recommended to use a password without any special characters (mixed-case alphanumeric characters
+only).
 
-**GameCI does not acquire nor store your Unity email or password. They are required for reactivating the license during build and test steps.**
+**GameCI does not acquire nor store your Unity email or password. They are required for reactivating
+the license during build and test steps.**
 
 #### Workflow file setup
 
@@ -27,9 +30,8 @@ Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
 Personal licenses require a one-time manual activation step.
 
-Make sure you
-[acquire and activate](/docs/github/activation)
-your license file and add it as a secret.
+Make sure you [acquire and activate](/docs/github/activation) your license file and add it as a
+secret.
 
 Then, define the build step as follows:
 
@@ -69,11 +71,10 @@ By default, the enabled scenes from the project's settings will be built.
 
 ## Storing the build
 
-To be able to access your built files,
-they need to be uploaded as artifacts.
-To do this it is recommended to use Github Actions official
-[upload artifact action](https://github.com/marketplace/actions/upload-artifact)
-after any build action.
+To be able to access your built files, they need to be uploaded as artifacts. To do this it is
+recommended to use Github Actions official
+[upload artifact action](https://github.com/marketplace/actions/upload-artifact) after any build
+action.
 
 By default, Builder outputs it's builds to a folder named `build`.
 
@@ -90,9 +91,9 @@ Builds can now be downloaded as Artifacts in the Actions tab.
 
 ## Caching
 
-In order to make builds run faster, you can cache Library files from previous
-builds. To do so simply add Github Actions official
-[cache action](https://github.com/marketplace/actions/cache) before any unity steps.
+In order to make builds run faster, you can cache Library files from previous builds. To do so
+simply add Github Actions official [cache action](https://github.com/marketplace/actions/cache)
+before any unity steps.
 
 Example:
 
@@ -116,17 +117,17 @@ Below options can be specified under `with:` for the `unity-builder` action.
 
 Platform that the build should target.
 
-Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html) listed in the Unity scripting manual.
+Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html)
+listed in the Unity scripting manual.
 
 _**required:** `true`_
 
 #### unityVersion
 
-Version of Unity to use for building the project.
-Use "auto" to get from your ProjectSettings/ProjectVersion.txt
+Version of Unity to use for building the project. Use "auto" to get from your
+ProjectSettings/ProjectVersion.txt
 
-_**required:** `false`_
-_**default:** `auto`_
+_**required:** `false`_ _**default:** `auto`_
 
 #### customImage
 
@@ -138,23 +139,20 @@ Specific docker image that should be used for building the project.
     customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### projectPath
 
-Specify the path to your Unity project to be built.
-The path should be relative to the root of your project.
+Specify the path to your Unity project to be built. The path should be relative to the root of your
+project.
 
-_**required:** `false`_
-_**default:** `<your project root>`_
+_**required:** `false`_ _**default:** `<your project root>`_
 
 #### buildName
 
 Name of the build. Also the folder in which the build will be stored within `buildsPath`.
 
-_**required:** `false`_
-_**default:** `<build_target>`_
+_**required:** `false`_ _**default:** `<build_target>`_
 
 #### buildsPath
 
@@ -162,8 +160,7 @@ Path where the builds should be stored.
 
 In this folder a folder will be created for every targetPlatform.
 
-_**required:** `false`_
-_**default:** `build`_
+_**required:** `false`_ _**default:** `build`_
 
 #### buildMethod
 
@@ -182,7 +179,9 @@ Example:
     buildMethod: EditorNamespace.BuilderClassName.StaticBuildMethod
 ```
 
-To get started with a modified version of the default Unity Builder build script, you can copy [BuildScript.cs](https://github.com/game-ci/documentation/blob/main/example/BuildScript.cs) to your `Assets/Editor/UnityBuilderAction` directory and reference it:
+To get started with a modified version of the default Unity Builder build script, you can copy
+[BuildScript.cs](https://github.com/game-ci/documentation/blob/main/example/BuildScript.cs) to your
+`Assets/Editor/UnityBuilderAction` directory and reference it:
 
 ```yaml
 - uses: game-ci/unity-builder@v2
@@ -192,8 +191,7 @@ To get started with a modified version of the default Unity Builder build script
 
 If you need to pass custom parameters to this build method, see `customParameters` below.
 
-_**required:** `false`_
-_**default:** Built-in script that will run a build out of the box._
+_**required:** `false`_ _**default:** Built-in script that will run a build out of the box._
 
 #### customParameters
 
@@ -212,10 +210,10 @@ Parameters without a value will be considered booleans (with a value of true).
 There are 2 main use cases:
 
 - To pass your own custom parameters to be used with `buildMethod` above
-- To pass [Unity Build Options](https://docs.unity3d.com/ScriptReference/BuildOptions.html) (for example, `customParameters: -EnableHeadlessMode` will do server builds)
+- To pass [Unity Build Options](https://docs.unity3d.com/ScriptReference/BuildOptions.html) (for
+  example, `customParameters: -EnableHeadlessMode` will do server builds)
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### versioning
 
@@ -248,32 +246,32 @@ No configuration required.
 
 ##### Tag
 
-Generates the version based on the latest git tag. For example `0.17.2` will
-generate the version `0.17.2`. A leading "v" is stripped, so a version of
-`v1.3.3` will generate a version of `1.3.3`. **(advanced users)**
+Generates the version based on the latest git tag. For example `0.17.2` will generate the version
+`0.17.2`. A leading "v" is stripped, so a version of `v1.3.3` will generate a version of `1.3.3`.
+**(advanced users)**
 
-> Compatible with **all platforms**.
-> Does **not** modify your repository.
+> Compatible with **all platforms**. Does **not** modify your repository.
 
 ##### Custom
 
 Allows specifying a custom version in the `version` field. **(advanced users)**
 
-> This strategy is useful when your project or pipeline has some kind of orchestration
-> that determines the versions.
+> This strategy is useful when your project or pipeline has some kind of orchestration that
+> determines the versions.
 
 ##### None
 
 No version will be set by Builder. **(not recommended)**
 
-> Not recommended unless you generate a new version in a pre-commit hook. Manually
-> setting versions is error-prone.
+> Not recommended unless you generate a new version in a pre-commit hook. Manually setting versions
+> is error-prone.
 
 #### androidVersionCode
 
 Configure the android `versionCode`.
 
-When not specified, the version code is generated from the version using the `major * 1000000 + minor * 1000 + patch` scheme;
+When not specified, the version code is generated from the version using the
+`major * 1000000 + minor * 1000 + patch` scheme;
 
 #### androidAppBundle
 
@@ -292,58 +290,55 @@ Set this flag to `true` to build '.aab' instead of '.apk'.
 
 You should also set all the Android Keystore options (see below).
 
-_**required:** `false`_
-_**default:** `false`_
+_**required:** `false`_ _**default:** `false`_
 
 #### androidKeystoreName
 
 Configure the android `keystoreName`. Must be provided if configuring the below keystore options.
 
 For this to take effect, you must enable `Custom Keystore` in your
-[Android Player settings](https://docs.unity3d.com/Manual/class-PlayerSettingsAndroid.html).
-The default build script overrides the other keystore settings with these keystore options.
+[Android Player settings](https://docs.unity3d.com/Manual/class-PlayerSettingsAndroid.html). The
+default build script overrides the other keystore settings with these keystore options.
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### androidKeystoreBase64
 
-Configure the base64 contents of the android keystore file. You should get this with `base64 $androidKeystoreName`
+Configure the base64 contents of the android keystore file. You should get this with
+`base64 $androidKeystoreName`
 
-The contents will be decoded from base64 using `echo $androidKeystoreBase64 | base64 --decode > $projectPath/$androidKeystoreName`
+The contents will be decoded from base64 using
+`echo $androidKeystoreBase64 | base64 --decode > $projectPath/$androidKeystoreName`
 
-It is recommended to use [GitHub Secrets](https://docs.github.com/en/actions/reference/encrypted-secrets).
+It is recommended to use
+[GitHub Secrets](https://docs.github.com/en/actions/reference/encrypted-secrets).
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### androidKeystorePass
 
 Configure the android `keystorePass`. Recommended to use GitHub Secrets.
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### androidKeyaliasName
 
 Configure the android `keyaliasName`. Recommended to use GitHub Secrets.
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### androidKeyaliasPass
 
 Configure the android `keyaliasPass`. Recommended to use GitHub Secrets.
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### androidTargetSdkVersion
 
-Configure the android target API level. If used, must be one of [Unity's AndroidSdkVersions](https://docs.unity3d.com/ScriptReference/AndroidSdkVersions.html).
+Configure the android target API level. If used, must be one of
+[Unity's AndroidSdkVersions](https://docs.unity3d.com/ScriptReference/AndroidSdkVersions.html).
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### sshAgent
 
@@ -351,8 +346,7 @@ SSH Agent path to forward to the container.
 
 This is useful if your manifest has a dependency on a private GitHub repo.
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### gitPrivateToken
 
@@ -360,15 +354,14 @@ Github private token to pull from github.
 
 This is useful if your manifest has a dependency on a private GitHub repo.
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### chownFilesTo
 
-User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build artifacts.
+User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build
+artifacts.
 
-_**required:** `false`_
-_**default:** `""`_
+_**required:** `false`_ _**default:** `""`_
 
 #### allowDirtyBuild
 
@@ -380,21 +373,20 @@ Allows the branch of the build to be dirty, and still generate the build.
     allowDirtyBuild: true
 ```
 
-Note that it is generally bad practice to modify your branch
-in a CI Pipeline. However there are exceptions where this might
-be needed. (use with care).
+Note that it is generally bad practice to modify your branch in a CI Pipeline. However there are
+exceptions where this might be needed. (use with care).
 
-_**required:** `false`_
-_**default:** `false`_
+_**required:** `false`_ _**default:** `false`_
 
 ## Outputs
 
-Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where `myBuildStep` is the id
-of the Builder step, and `outputName` is the name of the output.
+Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where
+`myBuildStep` is the id of the Builder step, and `outputName` is the name of the output.
 
 #### buildVersion
 
-Returns the version that was generated by Builder, following the strategy configured for `versioning`.
+Returns the version that was generated by Builder, following the strategy configured for
+`versioning`.
 
 ```yaml
 - uses: game-ci/unity-builder@v2
@@ -404,12 +396,18 @@ Returns the version that was generated by Builder, following the strategy config
 
 ## Private Github repositories
 
-If you use private git repository in your packages/manifest.json, you need to create SSH pub/private keys for your project and then add to the `webfactory/ssh-agent`
+If you use private git repository in your packages/manifest.json, you need to create SSH pub/private
+keys for your project and then add to the `webfactory/ssh-agent`
 
-- Generate public,private key for github's SSH using [this instruction](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key) and make sure that you you use `git@github.com:USER/PROJECT.git` instead of email for `-C` parameter because we're going to use it as deploy key for a single project and `webfactory/ssh-agent` going to use that for checking which repository this key is related to .
-- Add the public_key to Deploy settings of your private git repository ( https://github.com/USER/PROJECT/settings/keys)
-- Add private_key to Github secrets of the project that you want to build (https://github.com/USER/PROJECT/settings/secrets/actions)
-  (key name should be SSH_PRIVATE_KEY )
+- Generate public,private key for github's SSH using
+  [this instruction](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
+  and make sure that you you use `git@github.com:USER/PROJECT.git` instead of email for `-C`
+  parameter because we're going to use it as deploy key for a single project and
+  `webfactory/ssh-agent` going to use that for checking which repository this key is related to .
+- Add the public_key to Deploy settings of your private git repository (
+  https://github.com/USER/PROJECT/settings/keys)
+- Add private_key to Github secrets of the project that you want to build
+  (https://github.com/USER/PROJECT/settings/secrets/actions) (key name should be SSH_PRIVATE_KEY )
 - Finally, add `webfactory/ssh-agent` to your Github action :
 
 ```yaml
@@ -427,9 +425,10 @@ steps:
 
 ## UPM authentication using .upmconfig.toml
 
-Unity requires an .upmconfig.toml to exist in the home directory to authenticate and download packages from private UPM registries.
-To create this file, first create the `/home/runner/work/_temp/_github_home` directory, and then create the .upmconfig.toml file inside that directory.
-This action must be done before running the game-ci/unity-builder@v2 action.
+Unity requires an .upmconfig.toml to exist in the home directory to authenticate and download
+packages from private UPM registries. To create this file, first create the
+`/home/runner/work/_temp/_github_home` directory, and then create the .upmconfig.toml file inside
+that directory. This action must be done before running the game-ci/unity-builder@v2 action.
 
 ```yaml
 - name: Create .upmconfig.toml UPM authentication file
@@ -488,4 +487,5 @@ jobs:
 
 ## Next steps
 
-You can find more workflow examples in [Getting Started](/docs/github/getting-started#workflow-examples).
+You can find more workflow examples in
+[Getting Started](/docs/github/getting-started#workflow-examples).
