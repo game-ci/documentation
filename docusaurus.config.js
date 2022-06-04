@@ -193,7 +193,7 @@ const config = {
             items: [
               {
                 label: 'Welcome to GameCI',
-                to: '/docs/index',
+                to: '/docs/',
               },
               {
                 label: 'Getting Started with Github',
