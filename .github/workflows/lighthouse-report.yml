@@ -1,7 +1,6 @@
 name: Lighthouse Report
 
 on:
-  push: {}
   pull_request_target:
     branches:
       - main
