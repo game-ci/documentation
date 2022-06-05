@@ -8,16 +8,17 @@ assignees: ''
 
 **Bug description**
 
-<!--A clear and concise description of what the bug is.-->
+<!-- Add A clear and concise description of what the bug is. -->
 
-**How to reproduce**
+**Steps to reproduce**
 
-<!--Steps to reproduce the behavior:-->
+<!-- Provide steps to reproduce the behavior. -->
+<!-- Describe what have you tried to solve it? -->
 
-- **Expected behavior**
+**Expected behavior**
 
-<!--A clear and concise description of what you expected to happen.-->
+<!-- Add a clear description of what you would expect to happen. -->
 
 **Additional details**
 
-<!--Please add context, links, reasons, screenshots, etc.-->
+<!-- Please add context, reasons, screenshots etc. -->
