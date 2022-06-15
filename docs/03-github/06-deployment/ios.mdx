@@ -171,7 +171,7 @@ jobs:
       - name: Build iOS
         shell: bash
         run: |
-          bundle exec fastlane init_ci
+          bundle exec fastlane ios init_ci
         env:
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }} # Raw .p8 value
