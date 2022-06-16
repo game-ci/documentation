@@ -207,7 +207,7 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add - <<< "${MATCH_DEPLOY_KEY}"
-          bundle exec fastlane sync_certificates
+          bundle exec fastlane ios sync_certificates
         env:
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }} # Raw .p8 value
@@ -284,6 +284,22 @@ platform :ios do
       match_org: match_org,
       match_repo: match_repo,
       writable_deploy_key: true
+    )
+  end
+
+  desc "Sync codesigning certificates"
+  lane :sync_certificates do
+    app_store_connect_api_key(
+      key_id: ENV["APPSTORE_KEY_ID"],
+      issuer_id: ENV["APPSTORE_ISSUER_ID"],
+      key_content: ENV['APPSTORE_P8']
+    )
+
+    match(
+      type: "appstore",
+      storage_mode: "git",
+      git_url: "git@github.com:#{match_org}/#{match_repo}.git",
+      app_identifier: ENV["IOS_BUNDLE_ID"]
     )
   end
 
@@ -381,10 +397,10 @@ an Xcode project, which then must be built and code-signed in Xcode via fastlane
 
 This workflow builds your app and submits it to Apple for App Store release. If you want to submit
 your app for TestFlight distribution, you can create a job that is identical except it runs
-`bundle exec fastlane beta` instead of `bundle exec fastlane release` during the "Fix File
+`bundle exec fastlane ios beta` instead of `bundle exec fastlane ios release` during the "Fix File
 Permissions and Run fastlane" step. You can build your iOS app without uploading it (e.g. to confirm
 it builds successfully, or as a preparation step before uploading to an alternative distribution
-service) by instead running `bundle exec fastlane build`.
+service) by instead running `bundle exec fastlane ios build`.
 
 Please note that Apple will aggressively rate-limit you if you try to upload builds too frequently.
 We recommend you configure any workflow that submits to the App Store or TestFlight to be manually
