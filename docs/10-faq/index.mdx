@@ -1,5 +1,5 @@
 ---
-title: FAQ
+title: Frequently Asked Questions (FAQ)
 ---
 
 ## What is GameCI?
@@ -151,6 +151,8 @@ status of the images on [the supported Unity versions page][unity-docker-version
 
 ## How does Unity activation work?
 
+### The `machine-id`
+
 Unity has several activation methods, but they all share the same concept. Unity uses the
 `machine-id` to identify the user. This is usually unique per machine. On linux, the `machine-id` is
 located here:
@@ -165,6 +167,10 @@ To make it easier to use GameCI, we hardcoded the `machine-id` in all the docker
 
 This makes it easier to upgrade from one version of Unity to another as you will not need to
 re-activate.
+
+### I'm having troubles with Unity activation, what should I do?
+
+Have a look at the Have a look at the [common problems](/docs/unity/common-problems) page.
 
 ## Can I use a free Unity license to build my project?
 
@@ -258,5 +264,4 @@ The core maintainers of GameCI are:
   [Card Game Simulator](https://www.cardgamesimulator.com/) and Software Engineer at
   [JPMorgan Chase & Co](https://www.jpmorganchase.com/).
 
-[unity-docker-versions]: /docs/docker/versions
-[discord]: https://game.ci/discord
+[unity-docker-versions] /docs/docker/versions [discord] https://game.ci/discord
