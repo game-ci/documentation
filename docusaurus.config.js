@@ -116,6 +116,10 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
+          {
+            label: 'FAQ',
+            to: '/docs/faq',
+          },
           // {to: '/blog', label: 'Blog', position: 'left'},
           {
             type: 'docsVersionDropdown',
@@ -202,6 +206,10 @@ const config = {
               {
                 label: 'Getting Started with Gitlab',
                 to: '/docs/gitlab/getting-started',
+              },
+              {
+                label: 'FAQ',
+                to: '/docs/faq',
               },
             ],
           },
