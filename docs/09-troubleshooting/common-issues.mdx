@@ -4,7 +4,7 @@ Below you'll find a collection of answers to commonly reported problems.
 
 ## Unity Activation
 
-If you are having troubles with activation, you are not alone, this is a common problem and it is
+If you are having troubles with activation, you are not alone, this is a common problem, and it is
 not the easiest thing to solve. Here are some tips:
 
 - Try removing special characters from your password, sometimes they cause problems with command
@@ -48,11 +48,11 @@ version=v2020.1.12f1 # update this according to your version and file name
 iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf
 ```
 
-#### I use my google account to login to Unity, how do I get my username and password?
+#### I use my Google account to login to Unity, how do I get my username and password?
 
 If you are using google account you can have some issue with activating unity. You just need to go
-on the unity website, settings, security and change your password. Then use your google email and
-your new password and it will work just fine ;)
+on the unity website, settings, security and change your password. Then use your Google email and
+your new password, and it will work just fine ;)
 
 [Source](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/149)
 
@@ -87,7 +87,44 @@ This means the docker image trying to download from docker hub is not found.
 
 ### Solution
 
-In this specific situation, the pipeline is using an older
+To know which docker images are available, you can visit the list of [all supported Unity versions
+here][unity-docker-versions].
+
+In this particular case, it is also important to look for the last part of the docker image which is
+the version for GameCI. `-0` means it is the latest `v0.x.x` version of the docker images. `v0.x.x`
+version is out of date as we moved to Version 1 as shown on
+[github.com/game-ci/docker/releases](https://github.com/game-ci/docker/releases). We are not
+publishing images for `v0.x.x` anymore.
+
+The correct image should be `unityci/editor:2021.3.0f1-android-1`.
+
+You can also test this locally:
+
+```bash
+# wrong
+docker pull unityci/editor:2021.3.0f1-android-0
+# Error response from daemon: manifest for unityci/editor:2021.3.0f1-android-0 not found: manifest unknown: manifest unknown
+
+# right
+docker pull unityci/editor:2021.3.0f1-android-1
+# 2021.3.0f1-android-1: Pulling from unityci/editor
+# [...]
+```
+
+#### Github Actions
+
+You need to make sure you are using Github Actions v2, check for the version of your actions in your
+`.github/workflows/*.yml` files.
+
+```diff
+- uses: game-ci/unity-builder@v1
++ uses: game-ci/unity-builder@v2
+```
+
+#### Gitlab CI
+
+Set the `IMAGE_VERSION` to 1 in
+[`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml#L12)
 
 ### Scripts have compiler errors.
 
@@ -123,7 +160,7 @@ from there.
 Branch is dirty. Refusing to base semantic version on uncommitted changes
 ```
 
-This usually happens with github actions when using unity-builder. A dirty branch means that you
+This usually happens with GitHub actions when using unity-builder. A dirty branch means that you
 have uncommitted changes in your project. When you see this error in the logs of your pipeline, that
 means some files of your project are being modified after the build. This is not desirable as it
 could lead to unexpected results.
@@ -149,7 +186,7 @@ There are multiple options to solve this.
    You can also try to download the modified files from the pipeline by exposing them as artifact
    and looking at the diff yourself.
 
-   Something else you can try is moving and commiting the file(s) to see if it makes a difference.
+   Something else you can try is moving and committing the file(s) to see if it makes a difference.
 
 ### Gradle error
 
@@ -181,16 +218,17 @@ engine and CI/CD:
 
 You can **search for existing issues**:
 
-- [Github Actions: game-ci/unity-actions](https://github.com/game-ci/unity-actions/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
-- [Documentation: game-ci/documentaion](https://github.com/game-ci/documentation/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
+- [GitHub Actions: game-ci/unity-actions](https://github.com/game-ci/unity-actions/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
+- [Documentation: game-ci/documentation](https://github.com/game-ci/documentation/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
 - [gitlab-ci: game-ci/unity3d-gitlab-ci-example](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues)
 
 You can **open an issue** on one of the related projects:
 
-- [Github Actions: game-ci/unity-actions](https://github.com/game-ci/unity-actions/issues/new/choose)
-- [Documentation: game-ci/documentaion](https://github.com/game-ci/documentation/issues/new/choose)
+- [GitHub Actions: game-ci/unity-actions](https://github.com/game-ci/unity-actions/issues/new/choose)
+- [Documentation: game-ci/documentation](https://github.com/game-ci/documentation/issues/new/choose)
 - [gitlab-ci: game-ci/unity3d-gitlab-ci-example](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/new)
 
 You can also visit us on [discord][discord]. _Discord also has a search feature_. 😉
 
 [discord]: https://game.ci/discord
+[unity-docker-versions]: /docs/docker/versions
