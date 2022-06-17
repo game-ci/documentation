@@ -3,6 +3,26 @@
 There are a few methods available, if you're using gitlab-ci, the easiest method in the current
 documentation is using gitlab-ci.
 
+:::caution Known issue with Unity activation on gitlab-ci: empty license file
+
+If you are having troubles with Unity activation with gitlab-ci, there is currently an issue with
+recent Unity versions preventing us to retrieve a license file with actual content.
+
+For more details see the
+[following issue: get-activation-file succeeding but giving a 0kb file. Unity Version 2021.2.7f1](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/171)
+and
+[the workaround](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/171#note_974622879).
+
+Don't hesitate to contribute and implement a fix 💝
+
+:::
+
+:::info Having issues with activation?
+
+Have a look at the [troubleshooting / common issues][common-issues] page.
+
+:::
+
 ## Unity Personal
 
 ### a. Using gitlab-ci
@@ -142,3 +162,5 @@ All you need is [docker](https://www.docker.com/) installed on your machine.
    [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml)
    will then place the `UNITY_LICENSE` to the right place before running tests or creating the
    builds.
+
+[common-issues]: /docs/troubleshooting/common-issues
