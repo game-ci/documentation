@@ -120,6 +120,10 @@ const config = {
             label: 'FAQ',
             to: '/docs/faq',
           },
+          {
+            label: 'About us',
+            to: 'about',
+          },
           // {to: '/blog', label: 'Blog', position: 'left'},
           {
             type: 'docsVersionDropdown',
@@ -210,6 +214,10 @@ const config = {
               {
                 label: 'FAQ',
                 to: '/docs/faq',
+              },
+              {
+                label: 'About us',
+                to: 'about',
               },
             ],
           },
