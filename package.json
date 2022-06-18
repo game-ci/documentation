@@ -11,6 +11,7 @@
   "scripts": {
     "prepare": "lefthook install && npx husky uninstall -y",
     "docusaurus": "docusaurus",
+    "dev": "yarn start",
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
