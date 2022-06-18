@@ -6,8 +6,8 @@ import FadeIntoView from '@site/src/components/molecules/animations/fade-into-vi
 const OurStory = () => {
   return (
     <div className="2xl:container 2xl:mx-auto lg:py-16 lg:px-20 md:py-12 md:px-6 px-4">
-      <div className="flex lg:flex-row flex-col items-start space-x-8">
-        <div className="w-full lg:w-7/12 p-5 bg-theme-highlight  rounded-md">
+      <div className="flex lg:flex-row flex-col items-start lg:space-x-8">
+        <div className="w-full lg:w-7/12 p-5 bg-theme-highlight rounded-md">
           <FadeIntoView>
             <h2 className="font-bold lg:text-4xl text-3xl lg:leading-9 leading-7 ">Our Story</h2>
           </FadeIntoView>
