@@ -2,9 +2,9 @@
 
 ```yaml
 - name: example hook
-  hook: # Options: before, after or all
+  hook: |
     step:
       - before
-        commands: |
-          echo "hello world!"
+    commands: |
+      echo "hello world!"
 ```
