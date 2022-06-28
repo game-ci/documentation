@@ -3,13 +3,13 @@
  * bundles Infima by default. Infima is a CSS framework designed to
  * work well for content-centric websites.
  */
-/*@tailwind base;*/ /* Hack: Removing base prevents tailwindcss Preflight to be applied: https://tailwindcss.com/docs/preflight */
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #356450;
+  --ifm-color-primary: rgb(61, 192, 148);
   --ifm-color-primary-dark: #305a48;
   --ifm-color-primary-darker: #2d5544;
   --ifm-color-primary-darkest: #254638;
@@ -19,6 +19,9 @@
   --brand-primary: rgb(61, 192, 148);
   --brand-secondary: rgb(233, 224, 255);
   --brand-tertiary: rgb(240, 242, 245);
+  --brand-text: rgb(55, 52, 69);
+  --brand-background: rgb(240, 242, 245);
+  --theme-background: rgba(255,255,255);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -36,6 +39,9 @@
   --brand-primary: rgb(61, 192, 148);
   --brand-secondary: rgb(55, 52, 69);
   --brand-tertiary: rgb(240, 242, 245);
+  --brand-text: rgb(240, 242, 245);
+  --brand-background: #23212b;
+  --theme-background: #363344;
 }
 
 .docusaurus-highlight-code-line {
@@ -49,6 +55,31 @@
   background-color: rgba(0, 0, 0, 0.3);
 }
 
+/* text-soft */
+@layer base {
+  p {
+    opacity: .9;
+  }
+}
+
+.text-softer {
+  @apply opacity-75
+}
+
+.border-primary {
+  border-color: var(--brand-primary);
+}
+
 .footer {
   --ifm-footer-background-color: #373445;
+}
+
+.layout {
+  color: var(--brand-text);
+  background: var(--brand-background);
+}
+
+
+.bg-theme-highlight {
+  background: var(--theme-background);
 }
