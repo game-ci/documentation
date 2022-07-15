@@ -46,7 +46,7 @@ const membersPerTwo = [
       image: david,
       continent: 'Americas',
       social: {
-        website: 'https://davidmfinol.website?utm_source=game-ci',
+        website: 'https://davidmfinol.com?utm_source=game-ci',
         linkedIn: 'https://www.linkedin.com/in/davidmfinol/',
         github: 'https://github.com/davidmfinol',
       },
