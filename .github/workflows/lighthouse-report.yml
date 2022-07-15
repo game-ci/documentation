@@ -28,6 +28,8 @@ jobs:
         with:
           urls: |
             ${{ steps.deployment.outputs.deployment }}
+            ${{ steps.deployment.outputs.deployment }}/docs/github/getting-started
+            ${{ steps.deployment.outputs.deployment }}/about
           configPath: ./.github/workflows/lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: true

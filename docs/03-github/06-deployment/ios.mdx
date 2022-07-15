@@ -122,6 +122,7 @@ match_org, match_repo = (ENV["MATCH_REPOSITORY"]||"").split("/")
 
 platform :ios do
   lane :init_ci do
+    setup_ci
     github_action(
       api_token: ENV["GH_PAT"],
       org: org,
