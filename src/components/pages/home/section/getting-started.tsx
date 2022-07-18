@@ -17,7 +17,7 @@ const GettingStarted = () => {
         </FadeIntoView>
         <div className="lg:mt-0 lg:flex-shrink-0">
           <FadeIntoView>
-            <div className="mt-12 inline-flex rounded-md shadow">
+            <div className="mt-12 inline-flex">
               <Link to="/docs/github/getting-started" className={buttonClasses}>
                 github
               </Link>
