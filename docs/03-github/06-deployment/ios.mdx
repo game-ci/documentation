@@ -64,7 +64,10 @@ project.
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
-> -- **Note:** Depending on your local OS you might need to run `bundle lock --add-platform x86_64-linux` and `bundle lock --add-platform x86_64-darwin-19` commands in order to add the required platforms to `Gemfile.lock` file. Be sure to commit the `Gemfile.lock` after running these commands.
+> -- **Note:** Depending on your local OS you might need to run
+> `bundle lock --add-platform x86_64-linux` and `bundle lock --add-platform x86_64-darwin-19`
+> commands in order to add the required platforms to `Gemfile.lock` file. Be sure to commit the
+> `Gemfile.lock` after running these commands.
 
 ### 2. Generate an App Store Connect API Key
 
@@ -255,7 +258,9 @@ by selecting it from the list on the left, clicking the "Run Workflow" button, a
 next "Run Workflow" button after confirming the branch is correct. This will run both of those two
 workflows, configuring your Match git repository and then generating certificates with Apple.
 
-> -- **Note:** If `Generate iOS Certs` causes an `Unknown platform` issue, go into the `Gemfile.lock` file and under `PLATFORMS` delete any lines that are not `x86_64-darwin-19` or `x86_64-linux`. Don't forget to commit and push the file before running the action again.
+> -- **Note:** If `Generate iOS Certs` causes an `Unknown platform` issue, go into the
+> `Gemfile.lock` file and under `PLATFORMS` delete any lines that are not `x86_64-darwin-19` or
+> `x86_64-linux`. Don't forget to commit and push the file before running the action again.
 
 ### 4b. Manage codesigning manually on your Mac
 
