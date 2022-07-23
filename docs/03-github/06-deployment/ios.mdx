@@ -64,6 +64,11 @@ project.
 
 Commit both `Gemfile` and `Gemfile.lock` to your repo.
 
+> -- **Note:** Depending on your local OS you might need to run
+> `bundle lock --add-platform x86_64-linux` and `bundle lock --add-platform x86_64-darwin-19`
+> commands in order to add the required platforms to `Gemfile.lock` file. Be sure to commit the
+> `Gemfile.lock` after running these commands.
+
 ### 2. Generate an App Store Connect API Key
 
 In order for fastlane match to fetch and validate your codesigning certificates, it needs to
@@ -252,6 +257,10 @@ Go to the "Actions" tab in your GitHub repository, and manually run the "iOS One
 by selecting it from the list on the left, clicking the "Run Workflow" button, and then clicking the
 next "Run Workflow" button after confirming the branch is correct. This will run both of those two
 workflows, configuring your Match git repository and then generating certificates with Apple.
+
+> -- **Note:** If `Generate iOS Certs` causes an `Unknown platform` issue, go into the
+> `Gemfile.lock` file and under `PLATFORMS` delete any lines that are not `x86_64-darwin-19` or
+> `x86_64-linux`. Don't forget to commit and push the file before running the action again.
 
 ### 4b. Manage codesigning manually on your Mac
 
@@ -467,6 +476,8 @@ jobs:
           IOS_BUNDLE_ID: com.company.application # Change it to match your Unity bundle id
           PROJECT_NAME: Your Project Name # Change it to match your project's name
         run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "${MATCH_DEPLOY_KEY}"
           find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
           bundle install
           bundle exec fastlane ios release
