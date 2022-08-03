@@ -7,8 +7,7 @@ This guide will help you test and build your Unity project using the
 
 1. Understand how [CircleCI](https://circleci.com/docs/getting-started) works.
 2. Set up a workflow for your project.
-3. Add your Unity credentials and license to a context.
-4. Result: Merge pull requests with more confidence.
+3. Download the artifacts from your first build using the orb.
 
 ## First time using CircleCI?
 
@@ -22,7 +21,7 @@ so.
 processes, speed up project setup, and make it easy to integrate with third-party tools.
 
 To streamline the process of testing and building Unity projects in CircleCI, GameCI provides the
-[Unity Orb](https://circleci.com/developer/orbs/orb/game-ci/unity). A certified orb capable of
+[Unity Orb](https://circleci.com/developer/orbs/orb/game-ci/unity) — a certified orb capable of
 dependencies caching, artifacts storage, test data collection and macOS, Windows, Docker, Machine
 and Runner support.
 
@@ -32,18 +31,25 @@ several target platforms.
 _**Note:** the orb is in the early stages of development; it doesn't have all features included in
 the [Builder Action](https://github.com/game-ci/unity-builder)._
 
+## Activation
+
+The orb uses a Unity Editor instance to test and build your projects. These operations demand the
+instance to be activated beforehand — to accomplish this, the orb requires an encoded license or
+serial to be included in the job’s Context. If you are unsure what this means or need help creating
+the license, navigate to the [Activation](/docs/circleci/activation) step before proceeding.
+
 ## Setting up a workflow
 
 Create a `.circleci/config.yml` file in the root of your repository and follow these steps:
 
 1. Import the [Unity Orb](https://circleci.com/developer/orbs/orb/game-ci/unity). It's recommended
-   to fix a `minor` or `patch` version to avoid unintended updates with breaking changes:
+   to fix a `minor` or `patch` version to avoid updates with breaking changes:
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@1.0
+  unity: game-ci/unity@x.y
 ```
 
 2. Include a [build job](https://circleci.com/developer/orbs/orb/game-ci/unity#jobs-build) in your
@@ -53,7 +59,7 @@ orbs:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@1.0
+  unity: game-ci/unity@x.y
 
 workflows:
   build-unity-project:
@@ -77,14 +83,14 @@ workflows:
 
 3. Optionally, include a [test job](https://circleci.com/developer/orbs/orb/game-ci/unity#jobs-test)
    in your workflow. You can add it as a
-   [requirement](https://circleci.com/docs/configuration-reference#requires) in the build job above
-   to prevent it from running in case of failure:
+   [requirement](https://circleci.com/docs/configuration-reference#requires) in the build job to
+   prevent it from running in case of failure:
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@1.0
+  unity: game-ci/unity@x.y
 
 workflows:
   test-and-build-unity-project:
@@ -123,7 +129,20 @@ workflows:
 ```
 
 4. Set the `UNITY_USERNAME`, `UNITY_PASSWORD` and `UNITY_ENCODED_LICENSE` environment variables in
-   your organization's [context](https://circleci.com/docs/contexts). See the `Activation` section
-   for instructions on how to get the `UNITY_ENCODED_LICENSE` value.
+   your organization's [Context](https://circleci.com/docs/contexts).
 
-5. Build your application.
+> _**Note:** See the [Activation](/docs/circleci/activation#personal-license) step for instructions
+> on how to get the `UNITY_ENCODED_LICENSE` value._
+
+5. Commit and push the new workflow.
+
+## Downloading the artifacts
+
+1. Navigate to your project in the CircleCI Dashboard.
+
+2. Identify the pipeline triggered by your changes and open the `build-linux64-il2cpp` job.
+
+3. Navigate to the `ARTIFACTS` tab and download the `UnityBuild-StandaloneLinux64.tar.gz` file.
+
+4. Extract the `UnityBuild-StandaloneLinux64.tar.gz` file and you will have your first build using
+   the Unity Orb 🚀.
