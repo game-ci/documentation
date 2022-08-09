@@ -1,0 +1,141 @@
+# Build
+
+The Unity orb provides the
+[build job](https://circleci.com/developer/orbs/orb/game-ci/unity#jobs-build) to facilitate the
+process of building your Unity project to multiple platforms. This section will provide examples and
+detail its parameters.
+
+### Parameters
+
+The orb parameters are as follow:
+
+#### build-name
+
+- _Default_: `UnityBuild`
+- _Required_: `False`
+- _Type_: `String`
+
+Your build's name. If you choose to compress your artifacts, this name will be used in the
+compressed file.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          build-name: 'MyUnityProject'
+```
+
+#### build-target
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+The platform on which you want to run your game on. Accepted parameters can be found in the
+[documentation](https://docs.unity3d.com/2022.2/Documentation/ScriptReference/BuildTarget.html).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          build-target: 'StandaloneLinux64'
+```
+
+#### compress
+
+- _Default_: `true`
+- _Required_: `False`
+- _Type_: `Boolean`
+
+Whether to compress the build output to a `.tar.gz` file. Set it to `true` if you want to download
+the build artifacts from the GameCI dashboard, otherwise, you will have to download each file
+individually. If set to `false` for decompressed WebGL builds, the built project can be run directly
+from the GameCI dashboard.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          compress: true
+```
+
+#### executor
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `Executor`
+
+The executor on which you want to run your build job on. Bear in mind that projects using `IL2CPP`
+as the [scripting backend](https://docs.unity3d.com/Manual/scripting-backends.html) should run on
+the same OS as the [build target](#build-target). For example, if you want to build for macOS using
+`IL2CPP`, you must use the
+[macos](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos) or
+[macos-runner](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos-runner)
+executors.
+
+Notice that the Windows and macOS executors have a longer environment setup time than
+[ubuntu](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-ubuntu). This is due to the
+installation of the Windows SDK in `Windows` and the installation of the Unity Hub and Unity Editor
+in `macOS`. Should you require faster build times in these executors, consider using their
+non-ephemeral runner counterparts.
+
+Each executor has its set of parameters. They are explained in the [Executor](#executors) section.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+```
+
+#### project-path
+
+- _Default_: `.`
+- _Required_: `False`
+- _Type_: `String`
+
+If your project sits at the root of your repository, leave it to the default value. Otherwise, enter
+the path of your Unity project. This should be the directory that has an "Assets" folder inside it.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+```
+
+### Executors
