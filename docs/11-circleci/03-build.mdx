@@ -97,7 +97,8 @@ installation of the Windows SDK in `Windows` and the installation of the Unity H
 in `macOS`. Should you require faster build times in these executors, consider using their
 non-ephemeral runner counterparts.
 
-Each executor has its set of parameters. They are explained in the [Executor](#executors) section.
+Each executor has its set of parameters. See the [Executors](/docs/circleci/executors) section for
+more details.
 
 ```yaml
 version: 2.1
@@ -252,83 +253,3 @@ workflows:
       - unity/build:
           unity-username-var-name: 'UNITY_USERNAME'
 ```
-
-### Executors
-
-The executors available in the orb are as follows:
-
-#### macos
-
-This executor uses the CircleCI
-[macOS cloud executor](https://circleci.com/docs/configuration-reference#macos). It's recommended to
-use it for macOS IL2CPP builds. The executor parameters are:
-
-- **editor_version**
-
-  - _Default_: `N/A`
-  - _Required_: `True`
-  - _Type_: `String`
-
-  Choose the Unity Editor version that you want to use to build your project. The options available
-  can be found on the Unity [archive](https://unity3d.com/get-unity/download/archive).
-
-  ```yaml
-  version: 2.1
-
-  orbs:
-    unity: game-ci/unity@x.y
-
-  workflows:
-    build-unity-project:
-      jobs:
-        - unity/build:
-            executor:
-              editor_version: '2021.3.2f1'
-  ```
-
-- **resource_class**
-
-  - _Default_: `medium`
-  - _Required_: `False`
-  - _Type_: `enum`
-
-  Choose the
-  [resource class](https://circleci.com/docs/configuration-reference#macos-execution-environment)
-  for your execution environment. Try increasing it if your environment is running out of memory.
-
-  ```yaml
-  version: 2.1
-
-  orbs:
-    unity: game-ci/unity@x.y
-
-  workflows:
-    build-unity-project:
-      jobs:
-        - unity/build:
-            executor:
-              resource_class: 'large'
-  ```
-
-- **xcode_version**
-
-  - _Default_: `13.4.1`
-  - _Required_: `False`
-  - _Type_: `string`
-
-  Choose the [xcode version](https://circleci.com/docs/using-macos#supported-xcode-versions) for
-  your execution environment.
-
-  ```yaml
-  version: 2.1
-
-  orbs:
-    unity: game-ci/unity@x.y
-
-  workflows:
-    build-unity-project:
-      jobs:
-        - unity/build:
-            executor:
-              xcode_version: '14.0.0'
-  ```

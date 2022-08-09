@@ -1,0 +1,97 @@
+# Executors
+
+The orb provides reusable execution environments for you to run your jobs on. The executors
+available are [macOS](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos),
+[macOS on Runner](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos-runner),
+[Windows](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-windows-2022),
+[Windows on Runner](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-windows-runner)
+and [Ubuntu on Docker](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-ubuntu).
+
+Due to the installation of external dependencies, the `macos` and `windows` executors have longer
+environment preparation times. This can be mitigated using their
+[Runner](https://circleci.com/docs/runner-overview) variants. As Runner doesn't share the ephemeral
+nature of the CircleCI cloud executors, the external dependencies will already be installed after
+the first run, decreasing the environment preparation time.
+
+Notice that projects using `IL2CPP` as the
+[scripting backend](https://docs.unity3d.com/Manual/scripting-backends.html) should run on the same
+OS as the [build target](#build-target). For example, if you want to build for macOS using `IL2CPP`,
+you must use the [macos](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos) or
+[macos-runner](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos-runner)
+executors.
+
+### macos
+
+This executor uses the CircleCI
+[macOS cloud executor](https://circleci.com/docs/configuration-reference#macos). It's recommended to
+use it for macOS IL2CPP builds. The executor parameters are:
+
+#### editor_version
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+Choose the Unity Editor version that you want to use to build your project. The options available
+can be found on the Unity [archive](https://unity3d.com/get-unity/download/archive).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            editor_version: '2021.3.2f1'
+```
+
+#### resource_class
+
+- _Default_: `medium`
+- _Required_: `False`
+- _Type_: `enum`
+
+Choose the
+[resource class](https://circleci.com/docs/configuration-reference#macos-execution-environment) for
+your execution environment. Try increasing it if your environment is running out of memory.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            resource_class: 'large'
+```
+
+#### xcode_version
+
+- _Default_: `13.4.1`
+- _Required_: `False`
+- _Type_: `string`
+
+Choose the [xcode version](https://circleci.com/docs/using-macos#supported-xcode-versions) for your
+execution environment.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            xcode_version: '14.0.0'
+```
