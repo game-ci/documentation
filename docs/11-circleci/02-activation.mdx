@@ -64,22 +64,24 @@ steps
 3. Download the license file (Unity_v20XX.x.ulf). It's ok if the numbers don't match your Unity
    version exactly.
 
-#### Encoding and saving the license file in a Context
+#### Encoding the license
 
-1. Encode the contents of your `Unity_v20XX.x.ulf` file to base64. If you have the `base64` command
-   line utility you can use:
+Encode the contents of your `Unity_v20XX.x.ulf` file to base64. If you have the `base64` command
+line utility you can use:
 
-   ```
-   cat Unity_v20XX.x.ulf | base64
-   ```
+```
+cat Unity_v20XX.x.ulf | base64
+```
 
-2. Go to `CircleCI` > `<Organizations Settings>` > `Contexts` > `Create Context` or open an existing
+#### Preparing the Context
+
+1. Go to `CircleCI` > `<Organizations Settings>` > `Contexts` > `Create Context` or open an existing
    Context that you want to use.
-3. Create the following secrets:
+2. Create the following secrets:
    - `UNITY_ENCODED_LICENSE` - _(Paste the content from **step 1** here)_
    - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
-4. Remove the `unity/create-activation-file` job from your `.circleci/config.yml` as it's no longer
+3. Remove the `unity/create-activation-file` job from your `.circleci/config.yml` as it's no longer
    necessary.
 
 **GameCI does not acquire nor store your Unity email or password. They are required for activating
