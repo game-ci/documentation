@@ -18,7 +18,9 @@ Notice that projects using `IL2CPP` as the
 OS as the [build target](#build-target). For example, if you want to build for macOS using `IL2CPP`,
 you must use the [macos](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos) or
 [macos-runner](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos-runner)
-executors.
+executors. However, if you prefer `Mono`, it's recommended to use
+[ubuntu](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-ubuntu) for all supported
+platforms as it will be cheaper and faster.
 
 ### macos
 
@@ -57,7 +59,8 @@ workflows:
 
 Choose the
 [resource class](https://circleci.com/docs/configuration-reference#macos-execution-environment) for
-your execution environment. Try increasing it if your environment is running out of memory.
+your execution environment. Try increasing it if your environment is running out of memory during
+the build.
 
 ```yaml
 version: 2.1
