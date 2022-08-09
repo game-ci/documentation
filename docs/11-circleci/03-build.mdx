@@ -138,4 +138,119 @@ workflows:
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
 ```
 
+#### step-name
+
+- _Default_: `Build the project`
+- _Required_: `False`
+- _Type_: `String`
+
+Specify a custom step name to be shown in the CircleCI dashboard.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          step-name: 'Build my Unity project'
+```
+
+#### unity-license-var-name
+
+- _Default_: `UNITY_ENCODED_LICENSE`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+The name of the environment variable holding the license set in your
+[Context](/docs/circleci/activation#preparing-the-context). If you are building your project using
+the Unity Pro or Plus license, this is **not** required. See [Activation](/docs/circleci/activation)
+for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+```
+
+#### unity-password-var-name
+
+- _Default_: `UNITY_PASSWORD`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+The name of the environment variable holding the password set in your
+[Context](/docs/circleci/activation#preparing-the-context). See
+[Activation](/docs/circleci/activation) for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          unity-password-var-name: 'UNITY_PASSWORD'
+```
+
+#### unity-serial-var-name
+
+- _Default_: `UNITY_SERIAL`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+The name of the environment variable holding the serial set in your
+[Context](/docs/circleci/activation#preparing-the-context). If you are building your project using
+the Unity Personal license, this is **not** required. See [Activation](/docs/circleci/activation)
+for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          unity-serial-var-name: 'UNITY_SERIAL'
+```
+
+#### unity-username-var-name
+
+- _Default_: `UNITY_USERNAME`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+The name of the environment variable holding the username set in your
+[Context](/docs/circleci/activation#preparing-the-context). See
+[Activation](/docs/circleci/activation) for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          unity-username-var-name: 'UNITY_USERNAME'
+```
+
 ### Executors
