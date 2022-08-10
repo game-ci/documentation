@@ -13,9 +13,9 @@ This guide will help you test and build your Unity project using the
 2. Set up a workflow for your project.
 3. Download the artifacts from your first build using the orb.
 
-## First time using CircleCI?
+## CircleCI
 
-Read the official documentation on how to set up a
+If you are not familiar with CircleCI, read the official documentation on how to set up a
 [workflow](https://circleci.com/docs/getting-started). Subsequent steps will assume you have done
 so.
 
@@ -41,6 +41,10 @@ The orb uses a Unity Editor instance to test and build your projects. These oper
 instance to be activated beforehand — to accomplish this, the orb requires an encoded license or
 serial to be included in the job’s Context. If you are unsure what this means or need help creating
 the license, navigate to the [Activation](/docs/circleci/activation) step before proceeding.
+
+> If you proceed to [set up your workflow](#setting-up-a-workflow) without going through
+> [activation](/docs/circleci/activation), your job won't have the necessary environment variables
+> for a successful run and it will fail.
 
 ## Setting up a workflow
 
@@ -132,13 +136,7 @@ workflows:
             - test-linux
 ```
 
-4. Set the `UNITY_USERNAME`, `UNITY_PASSWORD` and `UNITY_ENCODED_LICENSE` environment variables in
-   your organization's [Context](https://circleci.com/docs/contexts).
-
-> _**Note:** See the [Activation](/docs/circleci/activation#personal-license) step for instructions
-> on how to get the `UNITY_ENCODED_LICENSE` value._
-
-5. Commit and push the new workflow.
+4. Commit and push the new workflow.
 
 ## Downloading the artifacts
 
