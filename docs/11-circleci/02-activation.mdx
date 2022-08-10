@@ -7,9 +7,6 @@ Unity separates its licenses between `Personal` and `Professional`. The former a
 and the latter to the _Pro_ and _Plus_ versions. Based on your use case proceed to the
 [Personal](#personal-license) or [Professional](#professional-license) license section.
 
-> _**Note:** GameCI does not acquire nor store your Unity email, password or serial. They are
-> required for activating the license during the build and test steps._
-
 ## Personal license
 
 Follow these steps if you are using Unity's _free_ version.
@@ -112,8 +109,8 @@ Follow these steps if you are using Unity's _Pro_ or _Plus_ version.
 
 ## Next steps
 
-With your context set, you are good to start testing and [building](/docs/circleci/build) your Unity
-project. However, you must reference it in every job you run; otherwise, the job will fail:
+Now you are prepared to start testing and [building](/docs/circleci/build) your Unity project.
+However, remember to reference your context in every job you run; otherwise, they will fail:
 
 ```yaml
 version: 2.1

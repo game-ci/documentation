@@ -6,7 +6,7 @@ process of building your Unity project to multiple platforms.
 
 ### Parameters
 
-In this sub-section, you will find information and examples of each parameter the job provides.
+In this sub-section, you will find information on each parameter the job provides.
 
 #### build-name
 
@@ -252,4 +252,489 @@ workflows:
     jobs:
       - unity/build:
           unity-username-var-name: 'UNITY_USERNAME'
+```
+
+### Examples
+
+In this sub-section, you will find examples of workflows using this job. However, notice that the
+separation used in the examples is for visualization's sake only. You can build for all target
+platforms in the same workflow.
+
+#### Personal License
+
+Below you will see how the build job can be used to build your project for several platforms using
+Unity's personal license. If you are unsure what this means, navigate to the
+[Activation](/docs/circleci/activation) section. All examples are based on CircleCI's
+[Demo Project](https://github.com/CircleCI-Public/Unity2D-Demo-Game-CI-CD).
+
+##### IL2CPP
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # Linux IL2CPP
+      - unity/build:
+          name: 'build-linux64-il2cpp'
+          step-name: 'Build StandaloneLinux64'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneLinux64
+          compress: true
+          context: unity
+
+      # Windows IL2CPP
+      - unity/build:
+          name: 'build-Windows64-il2cpp'
+          step-name: 'Build StandaloneWindows64 il2cpp'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2019'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneWindows64
+          compress: true
+          context: unity
+
+      # macOS IL2CPP
+      - unity/build:
+          name: 'build-Windows64-il2cpp'
+          step-name: 'Build StandaloneWindows64 il2cpp'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2019'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneWindows64
+          compress: true
+          context: unity
+```
+
+##### Mono
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # Linux Mono
+      - unity/build:
+          name: 'build-linux64-mono'
+          step-name: 'Build StandaloneLinux64'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'base'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneLinux64
+          compress: true
+          context: unity
+
+      # Windows Mono
+      - unity/build:
+          name: 'build-Windows64-mono'
+          step-name: 'Build StandaloneWindows64'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'windows-mono'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'StandaloneWindows64'
+          context: unity
+
+      # macOS Mono
+      - unity/build:
+          name: 'build-osx-mono'
+          step-name: 'Build StandaloneOSX'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'mac-mono'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'StandaloneOSX'
+          context: unity
+```
+
+##### Other Platforms
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # WebGL
+      - unity/build:
+          name: 'build-webgl'
+          step-name: 'Build WebGL'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'webgl'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'WebGL'
+          compress: false
+          context: unity
+
+      # Android
+      - unity/build:
+          name: 'build-android'
+          step-name: 'Build Android'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'android'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'Android'
+          context: unity
+
+      # iOS
+      - unity/build:
+          name: 'build-ios'
+          step-name: 'Build iOS'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'ios'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'iOS'
+          context: unity
+
+      # tvOS
+      - unity/build:
+          name: 'build-tvOS'
+          step-name: "Build Apple's tvOS"
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2019'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'appletv'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: tvOS
+          compress: true
+          context: unity
+```
+
+#### Professional License
+
+Below you will see how the build job can be used to build your project for several platforms using
+Unity's professional license. If you are unsure what this means, navigate to the
+[Activation](/docs/circleci/activation) section. All examples are based on CircleCI's
+[Demo Project](https://github.com/CircleCI-Public/Unity2D-Demo-Game-CI-CD).
+
+##### IL2CPP
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # Linux IL2CPP
+      - unity/build:
+          name: 'build-linux64-il2cpp'
+          step-name: 'Build StandaloneLinux64'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneLinux64
+          compress: true
+          context: unity
+
+      # Windows IL2CPP
+      - unity/build:
+          name: 'build-Windows64-il2cpp'
+          step-name: 'Build StandaloneWindows64 il2cpp'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2019'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneWindows64
+          compress: true
+          context: unity
+
+      # macOS IL2CPP
+      - unity/build:
+          name: 'build-Windows64-il2cpp'
+          step-name: 'Build StandaloneWindows64 il2cpp'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2019'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneWindows64
+          compress: true
+          context: unity
+```
+
+##### Mono
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # Linux Mono
+      - unity/build:
+          name: 'build-linux64-mono'
+          step-name: 'Build StandaloneLinux64'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'base'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneLinux64
+          compress: true
+          context: unity
+
+      # Windows Mono
+      - unity/build:
+          name: 'build-Windows64-mono'
+          step-name: 'Build StandaloneWindows64'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'windows-mono'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'StandaloneWindows64'
+          context: unity
+
+      # macOS Mono
+      - unity/build:
+          name: 'build-osx-mono'
+          step-name: 'Build StandaloneOSX'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'mac-mono'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'StandaloneOSX'
+          context: unity
+```
+
+##### Other Platforms
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # WebGL
+      - unity/build:
+          name: 'build-webgl'
+          step-name: 'Build WebGL'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'webgl'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'WebGL'
+          compress: false
+          context: unity
+
+      # Android
+      - unity/build:
+          name: 'build-android'
+          step-name: 'Build Android'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'android'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'Android'
+          context: unity
+
+      # iOS
+      - unity/build:
+          name: 'build-ios'
+          step-name: 'Build iOS'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'ios'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'iOS'
+          context: unity
+
+      # tvOS
+      - unity/build:
+          name: 'build-tvOS'
+          step-name: "Build Apple's tvOS"
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2019'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'appletv'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: tvOS
+          compress: true
+          context: unity
+```
+
+:
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # Windows IL2CPP
+      - unity/build:
+          name: 'build-Windows64-il2cpp'
+          step-name: 'Build StandaloneWindows64 il2cpp'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2019'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: StandaloneWindows64
+          compress: true
+          context: unity
+
+      # macOS Mono
+      - unity/build:
+          name: 'build-osx-mono'
+          step-name: 'Build StandaloneOSX'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'mac-mono'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'StandaloneOSX'
+          context: unity
+
+      # Android
+      - unity/build:
+          name: 'build-android'
+          step-name: 'Build Android'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'android'
+            editor_version: '2021.3.2f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          build-target: 'Android'
+          context: unity
 ```

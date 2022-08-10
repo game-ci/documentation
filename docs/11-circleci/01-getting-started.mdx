@@ -5,7 +5,7 @@ This guide will help you test and build your Unity project using the
 
 ## Overall steps
 
-1. Understand how [CircleCI](https://circleci.com/docs/getting-started) works.
+1. Understand how CircleCI works.
 2. Set up a workflow for your project.
 3. Download the artifacts from your first build using the orb.
 
@@ -18,7 +18,7 @@ so.
 #### Unity Orb
 
 [Orbs](https://circleci.com/orbs/) are reusable snippets of code that help automate repeated
-processes, speed up project setup, and make it easy to integrate with third-party tools.
+processes, speed up project setup and make it easy to integrate with third-party tools.
 
 To streamline the process of testing and building Unity projects in CircleCI, GameCI provides the
 [Unity Orb](https://circleci.com/developer/orbs/orb/game-ci/unity) — a certified orb capable of
@@ -29,7 +29,7 @@ In further sections, you will learn how to import and use the orb to test and bu
 several target platforms.
 
 _**Note:** the orb is in the early stages of development; it doesn't have all features included in
-the [Builder Action](https://github.com/game-ci/unity-builder)._
+the [Builder Action](/docs/github/builder)._
 
 ## Activation
 
@@ -52,7 +52,8 @@ orbs:
   unity: game-ci/unity@x.y
 ```
 
-2. Include a [build job](/docs/circleci/build) in your workflow:
+2. Include a [build job](/docs/circleci/build) in your workflow and modify the
+   [parameters](/docs/circleci/build#parameters) to accommodate your project needs:
 
 ```yaml
 version: 2.1
