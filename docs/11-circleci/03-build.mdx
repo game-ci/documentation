@@ -36,7 +36,7 @@ workflows:
 - _Required_: `True`
 - _Type_: `String`
 
-The platform on which you want to run your game on. Accepted parameters can be found in the
+The platform on which you want to run your game. Valid parameters can be found in the Unity Editor
 [documentation](https://docs.unity3d.com/2022.2/Documentation/ScriptReference/BuildTarget.html).
 
 ```yaml
@@ -59,9 +59,10 @@ workflows:
 - _Type_: `Boolean`
 
 Whether to compress the build output to a `.tar.gz` file. Set it to `true` if you want to download
-the build artifacts from the GameCI dashboard, otherwise, you will have to download each file
-individually. If set to `false` for decompressed WebGL builds, the built project can be run directly
-from the GameCI dashboard.
+the build artifacts from the CircleCI dashboard, otherwise, you will have to download each file
+individually. If set to `false` for
+[decompressed WebGL](https://docs.unity3d.com/Manual/webgl-deploying.html) builds, the built project
+can be run directly from the GameCI dashboard.
 
 ```yaml
 version: 2.1
