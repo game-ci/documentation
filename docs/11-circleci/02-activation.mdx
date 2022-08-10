@@ -7,6 +7,9 @@ Unity separates its licenses between `Personal` and `Professional`. The former a
 and the latter to the _Pro_ and _Plus_ versions. Based on your use case proceed to the
 [Personal](#personal-license) or [Professional](#professional-license) license section.
 
+> _**Note:** GameCI does not acquire nor store your Unity email, password or serial. They are
+> required for activating the license during the build and test steps._
+
 ## Personal license
 
 Follow these steps if you are using Unity's _free_ version.
@@ -17,17 +20,19 @@ Follow these steps if you are using Unity's _free_ version.
 
 1. Use the Unity orb to create an activation file.
 2. Convert the activation file to a license file.
-3. Encoded the license file and save it in a CircleCI Context.
+3. Encode the license file and save it in a CircleCI Context.
 
 #### Creating an activation file
 
-Add the workflow below to a [project set up in CircleCI](https://circleci.com/docs/getting-started):
+Add the workflow below to a [project set up in CircleCI](https://circleci.com/docs/getting-started).
+As long as you can access it in the CircleCI Dashboard and download its artifacts, it can be any
+project.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y.z
+  unity: game-ci/unity@x.y
 
 workflows:
   create-unity-activation-file:
@@ -35,14 +40,14 @@ workflows:
       - unity/create-activation-file
 ```
 
-If you require an activation file for a specific Unity version, provide the semantic version found
-on GameCI's [Docker images](https://game.ci/docs/docker/versions):
+If you require an activation file for a specific Editor version, provide its semantic version. The
+available options can be found on the [versions](/docs/docker/versions) page.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y.z
+  unity: game-ci/unity@x.y
 
 workflows:
   create-unity-activation-file:
@@ -58,11 +63,11 @@ steps
 
 #### Converting the activation file
 
-1. Navigate to [license.unity3d.com](https://license.unity3d.com/manual) and upload the `Unity.alf`
-   file.
+1. Navigate to the [manual activation](https://license.unity3d.com/manual) page and upload the
+   `Unity.alf` file.
 2. Answer the prompted questions.
-3. Download the license file (Unity_v20XX.x.ulf). It's ok if the numbers don't match your Unity
-   version exactly.
+3. Download the license file (Unity_v20XX.x.ulf). It's ok if the numbers don't match your exact
+   Unity version.
 
 #### Encoding the license
 
@@ -75,17 +80,16 @@ cat Unity_v20XX.x.ulf | base64
 
 #### Preparing the Context
 
-1. Go to `CircleCI` > `<Organizations Settings>` > `Contexts` > `Create Context` or open an existing
-   Context that you want to use.
-2. Create the following secrets:
-   - `UNITY_ENCODED_LICENSE` - _(Paste the content from **step 1** here)_
+1. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
+   `Create Context` and choose a context name. Alternatively, open an existing Context that you want
+   to use.
+2. Create the following environment variables:
+   - `UNITY_ENCODED_LICENSE` - _(Paste the content from the
+     [Encoding the License](#encoding-the-license) section here)_
    - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
-3. Remove the `unity/create-activation-file` job from your `.circleci/config.yml` as it's no longer
-   necessary.
-
-**GameCI does not acquire nor store your Unity email or password. They are required for activating
-the license during the build and test steps.**
+3. Remove the job you added to your `.circleci/config.yml` on the
+   [Creating an Activation File](#creating-an-activation-file) section as it's no longer necessary.
 
 > _**Note:** When changing the Unity version, you may need to repeat the same process._
 
@@ -97,19 +101,33 @@ Follow these steps if you are using Unity's _Pro_ or _Plus_ version.
 
 1. Subscribe to Unity Pro or Unity Plus, and get your Serial Key from the
    [subscriptions page](https://id.unity.com/en/subscriptions).
-2. Go to `CircleCI` > `<Organizations Settings>` > `Contexts` > `Create Context` or open an existing
-   Context that you want to use.
-3. Create the following secrets:
+2. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
+   `Create Context` and choose a context name. Alternatively, open an existing Context that you want
+   to use.
+3. Create the following environment variables:
    - `UNITY_SERIAL` - _(Paste the content from **step 1** here. It should look like this:
      `XX-XXXX-XXXX-XXXX-XXXX-XXXX`)_
    - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
 
-**GameCI does not acquire nor store your Unity email, password or serial. They are required for
-activating the license during the build and test steps.**
-
 ## Next steps
 
-The license can now be used in test and build steps.
+With your context set, you are good to start testing and [building](/docs/circleci/build) your Unity
+project. However, you must reference it in every job you run; otherwise, the job will fail:
 
-You are now ready to start configuring these.
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/test:
+          ...
+          context: unity
+      - unity/build:
+          ...
+          context: unity
+```
