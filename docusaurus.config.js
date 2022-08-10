@@ -176,6 +176,10 @@ const config = {
                 to: 'https://github.com/game-ci/unity-return-license',
               },
               {
+                label: 'Unity Orb',
+                to: 'https://github.com/game-ci/unity-orb',
+              },
+              {
                 label: 'Steam Deploy',
                 to: 'https://github.com/game-ci/steam-deploy',
               },
