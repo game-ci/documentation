@@ -33,7 +33,10 @@ namespace UnityBuilderAction
                     EditorUserBuildSettings.buildAppBundle = options["customBuildPath"].EndsWith(".aab");
                     if (options.TryGetValue("androidKeystoreName", out string keystoreName) &&
                         !string.IsNullOrEmpty(keystoreName))
-                        PlayerSettings.Android.keystoreName = keystoreName;
+                    {
+                      PlayerSettings.Android.useCustomKeystore = true;
+                      PlayerSettings.Android.keystoreName = keystoreName;
+                    }
                     if (options.TryGetValue("androidKeystorePass", out string keystorePass) &&
                         !string.IsNullOrEmpty(keystorePass))
                         PlayerSettings.Android.keystorePass = keystorePass;
