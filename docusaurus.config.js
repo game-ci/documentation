@@ -216,6 +216,10 @@ const config = {
                 to: '/docs/gitlab/getting-started',
               },
               {
+                label: 'Getting Started with CircleCI',
+                to: '/docs/circleci/getting-started',
+              },
+              {
                 label: 'FAQ',
                 to: '/docs/faq',
               },
