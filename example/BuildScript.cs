@@ -57,7 +57,7 @@ namespace UnityBuilderAction
                         }
                         catch
                         {
-                            Debug.Log("Failed to parse androidTargetSdkVersion! Fallback to AndroidApiLevelAuto");
+                            UnityEngine.Debug.Log("Failed to parse androidTargetSdkVersion! Fallback to AndroidApiLevelAuto");
                         }
 
                         PlayerSettings.Android.targetSdkVersion = targetSdkVersion;
