@@ -92,7 +92,8 @@ cat Unity_v20XX.x.ulf | base64
    - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
 3. Remove the job you added to your `.circleci/config.yml` on the
-   [Creating an Activation File](#creating-an-activation-file) section as it's no longer necessary.
+   [Acquiring an Activation File](#acquiring-an-activation-file) section as it's no longer
+   necessary.
 
 > _**Note:** When changing the Unity version, you may need to repeat the same process._
 
@@ -102,13 +103,12 @@ Follow these steps if you are using Unity's _Pro_ or _Plus_ version.
 
 > _**Note:** Do NOT follow the steps for the professional license if you have a personal license._
 
-1. Subscribe to Unity Pro or Unity Plus, and get your Serial Key from the
-   [subscriptions page](https://id.unity.com/en/subscriptions).
+1. Get your Serial Key from the [subscriptions page](https://id.unity.com/en/subscriptions).
 2. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
-   `Create Context` and choose a context name. Alternatively, open an existing Context that you want
-   to use.
+   `Create Context` and choose a name for your context (e.g. `myProjectContext`). Alternatively,
+   open an existing Context that you would like to use.
 3. Create the following environment variables:
-   - `UNITY_SERIAL` - _(Paste the content from **step 1** here. It should look like this:
+   - `UNITY_SERIAL` - _(Paste the serial acquired in **step 1** here. It should look like this:
      `XX-XXXX-XXXX-XXXX-XXXX-XXXX`)_
    - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
