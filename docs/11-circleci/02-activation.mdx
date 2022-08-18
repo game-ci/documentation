@@ -19,11 +19,11 @@ Follow these steps if you are using Unity's _free_ version.
 
 #### Mental model
 
-1. Use the Unity orb to create an activation file.
-2. Convert the activation file to a license file.
+1. Use the Unity Orb to create an activation file.
+2. Use the activation file to acquire a license file from the Unity website.
 3. Encode the license file and save it in a CircleCI Context.
 
-#### Creating an activation file
+#### Acquiring an activation file
 
 Add the workflow below to a [project set up in CircleCI](https://circleci.com/docs/getting-started).
 As long as you can access it in the CircleCI Dashboard and download its artifacts, it can be any
@@ -41,8 +41,9 @@ workflows:
       - unity/create-activation-file
 ```
 
-If you require an activation file for a specific Editor version, provide its semantic version. The
-available options can be found on the [versions](/docs/docker/versions) page.
+If you require an activation file for a specific version of the Unity Editor, you need to provide
+its version number as an argument. The available versions can be found on our
+[versions](/docs/docker/versions) page.
 
 ```yaml
 version: 2.1
@@ -59,16 +60,17 @@ workflows:
 
 Commit and push the new workflow and navigate to your project in the CircleCI Dashboard. Identify
 the pipeline triggered by your changes and open the `unity/create-activation-file` job. In the
-`ARTIFACTS` tab, you will encounter the `Unity.alf` file. Download it and follow the next section
-steps
+`ARTIFACTS` tab, you will encounter `Unity.alf`; this is your activation file. Download it and
+proceed to the following sub-section.
 
-#### Converting the activation file
+#### Acquiring the license file
 
 1. Navigate to the [manual activation](https://license.unity3d.com/manual) page and upload the
-   `Unity.alf` file.
+   `Unity.alf` activation file.
 2. Answer the prompted questions.
-3. Download the license file (Unity_v20XX.x.ulf). It's ok if the numbers don't match your exact
-   Unity version.
+3. Download the license file (Unity_v20XX.x.ulf).
+
+> _Note: It is fine if the version number in the file name does not match your exact Unity version._
 
 #### Encoding the license
 
@@ -79,11 +81,11 @@ line utility you can use:
 cat Unity_v20XX.x.ulf | base64
 ```
 
-#### Preparing the Context
+#### Configuring your Context
 
 1. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
-   `Create Context` and choose a context name. Alternatively, open an existing Context that you want
-   to use.
+   `Create Context` and choose a name for your context (e.g. `myProjectContext`). Alternatively,
+   open an existing Context that you would like to use.
 2. Create the following environment variables:
    - `UNITY_ENCODED_LICENSE` - _(Paste the content from the
      [Encoding the License](#encoding-the-license) section here)_

@@ -176,7 +176,7 @@ const config = {
                 to: 'https://github.com/game-ci/unity-return-license',
               },
               {
-                label: 'Unity Orb',
+                label: 'CircleCI Orb',
                 to: 'https://github.com/game-ci/unity-orb',
               },
               {
