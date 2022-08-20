@@ -61,7 +61,7 @@ combinations:
     projectPath: ${{ matrix.projectPath }}
     unityVersion: ${{ matrix.unityVersion }}
     targetPlatform: ${{ matrix.targetPlatform }}
-    githubToken: ${{ secrets.GITHUB_TOKEN }}
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
     # You may want to export your builds somewhere external so you can access them outside of Cloud Runner jobs via the postBuildSteps:
     postBuildSteps: |
       - name: upload
