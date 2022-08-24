@@ -12,7 +12,7 @@ const GettingStarted = () => {
         <FadeIntoView>
           <h2 className="text-3xl font-extrabold text-black dark:text-white sm:text-4xl">
             <span className="block">Quickly get started</span>
-            <span>My Unity project is hosted on</span>
+            <span>My automation runs on</span>
           </h2>
         </FadeIntoView>
         <div className="lg:mt-0 lg:flex-shrink-0">
@@ -23,6 +23,9 @@ const GettingStarted = () => {
               </Link>
               <Link to="/docs/gitlab/getting-started" className={buttonClasses}>
                 gitlab
+              </Link>
+              <Link to="/docs/circleci/getting-started" className={buttonClasses}>
+                circleci
               </Link>
             </div>
           </FadeIntoView>

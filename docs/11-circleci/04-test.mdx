@@ -1,0 +1,338 @@
+---
+toc_max_heading_level: 4
+---
+
+# Test
+
+The Unity Orb provides the
+[test job](https://circleci.com/developer/orbs/orb/game-ci/unity#jobs-test) to facilitate the
+process of testing your Unity project.
+
+At the end of the run, the test results are parsed to JUnit and
+[stored](https://circleci.com/docs/collect-test-data) in CircleCI so that
+[test insights](https://circleci.com/docs/insights-tests) can be used. You can access test insights
+from the CircleCI web app.
+
+### Parameters
+
+Below you will find information on each parameter that can be passed to the test job.
+
+#### executor
+
+The executor on which you want to run your test job on. Each executor has its set of parameters. See
+the [Executors](/docs/circleci/executors) section for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2021.3.2f1'
+            resource_class: 'medium'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `Executor`
+
+#### project-path
+
+If your project sits at the root of your repository, leave it to the default value. Otherwise, enter
+the path of your Unity project. This should be the directory that has an "Assets" folder inside it.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+```
+
+- _Default_: `.`
+- _Required_: `False`
+- _Type_: `String`
+
+#### step-name
+
+Specify a custom step name to be shown in the CircleCI web app.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          step-name: 'Test my Unity project'
+```
+
+- _Default_: `Run tests`
+- _Required_: `False`
+- _Type_: `String`
+
+#### test-platform
+
+Choose the platform to run your tests on. The available options can be found on the Unity test
+framework
+[documentation](https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/reference-command-line.html).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          test-platform: 'playmode'
+```
+
+- _Default_: `editmode`
+- _Required_: `False`
+- _Type_: `String`
+
+#### unity-license-var-name
+
+The name of the environment variable holding the license set in your
+[Context](/docs/circleci/activation#preparing-the-context). If you are testing your project using
+the Unity Pro or Plus license, this is **not** required. See [Activation](/docs/circleci/activation)
+for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+```
+
+- _Default_: `UNITY_ENCODED_LICENSE`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+#### unity-password-var-name
+
+The name of the environment variable holding the password set in your
+[Context](/docs/circleci/activation#preparing-the-context). See
+[Activation](/docs/circleci/activation) for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          unity-password-var-name: 'UNITY_PASSWORD'
+```
+
+- _Default_: `UNITY_PASSWORD`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+#### unity-serial-var-name
+
+The name of the environment variable holding the serial set in your
+[Context](/docs/circleci/activation#preparing-the-context). If you are testing your project using
+the Unity Personal license, this is **not** required. See [Activation](/docs/circleci/activation)
+for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          unity-serial-var-name: 'UNITY_SERIAL'
+```
+
+- _Default_: `UNITY_SERIAL`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+#### unity-username-var-name
+
+The name of the environment variable holding the username set in your
+[Context](/docs/circleci/activation#preparing-the-context). See
+[Activation](/docs/circleci/activation) for more details.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          unity-username-var-name: 'UNITY_USERNAME'
+```
+
+- _Default_: `UNITY_USERNAME`
+- _Required_: `False`
+- _Type_: `env_var_name`
+
+### Examples
+
+In this sub-section, you will find examples of workflows using this job. However, notice that the
+separation used in the examples is for visualization's sake only. You can test for all test
+platforms in the same workflow.
+
+#### Personal License
+
+Below you will see how the test job can be used to test your project for several platforms using
+Unity's personal license. If you are unsure what this means, navigate to the
+[Activation](/docs/circleci/activation) section. All examples are based on CircleCI's
+[Demo Project](https://github.com/CircleCI-Public/Unity2D-Demo-Game-CI-CD).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # Linux
+      - unity/test:
+          name: 'test-linux'
+          step-name: 'Check if the tests run and results are uploaded'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2021.3.1f1'
+            resource_class: 'medium'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          test-platform: 'playmode'
+          context: unity
+
+      # Windows
+      - unity/test:
+          name: 'test-windows'
+          step-name: 'Check if the tests run and results are uploaded'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2022'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          test-platform: 'playmode'
+          context: unity
+
+      # macOS
+      - unity/test:
+          name: 'test-osx'
+          step-name: 'Check if the tests run and results are uploaded'
+          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/macos'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          test-platform: 'playmode'
+          context: unity
+```
+
+#### Professional License
+
+Below you will see how the test job can be used to test your project for several platforms using
+Unity's professional license. If you are unsure what this means, navigate to the
+[Activation](/docs/circleci/activation) section. All examples are based on CircleCI's
+[Demo Project](https://github.com/CircleCI-Public/Unity2D-Demo-Game-CI-CD).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      # Linux
+      - unity/test:
+          name: 'test-linux'
+          step-name: 'Check if the tests run and results are uploaded'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/ubuntu'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2021.3.1f1'
+            resource_class: 'medium'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          test-platform: 'playmode'
+          context: unity
+
+      # Windows
+      - unity/test:
+          name: 'test-windows'
+          step-name: 'Check if the tests run and results are uploaded'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/windows-2022'
+            size: 'large'
+            editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          test-platform: 'playmode'
+          context: unity
+
+      # macOS
+      - unity/test:
+          name: 'test-osx'
+          step-name: 'Check if the tests run and results are uploaded'
+          unity-serial-var-name: 'UNITY_SERIAL'
+          unity-username-var-name: 'UNITY_USERNAME'
+          unity-password-var-name: 'UNITY_PASSWORD'
+          executor:
+            name: 'unity/macos'
+            editor_version: '2021.3.1f1'
+            resource_class: 'large'
+          project-path: 'Unity2D-Demo-Game-CI-CD/src'
+          test-platform: 'playmode'
+          context: unity
+```

@@ -1,0 +1,135 @@
+---
+toc_max_heading_level: 4
+---
+
+# Activation
+
+The orb uses a Unity Editor instance to test and build your projects. These operations require the
+instance to be activated before each job you run.
+
+Unity separates its licenses between `Personal` and `Professional`. The former applies to the _free_
+and the latter to the _Pro_ and _Plus_ versions. Based on your use case proceed to the
+[Personal](#personal-license) or [Professional](#professional-license) license section.
+
+## Personal license
+
+Follow these steps if you are using Unity's _free_ version.
+
+> _**Note:** Do NOT follow the steps for the personal license if you have a professional license._
+
+#### Mental model
+
+1. Use the Unity Orb to create an activation file.
+2. Use the activation file to acquire a license file from the Unity website.
+3. Encode the license file and save it in a CircleCI Context.
+
+#### Acquiring an activation file
+
+Add the workflow below to a [project set up in CircleCI](https://circleci.com/docs/getting-started).
+As long as you can access it in the CircleCI web app and download its artifacts, it can be any
+project.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  create-unity-activation-file:
+    jobs:
+      - unity/create-activation-file
+```
+
+If you require an activation file for a specific version of the Unity Editor, you need to provide
+its version number as an argument. The available versions can be found on our
+[versions](/docs/docker/versions) page.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  create-unity-activation-file:
+    jobs:
+      - unity/create-activation-file:
+          editor_version: 2022.1.11f1
+```
+
+Commit and push the new workflow and navigate to your project in the CircleCI web app. Identify the
+pipeline triggered by your changes and open the `unity/create-activation-file` job. In the
+`ARTIFACTS` tab, you will encounter `Unity.alf`; this is your activation file. Download it and
+proceed to the following sub-section.
+
+#### Acquiring the license file
+
+1. Navigate to the [manual activation](https://license.unity3d.com/manual) page and upload the
+   `Unity.alf` activation file.
+2. Answer the prompted questions.
+3. Download the license file (Unity_v20XX.x.ulf).
+
+> _Note: It is fine if the version number in the file name does not match your exact Unity version._
+
+#### Encoding the license
+
+Encode the contents of your `Unity_v20XX.x.ulf` file to base64. If you have the `base64` command
+line utility you can use:
+
+```
+cat Unity_v20XX.x.ulf | base64
+```
+
+#### Configuring your Context
+
+1. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
+   `Create Context` and choose a name for your context (e.g. `myProjectContext`). Alternatively,
+   open an existing Context that you would like to use.
+2. Create the following environment variables:
+   - `UNITY_ENCODED_LICENSE` - _(Paste the content from the
+     [Encoding the License](#encoding-the-license) section here)_
+   - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
+   - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
+3. Remove or disable the job you included to acquire your activation file. It's no longer necessary.
+
+> _**Note:** When changing the Unity version, you may need to repeat the same process._
+
+## Professional license
+
+Follow these steps if you are using Unity's _Pro_ or _Plus_ version.
+
+> _**Note:** Do NOT follow the steps for the professional license if you have a personal license._
+
+1. Get your Serial Key from the [subscriptions page](https://id.unity.com/en/subscriptions).
+2. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
+   `Create Context` and choose a name for your context (e.g. `myProjectContext`). Alternatively,
+   open an existing Context that you would like to use.
+3. Create the following environment variables:
+   - `UNITY_SERIAL` - _(Paste the serial acquired in **step 1** here. It should look like this:
+     `XX-XXXX-XXXX-XXXX-XXXX-XXXX`)_
+   - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
+   - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
+
+## Next steps
+
+Now you are prepared to start [testing](/docs/circleci/test) and [building](/docs/circleci/build)
+your Unity project. However, remember to reference your context in every job you run; otherwise,
+they will fail:
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/test:
+          ...
+          context: unity
+      - unity/build:
+          ...
+          context: unity
+```

@@ -176,6 +176,10 @@ const config = {
                 to: 'https://github.com/game-ci/unity-return-license',
               },
               {
+                label: 'CircleCI Orb',
+                to: 'https://github.com/game-ci/unity-orb',
+              },
+              {
                 label: 'Steam Deploy',
                 to: 'https://github.com/game-ci/steam-deploy',
               },
@@ -210,6 +214,10 @@ const config = {
               {
                 label: 'Getting Started with Gitlab',
                 to: '/docs/gitlab/getting-started',
+              },
+              {
+                label: 'Getting Started with CircleCI',
+                to: '/docs/circleci/getting-started',
               },
               {
                 label: 'FAQ',
