@@ -1,5 +1,5 @@
 ---
-toc_max_heading_level: 5
+toc_max_heading_level: 4
 ---
 
 # Build
@@ -10,13 +10,9 @@ process of building your Unity project for multiple platforms.
 
 ### Parameters
 
-In this sub-section, you will find information on each parameter the job provides.
+Below you will find information on each parameter that can be passed to the build job.
 
 #### build-name
-
-- _Default_: `UnityBuild`
-- _Required_: `False`
-- _Type_: `String`
 
 Your build's name. If you choose to compress your artifacts, this name will be used in the
 compressed file.
@@ -34,13 +30,14 @@ workflows:
           build-name: 'MyUnityProject'
 ```
 
+- _Default_: `UnityBuild`
+- _Required_: `false`
+- _Type_: `string`
+
 #### build-target
 
-- _Default_: `N/A`
-- _Required_: `True`
-- _Type_: `String`
-
-The platform on which you want to run your game. Valid parameters can be found in the Unity Editor
+The platform on which you want to run your game or application. Available targets can be found in
+the Unity Editor
 [documentation](https://docs.unity3d.com/2022.2/Documentation/ScriptReference/BuildTarget.html).
 
 ```yaml
@@ -56,14 +53,14 @@ workflows:
           build-target: 'StandaloneLinux64'
 ```
 
+- _Default_: `N/A`
+- _Required_: `true`
+- _Type_: `string`
+
 #### compress
 
-- _Default_: `true`
-- _Required_: `False`
-- _Type_: `Boolean`
-
 Whether to compress the build output to a `.tar.gz` file. Set it to `true` if you want to download
-the build artifacts from the CircleCI dashboard, otherwise, you will have to download each file
+the build artifacts from the CircleCI dashboard. Otherwise, you will have to download each file
 individually. If set to `false` for
 [decompressed WebGL](https://docs.unity3d.com/Manual/webgl-deploying.html) builds, the built project
 can be run directly from the GameCI dashboard.
@@ -81,25 +78,18 @@ workflows:
           compress: true
 ```
 
+- _Default_: `true`
+- _Required_: `false`
+- _Type_: `boolean`
+
 #### executor
 
-- _Default_: `N/A`
-- _Required_: `True`
-- _Type_: `Executor`
-
-The executor on which you want to run your build job on. Bear in mind that projects using `IL2CPP`
-as the [scripting backend](https://docs.unity3d.com/Manual/scripting-backends.html) should run on
-the same OS as the [build target](#build-target). For example, if you want to build for macOS using
-`IL2CPP`, you must use the
-[macos](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos) or
-[macos-runner](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos-runner)
-executors.
-
-Notice that the Windows and macOS executors have a longer environment setup time than
-[ubuntu](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-ubuntu). This is due to the
-installation of the Windows SDK in `Windows` and the installation of the Unity Hub and Unity Editor
-in `macOS`. Should you require faster build times in these executors, consider using their
-non-ephemeral runner counterparts.
+The executor that you want to run your build job on. Bear in mind that projects using `IL2CPP` for a
+[scripting backend](https://docs.unity3d.com/Manual/scripting-backends.html) should run on the same
+OS as the [build target](#build-target). For example, if you want to build for macOS using `IL2CPP`,
+then you must use the [macos](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos)
+or [macos-runner](https://circleci.com/developer/orbs/orb/game-ci/unity#executors-macos-runner)
+executor.
 
 Each executor has its set of parameters. See the [Executors](/docs/circleci/executors) section for
 more details.
@@ -121,14 +111,14 @@ workflows:
             resource_class: 'large'
 ```
 
+- _Default_: `N/A`
+- _Required_: `true`
+- _Type_: `executor`
+
 #### project-path
 
-- _Default_: `.`
-- _Required_: `False`
-- _Type_: `String`
-
 If your project sits at the root of your repository, leave it to the default value. Otherwise, enter
-the path of your Unity project. This should be the directory that has an "Assets" folder inside it.
+the path to your Unity project. It should be the directory that has the "Assets" folder inside it.
 
 ```yaml
 version: 2.1
@@ -143,13 +133,13 @@ workflows:
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
 ```
 
+- _Default_: `.`
+- _Required_: `false`
+- _Type_: `string`
+
 #### step-name
 
-- _Default_: `Build the project`
-- _Required_: `False`
-- _Type_: `String`
-
-Specify a custom step name to be shown in the CircleCI dashboard.
+Specify a custom step name to be shown in the CircleCI web app.
 
 ```yaml
 version: 2.1
@@ -164,16 +154,15 @@ workflows:
           step-name: 'Build my Unity project'
 ```
 
+- _Default_: `Build the project`
+- _Required_: `false`
+- _Type_: `string`
+
 #### unity-license-var-name
 
-- _Default_: `UNITY_ENCODED_LICENSE`
-- _Required_: `False`
-- _Type_: `env_var_name`
-
 The name of the environment variable holding the license set in your
-[Context](/docs/circleci/activation#preparing-the-context). If you are building your project using
-the Unity Pro or Plus license, this is **not** required. See [Activation](/docs/circleci/activation)
-for more details.
+[Context](/docs/circleci/activation#preparing-the-context). Only required when using a Personal
+License. See [activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
@@ -188,15 +177,15 @@ workflows:
           unity-license-var-name: 'UNITY_ENCODED_LICENSE'
 ```
 
-#### unity-password-var-name
-
-- _Default_: `UNITY_PASSWORD`
-- _Required_: `False`
+- _Default_: `UNITY_ENCODED_LICENSE`
+- _Required_: `false`
 - _Type_: `env_var_name`
+
+#### unity-password-var-name
 
 The name of the environment variable holding the password set in your
 [Context](/docs/circleci/activation#preparing-the-context). See
-[Activation](/docs/circleci/activation) for more details.
+[activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
@@ -211,16 +200,15 @@ workflows:
           unity-password-var-name: 'UNITY_PASSWORD'
 ```
 
-#### unity-serial-var-name
-
-- _Default_: `UNITY_SERIAL`
-- _Required_: `False`
+- _Default_: `UNITY_PASSWORD`
+- _Required_: `false`
 - _Type_: `env_var_name`
 
+#### unity-serial-var-name
+
 The name of the environment variable holding the serial set in your
-[Context](/docs/circleci/activation#preparing-the-context). If you are building your project using
-the Unity Personal license, this is **not** required. See [Activation](/docs/circleci/activation)
-for more details.
+[Context](/docs/circleci/activation#preparing-the-context). Only required when using a Pro or Plus
+License. See [activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
@@ -235,11 +223,11 @@ workflows:
           unity-serial-var-name: 'UNITY_SERIAL'
 ```
 
-#### unity-username-var-name
-
-- _Default_: `UNITY_USERNAME`
-- _Required_: `False`
+- _Default_: `UNITY_SERIAL`
+- _Required_: `false`
 - _Type_: `env_var_name`
+
+#### unity-username-var-name
 
 The name of the environment variable holding the username set in your
 [Context](/docs/circleci/activation#preparing-the-context). See
@@ -258,18 +246,20 @@ workflows:
           unity-username-var-name: 'UNITY_USERNAME'
 ```
 
+- _Default_: `UNITY_USERNAME`
+- _Required_: `false`
+- _Type_: `env_var_name`
+
 ### Examples
 
-In this sub-section, you will find examples of workflows using this job. However, notice that the
-separation used in the examples is for visualization's sake only. You can build for all target
-platforms in the same workflow.
+In this section, you will find examples of workflows using this job. However, notice that the
+separation used in the examples is only for the sake of visualisation. You can build for all target
+platforms in the same workflow. All examples are based on CircleCI's
+[Demo Project](https://github.com/CircleCI-Public/Unity2D-Demo-Game-CI-CD).
 
 #### Personal License
 
-Below you will see how the build job can be used to build your project for several platforms using
-Unity's personal license. If you are unsure what this means, navigate to the
-[Activation](/docs/circleci/activation) section. All examples are based on CircleCI's
-[Demo Project](https://github.com/CircleCI-Public/Unity2D-Demo-Game-CI-CD).
+This example shows how to build your project for several platforms using a Personal License.
 
 ##### IL2CPP
 
@@ -475,10 +465,7 @@ workflows:
 
 #### Professional License
 
-Below you will see how the build job can be used to build your project for several platforms using
-Unity's professional license. If you are unsure what this means, navigate to the
-[Activation](/docs/circleci/activation) section. All examples are based on CircleCI's
-[Demo Project](https://github.com/CircleCI-Public/Unity2D-Demo-Game-CI-CD).
+This example shows how to build your project for several platforms using a Pro License.
 
 ##### IL2CPP
 

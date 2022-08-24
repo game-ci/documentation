@@ -4,22 +4,19 @@ toc_max_heading_level: 4
 
 # Test
 
-The Unity orb provides the
+The Unity Orb provides the
 [test job](https://circleci.com/developer/orbs/orb/game-ci/unity#jobs-test) to facilitate the
-process of testing your Unity project. At the end of the run, the test results are parsed to JUnit
-and [stored](https://circleci.com/docs/collect-test-data) in CircleCI to enable
-[test insights](https://circleci.com/docs/insights-tests). You can access them from the CircleCI
-Dashboard.
+process of testing your Unity project. 
+
+At the end of the run, the test results are parsed to JUnit
+and [stored](https://circleci.com/docs/collect-test-data) in CircleCI so that [test insights](https://circleci.com/docs/insights-tests) can be used. You can access test insights from the CircleCI
+web app.
 
 ### Parameters
 
-In this sub-section, you will find information on each parameter the job provides.
+Below you will find information on each parameter that can be passed to the test job.
 
 #### executor
-
-- _Default_: `N/A`
-- _Required_: `True`
-- _Type_: `Executor`
 
 The executor on which you want to run your test job on. Each executor has its set of parameters. See
 the [Executors](/docs/circleci/executors) section for more details.
@@ -41,11 +38,11 @@ workflows:
             resource_class: 'medium'
 ```
 
-#### project-path
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `Executor`
 
-- _Default_: `.`
-- _Required_: `False`
-- _Type_: `String`
+#### project-path
 
 If your project sits at the root of your repository, leave it to the default value. Otherwise, enter
 the path of your Unity project. This should be the directory that has an "Assets" folder inside it.
@@ -63,13 +60,13 @@ workflows:
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
 ```
 
-#### step-name
-
-- _Default_: `Run tests`
+- _Default_: `.`
 - _Required_: `False`
 - _Type_: `String`
 
-Specify a custom step name to be shown in the CircleCI dashboard.
+#### step-name
+
+Specify a custom step name to be shown in the CircleCI web app.
 
 ```yaml
 version: 2.1
@@ -84,13 +81,13 @@ workflows:
           step-name: 'Test my Unity project'
 ```
 
-#### test-platform
-
-- _Default_: `editmode`
+- _Default_: `Run tests`
 - _Required_: `False`
 - _Type_: `String`
 
-Chose the platform to run your tests on. The available options can be found on the Unity test
+#### test-platform
+
+Choose the platform to run your tests on. The available options can be found on the Unity test
 framework
 [documentation](https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/reference-command-line.html).
 
@@ -107,11 +104,11 @@ workflows:
           test-platform: 'playmode'
 ```
 
-#### unity-license-var-name
-
-- _Default_: `UNITY_ENCODED_LICENSE`
+- _Default_: `editmode`
 - _Required_: `False`
-- _Type_: `env_var_name`
+- _Type_: `String`
+
+#### unity-license-var-name
 
 The name of the environment variable holding the license set in your
 [Context](/docs/circleci/activation#preparing-the-context). If you are testing your project using
@@ -131,11 +128,11 @@ workflows:
           unity-license-var-name: 'UNITY_ENCODED_LICENSE'
 ```
 
-#### unity-password-var-name
-
-- _Default_: `UNITY_PASSWORD`
+- _Default_: `UNITY_ENCODED_LICENSE`
 - _Required_: `False`
 - _Type_: `env_var_name`
+
+#### unity-password-var-name
 
 The name of the environment variable holding the password set in your
 [Context](/docs/circleci/activation#preparing-the-context). See
@@ -154,11 +151,11 @@ workflows:
           unity-password-var-name: 'UNITY_PASSWORD'
 ```
 
-#### unity-serial-var-name
-
-- _Default_: `UNITY_SERIAL`
+- _Default_: `UNITY_PASSWORD`
 - _Required_: `False`
 - _Type_: `env_var_name`
+
+#### unity-serial-var-name
 
 The name of the environment variable holding the serial set in your
 [Context](/docs/circleci/activation#preparing-the-context). If you are testing your project using
@@ -178,11 +175,11 @@ workflows:
           unity-serial-var-name: 'UNITY_SERIAL'
 ```
 
-#### unity-username-var-name
-
-- _Default_: `UNITY_USERNAME`
+- _Default_: `UNITY_SERIAL`
 - _Required_: `False`
 - _Type_: `env_var_name`
+
+#### unity-username-var-name
 
 The name of the environment variable holding the username set in your
 [Context](/docs/circleci/activation#preparing-the-context). See
@@ -200,6 +197,10 @@ workflows:
       - unity/test:
           unity-username-var-name: 'UNITY_USERNAME'
 ```
+
+- _Default_: `UNITY_USERNAME`
+- _Required_: `False`
+- _Type_: `env_var_name`
 
 ### Examples
 
