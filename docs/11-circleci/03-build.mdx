@@ -14,8 +14,7 @@ Below you will find information on each parameter that can be passed to the buil
 
 #### build-name
 
-Your build's name. If you choose to compress your artifacts, this name will be used in the
-compressed file.
+Your build's name. If left blank, the build will be named after the target platform.
 
 ```yaml
 version: 2.1
@@ -30,7 +29,7 @@ workflows:
           build-name: 'MyUnityProject'
 ```
 
-- _Default_: `UnityBuild`
+- _Default_: `N/A`
 - _Required_: `false`
 - _Type_: `string`
 
