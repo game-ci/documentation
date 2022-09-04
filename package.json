@@ -27,7 +27,7 @@
     "verify:formatting": "prettier --check .",
     "verify:code-styles": "eslint .",
     "test": "jest --passWithNoTests",
-    "typecheck": "tsc --skipLibCheck"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@docusaurus/core": "^0.0.0-5035",
