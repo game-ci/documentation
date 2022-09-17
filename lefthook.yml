@@ -33,7 +33,7 @@ pre-commit:
     type check:
       glob: '*.{ts,tsx}'
       exclude: '.docusaurus/|build/'
-      run: yarn tsc --skipLibCheck --noEmit --jsx react --esModuleInterop {staged_files}
+      run: yarn tsc-files {staged_files}
     run tests:
       glob: '*.{js,jsx,ts,tsx}'
       exclude: '.docusaurus/|build/'

@@ -27,7 +27,7 @@
     "verify:formatting": "prettier --check .",
     "verify:code-styles": "eslint .",
     "test": "jest --passWithNoTests",
-    "typecheck": "tsc --skipLibCheck"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@docusaurus/core": "^0.0.0-5035",
@@ -86,7 +86,8 @@
     "eslint-plugin-unicorn": "^27.0.0",
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^28.1.0",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "tsc-files": "^1.1.3"
   },
   "browserslist": {
     "production": [
