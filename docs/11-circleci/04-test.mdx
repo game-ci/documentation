@@ -43,6 +43,31 @@ workflows:
 - _Required_: `True`
 - _Type_: `Executor`
 
+#### no_output_timeout
+
+Elapsed time without output before the job is canceled and stopped. The value can be in hours,
+minutes or seconds - a digit followed by h, m or s respectively. Consider increasing it if you see
+this error:
+
+> Too long with no output (exceeded 20m0s): context deadline exceeded
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          no_output_timeout: 30m
+```
+
+- _Default_: `20m`
+- _Required_: `false`
+- _Type_: `string`
+
 #### project-path
 
 If your project sits at the root of your repository, leave it to the default value. Otherwise, enter
@@ -64,6 +89,29 @@ workflows:
 - _Default_: `.`
 - _Required_: `False`
 - _Type_: `String`
+
+#### return-license
+
+Whether to manually return the Unity license after the test job is finished. This is usually
+unnecessary and only useful when running into an unrecoverable error while having a license active.
+Additionally, Unity only allows returning professional licenses.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          return-license: true
+```
+
+- _Default_: `false`
+- _Required_: `false`
+- _Type_: `boolean`
 
 #### step-name
 
