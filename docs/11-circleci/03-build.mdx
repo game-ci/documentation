@@ -90,7 +90,7 @@ workflows:
 #### compress
 
 Whether to compress the build output to a `.tar.gz` file. Set it to `true` if you want to download
-the build artifacts from the CircleCI dashboard. Otherwise, you will have to download each file
+the build artifacts from the CircleCI web app. Otherwise, you will have to download each file
 individually. If set to `false` for
 [decompressed WebGL](https://docs.unity3d.com/Manual/webgl-deploying.html) builds, the built project
 can be run directly from the GameCI dashboard.
@@ -262,6 +262,28 @@ workflows:
 - _Default_: `Build the project`
 - _Required_: `false`
 - _Type_: `string`
+
+#### store-artifacts
+
+Whether to store the build output. If set to `false` you won't be able to download your build in the
+CircleCI web app.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          store-artifacts: false
+```
+
+- _Default_: `true`
+- _Required_: `false`
+- _Type_: `boolean`
 
 #### unity-license-var-name
 
