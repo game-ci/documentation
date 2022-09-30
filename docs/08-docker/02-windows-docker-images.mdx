@@ -137,33 +137,30 @@ unity-windows-il2cpp-build:
   needs:
     - get-unity-version
   script:
-    - >
+    - |
       try {
-        & $env:UNITY_EXECUTABLE
-        -projectPath $env:CI_PROJECT_DIR
-        -quit
-        -batchmode
-        -nographics
-        -buildTarget $env:BUILD_TARGET
-        -customBuildTarget $env:BUILD_TARGET
-        -customBuildName $env:BUILD_NAME
-        -customBuildPath $env:BUILD_PATH
-        -executeMethod $env:BUILD_COMMAND
-        -logFile -
-        -username $env:UNITY_USERNAME
-        -password $env:UNITY_PASSWORD
-        -serial $env:UNITY_SERIAL
+        & $env:UNITY_EXECUTABLE `
+        -projectPath $env:CI_PROJECT_DIR `
+        -quit `
+        -batchmode `
+        -nographics `
+        -buildTarget $env:BUILD_TARGET `
+        -executeMethod $env:BUILD_COMMAND `
+        -logFile - `
+        -username $env:UNITY_USERNAME `
+        -password $env:UNITY_PASSWORD `
+        -serial $env:UNITY_SERIAL `
         | Out-Host
       }
       finally {
-        & $env:UNITY_EXECUTABLE
-        -quit
-        -batchmode
-        -nographics
-        -logFile -
-        -username $env:UNITY_USERNAME
-        -password $env:UNITY_PASSWORD
-        -returnlicense
+        & $env:UNITY_EXECUTABLE `
+        -quit `
+        -batchmode `
+        -nographics `
+        -logFile - `
+        -username $env:UNITY_USERNAME `
+        -password $env:UNITY_PASSWORD `
+        -returnlicense `
         | Out-Host
       }
 ```
