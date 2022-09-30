@@ -17,11 +17,10 @@ found in
 
 ### Microsoft does not allow redistribution of Visual Studio build tools
 
-Microsoft doesn't permit publishing images with VS Build tools
-[`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844) so
-we aren't allowed to do that. Building windows IL2CPP project in pure editor images leads to
-exceptions claiming that "C++ code builder" nor "Windows 10 SDK" are installed. There are two
-options to avoid this obstacle:
+Microsoft does not permit publishing images with VS Build tools which are needed for IL2CPP builds 
+[`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844). 
+You will encounter exceptions in the Unity log claiming that "C++ code builder" nor "Windows 10 SDK" are installed. 
+There are two options to avoid this obstacle:
 
 1. (*Recommended*) Inject/mount Microsoft Visual Studio with VC++ and Windows 10 SDK from the host system into the
    container during runtime.
