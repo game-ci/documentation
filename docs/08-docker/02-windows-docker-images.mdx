@@ -25,18 +25,20 @@ You will encounter exceptions in the Unity log similar to
 
 <details>
   <summary>Expand this section for a full log example.</summary>
-  ``` error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools
-  installed for il2cpp builds. Details: IL2CPP C++ code builder is unable to build C++ code. In order
-  to build C++ code for Windows Desktop, you must have one of these installed: * Visual Studio 2022 or
-  newer with C++ compilers and Windows 10 SDK (recommended) * Visual Studio 2019 with C++ compilers and
-  Windows 10 SDK * Visual Studio 2017 with C++ compilers and Windows 10 SDK * Visual Studio 2015 with
-  C++ compilers and Windows 10 SDK Visual Studio 2017 (or newer) is detected using `vswhere.exe` as well
-  as VSCOMNTOOLS environment variables. Visual Studio 2015 is detected by looking at "SOFTWARE\Microsoft\VisualStudio\14.0_Config\InstallDir"
-  in the registry as well as VSCOMNTOOLS environment variables. Windows 10 SDK is detected by looking
-  at "SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0\InstallationFolder" in the registry.
-  Unable to detect any compatible Visual Studio installation! * Found Visual Studio 2022 installation
-  without C++ tool components Windows 10 SDK is not installed. You can install from here: https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/
-  ```
+
+```error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools
+installed for il2cpp builds. Details: IL2CPP C++ code builder is unable to build C++ code. In order
+to build C++ code for Windows Desktop, you must have one of these installed: * Visual Studio 2022 or
+newer with C++ compilers and Windows 10 SDK (recommended) * Visual Studio 2019 with C++ compilers and
+Windows 10 SDK * Visual Studio 2017 with C++ compilers and Windows 10 SDK * Visual Studio 2015 with
+C++ compilers and Windows 10 SDK Visual Studio 2017 (or newer) is detected using `vswhere.exe` as well
+as VSCOMNTOOLS environment variables. Visual Studio 2015 is detected by looking at "SOFTWARE\Microsoft\VisualStudio\14.0_Config\InstallDir"
+in the registry as well as VSCOMNTOOLS environment variables. Windows 10 SDK is detected by looking
+at "SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0\InstallationFolder" in the registry.
+Unable to detect any compatible Visual Studio installation! * Found Visual Studio 2022 installation
+without C++ tool components Windows 10 SDK is not installed. You can install from here: https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/
+```
+
 </details>
 
 There are two options to avoid this obstacle:
