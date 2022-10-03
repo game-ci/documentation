@@ -17,36 +17,32 @@ found in
 
 ### Microsoft does not allow redistribution of Visual Studio build tools
 
-Microsoft does not permit publishing images with VS Build tools which are needed for IL2CPP builds 
-[`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844). 
+Microsoft does not permit publishing images with VS Build tools which are needed for IL2CPP builds
+[`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844).
 
-You will encounter exceptions in the Unity log similar to ```error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools installed for il2cpp builds.```
+You will encounter exceptions in the Unity log similar to
+`error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools installed for il2cpp builds.`
 
 <details>
-  <summary>
-   Expand this section for a full log example.
-  </summary>
-  
-```
-error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools installed for il2cpp builds. Details:
-IL2CPP C++ code builder is unable to build C++ code. In order to build C++ code for Windows Desktop, you must have one of these installed:
- * Visual Studio 2022 or newer with C++ compilers and Windows 10 SDK (recommended)
- * Visual Studio 2019 with C++ compilers and Windows 10 SDK
- * Visual Studio 2017 with C++ compilers and Windows 10 SDK
- * Visual Studio 2015 with C++ compilers and Windows 10 SDK
-Visual Studio 2017 (or newer) is detected using `vswhere.exe` as well as VSCOMNTOOLS environment variables.
-Visual Studio 2015 is detected by looking at "SOFTWARE\Microsoft\VisualStudio\14.0_Config\InstallDir" in the registry as well as VSCOMNTOOLS environment variables.
-Windows 10 SDK is detected by looking at "SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0\InstallationFolder" in the registry.
-Unable to detect any compatible Visual Studio installation!
- * Found Visual Studio 2022 installation without C++ tool components
-Windows 10 SDK is not installed. You can install from here: https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/
-```
+  <summary>Expand this section for a full log example.</summary>
+  ``` error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools
+  installed for il2cpp builds. Details: IL2CPP C++ code builder is unable to build C++ code. In order
+  to build C++ code for Windows Desktop, you must have one of these installed: * Visual Studio 2022 or
+  newer with C++ compilers and Windows 10 SDK (recommended) * Visual Studio 2019 with C++ compilers and
+  Windows 10 SDK * Visual Studio 2017 with C++ compilers and Windows 10 SDK * Visual Studio 2015 with
+  C++ compilers and Windows 10 SDK Visual Studio 2017 (or newer) is detected using `vswhere.exe` as well
+  as VSCOMNTOOLS environment variables. Visual Studio 2015 is detected by looking at "SOFTWARE\Microsoft\VisualStudio\14.0_Config\InstallDir"
+  in the registry as well as VSCOMNTOOLS environment variables. Windows 10 SDK is detected by looking
+  at "SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0\InstallationFolder" in the registry.
+  Unable to detect any compatible Visual Studio installation! * Found Visual Studio 2022 installation
+  without C++ tool components Windows 10 SDK is not installed. You can install from here: https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/
+  ```
 </details>
 
 There are two options to avoid this obstacle:
 
-1. (*Recommended*) Inject/mount Microsoft Visual Studio with VC++ and Windows 10 SDK from the host system into the
-   container during runtime.
+1. (_Recommended_) Inject/mount Microsoft Visual Studio with VC++ and Windows 10 SDK from the host
+   system into the container during runtime.
 2. Build a custom image and push it to a docker registry.
 
 #### Option 1. Injecting VC++ from the host system into the container
@@ -55,13 +51,17 @@ There are two options to avoid this obstacle:
 
 _Install Visual Studio Build Tools_
 
-The recommended way to install the correct dependencies on the host is with [Chocolatey](https://chocolatey.org/). This works with Windows 10/11, Windows Server, and Windows Server Core.
+The recommended way to install the correct dependencies on the host is with
+[Chocolatey](https://chocolatey.org/). This works with Windows 10/11, Windows Server, and Windows
+Server Core.
 
 ```powershell
 choco install visualstudio2022-workload-vctools --no-progress -y
 ```
 
-There is a way to install the same dependencies from the graphical [Visual Studio Installer](https://visualstudio.microsoft.com/downloads/), but the workload component options in the installer frequently change.
+There is a way to install the same dependencies from the graphical
+[Visual Studio Installer](https://visualstudio.microsoft.com/downloads/), but the workload component
+options in the installer frequently change.
 
 _The following directories need to be bind-mounted into the container_
 
@@ -70,6 +70,7 @@ _The following directories need to be bind-mounted into the container_
 - C:\ProgramData\Microsoft\VisualStudio
 
 _Docker run example_
+
 ```powershell
 docker run `
   -v "C:\Program Files (x86)\Windows Kits:C:\Program Files (x86)\Windows Kits" `
@@ -186,6 +187,7 @@ unity-windows-il2cpp-build:
         | Out-Host
       }
 ```
+
 ## Troubleshooting: GitLab
 
 ### Gitlab doesn't have (or has few) shared docker-windows runners
@@ -213,11 +215,12 @@ association to a machine
 
 ### Default shell for GitLab Runner is PowerShell Core
 
-GitLab Runner changed the default docker-windows executor shell in v14 to PowerShell Core which is a newer version of PowerShell than is distributed with base windows container images.
+GitLab Runner changed the default docker-windows executor shell in v14 to PowerShell Core which is a
+newer version of PowerShell than is distributed with base windows container images.
 
 There are two workarounds:
 
-1. (*Recommended*) Manually specify the shell in the config to be the pre-v14 default.
+1. (_Recommended_) Manually specify the shell in the config to be the pre-v14 default.
 2. Build a custom image including PowerShell Core and push it to a docker registry.
 
 _Option 1: Change it in the `config.toml`_
