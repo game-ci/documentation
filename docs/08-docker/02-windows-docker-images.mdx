@@ -19,8 +19,14 @@ found in
 
 Microsoft does not permit publishing images with VS Build tools which are needed for IL2CPP builds 
 [`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844). 
-You will encounter exceptions in the Unity log similar to the below:
 
+You will encounter exceptions in the Unity log similar to ```error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools installed for il2cpp builds.```
+
+<details>
+  <summary>
+   Expand this section for a full log example.
+  </summary>
+  
 ```
 error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools installed for il2cpp builds. Details:
 IL2CPP C++ code builder is unable to build C++ code. In order to build C++ code for Windows Desktop, you must have one of these installed:
@@ -35,6 +41,7 @@ Unable to detect any compatible Visual Studio installation!
  * Found Visual Studio 2022 installation without C++ tool components
 Windows 10 SDK is not installed. You can install from here: https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/
 ```
+</details>
 
 There are two options to avoid this obstacle:
 
