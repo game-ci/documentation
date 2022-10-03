@@ -70,7 +70,11 @@ _The following directories need to be bind-mounted into the container_
 
 - C:\Program Files (x86)\Windows Kits
 - C:\Program Files (x86)\Microsoft Visual Studio
+- C:\Program Files\Microsoft Visual Studio
 - C:\ProgramData\Microsoft\VisualStudio
+
+> Please confirm all of the above directories exist in your installation. Some may be missing and
+> things might still work OK without them. Omit the missing directories in the following steps.
 
 _Docker run example_
 
@@ -78,6 +82,7 @@ _Docker run example_
 docker run `
   -v "C:\Program Files (x86)\Windows Kits:C:\Program Files (x86)\Windows Kits" `
   -v "C:\Program Files (x86)\Microsoft Visual Studio:C:\Program Files (x86)\Microsoft Visual Studio" `
+  -v "C:\Program Files\Microsoft Visual Studio:C:\Program Files\Microsoft Visual Studio"
   -v "C:\ProgramData\Microsoft\VisualStudio:C:\ProgramData\Microsoft\VisualStudio" `
   unityci/editor:windows-$env:UNITY_VERSION-windows-il2cpp-$env:UNITY_IMAGE_VERSION
 ```
@@ -88,6 +93,7 @@ _Gitlab runner config.toml example_
 #...
 volumes = [
   "C:\\Program Files (x86)\\Windows Kits:C:\\Program Files (x86)\\Windows Kits",
+  "C:\\Program Files\\Microsoft Visual Studio:C:\\Program Files\\Microsoft Visual Studio",
   "C:\\Program Files (x86)\\Microsoft Visual Studio:C:\\Program Files (x86)\\Microsoft Visual Studio",
   "C:\\ProgramData\\Microsoft\\VisualStudio:C:\\ProgramData\\Microsoft\\VisualStudio"
 ]
