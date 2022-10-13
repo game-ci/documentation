@@ -121,6 +121,10 @@ const config = {
             to: '/docs/faq',
           },
           {
+            label: 'Merch',
+            href: 'https://www.redbubble.com/shop/ap/125854959',
+          },
+          {
             label: 'About us',
             to: 'about',
           },
@@ -204,28 +208,24 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Welcome to GameCI',
+                label: 'Welcome',
                 to: '/docs/',
               },
               {
-                label: 'Getting Started with Github',
+                label: 'Getting Started (GitHub)',
                 to: '/docs/github/getting-started',
               },
               {
-                label: 'Getting Started with Gitlab',
+                label: 'Getting Started (GitLab)',
                 to: '/docs/gitlab/getting-started',
               },
               {
-                label: 'Getting Started with CircleCI',
+                label: 'Getting Started (CircleCI)',
                 to: '/docs/circleci/getting-started',
               },
               {
                 label: 'FAQ',
                 to: '/docs/faq',
-              },
-              {
-                label: 'About us',
-                to: 'about',
               },
             ],
           },
@@ -233,8 +233,16 @@ const config = {
             title: 'Community',
             items: [
               {
+                label: 'About us',
+                to: 'about',
+              },
+              {
                 label: 'Discord',
                 href: 'https://game.ci/discord',
+              },
+              {
+                label: 'Merchandise',
+                href: 'https://www.redbubble.com/shop/ap/125854959',
               },
             ],
           },
