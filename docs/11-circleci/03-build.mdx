@@ -12,6 +12,37 @@ process of building your Unity project for multiple platforms.
 
 Below you will find information on each parameter that can be passed to the build job.
 
+#### build-method
+
+The command used to build your project. A valid `build-method` contains the path to a `static`
+method in a class inside the `Assets/Editor` directory. The Unity Orb will fall back to the
+[default script](https://github.com/game-ci/unity-orb/blob/main/src/dependencies/unity-builder/BuildCommand.cs)
+if this parameter is left empty.
+
+To illustrate, if you were to modify the default script and use it to build your project, you would
+need to place its content in `Assets/Editor/MyBuildMethod.cs` and pass `BuildCommand.PerformBuild`
+as your `build-method` value.
+
+If your custom build method requires additional parameters, see
+[custom-parameters](#custom-parameters).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          build-method: 'BuildCommand.PerformBuild'
+```
+
+- _Default_: `N/A`
+- _Required_: `false`
+- _Type_: `string`
+
 #### build-name
 
 Your build's name. If left blank, the build will be named after the target platform.
@@ -81,6 +112,34 @@ workflows:
 - _Required_: `false`
 - _Type_: `boolean`
 
+#### custom-parameters
+
+Additional parameters for the Unity CLI. This is useful if you want to change Unity's
+[build options](https://docs.unity3d.com/ScriptReference/BuildOptions.html) or pass custom
+parameters to your [build method](#build-method).
+
+The parameters must be separated by space and must be in the format `-key value` or `-key` for
+booleans. Environment variables are supported and will be expanded in runtime.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          custom-parameters:
+            '-customParam1 potato -customParam2 tomato -customParam3 $CIRCLE_WORKFLOW_ID
+            -DetailedBuildReport'
+```
+
+- _Default_: `N/A`
+- _Required_: `false`
+- _Type_: `string`
+
 #### executor
 
 The executor that you want to run your build job on. Bear in mind that projects using `IL2CPP` for a
@@ -113,6 +172,31 @@ workflows:
 - _Required_: `true`
 - _Type_: `executor`
 
+#### no_output_timeout
+
+Elapsed time without output before the job is canceled and stopped. The value can be in hours,
+minutes or seconds - a digit followed by h, m or s respectively. Consider increasing it if you see
+this error:
+
+> Too long with no output (exceeded 20m0s): context deadline exceeded
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          no_output_timeout: 30m
+```
+
+- _Default_: `20m`
+- _Required_: `false`
+- _Type_: `string`
+
 #### project-path
 
 If your project sits at the root of your repository, leave it to the default value. Otherwise, enter
@@ -134,6 +218,29 @@ workflows:
 - _Default_: `.`
 - _Required_: `false`
 - _Type_: `string`
+
+#### return-license
+
+Whether to manually return the Unity license after the build job is finished. This is usually
+unnecessary and only useful when running into an unrecoverable error while having a license active.
+Additionally, Unity only allows returning professional licenses.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          return-license: true
+```
+
+- _Default_: `false`
+- _Required_: `false`
+- _Type_: `boolean`
 
 #### step-name
 

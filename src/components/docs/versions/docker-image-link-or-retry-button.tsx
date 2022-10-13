@@ -21,11 +21,12 @@ interface Props {
       imageRepo: string;
       imageName: string;
     };
+    status: string;
   };
 }
 
 const DockerImageLinkOrRetryButton = ({ record }: Props) => {
-  const { buildInfo, dockerInfo, buildId, relatedJobId } = record;
+  const { buildInfo, dockerInfo, buildId, relatedJobId, status } = record;
   const { baseOs, editorVersion, targetPlatform, repoVersion } = buildInfo;
   const { imageRepo, imageName } = dockerInfo || {};
   const imageTag = `${baseOs}-${editorVersion}-${targetPlatform}-${repoVersion}`;
@@ -34,7 +35,8 @@ const DockerImageLinkOrRetryButton = ({ record }: Props) => {
   const notify = useNotification();
   const retryBuild = useAuthenticatedEndpoint('retryBuild', { buildId, relatedJobId });
 
-  if (dockerInfo) {
+  // Also show the retry button when the build has been sent to `failed` manually.
+  if (dockerInfo && status !== 'failed') {
     return <DockerImageLink imageRepo={imageRepo} imageName={imageName} imageTag={imageTag} />;
   }
 

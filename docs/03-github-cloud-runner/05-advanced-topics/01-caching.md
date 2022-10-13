@@ -8,7 +8,6 @@
 ## Development roadmap
 
 - Full project working directory support
-- Selectively skip caching when hashed cache selection doesn't change
-- `tar` supports various types of compression. This will be exposed as an option in the Cloud Runner
-  API.
-- Branch is used as cache key, new branch always misses cache once
+- Optional lz4 compression or faster (but larger storage requirements) tar archiving
+- Branch is used as cache key, new branch always misses cache once, we can make a best guess here
+  and try and recover a recent valid cache entry
