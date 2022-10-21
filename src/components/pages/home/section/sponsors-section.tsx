@@ -14,7 +14,7 @@ const SponsorsSection = () => {
 
       <FadeIntoView>
         <div className="mt-12 inline-flex">
-          <Link to="https://circleci.com/" className="text-black dark:text-white">
+          <Link to="https://circleci.com?utm_source=game-ci" className="text-black dark:text-white">
             <span className={styles.linkSpan}>
               <svg
                 width="120"
