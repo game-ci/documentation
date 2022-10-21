@@ -1,13 +1,17 @@
 .section {
   width: 100%;
-  min-height: 50vh;
+  min-height: 30vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 10vh 10vw;
+  background: var(--ifm-navbar-background-color);
+
+  color: var(--brand-text);
 
   .title {
+    color: var(--brand-primary);
     width: 70vmin;
     text-align: center;
   }
@@ -15,7 +19,7 @@
 
 .openingSection {
   min-height: calc(100vh - 64px);
-  background: linear-gradient(180deg, var(--ifm-navbar-background-color), var(--brand-secondary));
+
   user-select: none;
   padding: 0;
 
@@ -46,7 +50,26 @@
   }
 }
 
-.thePerksSection {}
+.thePerksSection {
+  .cardTitle {
+    color: var(--brand-primary);
+  }
+}
+
+.gettingStartedSection {
+  .button {
+    color: var(--brand-text);
+    border: 2px solid var(--brand-text);
+    border-radius: 3px;
+    padding: 4px 16px;
+  }
+}
+
+.sponsorsSection {
+  .linkSpan {
+    color: var(--brand-text);
+  }
+}
 
 .codeExamplesSection {
   background: var(--brand-primary);
