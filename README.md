@@ -47,5 +47,7 @@ This includes all contributions from the community.
 
 ## Sponsors
 
-[![Vercel](static/assets/readme/Vercel.svg)](https://vercel.com?utm_source=game-ci)
-[![CircleCI](static/assets/readme/CircleCI.svg)](https://circleci.com?utm_source=game-ci)
+<p align="middle">
+  <a href="ttps://vercel.com?utm_source=game-ci"><img width="240" src="static/assets/readme/Vercel.svg"></a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+  <a href="https://circleci.com?utm_source=game-ci"><img width="240" src="static/assets/readme/CircleCI.svg"></a>
+</p>
