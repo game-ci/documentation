@@ -30,7 +30,7 @@ contents hosting service.
 
 ## Community
 
-Feel free to join us on [![Discord](assets/readme/Discord.svg)](https://game.ci/discord) and engage
+Feel free to join us on [![Discord](static/assets/readme/Discord.svg)](https://game.ci/discord) and engage
 with the community.
 
 ## Support us
