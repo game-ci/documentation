@@ -30,8 +30,8 @@ contents hosting service.
 
 ## Community
 
-Feel free to join us on [![Discord](assets/readme/Discord.svg)](https://game.ci/discord) and engage
-with the community.
+Feel free to join us on [![Discord](static/assets/readme/Discord.svg)](https://game.ci/discord) and
+engage with the community.
 
 ## Support us
 
@@ -47,4 +47,5 @@ This includes all contributions from the community.
 
 ## Sponsors
 
-[![Vercel](assets/readme/Vercel.svg)](https://vercel.com?utm_source=game-ci)
+[![Vercel](static/assets/readme/Vercel.svg)](https://vercel.com?utm_source=game-ci)
+[![CircleCI](static/assets/readme/CircleCI.svg)](https://circleci.com?utm_source=game-ci)
