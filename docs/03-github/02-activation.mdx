@@ -6,7 +6,8 @@ Unity differentiates their methods between `personal` and `professional` license
 
 Depending on whether you are using a free or paid version of Unity, you will need to follow the
 steps for either a [personal license](#personal-license) or a
-[professional license](#professional-license).
+[professional license](#professional-license). Alternatively you can provide the url to a
+[License server](#license-server).
 
 ## Personal license
 
@@ -95,6 +96,20 @@ the license during build and test steps.**
 the license during build and test steps.**
 
 > _**Note:** Do NOT follow the steps for the personal license if you have a professional license._
+
+## License Server
+
+If you host your own Unity license server you can provide its url using `unityLicensingServer`. A
+floating license will be acquired before the build, and returned after.
+
+Example of use:
+
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    targetPlatform: WebGL
+    unityLicensingServer: [url to your license server]
+```
 
 ## Optional steps
 

@@ -58,6 +58,20 @@ Define the test step as follows:
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+## License Server
+
+If you host your own Unity license server you can provide its url using `unityLicensingServer`. A
+floating license will be acquired before the tests run, and returned after.
+
+Example of use:
+
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    targetPlatform: WebGL
+    unityLicensingServer: [url to your license server]
+```
+
 That is all you need to test your project.
 
 ## Viewing test results

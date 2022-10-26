@@ -69,6 +69,20 @@ Then, define the build step as follows:
     targetPlatform: WebGL
 ```
 
+## License Server
+
+If you host your own Unity license server internally you can provide its url using
+`unityLicensingServer`. A floating license will be acquired before the build, and returned after.
+
+Example of use:
+
+```yaml
+- uses: game-ci/unity-builder@v2
+  with:
+    targetPlatform: WebGL
+    unityLicensingServer: [url to your license server]
+```
+
 That is all you need to build your project.
 
 By default, the enabled scenes from the project's settings will be built.
@@ -383,6 +397,12 @@ Note that it is generally bad practice to modify your branch in a CI Pipeline. H
 exceptions where this might be needed. (use with care).
 
 _**required:** `false`_ _**default:** `false`_
+
+#### unityLicensingServer
+
+Sets the url to a unity license server for acquiring floating licenses.
+
+_**required:** `false`_ _**default:** `""`_
 
 ## Outputs
 
