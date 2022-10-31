@@ -456,16 +456,15 @@ workflows:
 
       # macOS IL2CPP
       - unity/build:
-          name: 'build-Windows64-il2cpp'
-          step-name: 'Build StandaloneWindows64 il2cpp'
+          name: 'build-osx-il2cpp'
+          step-name: 'Build macOS IL2CPP'
           unity-license-var-name: 'UNITY_ENCODED_LICENSE'
           unity-username-var-name: 'UNITY_USERNAME'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
-            name: 'unity/windows-2019'
-            size: 'large'
+            name: 'unity/macos'
+            resource_class: 'large'
             editor_version: '2021.3.2f1'
-            target_platform: 'windows-il2cpp'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
           build-target: StandaloneWindows64
           compress: true
@@ -662,18 +661,17 @@ workflows:
 
       # macOS IL2CPP
       - unity/build:
-          name: 'build-Windows64-il2cpp'
-          step-name: 'Build StandaloneWindows64 il2cpp'
+          name: 'build-osx-il2cpp'
+          step-name: 'Build macOS IL2CPP'
           unity-serial-var-name: 'UNITY_SERIAL'
           unity-username-var-name: 'UNITY_USERNAME'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
-            name: 'unity/windows-2019'
-            size: 'large'
+            name: 'unity/macos'
+            resource_class: 'large'
             editor_version: '2021.3.2f1'
-            target_platform: 'windows-il2cpp'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
-          build-target: StandaloneWindows64
+          build-target: StandaloneOSX
           compress: true
           context: unity
 ```
