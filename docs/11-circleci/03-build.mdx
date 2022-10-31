@@ -285,6 +285,27 @@ workflows:
 - _Required_: `false`
 - _Type_: `boolean`
 
+#### fetch-submodules
+
+Whether to fetch git submodules relating to the project repository.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          fetch-submodules: true
+```
+
+- _Default_: `false`
+- _Required_: `false`
+- _Type_: `boolean`
+
 #### unity-license-var-name
 
 The name of the environment variable holding the license set in your
