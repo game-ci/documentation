@@ -23,4 +23,4 @@ guarentee shutdown (already possible via custom hooks).
 
 # Garbage Collection - Command Line Functions
 
-[Command Line Garbage Collection Utilities](../command-line#garbage-collection)
+[Command Line Garbage Collection Utilities](../../05-command-line/command-line#garbage-collection)
