@@ -12,7 +12,7 @@ scenarios.
 You can use "Retained Workspace Mode" to cache entire project folders and accelerate performance,
 although you will use additional storage resources.
 
-See [Caching](caching).
+See [Caching](../responsive-pipelines/caching).
 
 ## Provider Platform's impact
 
