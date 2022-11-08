@@ -42,26 +42,47 @@ You can specify input parameters via environment variables.
 ```md
 - gitPrivateToken (should be a GitHub access token with permission to get repositories)
 - region
+```
+
+```md
 - GITHUB_REPOSITORY
 - GITHUB_REF || branch || GitSHA
+```
+
+```md
 - cloudRunnerBuilderPlatform
 - cloudRunnerBranch
 - cloudRunnerCluster - Valid options: `aws` | `k8s`
 - cloudRunnerCpu
 - cloudRunnerMemory
+```
+
+```md
 - customJob
 - customStepFiles
 - customHookFiles
 - customJobHooks
 - postBuildSteps
 - preBuildSteps
+```
+
+```md
 - readInputFromOverrideList
 - readInputOverrideCommand
+```
+
+```md
 - awsBaseStackName
+```
+
+```md
 - kubeConfig
 - kubeVolume
 - kubeVolumeSize
 - kubeStorageClass
+```
+
+```md
 - cacheKey
 - cloudRunnerTests || cloudRunnerDebug
 - cloudRunnerDebugTree
