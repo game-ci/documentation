@@ -60,7 +60,7 @@ Utility commands
 
 ```md
 - remote-cli-pre-build (sets up a repository, usually before a game-ci build)
-- remote-cli-post-build
+- remote-cli-post-build (pushes to LFS and Library cache)
 ```
 
 Commands called during cloud runner workflows before/after a build.
@@ -71,19 +71,41 @@ Commands called during cloud runner workflows before/after a build.
 
 ```md
 - gitPrivateToken (should be a GitHub access token with permission to get repositories)
+```
+
+Used to authenticate remote job's access to repository.
+
+```md
 - GITHUB_REPOSITORY
 - GITHUB_REF || branch || GitSHA
 ```
 
+Used to syncronize the repository to the Cloud Runner job. If parameters are not provided, will
+attempt to read them from current directory's git repo (e.g branch, commit SHA, remote URL).
+
 ### Cloud Runner parameters
 
 ```md
-- cloudRunnerBuilderPlatform
-- cloudRunnerBranch
-- cloudRunnerCluster - Valid options: `aws` | `k8s`
+cloudRunnerCluster
+```
+
+Specifies the Cloud Provider to use for Cloud Runner jobs. Accepted values: `aws`, `k8s`,
+`local-docker`.
+
+```md
 - cloudRunnerCpu
 - cloudRunnerMemory
 ```
+
+Specifies the CPU and Memory resources to be used for cloud containers created by Cloud Runner.
+(See: getting started section for more configuration options per provider.)
+
+```md
+- cloudRunnerBranch
+```
+
+Specifies the release branch of Cloud Runner to use for remote containers. Accepted values: `main`
+(default), `cloud-runner-preview` (stable/development), `cloud-runner-develop` (latest/development)
 
 ### Custom commands from files parameters
 
@@ -92,21 +114,42 @@ Commands called during cloud runner workflows before/after a build.
 - customHookFiles
 ```
 
+Specifies the name of custom hook or step files to include in workflow. (Accepted Format: see
+`advanced topics / custom steps + hooks`)
+
 ### Custom commands from yaml parameters
 
 ```md
-- customJob
+customJob
+```
+
+Specifies a custom job to override default build workflow. (Accepted Format: see
+`advanced topics / custom job`)
+
+```md
 - customJobHooks
 - postBuildSteps
 - preBuildSteps
 ```
 
+Specify yaml based hooks or pre/post build steps.
+
+(Accepted Format: see `advanced topics / custom steps + hooks`)
+
 ### Configuration Override
 
 ```md
-- readInputFromOverrideList
-- readInputOverrideCommand
+readInputOverrideCommand
 ```
+
+Read parameter from command line ouput, such as a secret manager. Must include a `{0}` to inject the
+name of the parameter to pull.
+
+```md
+- readInputFromOverrideList
+```
+
+List of parameters to apply with `readInputOverrideCommand`.
 
 ### Aws
 
@@ -114,31 +157,38 @@ Commands called during cloud runner workflows before/after a build.
 - awsBaseStackName
 ```
 
+Name of the persistent shared base stack, used to store artifacts and caching.
+
 ### K8s
 
 ```md
-- kubeConfig
 - kubeVolume
 - kubeVolumeSize
 - kubeStorageClass
 ```
 
+Override name of persistent volume used, size of volume and storage class used.
+
 ### Caching
 
 ```md
-- cacheKey
+cacheKey
 ```
+
+Defaults to branch name. Defines the scope for sharing cache entries.
 
 ### Utility
 
 ```md
-- cloudRunnerTests || cloudRunnerDebug
-- cloudRunnerDebugTree
-- cloudRunnerDebugEnv
-- watchToEnd
-- useSharedLargePackages
-- useSharedBuilder
-- useLz4Compression
+- cloudRunnerTests || cloudRunnerDebug (Debug logging for Cloud Runner)
+- cloudRunnerDebugTree (Logs cloud container file tree)
+- cloudRunnerDebugEnv (Logs cloud container envrionment details)
+- watchToEnd (do not follow build)
+- useSharedLargePackages (Any packages in manifest.json containing phrase "LargePackage" will be
+  redirected to a shared folder for all builds sharing a cache key)
+- useSharedBuilder (Use a shared clone of Game-CI, saves some storage space and can be used if
+  you're using one release branch of Cloud Runner)
+- useLz4Compression (Use Lz4 compression for cache and build artifacts. Enabled by default)
 ```
 
 ### Retained Workspace
@@ -147,6 +197,8 @@ Commands called during cloud runner workflows before/after a build.
 - retainWorkspaces
 - maxRetainedWorkspaces
 ```
+
+See "Advanced Topics / Retained Workspaces", enables caching entire project folder.
 
 ### Garbage Collection
 
