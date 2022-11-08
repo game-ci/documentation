@@ -39,15 +39,15 @@ You can specify input parameters via environment variables.
 
 ## Main Parameters
 
-```md
-- gitPrivateToken (should be a GitHub access token with permission to get repositories)
-- region
-```
+Git syncronization parameters
 
 ```md
+- gitPrivateToken (should be a GitHub access token with permission to get repositories)
 - GITHUB_REPOSITORY
 - GITHUB_REF || branch || GitSHA
 ```
+
+Cloud Runner parameters
 
 ```md
 - cloudRunnerBuilderPlatform
@@ -56,6 +56,8 @@ You can specify input parameters via environment variables.
 - cloudRunnerCpu
 - cloudRunnerMemory
 ```
+
+Custom commands from yaml parameters & Custom commands from files parameters
 
 ```md
 - customJob
@@ -66,14 +68,20 @@ You can specify input parameters via environment variables.
 - preBuildSteps
 ```
 
+Configuration Override
+
 ```md
 - readInputFromOverrideList
 - readInputOverrideCommand
 ```
 
+Aws
+
 ```md
 - awsBaseStackName
 ```
+
+K8s
 
 ```md
 - kubeConfig
@@ -82,8 +90,15 @@ You can specify input parameters via environment variables.
 - kubeStorageClass
 ```
 
+Caching
+
 ```md
 - cacheKey
+```
+
+Utility
+
+```md
 - cloudRunnerTests || cloudRunnerDebug
 - cloudRunnerDebugTree
 - cloudRunnerDebugEnv
@@ -91,8 +106,18 @@ You can specify input parameters via environment variables.
 - useSharedLargePackages
 - useSharedBuilder
 - useLz4Compression
+```
+
+Retained Workspace
+
+```md
 - retainWorkspaces
 - maxRetainedWorkspaces
+```
+
+Garbage Collection
+
+```md
 - constantGarbageCollection
 - garbageCollectionMaxAge
 ```
