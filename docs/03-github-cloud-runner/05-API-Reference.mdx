@@ -115,7 +115,8 @@ Specifies the release branch of Cloud Runner to use for remote containers. Accep
 ```
 
 Specifies the name of custom hook or step files to include in workflow. (Accepted Format: see
-`advanced topics / custom steps + hooks`)
+"advanced topics / [custom steps](advanced-topics/custom-jobs/custom-steps) +
+[custom hooks](advanced-topics/custom-jobs/custom-hooks)")
 
 ### Custom commands from yaml parameters
 
@@ -124,7 +125,7 @@ customJob
 ```
 
 Specifies a custom job to override default build workflow. (Accepted Format: see
-`advanced topics / custom job`)
+"[advanced topics / custom job](advanced-topics/custom-jobs/custom-job)")
 
 ```md
 - customJobHooks
@@ -132,7 +133,8 @@ Specifies a custom job to override default build workflow. (Accepted Format: see
 - preBuildSteps
 ```
 
-Specify yaml based hooks or pre/post build steps.
+Specify yaml based [hooks](advanced-topics/custom-jobs/custom-hooks) or pre/post build
+[steps](advanced-topics/custom-jobs/custom-steps).
 
 (Accepted Format: see `advanced topics / custom steps + hooks`)
 
@@ -143,13 +145,15 @@ readInputOverrideCommand
 ```
 
 Read parameter from command line ouput, such as a secret manager. Must include a `{0}` to inject the
-name of the parameter to pull.
+name of the parameter to pull. (See:
+[Configuration Override](advanced-topics/configuration-override))
 
 ```md
 readInputFromOverrideList
 ```
 
-List of parameters to apply with `readInputOverrideCommand`.
+List of parameters to apply with `readInputOverrideCommand`. (See:
+[Configuration Override](advanced-topics/configuration-override))
 
 ### Aws
 
@@ -198,7 +202,8 @@ Defaults to branch name. Defines the scope for sharing cache entries.
 - maxRetainedWorkspaces
 ```
 
-See "Advanced Topics / Retained Workspaces", enables caching entire project folder.
+See: [Advanced Topics / Retained Workspaces](advanced-topics/retained-workspace), enables caching
+entire project folder.
 
 ### Garbage Collection
 
