@@ -20,25 +20,25 @@ cli-build
 _runs a cloud runner build_
 
 ```md
-- list-resources
+list-resources
 ```
 
 _lists active resources_
 
 ```md
-- list-worfklow
+list-worfklow
 ```
 
 _lists running workflows_
 
 ```md
-- watch
+watch
 ```
 
 _follows logs of a running workflow_
 
 ```md
-- garbage-collect
+garbage-collect
 ```
 
 _runs garbage collection_
@@ -70,7 +70,7 @@ Commands called during cloud runner workflows before/after a build.
 ### Git syncronization parameters
 
 ```md
-- gitPrivateToken (should be a GitHub access token with permission to get repositories)
+gitPrivateToken (should be a GitHub access token with permission to get repositories)
 ```
 
 Used to authenticate remote job's access to repository.
@@ -101,7 +101,7 @@ Specifies the CPU and Memory resources to be used for cloud containers created b
 (See: getting started section for more configuration options per provider.)
 
 ```md
-- cloudRunnerBranch
+cloudRunnerBranch
 ```
 
 Specifies the release branch of Cloud Runner to use for remote containers. Accepted values: `main`
@@ -146,7 +146,7 @@ Read parameter from command line ouput, such as a secret manager. Must include a
 name of the parameter to pull.
 
 ```md
-- readInputFromOverrideList
+readInputFromOverrideList
 ```
 
 List of parameters to apply with `readInputOverrideCommand`.
@@ -154,7 +154,7 @@ List of parameters to apply with `readInputOverrideCommand`.
 ### Aws
 
 ```md
-- awsBaseStackName
+awsBaseStackName
 ```
 
 Name of the persistent shared base stack, used to store artifacts and caching.
