@@ -1,8 +1,25 @@
 # API Reference
 
-## Cloud Runner Core API
+## Configuration
 
-Cloud Runner uses the core parameters of Game-CI.
+### Configuration Input Methods
+
+#### Configuration Override
+
+You can specify input parameters via Config Override (link)
+
+#### GitHub Action `with:`
+
+You can specify input parameters via GitHub Action yaml section `with` as shown in the "Getting
+Started" examples.
+
+#### Command Line
+
+You can specify input parameters via command line.
+
+#### Environment Variables
+
+You can specify input parameters via environment variables.
 
 ## Modes
 
@@ -23,13 +40,14 @@ Cloud Runner uses the core parameters of Game-CI.
 ## Main Parameters
 
 ```md
+- gitPrivateToken (should be a GitHub access token with permission to get repositories)
 - region
 - GITHUB_REPOSITORY
 - GITHUB_REF || branch || GitSHA
 - cloudRunnerBuilderPlatform
 - cloudRunnerBranch
-- cloudRunnerCluster
-- cloudRunnerCluster
+- cloudRunnerCluster - Valid options: `aws` [Getting Started - AWS](getting-started/aws) | `k8s`
+  [Getting Started - Kubernetes](getting-started/kubernetes)
 - cloudRunnerCpu
 - cloudRunnerMemory
 - customJob
@@ -74,3 +92,9 @@ Cloud Runner uses the core parameters of Game-CI.
 ```md
 USE_IL2CPP - Set to `false`
 ```
+
+# External Links
+
+All accepted parameters given here with a description:
+
+- [https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
