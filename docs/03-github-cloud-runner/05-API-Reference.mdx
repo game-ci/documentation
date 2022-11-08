@@ -14,18 +14,56 @@ _You can specify input parameters via any of the following methods._
 Cloud Runner can accept a parameter to run a specific mode, by default cli-build is run.
 
 ```md
-- cli-build (runs a cloud runner build)
-- list-resources (lists active resources)
-- list-worfklow (lists running workflows)
-- watch (follows logs of a running workflow)
-- garbage-collect (runs garbage collection)
-- hash (hash all folder contents)
-- cache-push (push to cache)
-- cache-pull (pull from cache)
-- print-input (prints all input)
-- remote-cli-pre-build (sets up a repository, usually before a game-ci build)
-- remote-cli-post-build (runs a cloud runner build)
+cli-build
 ```
+
+_runs a cloud runner build_
+
+```md
+- list-resources
+```
+
+_lists active resources_
+
+```md
+- list-worfklow
+```
+
+_lists running workflows_
+
+```md
+- watch
+```
+
+_follows logs of a running workflow_
+
+```md
+- garbage-collect
+```
+
+_runs garbage collection_
+
+```md
+- cache-push
+- cache-pull
+```
+
+Cache commands to push and pull from the local caching directory. Used in cloud runner workflows.
+Uses `cachePullFrom` and `cachePushTo` parameters.
+
+```md
+- hash (hash folder contents recursively)
+- print-input (prints all input parameters)
+```
+
+Utility commands
+
+```md
+- remote-cli-pre-build (sets up a repository, usually before a game-ci build)
+- remote-cli-post-build
+```
+
+Commands called during cloud runner workflows before/after a build.
 
 ## Main Parameters
 
