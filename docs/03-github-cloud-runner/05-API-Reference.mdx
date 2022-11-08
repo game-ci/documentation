@@ -7,7 +7,17 @@ Cloud Runner uses the core parameters of Game-CI.
 ## Modes
 
 ```md
-Run / CLI Run List workflows List resources Watch Garbage Collect
+- hash (hash all folder contents)
+- cache-push (push to cache)
+- cache-pull (pull from cache)
+- remote-cli-pre-build (sets up a repository, usually before a game-ci build)
+- print-input (prints all input)
+- cli-build (runs a cloud runner build)
+- garbage-collect (runs garbage collection)
+- list-resources (lists active resources)
+- list-worfklow (lists running workflows)
+- watch (follows logs of a running workflow)
+- remote-cli-post-build (runs a cloud runner build)
 ```
 
 ## Main Parameters
@@ -52,11 +62,15 @@ Run / CLI Run List workflows List resources Watch Garbage Collect
 ## Command Line Only Parameters
 
 ```md
-...
+- populateOverride
+- cachePushFrom
+- cachePushTo
+- artifactName
+- select
 ```
 
 ## Other Environment Variables
 
 ```md
-...
+USE_IL2CPP - Set to `false`
 ```
