@@ -13,7 +13,13 @@ Run / CLI Run List workflows List resources Watch Garbage Collect
 ## Main Parameters
 
 ```md
-... actions.yaml or CloudRunnerOptions
+region GITHUB_REPOSITORY GITHUB_REF || branch || GitSHA cloudRunnerBuilderPlatform cloudRunnerBranch
+cloudRunnerCluster cloudRunnerCluster cloudRunnerCpu cloudRunnerMemory customJob customStepFiles
+customHookFiles customJobHooks postBuildSteps preBuildSteps readInputFromOverrideList
+readInputOverrideCommand awsBaseStackName kubeConfig kubeVolume kubeVolumeSize kubeStorageClass
+cacheKey cloudRunnerTests ||cloudRunnerDebug cloudRunnerDebugTree cloudRunnerDebugEnv watchToEnd
+useSharedLargePackages useSharedBuilder useLz4Compression retainWorkspaces maxRetainedWorkspaces
+constantGarbageCollection garbageCollectionMaxAge
 ```
 
 ## Command Line Only Parameters
