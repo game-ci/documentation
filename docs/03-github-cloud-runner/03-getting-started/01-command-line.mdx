@@ -1,7 +1,7 @@
-# Command Line
+# Command Line (Preview)
 
 You can install Game CI locally and start cloud runner jobs from the command line or by integrating
-your own tools. All parameters in [Configuration](configuration) can be specified as command line
+your own tools. All parameters in [API Reference](../api-reference) can be specified as command line
 input fields.
 
 # Install
@@ -31,13 +31,12 @@ descriptions_
 # Main Command Parameters
 
 - Default: `cli` (runs a standard build workflow)
-- [Garbage Collection Modes](#garbage-collection)
+- See API Reference "Modes"
 
-# Avoiding long parameters for commands
+# Keeping command line parameters short
 
-You can avoid specifying lots of command line input for credentials (e.g all unity authentication
-and cloud provider settings) by using environment variables or
-[the input override feature](advanced-topics/input-override#example) to shorten commands
+You can avoid specifying long command line input for credentials by using environment variables or
+[the input override feature](../advanced-topics/configuration-override#example) to shorten commands
 signficantly.
 
 This enables you to provide a command to pull input, e.g you can pull from a file or from a secret
@@ -45,28 +44,4 @@ manager.
 
 ```bash
 yarn run cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""
-```
-
-## Garbage Collection
-
-### AWS Provider Only
-
-```bash
-aws-list-stacks
-```
-
-```bash
-aws-list-tasks
-```
-
-```bash
-aws-garbage-collect
-```
-
-```bash
-aws-garbage-collect-all
-```
-
-```bash
-aws-garbage-collect-all-1d-older
 ```
