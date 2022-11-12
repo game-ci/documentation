@@ -13,37 +13,37 @@ _You can specify input parameters via any of the following methods._
 
 Cloud Runner can accept a parameter to run a specific mode, by default cli-build is run.
 
-```md
+```bash
 cli-build
 ```
 
 _runs a cloud runner build_
 
-```md
+```bash
 list-resources
 ```
 
 _lists active resources_
 
-```md
+```bash
 list-worfklow
 ```
 
 _lists running workflows_
 
-```md
+```bash
 watch
 ```
 
 _follows logs of a running workflow_
 
-```md
+```bash
 garbage-collect
 ```
 
 _runs garbage collection_
 
-```md
+```bash
 - cache-push
 - cache-pull
 ```
@@ -51,31 +51,31 @@ _runs garbage collection_
 Cache commands to push and pull from the local caching directory. Used in cloud runner workflows.
 Uses `cachePullFrom` and `cachePushTo` parameters.
 
-```md
+```bash
 - hash (hash folder contents recursively)
 - print-input (prints all input parameters)
 ```
 
 Utility commands
 
-```md
+```bash
 - remote-cli-pre-build (sets up a repository, usually before a game-ci build)
 - remote-cli-post-build (pushes to LFS and Library cache)
 ```
 
 Commands called during cloud runner workflows before/after a build.
 
-## Main Parameters
+## Common Parameters
 
 ### Git syncronization parameters
 
-```md
+```bash
 gitPrivateToken (should be a GitHub access token with permission to get repositories)
 ```
 
 Used to authenticate remote job's access to repository.
 
-```md
+```bash
 - GITHUB_REPOSITORY
 - GITHUB_REF || branch || GitSHA
 ```
@@ -85,14 +85,14 @@ attempt to read them from current directory's git repo (e.g branch, commit SHA, 
 
 ### Cloud Runner parameters
 
-```md
+```bash
 cloudRunnerCluster
 ```
 
 Specifies the Cloud Provider to use for Cloud Runner jobs. Accepted values: `aws`, `k8s`,
 `local-docker`.
 
-```md
+```bash
 - cloudRunnerCpu
 - cloudRunnerMemory
 ```
@@ -100,7 +100,7 @@ Specifies the Cloud Provider to use for Cloud Runner jobs. Accepted values: `aws
 Specifies the CPU and Memory resources to be used for cloud containers created by Cloud Runner.
 (See: getting started section for more configuration options per provider.)
 
-```md
+```bash
 cloudRunnerBranch
 ```
 
@@ -109,7 +109,7 @@ Specifies the release branch of Cloud Runner to use for remote containers. Accep
 
 ### Custom commands from files parameters
 
-```md
+```bash
 - customStepFiles
 - customHookFiles
 ```
@@ -120,14 +120,14 @@ Specifies the name of custom hook or step files to include in workflow. (Accepte
 
 ### Custom commands from yaml parameters
 
-```md
+```bash
 customJob
 ```
 
 Specifies a custom job to override default build workflow. (Accepted Format: see
 "[advanced topics / custom job](advanced-topics/custom-jobs/custom-job)")
 
-```md
+```bash
 - customJobHooks
 - postBuildSteps
 - preBuildSteps
@@ -140,7 +140,7 @@ Specify yaml based [hooks](advanced-topics/custom-jobs/custom-hooks) or pre/post
 
 ### Configuration Override
 
-```md
+```bash
 readInputOverrideCommand
 ```
 
@@ -148,7 +148,7 @@ Read parameter from command line ouput, such as a secret manager. Must include a
 name of the parameter to pull. (See:
 [Configuration Override](advanced-topics/configuration-override))
 
-```md
+```bash
 readInputFromOverrideList
 ```
 
@@ -157,7 +157,7 @@ List of parameters to apply with `readInputOverrideCommand`. (See:
 
 ### Aws
 
-```md
+```bash
 awsBaseStackName
 ```
 
@@ -165,7 +165,7 @@ Name of the persistent shared base stack, used to store artifacts and caching.
 
 ### K8s
 
-```md
+```bash
 - kubeVolume
 - kubeVolumeSize
 - kubeStorageClass
@@ -175,7 +175,7 @@ Override name of persistent volume used, size of volume and storage class used.
 
 ### Caching
 
-```md
+```bash
 cacheKey
 ```
 
@@ -183,7 +183,7 @@ Defaults to branch name. Defines the scope for sharing cache entries.
 
 ### Utility
 
-```md
+```bash
 - cloudRunnerTests || cloudRunnerDebug (Debug logging for Cloud Runner)
 - cloudRunnerDebugTree (Logs cloud container file tree)
 - cloudRunnerDebugEnv (Logs cloud container envrionment details)
@@ -197,7 +197,7 @@ Defaults to branch name. Defines the scope for sharing cache entries.
 
 ### Retained Workspace
 
-```md
+```bash
 - retainWorkspaces
 - maxRetainedWorkspaces
 ```
@@ -207,14 +207,14 @@ entire project folder.
 
 ### Garbage Collection
 
-```md
+```bash
 - constantGarbageCollection
 - garbageCollectionMaxAge
 ```
 
 ## Command Line Only Parameters
 
-```md
+```bash
 - populateOverride
 - cachePushFrom
 - cachePushTo
@@ -224,7 +224,7 @@ entire project folder.
 
 ## Other Environment Variables
 
-```md
+```bash
 - USE_IL2CPP (Set to `false`)
 ```
 
