@@ -49,25 +49,7 @@ Do not include the vCPU or GB suffix.
     versioning: None
     # Currently kuberentes builds do not save their persistent volumes beyond a cloud runner job.
     # So, you may want to export the results to cloud storage with a postBuildStep as follows:
-    postBuildSteps: |
-      - name: upload
-        image: amazon/aws-cli
-        commands: |
-          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default
-          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
-          aws configure set region $AWS_DEFAULT_REGION --profile default
-          aws s3 ls
-          aws s3 ls game-ci-test-storage
-          ls /data/cache/$CACHE_KEY
-          echo "/data/cache/$CACHE_KEY/build/build-$BUILD_GUID.zip s3://game-ci-test-storage/$CACHE_KEY/$BUILD_FILE"
-          aws s3 cp /data/cache/$CACHE_KEY/build/build-$BUILD_GUID.zip s3://game-ci-test-storage/$CACHE_KEY/build-$BUILD_GUID.zip
-        secrets:
-        - name: awsAccessKeyId
-          value: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        - name: awsSecretAccessKey
-          value: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        - name: awsDefaultRegion
-          value: eu-west-2
+    customStepFiles: aws-s3-upload-build
 ```
 
 _[Custom Steps](../advanced-topics/custom-jobs/custom-steps)_
