@@ -69,7 +69,7 @@ jobs:
         with:
           name: Build-StandaloneLinux64
           path: build/StandaloneLinux64
-      - uses: game-ci/steam-deploy@v1
+      - uses: game-ci/steam-deploy@v2
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
