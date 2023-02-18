@@ -36,5 +36,4 @@ yarn-error.log*
 !/.idea/documentation.iml
 !/.idea/prettier.xml
 .vscode
-.vercel
 
