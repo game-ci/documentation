@@ -32,6 +32,9 @@ yarn-error.log*
 
 # Misc
 .DS_Store
-.idea
+/.idea/*
+!/.idea/documentation.iml
+!/.idea/prettier.xml
 .vscode
 .vercel
+
