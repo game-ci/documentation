@@ -18,7 +18,16 @@ your project.
 
 Be sure to **ignore any automatically generated files**, by adding the reference
 [.gitignore](https://github.com/github/gitignore/blob/master/Unity.gitignore) file to the root of
-your project.
+your project. Please note that you may have to extend this file by ignoring the temporary files created by the runners:
+
+These temporary files may cause jobs to fail with the error message 'branch is dirty'. This error means that the local branch that the runner is using has uncommitted changes at that point during the build (more info [https://game.ci/docs/troubleshooting/common-issues#branch-is-dirty]).
+Two common temporary folders that are created by gameci are `artifacts` and `CodeCoverage`. By adding these lines to your .gitignore, you can ignore their contents:
+
+```
+# Ignore temporaries from game-ci
+/[Aa]rtifacts/
+/[Cc]odeCoverage/
+```
 
 To **ensure large files are handled correctly** (in [LFS](https://git-lfs.github.com/)), you can add
 our reference

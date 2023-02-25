@@ -174,9 +174,13 @@ There are multiple options to solve this.
 2. Find the files that are being modified and fix the source of the problem. **This is the
    recommended solution**.
 
-   The log should list the files that are considered modified on the now dirty branch. Locate the
-   modified files and figure out why they are being modified. Sometimes, it's because a `.meta` file
-   gets modified by unity when you open the project. If this is the case you can try this:
+   The log should list the files that are considered modified on the now dirty branch. 
+   First, double check that these are not temporary files created by the runners themselves (see the 
+   [Preparing the Project](https://game.ci/docs/getting-started/#preparing-the-project) section regarding
+   `.gitignore`).
+   If the files are instead project related, locate the modified files and figure out why they are being modified.
+   Sometimes, it's because a `.meta` file gets modified by unity when you open the project. If this is the case
+   you can try this:
 
    1. Clone your project in a new folder
    2. Open your project with unity
