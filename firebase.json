@@ -4,6 +4,10 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
+        "source": "/discord",
+        "destination": "https://discord.gg/ZjpyhCRd"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
