@@ -2,11 +2,14 @@
   "hosting": {
     "public": "build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
+    "redirects": [
       {
         "source": "/discord",
-        "destination": "https://discord.gg/ZjpyhCRd"
-      },
+        "destination": "https://discord.gg/ZjpyhCRd",
+        "type": 301
+      }
+    ],
+    "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
