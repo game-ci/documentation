@@ -112,11 +112,14 @@ Specifies the release branch of Cloud Runner to use for remote containers. Accep
 ```bash
 - containerHookFiles
 - commandHookFiles
+- commandHooks
+- postBuildContainerHooks
+- preBuildContainerHooks
 ```
 
 Specifies the name of custom hook or step files to include in workflow. (Accepted Format: see
-"advanced topics / [custom steps](advanced-topics/custom-hooks/container-hooks) +
-[custom hooks](advanced-topics/custom-hooks/custom-hooks)")
+"[container hooks](advanced-topics/custom-hooks/container-hooks)
+[command hooks](advanced-topics/custom-hooks/command-hooks)")
 
 ### Custom commands from yaml parameters
 
@@ -126,17 +129,6 @@ customJob
 
 Specifies a custom job to override default build workflow. (Accepted Format: see
 "[advanced topics / custom job](advanced-topics/custom-hooks/custom-job)")
-
-```bash
-- commandHooks
-- postBuildContainerHooks
-- preBuildContainerHooks
-```
-
-Specify yaml based [hooks](advanced-topics/custom-hooks/custom-hooks) or pre/post build
-[steps](advanced-topics/custom-hooks/container-hooks).
-
-(Accepted Format: see `advanced topics / custom steps + hooks`)
 
 ### Configuration Override
 
