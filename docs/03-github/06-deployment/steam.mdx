@@ -69,7 +69,7 @@ jobs:
         with:
           name: Build-StandaloneLinux64
           path: build/StandaloneLinux64
-      - uses: game-ci/steam-deploy@v1
+      - uses: game-ci/steam-deploy@v2
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
@@ -116,9 +116,18 @@ ssfnFileName, and ssfnFileContents with these steps:
 1. Use `cat <ssfnFileName> | base64 > ssfn_base64.txt` to encode the contents of the hidden ssfn
    file. Copy the contents of `ssfn_base64.txt` to a GitHub Secret `STEAM_SSFN_FILE_CONTENTS`.
 
+If your builder account uses MFA through the Steam Guard App, the `steam-deploy` app can use a TOTP
+instead of the above configuration. Generating a TOTP is outside the scope of this guide, as it is
+simpler to follow the above steps.
+
 ### 5. Additional Configuration
 
 You can configure these to better match your use case.
+
+#### totp
+
+Deploys to Steam using a TOTP. If this is passed, `configVdf`, `ssfnFileName`, and
+`ssfnFileContents` are not required.
 
 #### buildDescription
 

@@ -6,7 +6,7 @@
   "engines": {
     "npm": "please-use-yarn",
     "yarn": ">= 1.22.4",
-    "node": "16.x"
+    "node": ">= 16.x"
   },
   "scripts": {
     "prepare": "lefthook install && npx husky uninstall -y",

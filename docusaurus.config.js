@@ -274,9 +274,9 @@ const config = {
           <a href="https://docusaurus.io" target="_blank" rel="noreferrer noopener">
             <span aria-label="Docusaurus">🦖</span>
           </a>
-          and powered by
-          <a href="https://vercel.com?utm_source=game-ci" target="_blank" rel="noreferrer noopener">
-            <svg title="Vercel" style="margin: 0 4px -2px;" fill="black" stroke="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M256 48l240 416H16z"></path></svg>
+          and hosted by
+          <a href="https://firebase.com?utm_source=game-ci" target="_blank" rel="noreferrer noopener">
+            <svg title="Firebase" style="margin: 0 0 -2px;" stroke="#F57C00" fill="#F57C00" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M93.19 329.38l47.45-304.07c1.64-10.37 15.55-12.82 20.46-3.55l51 95.45zM432 400l-46.74-276.79a11 11 0 00-18.54-6L80 400l159.36 91.91a33.18 33.18 0 0031.91 0zM302.36 158.93l-36.54-69.54a10.86 10.86 0 00-19.36 0L85.83 375.74z"></path></svg>
           </a>
         </p>
         <p>

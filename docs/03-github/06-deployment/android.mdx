@@ -180,6 +180,7 @@ jobs:
           androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
           androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+          androidTargetSdkVersion: AndroidApiLevel31
       - uses: actions/upload-artifact@v2
         with:
           name: build-Android
@@ -239,7 +240,7 @@ double-check your keystore has been correctly encoded as valid base64, you can l
 keystore by manually running:
 
 ```bash
-cat [keystore file] | base64 --decode > user.keystore`
+cat [keystore file] | base64 --decode > user.keystore
 ```
 
 swapping in the name of a text file containing the base64 value. This will create a new keystore
