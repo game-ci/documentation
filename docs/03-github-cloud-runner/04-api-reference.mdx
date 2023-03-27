@@ -86,15 +86,15 @@ attempt to read them from current directory's git repo (e.g branch, commit SHA, 
 ### Cloud Runner parameters
 
 ```bash
-cloudRunnerCluster
+providerStrategy
 ```
 
 Specifies the Cloud Provider to use for Cloud Runner jobs. Accepted values: `aws`, `k8s`,
 `local-docker`.
 
 ```bash
-- cloudRunnerCpu
-- cloudRunnerMemory
+- containerCpu
+- containerMemory
 ```
 
 Specifies the CPU and Memory resources to be used for cloud containers created by Cloud Runner.
@@ -110,8 +110,8 @@ Specifies the release branch of Cloud Runner to use for remote containers. Accep
 ### Custom commands from files parameters
 
 ```bash
-- customStepFiles
-- customHookFiles
+- containerHookFiles
+- commandHookFiles
 ```
 
 Specifies the name of custom hook or step files to include in workflow. (Accepted Format: see
@@ -128,9 +128,9 @@ Specifies a custom job to override default build workflow. (Accepted Format: see
 "[advanced topics / custom job](advanced-topics/custom-jobs/custom-job)")
 
 ```bash
-- customJobHooks
-- postBuildSteps
-- preBuildSteps
+- commandHooks
+- postBuildContainerHooks
+- preBuildContainerHooks
 ```
 
 Specify yaml based [hooks](advanced-topics/custom-jobs/custom-hooks) or pre/post build
@@ -141,7 +141,7 @@ Specify yaml based [hooks](advanced-topics/custom-jobs/custom-hooks) or pre/post
 ### Configuration Override
 
 ```bash
-readInputOverrideCommand
+inputPullCommand
 ```
 
 Read parameter from command line ouput, such as a secret manager. Must include a `{0}` to inject the
@@ -149,16 +149,16 @@ name of the parameter to pull. (See:
 [Configuration Override](advanced-topics/configuration-override))
 
 ```bash
-readInputFromOverrideList
+pullInputList
 ```
 
-List of parameters to apply with `readInputOverrideCommand`. (See:
+List of parameters to apply with `inputPullCommand`. (See:
 [Configuration Override](advanced-topics/configuration-override))
 
 ### Aws
 
 ```bash
-awsBaseStackName
+awsStackName
 ```
 
 Name of the persistent shared base stack, used to store artifacts and caching.
@@ -184,21 +184,17 @@ Defaults to branch name. Defines the scope for sharing cache entries.
 ### Utility
 
 ```bash
-- cloudRunnerTests || cloudRunnerDebug (Debug logging for Cloud Runner)
-- cloudRunnerDebugTree (Logs cloud container file tree)
-- cloudRunnerDebugEnv (Logs cloud container envrionment details)
-- watchToEnd (do not follow build)
+- cloudRunnerDebug (Debug logging for Cloud Runner)
 - useSharedLargePackages (Any packages in manifest.json containing phrase "LargePackage" will be
   redirected to a shared folder for all builds sharing a cache key)
 - useSharedBuilder (Use a shared clone of Game-CI, saves some storage space and can be used if
   you're using one release branch of Cloud Runner)
-- useLz4Compression (Use Lz4 compression for cache and build artifacts. Enabled by default)
+- useCompressionStrategy (Use Lz4 compression for cache and build artifacts. Enabled by default)
 ```
 
 ### Retained Workspace
 
 ```bash
-- retainWorkspaces
 - maxRetainedWorkspaces
 ```
 
@@ -208,8 +204,7 @@ entire project folder.
 ### Garbage Collection
 
 ```bash
-- constantGarbageCollection
-- garbageCollectionMaxAge
+- garbageMaxAge
 ```
 
 ## Command Line Only Parameters

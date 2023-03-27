@@ -1,4 +1,4 @@
-# GitHub Actions - Kubernetes
+# Kubernetes
 
 ## Requirements
 
@@ -23,33 +23,26 @@ Refer to [Configuration page](../api-reference) or the [example below](#example)
 - `2 vCPU` - Between 4 GB and 16 GB in 1-GB increments
 - `4 vCPU` - Between 8 GB and 30 GB in 1-GB increments
 
+#### Summary Of Format
+
+- Values are represented as 1024:1 GB or CPU.
+
 Do not include the vCPU or GB suffix.
-
-#### Valid CPU and Memory Values
-
-```yaml
-- remoteBuildMemory: 2
-- remoteBuildCpu: 0.5
-```
 
 ### Example
 
 ```yaml
 - uses: game-ci/unity-builder@cloud-runner-develop
   id: k8s-unity-build
-  timeout-minutes: 30
   with:
-    cloudRunnerCluster: k8s
-    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-    targetPlatform: ${{ matrix.targetPlatform }}
-    kubeConfig: ${{ steps.read-base64.outputs.base64 }}
-    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
-    projectPath: test-project
-    unityVersion: ${{ matrix.unityVersion }}
+    providerStrategy: k8s
     versioning: None
-    # Currently kuberentes builds do not save their persistent volumes beyond a cloud runner job.
-    # So, you may want to export the results to cloud storage with a postBuildStep as follows:
-    customStepFiles: aws-s3-upload-build
+    projectPath: `your path here`
+    unityVersion: `unity version here`
+    targetPlatform: ${{ matrix.targetPlatform }}
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    # You may want to export your builds somewhere external so you can access it:
+    containerHookFiles: aws-s3-upload-build
 ```
 
 _[Custom Steps](../advanced-topics/custom-jobs/custom-steps)_

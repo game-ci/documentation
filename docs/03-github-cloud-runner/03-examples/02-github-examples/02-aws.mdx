@@ -1,4 +1,4 @@
-# GitHub Actions - AWS
+# AWS
 
 ## Requirements
 
@@ -54,16 +54,15 @@ combinations:
 ```yaml
 - uses: game-ci/unity-builder@cloud-runner-develop
   id: aws-fargate-unity-build
-  timeout-minutes: 25
   with:
-    cloudRunnerCluster: aws
+    providerStrategy: aws
     versioning: None
-    projectPath: ${{ matrix.projectPath }}
-    unityVersion: ${{ matrix.unityVersion }}
+    projectPath: `your path here`
+    unityVersion: `unity version here`
     targetPlatform: ${{ matrix.targetPlatform }}
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
-    # You may want to export your builds somewhere external so you can access them outside of Cloud Runner jobs via the postBuildSteps:
-    customStepFiles: aws-s3-upload-build
+    # You may want to export your builds somewhere external so you can access it:
+    containerHookFiles: aws-s3-upload-build
 ```
 
 _[Custom Steps](../advanced-topics/custom-jobs/custom-steps)_
