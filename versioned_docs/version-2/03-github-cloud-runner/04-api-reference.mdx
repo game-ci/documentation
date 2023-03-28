@@ -1,0 +1,234 @@
+# API Reference
+
+## Configuration
+
+_You can specify input parameters via any of the following methods._
+
+- **GitHub Action `with`** _See "Getting Started" examples._
+- **Command Line** _You can specify input parameters via command line._
+- **Environment Variables** _You can specify input parameters via environment variables._
+- **Configuration Override** _[Advanced Topics / Overrides](advanced-topics/configuration-override)_
+
+## Modes
+
+Cloud Runner can accept a parameter to run a specific mode, by default cli-build is run.
+
+```bash
+cli-build
+```
+
+_runs a cloud runner build_
+
+```bash
+list-resources
+```
+
+_lists active resources_
+
+```bash
+list-worfklow
+```
+
+_lists running workflows_
+
+```bash
+watch
+```
+
+_follows logs of a running workflow_
+
+```bash
+garbage-collect
+```
+
+_runs garbage collection_
+
+```bash
+- cache-push
+- cache-pull
+```
+
+Cache commands to push and pull from the local caching directory. Used in cloud runner workflows.
+Uses `cachePullFrom` and `cachePushTo` parameters.
+
+```bash
+- hash (hash folder contents recursively)
+- print-input (prints all input parameters)
+```
+
+Utility commands
+
+```bash
+- remote-cli-pre-build (sets up a repository, usually before a game-ci build)
+- remote-cli-post-build (pushes to LFS and Library cache)
+```
+
+Commands called during cloud runner workflows before/after a build.
+
+## Common Parameters
+
+### Git syncronization parameters
+
+```bash
+gitPrivateToken (should be a GitHub access token with permission to get repositories)
+```
+
+Used to authenticate remote job's access to repository.
+
+```bash
+- GITHUB_REPOSITORY
+- GITHUB_REF || branch || GitSHA
+```
+
+Used to syncronize the repository to the Cloud Runner job. If parameters are not provided, will
+attempt to read them from current directory's git repo (e.g branch, commit SHA, remote URL).
+
+### Cloud Runner parameters
+
+```bash
+cloudRunnerCluster
+```
+
+Specifies the Cloud Provider to use for Cloud Runner jobs. Accepted values: `aws`, `k8s`,
+`local-docker`.
+
+```bash
+- cloudRunnerCpu
+- cloudRunnerMemory
+```
+
+Specifies the CPU and Memory resources to be used for cloud containers created by Cloud Runner.
+(See: getting started section for more configuration options per provider.)
+
+```bash
+cloudRunnerBranch
+```
+
+Specifies the release branch of Cloud Runner to use for remote containers. Accepted values: `main`
+(default), `cloud-runner-preview` (stable/development), `cloud-runner-develop` (latest/development)
+
+### Custom commands from files parameters
+
+```bash
+- customStepFiles
+- customHookFiles
+```
+
+Specifies the name of custom hook or step files to include in workflow. (Accepted Format: see
+"advanced topics / [custom steps](advanced-topics/custom-jobs/custom-steps) +
+[custom hooks](advanced-topics/custom-jobs/custom-hooks)")
+
+### Custom commands from yaml parameters
+
+```bash
+customJob
+```
+
+Specifies a custom job to override default build workflow. (Accepted Format: see
+"[advanced topics / custom job](advanced-topics/custom-jobs/custom-job)")
+
+```bash
+- customJobHooks
+- postBuildSteps
+- preBuildSteps
+```
+
+Specify yaml based [hooks](advanced-topics/custom-jobs/custom-hooks) or pre/post build
+[steps](advanced-topics/custom-jobs/custom-steps).
+
+(Accepted Format: see `advanced topics / custom steps + hooks`)
+
+### Configuration Override
+
+```bash
+readInputOverrideCommand
+```
+
+Read parameter from command line ouput, such as a secret manager. Must include a `{0}` to inject the
+name of the parameter to pull. (See:
+[Configuration Override](advanced-topics/configuration-override))
+
+```bash
+readInputFromOverrideList
+```
+
+List of parameters to apply with `readInputOverrideCommand`. (See:
+[Configuration Override](advanced-topics/configuration-override))
+
+### Aws
+
+```bash
+awsBaseStackName
+```
+
+Name of the persistent shared base stack, used to store artifacts and caching.
+
+### K8s
+
+```bash
+- kubeVolume
+- kubeVolumeSize
+- kubeStorageClass
+```
+
+Override name of persistent volume used, size of volume and storage class used.
+
+### Caching
+
+```bash
+cacheKey
+```
+
+Defaults to branch name. Defines the scope for sharing cache entries.
+
+### Utility
+
+```bash
+- cloudRunnerTests || cloudRunnerDebug (Debug logging for Cloud Runner)
+- cloudRunnerDebugTree (Logs cloud container file tree)
+- cloudRunnerDebugEnv (Logs cloud container envrionment details)
+- watchToEnd (do not follow build)
+- useSharedLargePackages (Any packages in manifest.json containing phrase "LargePackage" will be
+  redirected to a shared folder for all builds sharing a cache key)
+- useSharedBuilder (Use a shared clone of Game-CI, saves some storage space and can be used if
+  you're using one release branch of Cloud Runner)
+- useLz4Compression (Use Lz4 compression for cache and build artifacts. Enabled by default)
+```
+
+### Retained Workspace
+
+```bash
+- retainWorkspaces
+- maxRetainedWorkspaces
+```
+
+See: [Advanced Topics / Retained Workspaces](advanced-topics/retained-workspace), enables caching
+entire project folder.
+
+### Garbage Collection
+
+```bash
+- constantGarbageCollection
+- garbageCollectionMaxAge
+```
+
+## Command Line Only Parameters
+
+```bash
+- populateOverride
+- cachePushFrom
+- cachePushTo
+- artifactName
+- select
+```
+
+## Other Environment Variables
+
+```bash
+- USE_IL2CPP (Set to `false`)
+```
+
+# External Links
+
+All accepted parameters given here with a description:
+[https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml](https://github.com/game-ci/unity-builder/blob/cloud-runner-develop/action.yml)
