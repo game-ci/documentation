@@ -1,0 +1,448 @@
+# Executors
+
+The Orb provides reusable execution environments for you to run your jobs on. The executors
+available are [macOS](#macos), [macOS on Runner](#macos-runner), [Windows](#windows),
+[Windows on Runner](#windows-runner), [Ubuntu on Docker](#ubuntu)
+
+The `macos` and `windows` executors take longer to setup due to the installation of external
+dependencies. This can be mitigated using their [Runner](https://circleci.com/docs/runner-overview)
+variants. As Runner doesn't share the ephemeral nature of the CircleCI cloud executors, the external
+dependencies will already be installed after the first run, decreasing the environment preparation
+time.
+
+Notice that projects using `IL2CPP` as the
+[scripting backend](https://docs.unity3d.com/Manual/scripting-backends.html) should run on the same
+OS as the [build target](/docs/circleci/build#build-target). For example, if you want to build for
+macOS using `IL2CPP`, you must use the [macos](#macos) or [macos-runner](#macos-runner) executors.
+For other use-cases, it's recommended to use [ubuntu](#ubuntu) for all supported platforms as it
+will be cheaper and faster.
+
+### macos
+
+This executor uses the
+[macOS cloud executor](https://circleci.com/docs/configuration-reference#macos) and it's recommended
+for **macOS IL2CPP builds**. As there are no GameCI images for macOS at the moment, the Unity Editor
+and Hub are installed in runtime, leading to longer build times. Should it become an issue, consider
+using [macos-runner](#macos-runner) instead.
+
+#### editor_version
+
+Choose the Unity Editor version that you want to use to build your project. The options available
+can be found on the Unity [archive](https://unity3d.com/get-unity/download/archive).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos'
+            editor_version: '2021.3.2f1'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+#### resource_class
+
+Choose the
+[resource class](https://circleci.com/docs/configuration-reference#macos-execution-environment) for
+your execution environment. Try increasing it if your environment is running out of memory during
+the build.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos'
+            resource_class: 'large'
+```
+
+- _Default_: `medium`
+- _Required_: `False`
+- _Type_: `Enum`
+
+#### xcode_version
+
+Choose the [xcode version](https://circleci.com/docs/using-macos#supported-xcode-versions) for your
+execution environment.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos'
+            xcode_version: '14.0.0'
+```
+
+- _Default_: `13.4.1`
+- _Required_: `False`
+- _Type_: `String`
+
+### macos-runner
+
+This executor uses [self-hosted runner](https://circleci.com/docs/runner-overview). If you are
+unsure how to create or configure it, follow  
+[Installing Self-Hosted Runners with the Web App](https://circleci.com/docs/runner-installation) and
+[CircleCI Self-hosted Runner Installation on macOS](https://circleci.com/docs/runner-installation-mac).
+
+The `macos-runner` is an excellent alternative over [macos](#macos) to build macOS IL2CPP with
+faster build times. Its non-ephemeral nature saves times on installing external dependencies after
+the first run. And in addition, you are free to use an agent with hardware exceeding the
+[available](https://circleci.com/docs/configuration-reference#macos-execution-environment) for the
+web macOS executor.
+
+#### editor_version
+
+Choose the Unity Editor version that you want to use to build your project. The options available
+can be found on the Unity [archive](https://unity3d.com/get-unity/download/archive).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos-runner'
+            editor_version: '2021.3.2f1'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+#### resource_class
+
+Enter your [runner resource class](https://circleci.com/docs/runner-overview). If you are unsure
+what this means, navigate to the beginning of this [sub-section](#macos-runner).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos-runner'
+            resource_class: 'my_runner_resource_class'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+#### working_directory
+
+Enter the working directory of your runner agent. This will be where the job steps will run.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos-runner'
+            working_directory: '/var/opt/circleci/unity_working_dir'
+```
+
+- _Default_: `/var/opt/circleci/workdir`
+- _Required_: `False`
+- _Type_: `String`
+
+### ubuntu
+
+This executor uses the
+[Docker cloud executor](https://circleci.com/docs/configuration-reference#docker) with GameCI
+[images](/docs/docker/docker-images). Since the latter ships with the Unity Hub, Editor and all
+necessary dependencies, none of it is installed in runtime - making `ubuntu` more time-efficient
+than [macos](#macos) and [windows](#windows).
+
+For faster and cheaper runs, use it for all [build targets](/docs/circleci/build#build-target) that
+don't require a host OS other than Linux.
+
+#### editor_version
+
+Choose the Unity Editor version that you want to use to build your project. The available options
+can be found on the [versions](/docs/docker/versions) page.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/ubuntu'
+            editor_version: '2021.3.2f1'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+#### resource_class
+
+Choose the
+[resource class](https://circleci.com/docs/configuration-reference#docker-execution-environment) for
+your execution environment. Try increasing it if your environment is running out of memory during
+the build.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos'
+            resource_class: 'large'
+```
+
+- _Default_: `medium`
+- _Required_: `False`
+- _Type_: `Enum`
+
+#### target_platform
+
+Choose the target platform to be used for the GameCI image. The available options can be found on
+the [versions](/docs/docker/versions) page.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/macos'
+            target_platform: 'linux-il2cpp'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `Enum`
+
+### windows
+
+This executor uses the
+[Windows cloud executor](https://circleci.com/docs/configuration-reference#available-windows-machine-images)
+with GameCI [images](/docs/docker/docker-images) and it's recommended for **Windows IL2CPP builds**.
+Due to [limitations](/docs/docker/windows-docker-images#limitations), jobs running on the Windows
+executor must install third-party dependencies in runtime, leading to longer build times. Should it
+become an issue, consider using [windows-runner](#windows-runner) instead.
+
+The orb ships with three variants:
+[windows-2019](https://circleci.com/developer/machine/image/windows-server-2019),
+[windows-2019-cuda](https://circleci.com/developer/machine/image/windows-server-2019-cuda) and
+[windows-2022](https://circleci.com/developer/machine/image/windows-server-2022-gui). If you are
+unsure of which one to use, pick `windows-2022`. If you need an executor with GPU, then choose
+`windows-2019-cuda`.
+
+#### editor_version
+
+Choose the Unity Editor version that you want to use to build your project. The available options
+can be found on the [versions](/docs/docker/versions) page.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/windows-2022'
+            ## or name: "unity/windows-2019"
+            ## or name: "unity/windows-2019-cuda"
+            editor_version: '2021.3.2f1'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+#### size
+
+Choose the [size](https://circleci.com/docs/configuration-reference#windows-execution) of your
+execution environment resource class. Try increasing it if your environment is running out of memory
+during the build.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/windows-2022'
+            ## or name: "unity/windows-2019"
+            ## or name: "unity/windows-2019-cuda"
+            resource_class: 'xlarge'
+```
+
+- _Default_: `large`
+- _Required_: `False`
+- _Type_: `Enum`
+
+#### target_platform
+
+Choose the target platform to be used for the GameCI image. The available options can be found on
+the [versions](/docs/docker/versions) page.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/windows-2022'
+            ## or name: "unity/windows-2019"
+            ## or name: "unity/windows-2019-cuda"
+            target_platform: 'windows-il2cpp'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `Enum`
+
+### windows-runner
+
+This executor uses [self-hosted runner](https://circleci.com/docs/runner-overview). If you are
+unsure how to create or configure it, follow  
+[Installing Self-Hosted Runners with the Web App](https://circleci.com/docs/runner-installation) and
+[CircleCI Self-hosted Runner Installation on Windows](https://circleci.com/docs/runner-installation-windows).
+
+The `windows-runner` is an excellent alternative over [windows](#windows) to build Windows IL2CPP
+with faster build times. Its non-ephemeral nature saves times on installing external dependencies
+after the first run. And in addition, you are free to use an agent with hardware exceeding the
+[available](https://circleci.com/docs/configuration-reference#windows-execution) for the web Windows
+executor.
+
+#### editor_version
+
+Choose the Unity Editor version that you want to use to build your project. The available options
+can be found on the [versions](/docs/docker/versions) page.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/windows-runner'
+            editor_version: '2021.3.2f1'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+#### resource_class
+
+Enter your [runner resource class](https://circleci.com/docs/runner-overview). If you are unsure
+what this means, navigate to the beginning of [this section](#windows-runner).
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/windows-runner'
+            resource_class: 'my_runner_resource_class'
+```
+
+- _Default_: `N/A`
+- _Required_: `True`
+- _Type_: `String`
+
+#### working_directory
+
+Enter the working directory of your runner agent. This is be where the job steps will run from.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@x.y
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          executor:
+            name: 'unity/windows-runner'
+            working_directory: 'C:\Users\circleci\AppData\Local\Temp\Unity_Working_Dir'
+```
+
+- _Default_: `C:\Users\circleci\AppData\Local\Temp\Workdir`
+- _Required_: `False`
+- _Type_: `String`

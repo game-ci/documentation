@@ -49,10 +49,13 @@ const config = {
           lastVersion: 'current',
           versions: {
             current: {
-              label: 'v2 (current)',
+              label: 'v3 (current)',
             },
             1: {
               label: 'v1',
+            },
+            2: {
+              label: 'v2',
             },
           },
           sidebarPath: require.resolve('./sidebars.js'),

@@ -1,0 +1,237 @@
+# Common issues
+
+Below you'll find a collection of answers to commonly reported problems.
+
+## Unity Activation
+
+If you are having troubles with activation, you are not alone, this is a common problem, and it is
+not the easiest thing to solve. Here are some tips:
+
+- Try removing special characters from your password, sometimes they cause problems with command
+  lines. _This is not a security advice_
+- Your username should be an email
+- Confirm you are able to connect on Unity's website using your credentials
+
+:::caution Known issue with Unity activation on gitlab-ci: empty license file
+
+If you are having troubles with Unity activation with gitlab-ci, there is currently an issue with
+recent Unity versions preventing us to retrieve a license file with actual content.
+
+For more details see the
+[following issue: get-activation-file succeeding but giving a 0kb file. Unity Version 2021.2.7f1](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/171)
+and
+[the workaround](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/171#note_974622879).
+
+Don't hesitate to contribute and implement a fix 💝
+
+:::
+
+### I cannot activate because
+
+#### 'Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼' during manual activation
+
+When activating a license on [license.unity3d.com](https://license.unity3d.com/), you may encounter
+the following error message:
+
+> Non-whitespace before first tag. Line: 0 Column: 1 Char: 㼼
+
+Here's Unity's workaround:
+
+> Unfortunately, this is a known issue our end. The relevant team are in the process of working on a
+> fix as we speak, in the meantime there is a workaround. Try renaming the `alf` file with a command
+> to convert characters on it with a `iconv` command.
+
+##### Solution
+
+```bash
+version=v2020.1.12f1 # update this according to your version and file name
+iconv -f UTF-8 -t utf-16BE Unity_${version}.alf > Unity_${version}.utf16be.alf
+```
+
+#### I use my Google account to login to Unity, how do I get my username and password?
+
+If you are using google account you can have some issue with activating unity. You just need to go
+on the unity website, settings, security and change your password. Then use your Google email and
+your new password, and it will work just fine ;)
+
+[Source](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/149)
+
+#### The digital signature is invalid.
+
+##### Error
+
+```plaintext
+Error: Code 400 while processing request (status: Cannot save ULF license file: Validation failed. The digital signature is invalid.)
+```
+
+##### Solution
+
+Depending on the CI/CD system, storing _multi-line_ file content into an environment variable can
+break the encoding. You can store the license as a base64 encoded string. Then during the pipeline
+execution, you decode it and write it to the right location afterward. For example, here is a fixed
+confirmed to be working on OneDev CI:
+
+```bash
+/bin/echo $UNITY_LICENSE > /opt/project/Unity_v2022.x.base64 \
+  && base64 -d /opt/project/Unity_v2022.x.base64 > /opt/project/Unity_v2022.x.ulf
+```
+
+Reference:
+[game-ci/documentation #300 Unity personal activation fails on OneDev CI](https://github.com/game-ci/documentation/issues/300)
+
+## My workflow isn't working because
+
+### I get `manifest for unityci/editor:2021.3.0f1-android-0 not found: manifest unknown: manifest unknown`
+
+This means the docker image trying to download from docker hub is not found.
+
+#### Solution
+
+To know which docker images are available, you can visit the list of [all supported Unity versions
+here][unity-docker-versions].
+
+In this particular case, it is also important to look for the last part of the docker image which is
+the version for GameCI. `-0` means it is the latest `v0.x.x` version of the docker images. `v0.x.x`
+version is out of date as we moved to Version 1 as shown on
+[github.com/game-ci/docker/releases](https://github.com/game-ci/docker/releases). We are not
+publishing images for `v0.x.x` anymore.
+
+The correct image should be `unityci/editor:2021.3.0f1-android-1`.
+
+You can also test this locally:
+
+```bash
+# wrong
+docker pull unityci/editor:2021.3.0f1-android-0
+# Error response from daemon: manifest for unityci/editor:2021.3.0f1-android-0 not found: manifest unknown: manifest unknown
+
+# right
+docker pull unityci/editor:2021.3.0f1-android-1
+# 2021.3.0f1-android-1: Pulling from unityci/editor
+# [...]
+```
+
+#### Github Actions
+
+You need to make sure you are using Github Actions v2, check for the version of your actions in your
+`.github/workflows/*.yml` files.
+
+```diff
+- uses: game-ci/unity-builder@v1
++ uses: game-ci/unity-builder@v2
+```
+
+#### Gitlab CI
+
+Set the `IMAGE_VERSION` to 1 in
+[`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml#L12)
+
+### Scripts have compiler errors.
+
+#### Error
+
+```plaintext
+Scripts have compiler errors.
+(Filename: ./Runtime/Utilities/Argv.cpp Line: 361)
+
+Aborting batchmode due to failure:
+Scripts have compiler errors.
+```
+
+#### Solution
+
+Likely you have a missing script or assembly.
+
+Make sure your branch is clean and all files are indeed present:
+
+- No accidentally ignored files (i.e. ignored `.tmp` might match text mesh pro);
+- No tracked files that you expected to be ignored;
+- All packages listed;
+- No pre-build steps that change your project differently from how that happens locally;
+
+A good way to verify this, is to (locally) clone the Unity project in a new folder and run the build
+from there.
+
+### Branch is dirty
+
+#### Error
+
+```plaintext
+Branch is dirty. Refusing to base semantic version on uncommitted changes
+```
+
+This usually happens with GitHub actions when using unity-builder. A dirty branch means that you
+have uncommitted changes in your project. When you see this error in the logs of your pipeline, that
+means some files of your project are being modified after the build. This is not desirable as it
+could lead to unexpected results.
+
+#### Solution
+
+There are multiple options to solve this.
+
+1. Ignore the dirty branch and continue the build. We have a parameter for that:
+   [`allowDirtyBuild`](/docs/github/builder#allowdirtybuild) but ⚠️ it is not recommended.
+2. Find the files that are being modified and fix the source of the problem. **This is the
+   recommended solution**.
+
+   The log should list the files that are considered modified on the now dirty branch. First, double
+   check that these are not temporary files created by the runners themselves (see the
+   [Preparing the Project](/docs/getting-started/#preparing-the-project) section regarding
+   `.gitignore`). If the files are instead project related, locate the modified files and figure out
+   why they are being modified. Sometimes, it's because a `.meta` file gets modified by unity when
+   you open the project. If this is the case you can try this:
+
+   1. Clone your project in a new folder
+   2. Open your project with unity
+   3. Build your project
+   4. Run `git status` and see if files were modified. If so, commit them.
+
+   You can also try to download the modified files from the pipeline by exposing them as artifact
+   and looking at the diff yourself.
+
+   Something else you can try is moving and committing the file(s) to see if it makes a difference.
+
+### Gradle error
+
+#### Error
+
+```plaintext
+Error: 3.690 [ERROR] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] Command execution: started DaemonCommandExecution[command = Build{id=69dbd5b3-10f2-488e-8640-977da68733f9, currentDir=/github/workspace/Temp/gradleOut/launcher}, connection = DefaultDaemonConnection: socket connection from /127.0.0.1:33657 to /127.0.0.1:43866] after 0.0 minutes of idle
+```
+
+#### Solution
+
+There are 2 possible solutions:
+
+- Remove emojis from all environment variables (and thus workflow files), or
+- Upgrade your project and workflow to use Unity editor version 2020.2 or later.
+
+## General tips
+
+These are tips that are usually applicable to problems you may encounter while working with a game
+engine and CI/CD:
+
+- Try to isolate your problem as much as possible
+- Try with a blank project, this will help you to isolate your problem. Is it a something with your
+  project specifically or is it with Unity or GameCI?
+- Try to search for error keywords in your message such as `error`, `failed`, `exception`, etc.
+- Read the error message closely to understand what's going on.
+
+## Still having problems?
+
+You can **search for existing issues**:
+
+- [GitHub Actions: game-ci/unity-actions](https://github.com/game-ci/unity-actions/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
+- [Documentation: game-ci/documentation](https://github.com/game-ci/documentation/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
+- [gitlab-ci: game-ci/unity3d-gitlab-ci-example](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues)
+
+You can **open an issue** on one of the related projects:
+
+- [GitHub Actions: game-ci/unity-actions](https://github.com/game-ci/unity-actions/issues/new/choose)
+- [Documentation: game-ci/documentation](https://github.com/game-ci/documentation/issues/new/choose)
+- [gitlab-ci: game-ci/unity3d-gitlab-ci-example](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/new)
+
+You can also visit us on [discord][discord]. _Discord also has a search feature_. 😉
+
+[discord]: https://game.ci/discord
+[unity-docker-versions]: /docs/docker/versions
