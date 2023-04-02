@@ -488,7 +488,7 @@ keys for your project and then add to the `webfactory/ssh-agent`
 - Add private_key to Github secrets of the project that you want to build
   (https://github.com/USER/PROJECT/settings/secrets/actions) (key name should be SSH_PRIVATE_KEY )
 - Add github to ssh known hosts : 
-```yml
+```yaml
 name: "Add GitHub to the SSH known hosts file"
 run: |
   mkdir -p -m 0700 /home/runner/.ssh
