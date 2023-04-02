@@ -487,6 +487,14 @@ keys for your project and then add to the `webfactory/ssh-agent`
   https://github.com/USER/PROJECT/settings/keys)
 - Add private_key to Github secrets of the project that you want to build
   (https://github.com/USER/PROJECT/settings/secrets/actions) (key name should be SSH_PRIVATE_KEY )
+- Add github to ssh known hosts : 
+```yml
+name: "Add GitHub to the SSH known hosts file"
+run: |
+  mkdir -p -m 0700 /home/runner/.ssh
+  curl --silent https://api.github.com/meta  | jq --raw-output '"github.com "+.ssh_keys[]' >> /home/runner/.ssh/known_hosts
+  chmod 600 /home/runner/.ssh/known_hosts
+```
 - Finally, add `webfactory/ssh-agent` to your Github action :
 
 ```yaml
@@ -494,7 +502,7 @@ name: Accessing private repos
 runs-on: ubuntu-latest
 steps:
   - uses: actions/checkout@v2
-  - uses: webfactory/ssh-agent@v0.5.2
+  - uses: webfactory/ssh-agent@v0.8.0
     with:
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
   - uses: game-ci/unity-builder@v2
