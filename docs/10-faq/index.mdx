@@ -149,6 +149,44 @@ Most likely yes. We have automated pipelines watching every 15 minutes for new r
 Jobs are then created on github to build and push the docker images to docker hub. You can find the
 status of the images on [the supported Unity versions page][unity-docker-versions].
 
+## How long does it take for a new version of Unity to become available as a Docker image?
+
+We have automated pipelines that check for new releases of Unity **every 15 minutes**. Once a new
+release is detected, a job is created on GitHub to build and publish a new Docker image to Docker
+Hub. When the version is available on the Unity's download page, it usually takes a few hours for
+the new version to become available on Docker Hub. _However, the exact time it takes for a new
+version to become available as a Docker image can vary depending on several factors, such as the
+time it takes to build the images, the availability of the new version on the Unity download page._
+
+We have a discord channel which you can watch to be notified of new versions detected by our bot
+here: [#new-versions](https://discord.com/channels/710946343828455455/731947345478156391). You will
+need to join our [discord server](https://game.ci/discord) first.
+
+## How does the Docker image publication process work?
+
+The Docker image publication process involves several steps. First, we detect new releases of Unity
+based on [Unity's Archive page](https://unity.com/releases/editor/archive) and we trigger a build
+job on GitHub. This happens in the
+[GameCI Versioning Backend](https://github.com/game-ci/versioning-backend) project. Next, the build
+job uses Unity Hub to install Unity and the required packages and builds new Docker images for each
+supported target platforms. This happens in the
+[Docker images for Unity](https://github.com/game-ci/docker) project. The new images are tagged and
+pushed to Docker Hub, where they are publicly available for download.
+
+## Where is the source of truth for the process of publishing Docker images?
+
+The source of truth for the process of publishing Docker images is
+[Unity's Archive page](https://unity.com/releases/editor/archive). We use automated scripts to
+detect new releases on this page and trigger the build process for new Docker images. However, Unity
+may occasionally release updates that are not immediately available on their download page, which
+can cause a delay in the availability of new Docker images.
+
+If you are currently using a recent unity version from Unity Hub that is not yet available on the
+[Unity's Archive page](https://unity.com/releases/editor/archive), you can usually roll back to
+previous version which is most likely already available, or you can wait a few hours until Unity
+publishes the new version on its download page and wait for our pipelines to finish building and
+publishing the images.
+
 ## How does Unity activation work?
 
 ### The `machine-id`
@@ -184,22 +222,6 @@ Yes
 
 Yes, but have a look at
 [Limitations: Concurrent builds on Windows and MacOS](/docs/docker/docker-images#concurrent-builds-on-windows-and-macos)
-
-## How long does it take for a new version of Unity to become available as a Docker image?
-
-We have automated pipelines that check for new releases of Unity every 15 minutes. Once a new release is detected, a job is created on GitHub to build and publish a new Docker image to Docker Hub. When the version is available on the Unity's download page, it usually takes a few hours for the new version to become available on Docker Hub. However, the exact time it takes for a new version to become available as a Docker image can vary depending on several factors, such as the time it takes to build the images, the availability of the new version on the Unity download page.
-
-We have a discord channel which you can watch to be notified of new versions detected by our bot here: [#new-versions](https://discord.com/channels/710946343828455455/731947345478156391). You will need to join our [discord server](https://game.ci/discord) first.
-
-## How does the Docker image publication process work?
-
-The Docker image publication process involves several steps. First, we detect a new release of Unity based on [Unity's Archive page](https://unity.com/releases/editor/archive) and we trigger a build job on GitHub. Next, the build job uses Unity Hub to install Unity and the required packages and builds new Docker images for each supported target platforms. The new image is then tagged and pushed to Docker Hub, where it is publicly available for download.
-
-## Where is the source of truth for the process of publishing Docker images?
-
-The source of truth for the process of publishing Docker images is [Unity's Archive page](https://unity.com/releases/editor/archive). We use automated scripts to detect new releases on this page and trigger the build process for new Docker images. However, Unity may occasionally release updates that are not immediately available on their download page, which can cause a delay in the availability of new Docker images.
-
-If you are currently using a recent unity version from Unity Hub that is not yet available on the [Unity's Archive page](https://unity.com/releases/editor/archive), you can usually roll back to previous version which is most likely already available, or you can wait a few hours until Unity publishes the new version on its download page and wait for our pipelines to finish building and publishing the images.
 
 ## How much does it cost to use GameCI for Unity?
 
