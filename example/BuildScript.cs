@@ -62,7 +62,7 @@ namespace UnityBuilderAction
 
                         PlayerSettings.Android.targetSdkVersion = targetSdkVersion;
                     }
-                    
+
                     break;
                 }
                 case BuildTarget.StandaloneOSX:
@@ -92,6 +92,7 @@ namespace UnityBuilderAction
 
             if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
             {
+                Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
                 EditorApplication.Exit(121);
             }
 
@@ -151,6 +152,13 @@ namespace UnityBuilderAction
 
         private static void Build(BuildTarget buildTarget, string filePath)
         {
+#if UNITY_2021_2_OR_NEWER
+            // Determine subtarget
+            StandaloneBuildSubtarget buildSubtarget;
+            if (!options.TryGetValue("standaloneBuildSubtarget", out var subtargetValue) || !Enum.TryParse(subtargetValue, out buildSubtarget)) {
+                buildSubtarget = default;
+            }
+#endif
             string[] scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
             var buildPlayerOptions = new BuildPlayerOptions
             {
@@ -159,6 +167,9 @@ namespace UnityBuilderAction
 //                targetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget),
                 locationPathName = filePath,
 //                options = UnityEditor.BuildOptions.Development
+#if UNITY_2021_2_OR_NEWER
+                subtarget = (int) buildSubtarget
+#endif
             };
 
             BuildSummary buildSummary = BuildPipeline.BuildPlayer(buildPlayerOptions).summary;
