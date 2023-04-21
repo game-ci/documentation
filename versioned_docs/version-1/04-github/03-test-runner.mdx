@@ -134,7 +134,9 @@ _**required:** `false`_ _**default:** `auto`_
 
 The type of tests to be run by the test runner.
 
-Options are: "all", "playmode", "editmode"
+Options are: "all", "playmode", "editmode", "standalone"
+
+Note: "all" only runs "playmode" and "editmode". You must explicitly specify "standalone" for it to run.
 
 _**required:** `false`_ _**default:** `all`_
 
@@ -212,6 +214,7 @@ jobs:
         testMode:
           - playmode
           - editmode
+          - standalone
     steps:
       - uses: actions/checkout@v2
         with:
