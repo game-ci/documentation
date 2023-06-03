@@ -1,50 +1,88 @@
-# GameCI
+<p align="center">
+  <img height=200px src="static/assets/images/logo-cropped.png">
+<p>
 
-Documentation for open source GameCI projects. You can find the `.md` files inside the
-[docs](./docs) folder. The live version is available on [game.ci](https://game.ci). This website is
-built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+<p align="center">
+  <img src="https://img.shields.io/github/license/game-ci/documentation.svg">
+  <img src="https://img.shields.io/github/stars/game-ci/documentation.svg">
+  <img src="https://img.shields.io/github/last-commit/game-ci/documentation.svg">
+<p>
+  
+<br>
 
-### Installation
+<h2 align="center"> Welcome </h2>
+<p align="center">
+  Welcome to the GameCI documentation repo! Here you will find the documentation assests for GameCI and it's related open-source projects. This documentation is also availble on our website <a  href="https://game.ci">game.ci</a> 
+  <br>
+</p>
 
-```bash
-yarn
-```
+<br>
 
-### Local Development
+<h2 align="center"> Markdown Files </h2>
+<p align="center">
+    <a href="docs/02-getting-started">Getting Started with GameCI</a> <br>
+    <a href="docs/03-github">Github Actions</a> <br>
+    <a href="docs/05-gitlab">Gitlab Pipelines</a> <br>
+    <a href="docs/11-circleci">CircleCi</a> <br>  
+    <a href="docs/08-docker">Docker</a> <br>
+    <a href="docs/03-github-cloud-runner">Github Cloud Runner</a> <br>
+    <a href="docs/09-troubleshooting">Troubleshooting</a> <br>
+    <a href="docs/10-faq">FAQ</a> <br>  
+</p>    
 
-```bash
-yarn start
-```
+<br>
 
-This command starts a local development server and opens up a browser window. Most changes are
-reflected live without having to restart the server.
+<h2 align="center"> Building the Docs Site </h2>
 
-### Build
+The documentation website is built using the static website generator [Docusaurus 2](https://docusaurus.io/) and requires Node 16. For instructions on how to install Node 16 on Ubuntu/Debian, see [How to install Node.js 16 on Ubuntu 20.04 LTS](https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/) by Josh Sherman.
 
-```bash
-yarn build
-```
+1. Install project dependancies
 
-This command generates static content into the `build` directory and can be served using any static
+    ```bash
+    yarn install
+    ```
+
+2. Start a local develpment server
+  
+    This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+
+    ```bash
+    yarn start
+    ```
+
+3. Create a build
+  
+    This command generates static content into the `build` directory and can be served using any static
 contents hosting service.
+  
+    ```bash
+    yarn build
+    ```
 
-## Community
+___
+<br>
 
-Feel free to join us on [![Discord](static/assets/readme/Discord.svg)](https://game.ci/discord) and
-engage with the community.
+<h2 align="center"> Meet the Community </h2>
 
-## Support us
+<p align="center"> Join us on <a href="assets/readme/Discord.svg)](https://game.ci/discord">Discord</a> and engage
+with the growing community of engineers, artists, hobbyists, and professionals using GameCI to build, test, and publish their projects everyday.<p>
 
-GameCI is free for everyone forever.
+<br>
 
-You can support us at [OpenCollective](https://opencollective.com/game-ci).
+<h2 align="center"> Support the Team </h2>
+<p align="center"> GameCI is free for everyone forever. You can support the peolpe who make GameCI pssible on <a href="https://opencollective.com/game-ci">OpenCollective</a> <p>
 
-## Licence
-
-This repository is [MIT](./LICENSE) licensed.
-
+<br>
+<h2 align="center"> Licence </h2>
+<p align="center">  This repository is <a href="./LICENSE">MIT<a> licensed. 
 This includes all contributions from the community.
+<p>
 
-## Sponsors
+<br>
 
-[![CircleCI](static/assets/readme/CircleCI.svg)](https://circleci.com?utm_source=game-ci)
+<h2 align="center"> Sponsors </h2>
+<p align="center"> 
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" href="https://vercel.com?utm_source=game-ci">
+<p>
+  
+<br>
