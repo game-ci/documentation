@@ -13,7 +13,6 @@
 <h2 align="center"> Welcome </h2>
 <p align="center">
   Welcome to the GameCI documentation repo! Here you will find the documentation assests for GameCI and it's related open-source projects. This documentation is also availble on our website <a  href="https://game.ci">game.ci</a> 
-  <br>
 </p>
 
 <br>
