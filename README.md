@@ -35,20 +35,26 @@
 
 <br>
 
-<h2 align="center"> Building the Docs Site </h2>
+<h2 align="center"> Building the Docs Site with <a href="https://docusaurus.io/">Docusaurus 2.</a></h2>
+
+<br>
 
 <p align="center">
-  The docs site is created using the static website generator <a href="https://docusaurus.io/">Docusaurus 2.</a> <br>
+  <img height=150px src="static/img/undraw_docusaurus_react.svg"> <br>
 </p>
 
-- This project has a hard dependancy on Node16. You will need to make sure that you have the proper version of node installed to avoid errors.
+### Pre-reqs
+
+1. This project has a hard dependancy on Node16. You will need to make sure that you have the proper version of node installed to avoid errors.
   
     - <a href="https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/">Install Node16 on Ubuntu</a>
     - <a href="https://apple.stackexchange.com/a/207883">Install Node16 using brew</a>
 
-- This project relies on yarn for package management. You will need to install yarn in order to build and test the documentation site.
+2. This project relies on yarn for package management. You will need to install yarn in order to build and test the documentation site.
    
-   - <a href="https://classic.yarnpkg.com/lang/en/docs/install"> Official yarn installation docs.</a>
+    - <a href="https://classic.yarnpkg.com/lang/en/docs/install"> Official yarn installation docs.</a>
+
+### Usage
 
 1. Install project dependancies
 
