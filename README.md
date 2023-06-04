@@ -11,39 +11,30 @@
   <img src="https://img.shields.io/github/stars/game-ci/documentation.svg">
   <img src="https://img.shields.io/github/last-commit/game-ci/documentation.svg">
 <p>
+
+<br>
+ 
+## Welcome 
+
+Welcome to the GameCI documentation repo! Here you will find the documentation assests for GameCI and it's related open-source projects. The live documentation site availble at <a  href="https://game.ci">game.ci</a>.
   
-<br>
-
-<h2 align="center"> Welcome </h2>
-<p align="center">
-  Welcome to the GameCI documentation repo! Here you will find the documentation assests for GameCI and it's related open-source projects. This documentation is also availble on our website <a  href="https://game.ci">game.ci</a> 
-</p>
-
-<br>
-
-<h2 align="center"> Markdown Files </h2>
-<p align="center">
-    <a href="docs/02-getting-started">Getting Started with GameCI</a> <br>
-    <a href="docs/03-github">Github Actions</a> <br>
-    <a href="docs/05-gitlab">Gitlab Pipelines</a> <br>
-    <a href="docs/11-circleci">CircleCi</a> <br>  
-    <a href="docs/08-docker">Docker</a> <br>
-    <a href="docs/03-github-cloud-runner">Github Cloud Runner</a> <br>
-    <a href="docs/09-troubleshooting">Troubleshooting</a> <br>
-    <a href="docs/10-faq">FAQ</a> <br>  
-</p>    
+You may also view the markdown files directly at the following links:
+  - <a href="docs/02-getting-started">Getting Started with GameCI</a> <br>
+  - <a href="docs/03-github">Github Actions</a> <br>
+  - <a href="docs/05-gitlab">Gitlab Pipelines</a> <br>
+  - <a href="docs/11-circleci">CircleCi</a> <br>  
+  - <a href="docs/08-docker">Docker</a> <br>
+  - <a href="docs/03-github-cloud-runner">Github Cloud Runner</a> <br>
+  - <a href="docs/09-troubleshooting">Troubleshooting</a> <br>
+  - <a href="docs/10-faq">FAQ</a> <br>  
 
 <br>
 
-<h2 align="center"> Building the Docs Site with <a href="https://docusaurus.io/">Docusaurus 2.</a></h2>
-
-<br>
-
-<p align="center">
-  <img height=150px src="static/img/undraw_docusaurus_react.svg"> <br>
-</p>
-
-### Pre-reqs
+## Building the Docs Site 
+  
+  Built with <a href="https://docusaurus.io/">Docusaurus 2.</a>
+  
+*Pre-reqs*
 
 1. This project has a hard dependancy on Node16. You will need to make sure that you have the proper version of node installed to avoid errors.
   
@@ -54,7 +45,7 @@
    
     - <a href="https://classic.yarnpkg.com/lang/en/docs/install"> Official yarn installation docs.</a>
 
-### Usage
+*Usage*
 
 1. Install project dependancies
 
@@ -79,31 +70,28 @@ contents hosting service.
     yarn build
     ```
 
-___
 <br>
 
-<h2 align="center"> Meet the Community </h2>
+## Meet the Community
 
-<p align="center"> Join us on <a href="assets/readme/Discord.svg)](https://game.ci/discord">Discord</a> and engage
-with the growing community of engineers, artists, hobbyists, and professionals using GameCI to build, test, and publish their projects everyday.<p>
-
-<br>
-
-<h2 align="center"> Support the Team </h2>
-<p align="center"> GameCI is free for everyone forever. You can support the peolpe who make GameCI pssible on <a href="https://opencollective.com/game-ci">OpenCollective</a> <p>
+Join us on <a href="assets/readme/Discord.svg)](https://game.ci/discord">Discord</a> and engage
+with the growing community of engineers, artists, hobbyists, and professionals using GameCI to build, test, and publish their projects everyday.
   
 <br>
   
-<h2 align="center"> Licence </h2>
-<p align="center">  This repository is <a href="./LICENSE">MIT<a> licensed. 
-This includes all contributions from the community.
-<p>
+## Support the Team
+
+GameCI is free for everyone forever. You can support the peolpe who make GameCI pssible on <a href="https://opencollective.com/game-ci">OpenCollective</a>
 
 <br>
 
-<h2 align="center"> Sponsors </h2>
-<p align="center"> 
-  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" href="https://vercel.com?utm_source=game-ci">
-<p>
+## Licence
+
+This repository is <a href="./LICENSE">MIT<a> licensed. This includes all contributions from the community.
+
+<br>
+
+## Sponsors
+
+<img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" href="https://vercel.com?utm_source=game-ci">
   
-<br>
