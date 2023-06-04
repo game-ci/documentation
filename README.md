@@ -3,6 +3,10 @@
 <p>
 
 <p align="center">
+  <a href="https://discord.com/invite/WyPN5r9">
+    <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white"></a>
+  <a href="https://opencollective.com/game-ci">
+    <img src="https://img.shields.io/badge/OpenCollective-1F87FF?style=for-the-badge&logo=OpenCollective&logoColor=white"></a> <br>
   <img src="https://img.shields.io/github/license/game-ci/documentation.svg">
   <img src="https://img.shields.io/github/stars/game-ci/documentation.svg">
   <img src="https://img.shields.io/github/last-commit/game-ci/documentation.svg">
@@ -33,7 +37,13 @@
 
 <h2 align="center"> Building the Docs Site </h2>
 
-The documentation website is built using the static website generator [Docusaurus 2](https://docusaurus.io/) and requires Node 16. For instructions on how to install Node 16 on Ubuntu/Debian, see [How to install Node.js 16 on Ubuntu 20.04 LTS](https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/) by Josh Sherman.
+<p align="center">
+  Created using <a href="https://docusaurus.io/">Docusaurus 2</a> <br>
+  Requires Node 16. <br>
+  <a href="https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/">How to install Node.js 16 on Ubuntu 20.04 LTS by Josh Sherman.</a>
+</p>
+
+<br>
 
 1. Install project dependancies
 
@@ -70,8 +80,9 @@ with the growing community of engineers, artists, hobbyists, and professionals u
 
 <h2 align="center"> Support the Team </h2>
 <p align="center"> GameCI is free for everyone forever. You can support the peolpe who make GameCI pssible on <a href="https://opencollective.com/game-ci">OpenCollective</a> <p>
-
+  
 <br>
+  
 <h2 align="center"> Licence </h2>
 <p align="center">  This repository is <a href="./LICENSE">MIT<a> licensed. 
 This includes all contributions from the community.
