@@ -28,24 +28,19 @@ You may also view the markdown files directly at the following links:
   - <a href="docs/09-troubleshooting">Troubleshooting</a> <br>
   - <a href="docs/10-faq">FAQ</a> <br>  
 
-<br>
 
 ## Building the Docs Site 
   
-  Built with <a href="https://docusaurus.io/">Docusaurus 2.</a>
+Built with <a href="https://docusaurus.io/">Docusaurus 2.</a>
   
-*Pre-reqs*
-
-1. This project has a hard dependancy on Node16. You will need to make sure that you have the proper version of node installed to avoid errors.
+This project has a hard dependancy on Node16. You will need to make sure that you have the proper version of node installed to avoid errors.
   
     - <a href="https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/">Install Node16 on Ubuntu</a>
     - <a href="https://apple.stackexchange.com/a/207883">Install Node16 using brew</a>
 
-2. This project relies on yarn for package management. You will need to install yarn in order to build and test the documentation site.
+This project relies on yarn for package management. You will need to install yarn in order to build and test the documentation site.
    
     - <a href="https://classic.yarnpkg.com/lang/en/docs/install"> Official yarn installation docs.</a>
-
-*Usage*
 
 1. Install project dependancies
 
@@ -70,26 +65,22 @@ contents hosting service.
     yarn build
     ```
 
-<br>
 
 ## Meet the Community
 
 Join us on <a href="assets/readme/Discord.svg)](https://game.ci/discord">Discord</a> and engage
 with the growing community of engineers, artists, hobbyists, and professionals using GameCI to build, test, and publish their projects everyday.
   
-<br>
   
 ## Support the Team
 
 GameCI is free for everyone forever. You can support the peolpe who make GameCI pssible on <a href="https://opencollective.com/game-ci">OpenCollective</a>
 
-<br>
 
 ## Licence
 
 This repository is <a href="./LICENSE">MIT<a> licensed. This includes all contributions from the community.
 
-<br>
 
 ## Sponsors
 
