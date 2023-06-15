@@ -35,12 +35,12 @@ Built with <a href="https://docusaurus.io/">Docusaurus 2.</a>
   
 This project has a hard dependancy on Node16. You will need to make sure that you have the proper version of node installed to avoid errors.
   
-    - <a href="https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/">Install Node16 on Ubuntu</a>
-    - <a href="https://apple.stackexchange.com/a/207883">Install Node16 using brew</a>
+   - <a href="https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/">Install Node16 on Ubuntu</a>
+   - <a href="https://apple.stackexchange.com/a/207883">Install Node16 using brew</a>
 
 This project relies on yarn for package management. You will need to install yarn in order to build and test the documentation site.
    
-    - <a href="https://classic.yarnpkg.com/lang/en/docs/install"> Official yarn installation docs.</a>
+   - <a href="https://classic.yarnpkg.com/lang/en/docs/install"> Official yarn installation docs.</a>
 
 1. Install project dependancies
 
