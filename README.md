@@ -78,7 +78,7 @@ GameCI is free for everyone forever. You can support the peolpe who make GameCI 
 
 ## Licence
 
-This repository is <a href="./LICENSE">MIT<a> licensed. This includes all contributions from the community.
+This repository is [MIT](./LICENSE) licensed. This includes all contributions from the community.
 
 
 ## Sponsors
