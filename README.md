@@ -19,28 +19,28 @@
 Welcome to the GameCI documentation repo! Here you will find the documentation assests for GameCI and it's related open-source projects. The live documentation site availble at <a  href="https://game.ci">game.ci</a>.
   
 You may also view the markdown files directly at the following links:
-  - <a href="docs/02-getting-started">Getting Started with GameCI</a> <br>
-  - <a href="docs/03-github">Github Actions</a> <br>
-  - <a href="docs/05-gitlab">Gitlab Pipelines</a> <br>
-  - <a href="docs/11-circleci">CircleCi</a> <br>  
-  - <a href="docs/08-docker">Docker</a> <br>
-  - <a href="docs/03-github-cloud-runner">Github Cloud Runner</a> <br>
-  - <a href="docs/09-troubleshooting">Troubleshooting</a> <br>
-  - <a href="docs/10-faq">FAQ</a> <br>  
+  - [Getting Started with GameCI](docs/02-getting-started)
+  - [Github Actions](docs/03-github)
+  - [Gitlab Pipelines](docs/05-gitlab)
+  - [CircleCi<](docs/11-circleci)
+  - [Docker](docs/08-docker)
+  - [Github Cloud Runner](docs/03-github-cloud-runner)
+  - [Troubleshooting](docs/09-troubleshooting)
+  - [FAQ](docs/10-faq)
 
 
 ## Building the Docs Site 
   
-Built with <a href="https://docusaurus.io/">Docusaurus 2.</a>
+Built with [Docusaurus 2.](https://docusaurus.io/)
   
 This project has a hard dependancy on Node16. You will need to make sure that you have the proper version of node installed to avoid errors.
   
-   - <a href="https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/">Install Node16 on Ubuntu</a>
-   - <a href="https://apple.stackexchange.com/a/207883">Install Node16 using brew</a>
+   - [Install Node16 on Ubuntu](https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/)
+   - [Install Node16 using brew](https://apple.stackexchange.com/a/207883)
 
 This project relies on yarn for package management. You will need to install yarn in order to build and test the documentation site.
    
-   - <a href="https://classic.yarnpkg.com/lang/en/docs/install"> Official yarn installation docs.</a>
+   - [Official yarn installation docs.](https://classic.yarnpkg.com/lang/en/docs/install)
 
 1. Install project dependancies
 
@@ -68,13 +68,12 @@ contents hosting service.
 
 ## Meet the Community
 
-Join us on <a href="assets/readme/Discord.svg)](https://game.ci/discord">Discord</a> and engage
-with the growing community of engineers, artists, hobbyists, and professionals using GameCI to build, test, and publish their projects everyday.
+Join us on [Discord](https://game.ci/discord) and engage with the growing community of engineers, artists, hobbyists, and professionals using GameCI to build, test, and publish their projects everyday.
   
   
 ## Support the Team
 
-GameCI is free for everyone forever. You can support the peolpe who make GameCI pssible on <a href="https://opencollective.com/game-ci">OpenCollective</a>
+GameCI is free for everyone forever. You can support the peolpe who make GameCI pssible on [OpenCollective](https://opencollective.com/game-ci)
 
 
 ## Licence
