@@ -80,8 +80,13 @@ The test runner offers basic support for testing Unity packages, with [a few cav
 
 ### Additional setup
 
-After performing [Basic setup](#basic-setup), two extra steps are required for testing Unity
+After performing [Basic setup](#basic-setup), three extra steps are required for testing Unity
 packages.
+
+#### Setting packageMode
+
+To indicate that the test runner is being run for a Unity package rather than a Unity project, set
+the [`packageMode`](#packagemode) configuration option to `true`.
 
 #### Choosing a package directory
 
@@ -237,13 +242,15 @@ Below options can be specified under `with:` for the `unity-test-runner` action.
 #### unityVersion
 
 Version of Unity to use for testing the project. Use "auto" to get from your
-ProjectSettings/ProjectVersion.txt
+ProjectSettings/ProjectVersion.txt. ⚠️ If testing a Unity Package, this field is required and cannot
+be set to "auto".
 
 _**required:** `false`_ _**default:** `auto`_
 
 #### customImage
 
-Specific docker image that should be used for testing the project.
+Specific docker image that should be used for testing the project. If packageMode is true, this
+image must have jq installed.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v2
@@ -255,8 +262,8 @@ _**required:** `false`_ _**default:** `""`_
 
 #### projectPath
 
-Specify the path to your Unity project to be tested. The path should be relative to the root of your
-project.
+Specify the path to your Unity project or package to be tested. The path should be relative to the
+root of your project.
 
 _**required:** `false`_ _**default:** `<your project root>`_
 
@@ -315,6 +322,9 @@ definition to manage scripts, see Unity's documentation on
 [Assembly definitions](https://docs.unity3d.com/2022.2/Documentation/Manual/ScriptCompilationAssemblyDefinitionFiles.html)
 for how to create and manage assembly definitions.
 
+To get coverage when testing a package, make sure you pass assemblies from the package you want
+covered to the `assemblyFilters` option.
+
 _**required:** `false`_ _**default:**
 `generateAdditionalMetrics;generateHtmlReport;generateBadgeReport`_
 
@@ -368,6 +378,19 @@ It may be useful to customize the check name if, for example, you have a job mat
 unity versions.
 
 _**required:** `false`_ _**default:** `Test Results`_
+
+#### packageMode
+
+Whether the tests are being run for a Unity package instead of a Unity project.
+
+If true, the action can only be run on Linux runners, and any custom docker image passed to this
+action must have `jq` installed.
+
+NOTE: may not work properly for packages with dependencies outside of the Unity Registry.
+
+See [Testing Unity packages](#testing-unity-packages) for more information.
+
+_**required:** `false`_ _**default:** `false`_
 
 ## Complete example
 
@@ -462,7 +485,7 @@ jobs:
           artifactsPath: ${{ matrix.testMode }}-artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
-          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*,-*Tests*'
+          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
       - uses: actions/upload-artifact@v2
         if: always()
         with:
