@@ -65,7 +65,7 @@ and test the documentation site.
     served using any static contents hosting service.
 
     ```bash
-    yarn build 
+    yarn build
     ```
 
 ## Meet the Community
