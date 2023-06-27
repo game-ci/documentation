@@ -76,7 +76,7 @@ That is all you need to test your project.
 
 ## Testing Unity packages
 
-The test runner offers basic support for testing Unity packages, with [a few caveats](#Caveats).
+The test runner offers basic support for testing Unity packages, with [a few caveats](#caveats).
 
 ### Additional setup
 
@@ -112,7 +112,8 @@ potential workarounds.
 Make sure that you explicitly pass the [`unityVersion`](#unityversion) argument, as it's necessary
 for the test runner to test Unity packages.
 
-See the [GitHub Issue](https://github.com/game-ci/unity-test-runner/issues/227) for more details.
+See the [GitHub Issue](https://github.com/game-ci/unity-test-runner/issues/227) for more details on
+why this is necessary.
 
 ### Caveats
 
@@ -233,7 +234,7 @@ To do so, simply add Github Actions' official
 This simple addition could speed up your test runs by more than 50%.
 
 Note that caching in this manner only applies to testing Unity **Projects**, not Unity **Packages**
-(see [Caveats](#Caveats)).
+(see [Caveats](#caveats)).
 
 ## Configuration options
 
@@ -250,7 +251,7 @@ _**required:** `false`_ _**default:** `auto`_
 #### customImage
 
 Specific docker image that should be used for testing the project. If packageMode is true, this
-image must have jq installed.
+image must have [`jq`](https://jqlang.github.io/jq/) installed.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v2
@@ -384,7 +385,7 @@ _**required:** `false`_ _**default:** `Test Results`_
 Whether the tests are being run for a Unity package instead of a Unity project.
 
 If true, the action can only be run on Linux runners, and any custom docker image passed to this
-action must have `jq` installed.
+action must have [`jq`](https://jqlang.github.io/jq/) installed.
 
 NOTE: may not work properly for packages with dependencies outside of the Unity Registry.
 
@@ -466,7 +467,7 @@ jobs:
         projectPath:
           - test-package
         unityVersion:
-          - '2020.3.0f1' # must be included for package testing
+          - '2020.3.0f1' # some version must be included for package testing
         testMode:
           - playmode
           - editmode
