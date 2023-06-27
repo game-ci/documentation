@@ -88,6 +88,26 @@ packages.
 To indicate that the test runner is being run for a Unity package rather than a Unity project, set
 the [`packageMode`](#packagemode) configuration option to `true`.
 
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    packageMode: true
+```
+
+#### Passing a unityVersion
+
+Make sure that you explicitly pass the [`unityVersion`](#unityversion) argument, as it's necessary
+for the test runner to test Unity packages.
+
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    unityVersion: [your desired Unity version]
+```
+
+See the [GitHub Issue](https://github.com/game-ci/unity-test-runner/issues/227) for more details on
+why this is necessary.
+
 #### Choosing a package directory
 
 Make sure that the directory of the package being tested is **not** the same as the repository's
@@ -107,20 +127,12 @@ Workflow.
 See the [GitHub Issue](https://github.com/game-ci/unity-test-runner/issues/223) for more details and
 potential workarounds.
 
-#### Passing a unityVersion
-
-Make sure that you explicitly pass the [`unityVersion`](#unityversion) argument, as it's necessary
-for the test runner to test Unity packages.
-
-See the [GitHub Issue](https://github.com/game-ci/unity-test-runner/issues/227) for more details on
-why this is necessary.
-
 ### Caveats
 
 - As stated above, the action will fail if the directory of the package being tested is the same as
   the root directory of the repository (this issue is being tracked
   [here](https://github.com/game-ci/unity-test-runner/issues/223)).
-- As stated above, excluding `unityVersion` or passing a `unityVersion` configuration of 'auto' when
+- As stated above, excluding `unityVersion` or passing a `unityVersion` configuration of `auto` when
   testing a Unity Package will cause the test runner to fail. The Unity version must be manually set
   in the configuration options (this issue is being tracked
   [here](https://github.com/game-ci/unity-test-runner/issues/227)).
@@ -466,8 +478,7 @@ jobs:
       matrix:
         projectPath:
           - test-package
-        unityVersion:
-          - '2020.3.0f1' # some version must be included for package testing
+        unityVersion: '2020.3.0f1' # some version must be included for package testing
         testMode:
           - playmode
           - editmode
