@@ -144,10 +144,10 @@ potential workarounds.
   [here](https://github.com/game-ci/unity-test-runner/issues/225)).
 - There is currently no caching set up for the testing of Unity packages (this issue is being
   tracked [here](https://github.com/game-ci/unity-test-runner/issues/226)).
-- If using the `customImage` parameter to use a custom Docker image to test the package, that image
-  must have [`jq`](https://jqlang.github.io/jq/) installed, or else the test runner will error. It
-  is used to add the package being tested to a temporary Unity project's package manifest at
-  runtime.
+- If using the [`customImage`](#customImage) parameter to use a custom Docker image to test the
+  package, that image must have [`jq`](https://jqlang.github.io/jq/) installed, or else the test
+  runner will error. It is used to add the package being tested to a temporary Unity project's
+  package manifest at runtime.
 
 ## Viewing test results
 
