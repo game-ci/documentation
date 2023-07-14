@@ -66,13 +66,88 @@ floating license will be acquired before the tests run, and returned after.
 Example of use:
 
 ```yaml
-- uses: game-ci/unity-builder@v2
+- uses: game-ci/unity-test-runner@v2
   with:
-    targetPlatform: WebGL
+    projectPath: path/to/your/project
     unityLicensingServer: [url to your license server]
 ```
 
 That is all you need to test your project.
+
+## Testing Unity packages
+
+The test runner offers basic support for testing Unity packages, with [a few caveats](#caveats).
+
+### Additional setup
+
+After performing [Basic setup](#basic-setup), three extra steps are required for testing Unity
+packages.
+
+#### Setting packageMode
+
+To indicate that the test runner is being run for a Unity package rather than a Unity project, set
+the [`packageMode`](#packagemode) configuration option to `true`.
+
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    packageMode: true
+```
+
+#### Passing a unityVersion
+
+Make sure that you explicitly pass the [`unityVersion`](#unityversion) argument, as it's necessary
+for the test runner to test Unity packages.
+
+```yaml
+- uses: game-ci/unity-test-runner@v2
+  with:
+    unityVersion: [your desired Unity version]
+```
+
+See the [GitHub Issue](https://github.com/game-ci/unity-test-runner/issues/227) for more details on
+why this is necessary.
+
+#### Choosing a package directory
+
+Make sure that the directory of the package being tested is **not** the same as the repository's
+root directory. This condition will cause the test runner to hang and fail.
+
+Currently, the only known workarounds for this failure are these two options:
+
+1. Restructure your repository to place the package being tested in a subdirectory of the
+   repository's root directory.
+2. Somehow temporarily move the package being tested to a subdirectory of the repository's root
+   directory within the GitHub Workflow where you're using the test runner.
+
+Whichever workaround you choose, make sure that the [`projectPath`](#projectpath) corresponds to
+wherever the package being tested is located at the time the test runner is called in your GitHub
+Workflow.
+
+See the [GitHub Issue](https://github.com/game-ci/unity-test-runner/issues/223) for more details and
+potential workarounds.
+
+### Caveats
+
+- As stated above, the action will fail if the directory of the package being tested is the same as
+  the root directory of the repository (this issue is being tracked
+  [here](https://github.com/game-ci/unity-test-runner/issues/223)).
+- As stated above, excluding `unityVersion` or passing a `unityVersion` configuration of `auto` when
+  testing a Unity package will cause the test runner to fail. The Unity version must be manually set
+  in the configuration options (this issue is being tracked
+  [here](https://github.com/game-ci/unity-test-runner/issues/227)).
+- The test runner can only test packages on Linux runners - Windows runners are currently not
+  supported (this issue is being tracked
+  [here](https://github.com/game-ci/unity-test-runner/issues/224))
+- Packages with dependencies outside of the Unity Registry have not been tested an may or may not
+  work with the test runner (this issue is being tracked
+  [here](https://github.com/game-ci/unity-test-runner/issues/225)).
+- There is currently no caching set up for the testing of Unity packages (this issue is being
+  tracked [here](https://github.com/game-ci/unity-test-runner/issues/226)).
+- If using the [`customImage`](#customImage) parameter to use a custom Docker image to test the
+  package, that image must have [`jq`](https://jqlang.github.io/jq/) installed, or else the test
+  runner will error. It is used to add the package being tested to a temporary Unity project's
+  package manifest at runtime.
 
 ## Viewing test results
 
@@ -170,6 +245,9 @@ To do so, simply add Github Actions' official
 
 This simple addition could speed up your test runs by more than 50%.
 
+Note that caching in this manner only applies to testing Unity **Projects**, not Unity **Packages**
+(see [Caveats](#caveats)).
+
 ## Configuration options
 
 Below options can be specified under `with:` for the `unity-test-runner` action.
@@ -177,13 +255,15 @@ Below options can be specified under `with:` for the `unity-test-runner` action.
 #### unityVersion
 
 Version of Unity to use for testing the project. Use "auto" to get from your
-ProjectSettings/ProjectVersion.txt
+ProjectSettings/ProjectVersion.txt. ⚠️ If testing a Unity Package, this field is required and cannot
+be set to "auto".
 
 _**required:** `false`_ _**default:** `auto`_
 
 #### customImage
 
-Specific docker image that should be used for testing the project.
+Specific docker image that should be used for testing the project. If packageMode is true, this
+image must have [`jq`](https://jqlang.github.io/jq/) installed.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v2
@@ -195,8 +275,8 @@ _**required:** `false`_ _**default:** `""`_
 
 #### projectPath
 
-Specify the path to your Unity project to be tested. The path should be relative to the root of your
-project.
+Specify the path to your Unity project or package to be tested. The path should be relative to the
+root of your project.
 
 _**required:** `false`_ _**default:** `<your project root>`_
 
@@ -224,7 +304,10 @@ _**required:** `false`_ _**default:** `""`_
 
 The type of tests to be run by the test runner.
 
-Options are: `All`, `PlayMode`, and `EditMode`.
+Options are: `All`, `PlayMode`, `EditMode`, and `Standalone`.
+
+Note: `All` only runs `PlayMode` and `EditMode`. You must explicitly specify `Standalone` for it to
+run.
 
 _**required:** `false`_ _**default:** `All`_
 
@@ -254,6 +337,9 @@ assemblies that match `+my.assembly.*`, the `*` is a wildcard. This will require
 definition to manage scripts, see Unity's documentation on
 [Assembly definitions](https://docs.unity3d.com/2022.2/Documentation/Manual/ScriptCompilationAssemblyDefinitionFiles.html)
 for how to create and manage assembly definitions.
+
+To get coverage when testing a package, make sure you pass assemblies from the package you want
+covered to the `assemblyFilters` option.
 
 _**required:** `false`_ _**default:**
 `generateAdditionalMetrics;generateHtmlReport;generateBadgeReport`_
@@ -309,6 +395,19 @@ unity versions.
 
 _**required:** `false`_ _**default:** `Test Results`_
 
+#### packageMode
+
+Whether the tests are being run for a Unity package instead of a Unity project.
+
+If true, the action can only be run on Linux runners, and any custom docker image passed to this
+action must have [`jq`](https://jqlang.github.io/jq/) installed.
+
+NOTE: may not work properly for packages with dependencies outside of the Unity Registry.
+
+See [Testing Unity packages](#testing-unity-packages) for more information.
+
+_**required:** `false`_ _**default:** `false`_
+
 ## Complete example
 
 A complete workflow that tests all modes separately could look like this:
@@ -330,6 +429,7 @@ jobs:
         testMode:
           - playmode
           - editmode
+          - standalone
     steps:
       - uses: actions/checkout@v2
         with:
@@ -346,6 +446,57 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           projectPath: ${{ matrix.projectPath }}
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: ${{ matrix.testMode }} Test Results
+          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Test results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Coverage results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.coveragePath }}
+```
+
+## Complete Example (Testing a Package)
+
+A complete workflow that tests all modes separately (for a package rather than a project) could look
+like this:
+
+```yaml
+name: Test package
+
+on: [push, pull_request]
+
+jobs:
+  testAllModes:
+    name: Test in ${{ matrix.testMode }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - test-package
+        unityVersion: '2020.3.0f1' # some version must be included for package testing
+        testMode:
+          - playmode
+          - editmode
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: game-ci/unity-test-runner@v2
+        id: tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}

@@ -62,7 +62,7 @@ namespace UnityBuilderAction
 
                         PlayerSettings.Android.targetSdkVersion = targetSdkVersion;
                     }
-                    
+
                     break;
                 }
                 case BuildTarget.StandaloneOSX:
@@ -70,8 +70,17 @@ namespace UnityBuilderAction
                     break;
             }
 
+            // Determine subtarget
+            int buildSubtarget = 0;
+#if UNITY_2021_2_OR_NEWER
+            if (!options.TryGetValue("standaloneBuildSubtarget", out var subtargetValue) || !Enum.TryParse(subtargetValue, out StandaloneBuildSubtarget buildSubtargetValue)) {
+                buildSubtargetValue = default;
+            }
+            buildSubtarget = (int) buildSubtargetValue;
+#endif
+
             // Custom build
-            Build(buildTarget, options["customBuildPath"]);
+            Build(buildTarget, buildSubtarget, options["customBuildPath"]);
         }
 
         private static Dictionary<string, string> GetValidatedOptions()
@@ -92,6 +101,7 @@ namespace UnityBuilderAction
 
             if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
             {
+                Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
                 EditorApplication.Exit(121);
             }
 
@@ -149,7 +159,7 @@ namespace UnityBuilderAction
             }
         }
 
-        private static void Build(BuildTarget buildTarget, string filePath)
+        private static void Build(BuildTarget buildTarget, int buildSubtarget, string filePath)
         {
             string[] scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
             var buildPlayerOptions = new BuildPlayerOptions
@@ -159,6 +169,9 @@ namespace UnityBuilderAction
 //                targetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget),
                 locationPathName = filePath,
 //                options = UnityEditor.BuildOptions.Development
+#if UNITY_2021_2_OR_NEWER
+                subtarget = buildSubtarget
+#endif
             };
 
             BuildSummary buildSummary = BuildPipeline.BuildPlayer(buildPlayerOptions).summary;

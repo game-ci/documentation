@@ -33,16 +33,18 @@ interested in automation around game development.
 
 ### Recommendations for other game engines
 
-For **[Unreal Engine](https://unrealengine.com/)**, we recommend you have a look at
-[unrealcontainers](https://unrealcontainers.com) from our friend [Adam Rehn](https://adamrehn.com/).
+For **[Unreal Engine](https://unrealengine.com/)** users, it's worth checking out
+[unrealcontainers](https://unrealcontainers.com), a great resource created by our friend
+[Adam Rehn](https://adamrehn.com/).
 
-For **[Godot](https://godotengine.org/)**, there are multiple options available. We know about
-[abarichello/godot-ci](https://github.com/abarichello/godot-ci) from
-[Artur Barichello](https://barichello.me/).
+For **[Godot](https://godotengine.org/)** developers, there are several options to consider. We
+recommend both [abarichello/godot-ci](https://github.com/abarichello/godot-ci) by
+[Artur Barichello](https://barichello.me/) and
+[firebelley/godot-export](https://github.com/firebelley/godot-export).
 
-For **[MonoGame](https://www.monogame.net/)**, there is this amazing guide on
-[Lean MonoGame - Automate Release](https://learn-monogame.github.io/how-to/automate-release/) from
-[Jean-David Moisan (Apostolique)](https://jeandavidmoisan.com/)
+**[MonoGame](https://www.monogame.net/)** enthusiasts should look at
+[Lean MonoGame - Automate Release](https://learn-monogame.github.io/how-to/automate-release/), an
+excellent guide from [Jean-David Moisan (Apostolique)](https://jeandavidmoisan.com/).
 
 ## Why use GameCI for Unity?
 
@@ -148,6 +150,44 @@ No, you can learn why by looking at the following issue:
 Most likely yes. We have automated pipelines watching every 15 minutes for new releases of Unity.
 Jobs are then created on github to build and push the docker images to docker hub. You can find the
 status of the images on [the supported Unity versions page][unity-docker-versions].
+
+## How long does it take for a new version of Unity to become available as a Docker image?
+
+We have automated pipelines that check for new releases of Unity **every 15 minutes**. Once a new
+release is detected, a job is created on GitHub to build and publish a new Docker image to Docker
+Hub. When the version is available on the Unity's download page, it usually takes a few hours for
+the new version to become available on Docker Hub. _However, the exact time it takes for a new
+version to become available as a Docker image can vary depending on several factors, such as the
+time it takes to build the images, the availability of the new version on the Unity download page._
+
+We have a discord channel which you can watch to be notified of new versions detected by our bot
+here: [#new-versions](https://discord.com/channels/710946343828455455/731947345478156391). You will
+need to join our [discord server](https://game.ci/discord) first.
+
+## How does the Docker image publication process work?
+
+The Docker image publication process involves several steps. First, we detect new releases of Unity
+based on [Unity's Archive page](https://unity.com/releases/editor/archive) and we trigger a build
+job on GitHub. This happens in the
+[GameCI Versioning Backend](https://github.com/game-ci/versioning-backend) project. Next, the build
+job uses Unity Hub to install Unity and the required packages and builds new Docker images for each
+supported target platforms. This happens in the
+[Docker images for Unity](https://github.com/game-ci/docker) project. The new images are tagged and
+pushed to Docker Hub, where they are publicly available for download.
+
+## Where is the source of truth for the process of publishing Docker images?
+
+The source of truth for the process of publishing Docker images is
+[Unity's Archive page](https://unity.com/releases/editor/archive). We use automated scripts to
+detect new releases on this page and trigger the build process for new Docker images. However, Unity
+may occasionally release updates that are not immediately available on their download page, which
+can cause a delay in the availability of new Docker images.
+
+If you are currently using a recent unity version from Unity Hub that is not yet available on the
+[Unity's Archive page](https://unity.com/releases/editor/archive), you can usually roll back to
+previous version which is most likely already available, or you can wait a few hours until Unity
+publishes the new version on its download page and wait for our pipelines to finish building and
+publishing the images.
 
 ## How does Unity activation work?
 
@@ -263,6 +303,8 @@ The core maintainers of GameCI are:
 - [David Finol](https://davidmfinol.website/), creator of
   [Card Game Simulator](https://www.cardgamesimulator.com/) and Software Engineer at
   [JPMorgan Chase & Co](https://www.jpmorganchase.com/).
+
+See [About us](https://game.ci/about) for more details.
 
 [unity-docker-versions]: /docs/docker/versions
 [discord]: https://game.ci/discord
