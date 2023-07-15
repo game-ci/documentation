@@ -113,9 +113,11 @@ For more information on how to publish to docker hub, you may refer to
 
 ## Example : Include Blender
 
-To include blender in the image used to build your unity project, you can define a custom Dockerfile based on unityci/editor and install blender on top of it.
+To include blender in the image used to build your unity project, you can define a custom Dockerfile
+based on unityci/editor and install blender on top of it.
 
 ### Dockerfile
+
 ```dockerfile
 ARG GAMECI_IMAGE = unityci/editor:2021.3.1f1-windows-mono-1.0.1
 FROM $GAMECI_IMAGE
@@ -134,6 +136,8 @@ RUN apt-get update && \
 ENV PATH="$PATH:/blender-$BLENDER_FULL_VERSION-linux-x64"
 
 ```
-### Usage
-You can build this image and upload it to your own Dockedhub registry to reference it in your Unity pipeline afterward.
 
+### Usage
+
+You can build this image and upload it to your own Dockedhub registry to reference it in your Unity
+pipeline afterward.
