@@ -217,6 +217,25 @@ engine and CI/CD:
 - Try to search for error keywords in your message such as `error`, `failed`, `exception`, etc.
 - Read the error message closely to understand what's going on.
 
+### No space left on device
+
+#### Error
+
+```plaintext
+docker: failed to register layer: ApplyLayer exit status 1 stdout:  stderr: write /opt/unity/Editor/Data/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.8/lib/linux/x86_64/libFuzzer.a: no space left on device.
+```
+
+#### Solution
+
+The GitHub-hosted runners often do not have enough disk space for game dev projects. To work around
+this limitation, you could try to use the
+[Free Disk Space (Ubuntu)](https://github.com/marketplace/actions/free-disk-space-ubuntu) action at
+the start of your workflow. If you still require additional disk space for your project, you could
+try using
+[Self-hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
+or using
+[Cloud Runners](https://game.ci/docs/github-cloud-runner/game-ci-vs-cloud-runner#large-github-projects).
+
 ## Still having problems?
 
 You can **search for existing issues**:

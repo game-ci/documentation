@@ -76,12 +76,12 @@ jobs:
     steps:
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           lfs: true
 
       # Cache
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: Library
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
@@ -107,7 +107,7 @@ jobs:
           targetPlatform: WebGL
 
       # Output
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Build
           path: build
@@ -131,14 +131,14 @@ jobs:
     steps:
       # Checkout (without LFS)
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Git LFS
       - name: Create LFS file list
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
 
       - name: Restore LFS cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: lfs-cache
         with:
           path: .git/lfs
@@ -151,7 +151,7 @@ jobs:
           git reset --hard
 
       # Cache
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: Library
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
@@ -177,7 +177,7 @@ jobs:
           targetPlatform: WebGL
 
       # Output
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Build
           path: build
@@ -219,11 +219,11 @@ jobs:
           - Android # Build an Android player.
           - WebGL # WebGL.
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
           key:
@@ -241,11 +241,13 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: Test results (all modes)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
+      - if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.2.0
       - uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -256,7 +258,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Build
           path: build
@@ -279,11 +281,11 @@ jobs:
           - WSAPlayer # Build a UWP App.
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
           key:
@@ -303,7 +305,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Build
           path: build
@@ -323,12 +325,12 @@ jobs:
           - StandaloneOSX # Build a macOS standalone.
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
           key:
@@ -350,7 +352,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Build
           path: build
