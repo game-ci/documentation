@@ -166,8 +166,9 @@ jobs:
     name: Build For Android Platform
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: jlumbroso/free-disk-space@v1.2.0
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: Library
           key: Library-Android
@@ -181,7 +182,7 @@ jobs:
           androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
           androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
           androidTargetSdkVersion: AndroidApiLevel31
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: build-Android
           path: build/Android
@@ -198,7 +199,7 @@ jobs:
       ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Download Android Artifact
         uses: actions/download-artifact@v2
         with:
