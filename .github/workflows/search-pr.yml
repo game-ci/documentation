@@ -1,0 +1,28 @@
+name: Vercel -> Algolia Crawler (PR)
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+
+jobs:
+  algolia_recrawl:
+    name: Algolia recrawl
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Get deployment URL from Vercel
+        id: deployment
+        uses: dorshinar/get-deployment-url@master
+        timeout-minutes: 1
+        with:
+          token: ${{ github.token }}
+      - name: Vercel-PR => Algolia crawler creation and recrawl on preview (Pull Request)
+        uses: webbertakken/algoliasearch-crawler-github-actions@4f4c4db12be599fbc3f407ff6d608461c09a8f6a
+        id: crawler_pr
+        with:
+          crawler-user-id: ${{ secrets.ALGOLIA_CRAWLER_USER_ID }}
+          crawler-api-key: ${{ secrets.ALGOLIA_CRAWLER_API_KEY }}
+          algolia-app-id: 'E57FOT37U9'
+          algolia-api-key: ${{ secrets.ALGOLIA_APP_API_KEY }}
+          site-url: '${{ steps.deployment.outputs.deployment }}'
+          override-config: true
