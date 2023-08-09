@@ -37,20 +37,24 @@ Create a file called `.github/workflows/activation.yml` and add the below workfl
 
 ```yaml
 name: Acquire activation file
+
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+
 jobs:
   activation:
     name: Request manual activation file 🔑
     runs-on: ubuntu-latest
     steps:
-      # Request manual activation file
       - name: Request manual activation file
         id: getManualLicenseFile
         uses: game-ci/unity-request-activation-file@v2
-      # Upload artifact (Unity_v20XX.X.XXXX.alf)
+        with:
+          unityVersion: 202x.x.xfx
+          # Include your unity version
+
       - name: Expose as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.getManualLicenseFile.outputs.filePath }}
           path: ${{ steps.getManualLicenseFile.outputs.filePath }}
