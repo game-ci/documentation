@@ -1,5 +1,5 @@
 import React from 'react';
-import { SiDocker } from 'react-icons/all';
+import { SiDocker } from 'react-icons/si';
 
 interface Props {
   imageRepo: string;
