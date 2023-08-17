@@ -308,32 +308,11 @@ Set this flag to `androidPackage` to build an apk, `androidAppBundle` for an aab
     androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
 ```
 
-You should also set all the Android Keystore options (see below). Refer to (this
-section)[/docs/github/deployment/android#3-generate-an-upload-key-and-keystore] for keystore setup.
+You should also set all the Android Keystore options (see below). Refer to
+[this section](/docs/github/deployment/android#3-generate-an-upload-key-and-keystore) for keystore
+setup.
 
 _**required:** `false`_ _**default:** `androidPackage`_
-
-#### androidAppBundle
-
-**[Deprecated] Please use androidExportType instead.**
-
-Set this flag to `true` to build '.aab' instead of '.apk'.
-
-```yaml
-- uses: game-ci/unity-builder@v2
-  with:
-    androidAppBundle: true
-    androidKeystoreName: user.keystore
-    androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-    androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-    androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
-    androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
-```
-
-You should also set all the Android Keystore options (see below). Refer to (this
-section)[/docs/github/deployment/android#3-generate-an-upload-key-and-keystore] for keystore setup.
-
-_**required:** `false`_ _**default:** `false`_
 
 #### androidKeystoreName
 
@@ -446,6 +425,20 @@ Allows pinning the Unity Hub version used on MacOS runners. Should be of format 
 ie `3.4.0`. An empty string represents the latest available version on homebrew.
 
 _**required:** `false`_ _**default:** `""`_
+
+#### dockerWorkspacePath
+
+Allows customizing the build path within the container in case there are hardcoded paths generated
+during the build. For example building an IOS XCode project on Linux and moving to a new path on
+MacOS occasionally leads to broken paths requiring this override to ensure the paths match.
+
+Paths should be of format `/path/to/build`, ie `/tmp/build`. On Windows, leave off the drive letter
+specification. For example `C:\build` becomes `/build`. There should be no trailing slash in the
+path and the path should be absolute. The path will automatically be created within the container if
+it does not exist. It is recommended to use a path that doesn't already exist within the container
+to avoid any conflicts.
+
+_**required:** `false`_ _**default:** `"/github/workspace"`_
 
 ## Outputs
 
