@@ -1,5 +1,5 @@
-import config from '@site/src/core/config';
 import { useUser } from 'reactfire';
+import config from '@site/src/core/config';
 
 export function useAuthenticatedEndpoint(endpoint: string, payload: { [key: string]: any }) {
   const { data: user } = useUser();

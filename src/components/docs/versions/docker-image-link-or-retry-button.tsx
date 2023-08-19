@@ -1,10 +1,10 @@
+import { Tooltip } from 'antd';
+import React, { useState } from 'react';
+import { HiOutlineRefresh } from 'react-icons/hi';
 import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
 import DockerImageLink from '@site/src/components/docs/versions/docker-image-link';
 import { useAuthenticatedEndpoint } from '@site/src/core/hooks/use-authenticated-endpoint';
 import { useNotification } from '@site/src/core/hooks/use-notification';
-import { Tooltip } from 'antd';
-import React, { useState } from 'react';
-import { HiOutlineRefresh } from 'react-icons/hi';
 import Spinner from '@site/src/components/molecules/spinner';
 
 interface Props {

@@ -1,9 +1,9 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { useColorMode } from '@docusaurus/theme-common';
 import Versions from '@site/src/components/docs/versions/versions';
 
-import { useColorMode } from '@docusaurus/theme-common';
 import Section from '@site/src/components/pages/home/section/section';
 import styles from '@site/src/components/pages/home/section/section.module.scss';
 

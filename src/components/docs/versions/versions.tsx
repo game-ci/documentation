@@ -1,7 +1,7 @@
-import isServer from '@site/src/core/is-server';
-import ImageVersions from '@site/src/components/docs/versions/image-versions';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+import isServer from '@site/src/core/is-server';
+import ImageVersions from '@site/src/components/docs/versions/image-versions';
 
 const Versions = () => {
   const loading = <p>Fetching versions...</p>;
