@@ -1,9 +1,9 @@
 import { Button } from 'antd';
-import firebase from 'firebase/app';
 import React from 'react';
 import { useState } from 'react';
 import { AiOutlineClose, AiTwotoneLock } from 'react-icons/ai';
 import { useAuth, AuthCheck } from 'reactfire';
+import firebase from 'firebase';
 
 const loadingDelay = async (delayMs = 100) => {
   return new Promise((resolve) => setTimeout(() => resolve('loading'), delayMs));
