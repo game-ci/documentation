@@ -1685,6 +1685,11 @@
     fs-extra "^10.1.0"
     tslib "^2.4.0"
 
+"@docusaurus/tsconfig@^3.0.0-alpha.0":
+  version "3.0.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@docusaurus/tsconfig/-/tsconfig-3.0.0-alpha.0.tgz#081aa666860ef8f495e6540e2c974a267d9ccd04"
+  integrity sha512-q8kbLqZxyUo4svUMIHIO0xTyOWhrjkSvQFqvXjwCdaYQCspAE9Ct3AAfLBQXtsLClgRbP0f2UjoCvvUMufncnQ==
+
 "@docusaurus/types@2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/types/-/types-2.4.1.tgz#d8e82f9e0f704984f98df1f93d6b4554d5458705"
@@ -2850,11 +2855,6 @@
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"
   integrity sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==
-
-"@tsconfig/docusaurus@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@tsconfig/docusaurus/-/docusaurus-2.0.0.tgz#cadc77ab84052ffaaa4d6f79e998d719efa50e56"
-  integrity sha512-X5wptT7pXA/46/IRFTW76oR5GNjoy9qjNM/1JGhFV4QAsmLh3YUpJJA+Vpx7Ds6eEBxSxz1QrgoNEBy6rLVs8w==
 
 "@types/aria-query@^5.0.1":
   version "5.0.1"
