@@ -3,7 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 import { AiOutlineClose, AiTwotoneLock } from 'react-icons/ai';
 import { useAuth, AuthCheck } from 'reactfire';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 const loadingDelay = async (delayMs = 100) => {
   return new Promise((resolve) => setTimeout(() => resolve('loading'), delayMs));
