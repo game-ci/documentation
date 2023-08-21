@@ -38,8 +38,8 @@ Built with [Docusaurus 2](https://docusaurus.io/).
 This project has a hard dependancy on Node16. You will need to make sure that you have the proper
 version of node installed to avoid errors.
 
-- [Install NodeJS v16 on Ubuntu](https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/)
-- [Install NodeJS v16 using brew](https://apple.stackexchange.com/a/207883)
+- [Install NodeJS v18 on Ubuntu](https://joshtronic.com/2022/04/24/how-to-install-nodejs-18-on-ubuntu-2004-lts/)
+- [Install NodeJS v18 using brew](https://apple.stackexchange.com/a/207883)
 
 This project relies on yarn for package management. You will need to install yarn in order to build
 and test the documentation site.

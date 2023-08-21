@@ -15,10 +15,10 @@ export default function Home(): React.JSX.Element {
   return (
     <Layout>
       <OpeningSection />
+      <GettingStarted />
       <OurVisionSection />
       <VisualRepresentationOfWhatWeDoSection />
       <ThePerksSection />
-      <GettingStarted />
       <SponsorsSection />
       <WhoIsUsingGameCiSection />
       <CodeExamplesSection />

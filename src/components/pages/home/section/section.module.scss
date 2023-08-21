@@ -58,10 +58,25 @@
 
 .gettingStartedSection {
   .button {
-    color: var(--brand-text);
-    border: 2px solid var(--brand-text);
+    border: 2px solid rgb(83, 86, 90);
     border-radius: 3px;
-    padding: 4px 16px;
+    padding: 25px 25px;
+
+    transition: all 0.25s;
+
+    &:hover {
+      transform: scale(1.1);
+      // margin: 0 5px;
+      background-color: rgb(84, 86, 88);
+    }
+
+    span {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }
 
