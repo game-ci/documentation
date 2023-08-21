@@ -4,20 +4,26 @@ import ThePerksSection from '@site/src/components/pages/home/section/the-perks-s
 import OpeningSection from '@site/src/components/pages/home/section/opening-section';
 import GettingStarted from '@site/src/components/pages/home/section/getting-started';
 import SponsorsSection from '@site/src/components/pages/home/section/sponsors-section';
+import VisualRepresentationOfWhatWeDoSection from '@site/src/components/pages/home/section/visual-representation-of-what-we-do';
+import OurVisionSection from '@site/src/components/pages/home/section/our-vision-section';
+import PricingSection from '@site/src/components/pages/home/section/pricing-section';
+import CodeExamplesSection from '@site/src/components/pages/home/section/code-examples-section';
+import WhoIsUsingGameCiSection from '@site/src/components/pages/home/section/who-is-using-game-ci-section';
+import GallerySection from '@site/src/components/pages/home/section/gallery-section';
 
-export default function Home(): JSX.Element {
+export default function Home(): React.JSX.Element {
   return (
     <Layout>
       <OpeningSection />
-      {/* <OurVisionSection /> */}
-      {/* <VisualRepresentationOfWhatWeDoSection /> */}
+      <OurVisionSection />
+      <VisualRepresentationOfWhatWeDoSection />
       <ThePerksSection />
       <GettingStarted />
       <SponsorsSection />
-      {/* <WhoIsUsingGameCiSection /> */}
-      {/* <CodeExamplesSection /> */}
-      {/* <PricingSection /> */}
-      {/* <GallerySection /> */}
+      <WhoIsUsingGameCiSection />
+      <CodeExamplesSection />
+      <PricingSection />
+      <GallerySection />
     </Layout>
   );
 }
