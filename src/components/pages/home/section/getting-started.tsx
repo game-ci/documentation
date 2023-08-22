@@ -12,7 +12,7 @@ const GettingStarted = () => {
       </FadeIntoView>
 
       <FadeIntoView className={styles.gettingStartedLinks}>
-        <div className="w-full mt-6 inline-flex gap-10 flex-col md:flex-row items-center pb-16">
+        <div className="w-full mt-6 inline-flex gap-10 flex-col md:flex-row items-center justify-center pb-16">
           <Link to="/docs/github/getting-started" className={styles.button}>
             <span>
               <svg
