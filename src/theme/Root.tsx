@@ -5,9 +5,9 @@ import { IconContext } from 'react-icons';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { FirebaseAppProvider } from 'reactfire';
+import { Toaster } from 'react-hot-toast';
 import config from '@site/src/core/config';
 import { reducer } from '@site/src/logic';
-import { Toaster } from 'react-hot-toast';
 
 const store = configureStore({ reducer });
 

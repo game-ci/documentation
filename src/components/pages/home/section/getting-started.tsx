@@ -1,8 +1,8 @@
-import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 import Link from '@docusaurus/Link';
 import React from 'react';
-import styles from '@site/src/components/pages/home/section/section.module.scss';
 import cx from 'classnames';
+import styles from '@site/src/components/pages/home/section/section.module.scss';
+import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 import Section from '@site/src/components/pages/home/section/section';
 
 const GettingStarted = () => {

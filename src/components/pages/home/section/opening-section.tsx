@@ -1,8 +1,8 @@
 import React, { createRef } from 'react';
 import { Typography } from 'antd';
+import { useColorMode } from '@docusaurus/theme-common';
 import GameCiLogo from '@site/static/assets/images/game-ci-brand-logo-wordmark.svg';
 import GameCiLogoLight from '@site/static/assets/images/game-ci-brand-logo-wordmark-light.svg';
-import { useColorMode } from '@docusaurus/theme-common';
 import Section from '@site/src/components/pages/home/section/section';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 import styles from './section.module.scss';

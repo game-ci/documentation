@@ -1,9 +1,9 @@
-import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 import Link from '@docusaurus/Link';
 import React from 'react';
+import cx from 'classnames';
+import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 import styles from '@site/src/components/pages/home/section/section.module.scss';
 import Section from '@site/src/components/pages/home/section/section';
-import cx from 'classnames';
 
 const SponsorsSection = () => {
   return (

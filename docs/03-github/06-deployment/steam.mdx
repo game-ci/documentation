@@ -40,7 +40,7 @@ jobs:
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
             Library-
-      - uses: game-ci/unity-builder@v2
+      - uses: game-ci/unity-builder@v3
         id: build
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}

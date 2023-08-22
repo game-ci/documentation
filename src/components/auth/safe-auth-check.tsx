@@ -1,6 +1,6 @@
-import firebase from 'firebase';
 import React from 'react';
 import { AuthCheckProps, ClaimsCheckProps, useIdTokenResult, useUser } from 'reactfire';
+import firebase from 'firebase';
 
 // Apply fix while this is not merged https://github.com/FirebaseExtended/reactfire/pull/336
 export function SafeClaimsCheck({ user, fallback, children, requiredClaims }: ClaimsCheckProps) {

@@ -1,0 +1,311 @@
+---
+title: Frequently Asked Questions (FAQ)
+---
+
+## What is GameCI?
+
+GameCI is a community of game developers aiming to automate the process of creating and maintaining
+games. It is also a set of tools related to CI/CD process that can be used by game developers.
+
+## What is GameCI's goal?
+
+- Making Continuous Integration and Continuous Delivery more accessible to game developers
+- Providing tools and resources to automate game development and deployment process
+- Having fun doing it
+
+## What does CI stand for in GameCI?
+
+Did you know that `.ci` in [game.ci](https://game.ci/) is
+[the Internet country code top-level domain (ccTLD) for Côte d'Ivoire](https://en.wikipedia.org/wiki/.ci)?
+In our case, it is also the abbreviation of Continuous Integration.
+
+## What is CI/CD?
+
+Continuous Integration and Continuous Delivery is a process that allows developers to build and
+deploy software without having to manually intervene each time there is a change. Learn more on
+[Wikipedia: CI/CD](https://en.wikipedia.org/wiki/CI/CD)
+
+## What game engines are supported?
+
+Right now, GameCI only supports **[Unity](https://unity3d.com/)**. We see a bright future with
+GameCI's integration with other game engines or simply put, building a community of people who are
+interested in automation around game development.
+
+### Recommendations for other game engines
+
+For **[Unreal Engine](https://unrealengine.com/)** users, it's worth checking out
+[unrealcontainers](https://unrealcontainers.com), a great resource created by our friend
+[Adam Rehn](https://adamrehn.com/).
+
+For **[Godot](https://godotengine.org/)** developers, there are several options to consider. We
+recommend both [abarichello/godot-ci](https://github.com/abarichello/godot-ci) by
+[Artur Barichello](https://barichello.me/) and
+[firebelley/godot-export](https://github.com/firebelley/godot-export).
+
+**[MonoGame](https://www.monogame.net/)** enthusiasts should look at
+[Lean MonoGame - Automate Release](https://learn-monogame.github.io/how-to/automate-release/), an
+excellent guide from [Jean-David Moisan (Apostolique)](https://jeandavidmoisan.com/).
+
+## Why use GameCI for Unity?
+
+We want developers to concentrate on their game development, not on the stuff of CI/CD. Having a
+CI/CD pipeline setup can benefit developers, but also artists, designers, Q/A and testers by
+providing game builds faster and automatically. We have a large community of developers who are
+using GameCI on a daily basis. We have community driven documentation to help you get started.
+Everything we provide is free and open source.
+
+## How does GameCI for Unity work?
+
+We provide ready to use docker images published to docker hub with Unity pre-installed and ready to
+run. This is especially useful for CI/CD pipelines where you don't want to waste time installing
+Unity each time. The main goal is to use these images as part of a pipeline you own. You can find a
+list of [all supported Unity versions here][unity-docker-versions]. We have a documentation website
+providing complete examples of working pipelines for building, testing and publishing games using
+major CI/CD platforms such as [Github Actions](https://help.github.com/en/actions),
+[Gitlab CI](https://docs.gitlab.com/ee/ci/quick_start/) and [CircleCI](https://circleci.com/).
+
+We rely on the community to help us maintain and improve the images.
+
+## Which CI/CD platforms are supported by GameCI for Unity?
+
+Right now, we have official support for the following CI/CD platforms:
+
+- **[Github Actions](https://help.github.com/en/actions)**
+- **[Gitlab CI](https://docs.gitlab.com/ee/ci/quick_start/)**
+- **[CircleCI](https://circleci.com/)**
+
+## Can I use GameCI for Unity with `<insert other CI/CD service here>`?
+
+This question is often ask for these CI/CD services:
+
+- [Jenkins](https://jenkins.io/)
+- [Travis CI](https://www.travis-ci.com/)
+- [Bitbucket Pipelines](https://bitbucket.org/product/features/pipelines)
+- [Azure DevOps](https://azure.microsoft.com/en-us/services/devops/)
+- [AWS CodeBuild](https://aws.amazon.com/codebuild/)
+- [Drone.io](https://www.drone.io/)
+
+If the service you want to use supports Docker (the above list does), then chances are it will work,
+but we might not have official support for it. Your best bet is to translate the
+[GameCI gitlab-ci unity example project](https://unity-ci.com/docs/gitlab/example-project) to your
+desired CI/CD service provider. Caution: if this is your first time using GameCI, you might want to
+try officially supported services first. The easiest one is Github Actions.
+
+We are also working on a **GameCI for Unity CLI** which will make it easier to integrate with any
+CI/CD service. See our [Roadmap v3.0.0](https://github.com/orgs/game-ci/projects/4).
+
+### Azure devOps
+
+You might also want to have a look at [Unity Tools for Azure DevOps](https://unitydevops.com/)
+
+## Which Unity versions are supported?
+
+You can find [all supported Unity versions here][unity-docker-versions].
+
+## What Unity build targets are supported?
+
+You can find a list of succeeding pipelines for
+[supported build targets in game-ci/unity-actions's ReadMe](https://github.com/game-ci/unity-actions#unity-actions).
+
+We have linux and windows based docker images to support as many build targets as possible. This
+includes the following build targets:
+
+- WebGL
+- Windows Mono
+- Linux Mono
+- macOS Mono
+- Windows IL2CPP
+- Linux IL2CPP
+- macOS IL2CPP
+- Android
+- iOS
+- Universal Windows Platform
+- AppleTV
+
+You can find a list of build targets on Unity's website:
+[Unity Build Targets](https://docs.unity3d.com/ScriptReference/BuildTarget.html)
+
+## Do you support Unity IL2CPP builds?
+
+Yes, we do, but there are limitations. See
+[Docker images limited IL2CPP support](/docs/docker/docker-images#limited-il2cpp-support)
+
+## Do you have macOS based docker images for Unity?
+
+No, we don't as it is currently not possible to build macos based images. If this is something you
+are interested in, have a look at [macOS Containers initiative](https://macoscontainers.org/).
+
+## Do I need a mac to build for iOS?
+
+Yes, but not for all steps. You will only need a mac for building the generated Xcode project. Unity
+on linux can generate an xcode project.
+
+## Do you have docker images for alpha and beta versions of Unity?
+
+No, you can learn why by looking at the following issue:
+[game-ci/docker - Support alpha and beta versions of Unity #50](https://github.com/game-ci/docker/issues/50)
+
+## Unity just released a new version, do you have a docker image for it?
+
+Most likely yes. We have automated pipelines watching every 15 minutes for new releases of Unity.
+Jobs are then created on github to build and push the docker images to docker hub. You can find the
+status of the images on [the supported Unity versions page][unity-docker-versions].
+
+## How long does it take for a new version of Unity to become available as a Docker image?
+
+We have automated pipelines that check for new releases of Unity **every 15 minutes**. Once a new
+release is detected, a job is created on GitHub to build and publish a new Docker image to Docker
+Hub. When the version is available on the Unity's download page, it usually takes a few hours for
+the new version to become available on Docker Hub. _However, the exact time it takes for a new
+version to become available as a Docker image can vary depending on several factors, such as the
+time it takes to build the images, the availability of the new version on the Unity download page._
+
+We have a discord channel which you can watch to be notified of new versions detected by our bot
+here: [#new-versions](https://discord.com/channels/710946343828455455/731947345478156391). You will
+need to join our [discord server](https://game.ci/discord) first.
+
+## How does the Docker image publication process work?
+
+The Docker image publication process involves several steps. First, we detect new releases of Unity
+based on [Unity's Archive page](https://unity.com/releases/editor/archive) and we trigger a build
+job on GitHub. This happens in the
+[GameCI Versioning Backend](https://github.com/game-ci/versioning-backend) project. Next, the build
+job uses Unity Hub to install Unity and the required packages and builds new Docker images for each
+supported target platforms. This happens in the
+[Docker images for Unity](https://github.com/game-ci/docker) project. The new images are tagged and
+pushed to Docker Hub, where they are publicly available for download.
+
+## Where is the source of truth for the process of publishing Docker images?
+
+The source of truth for the process of publishing Docker images is
+[Unity's Archive page](https://unity.com/releases/editor/archive). We use automated scripts to
+detect new releases on this page and trigger the build process for new Docker images. However, Unity
+may occasionally release updates that are not immediately available on their download page, which
+can cause a delay in the availability of new Docker images.
+
+If you are currently using a recent unity version from Unity Hub that is not yet available on the
+[Unity's Archive page](https://unity.com/releases/editor/archive), you can usually roll back to
+previous version which is most likely already available, or you can wait a few hours until Unity
+publishes the new version on its download page and wait for our pipelines to finish building and
+publishing the images.
+
+## How does Unity activation work?
+
+### The `machine-id`
+
+Unity has several activation methods, but they all share the same concept. Unity uses the
+`machine-id` to identify the user. This is usually unique per machine. On linux, the `machine-id` is
+located here:
+
+- `/etc/machine-id`
+- `/var/lib/dbus/machine-id`
+
+Using a different `machine-id` will cause Unity to require a new activation.
+
+To make it easier to use GameCI, we hardcoded the `machine-id` in all the docker images we publish,
+[see Ubuntu's base Dockerfile](https://github.com/game-ci/docker/blob/main/images/ubuntu/base/Dockerfile#L67-L68).
+
+This makes it easier to upgrade from one version of Unity to another as you will not need to
+re-activate.
+
+### I'm having troubles with Unity activation, what should I do?
+
+Have a look at the Have a look at the [troubleshooting / common issues][common-issues] page.
+
+## Can I use a free Unity license to build my project?
+
+Yes
+
+## Can I use a Unity Pro serial to build my project?
+
+Yes
+
+## Can I run multiple builds in parallel using Unity?
+
+Yes, but have a look at
+[Limitations: Concurrent builds on Windows and MacOS](/docs/docker/docker-images#concurrent-builds-on-windows-and-macos)
+
+## How much does it cost to use GameCI for Unity?
+
+GameCI is free and open source software. Depending on the CI/CD service you use, you can pay for
+build minutes but you can also use your own machines to build and test your project.
+
+Most CI/CD service providers offer a free tier with free build minutes for private projects. If you
+are building an open source project, it's often all free. ❤️
+
+### Github Actions
+
+- [About billing for GitHub Actions](https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions)
+- [About self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners)
+
+### Gitlab CI
+
+- [Gitlab CI pricing](https://about.gitlab.com/pricing/)
+- [Gitlab CI self-hosted runners](https://docs.gitlab.com/runner/)
+
+### CircleCI
+
+- [CircleCI pricing](https://circleci.com/pricing/)
+- [CircleCI self-hosted runners](https://circleci.com/execution-environments/runner/)
+
+## Is GameCI free?
+
+Yes, GameCI is free and will always be free. The software we develop is open source and under the
+[MIT license](https://opensource.org/licenses/MIT).
+
+## I have an issue when using GameCI, how can I get in touch with you?
+
+First you should look at the [documentation](/docs) and the [troubleshooting / common
+issues][common-issues] page. You can also search in issues of related project on
+[github.com/game-ci/](https://github.com/game-ci/) or
+[gitlab.com/game-ci/](https://gitlab.com/game-ci/). If you still have problems, you can open an
+issue on the related project. Still unsure? You can visit us on our [discord server][discord].
+
+## Why is it so long to get support?
+
+We are a small community of developers who are trying to make the world a better place. We are not
+doing this for the money and no one is being paid for the support. This is all a community effort to
+end up with games that are less buggy ;). Don't hold your breath and be nice with people helping
+you. ❤️
+
+## Do you offer premium support?
+
+We don't offer premium support. We do offer free support for the community as a best-effort.
+
+## I have too much money, and I like your projects, how can I help?
+
+We have an [opencollective page](https://opencollective.com/game-ci) where you can donate. The
+donations are used to pay for the costs of the infrastructure, domains and the servers (which we
+kept to a very reasonable price, thanks to all the free services for open source projects). We might
+also use the money to pay for improving our visuals or anything that could help us become a better
+community. It is also possible that we send gifts to major contributors, who knows? ❤️
+
+## Do you have a roadmap?
+
+Yes, see our [Roadmap v3.0.0](https://github.com/orgs/game-ci/projects/4).
+
+## Who made GameCI?
+
+GameCI is a collaborative effort. We are a community of developers who are passionate about good
+practice and automation. You can find a list of our contributors on
+[github.com/game-ci/](https://github.com/game-ci/) in each project.
+
+The core maintainers of GameCI are:
+
+- [Gabriel "GabLeRoux" Le Breton](https://gableroux.com), founder of GameCI, Co-owner at
+  [Totema Studio](https://totemastudio.com), full time dev at [TLM](https://tlmgo.com/) and lecturer
+  at [UQAC](https://uqac.ca/).
+- [Dick "Webber" Webbink](https://takken.io/), founder of GameCI and Senior Software Engineer at
+  [Just Eat Takeaway.com](https://www.justeattakeaway.com/).
+- [Markus "Fisher" Dugdale](https://www.linkedin.com/in/markus-dugdale-136112136/) Lead game
+  developer [@bossastudios](https://www.bossastudios.com/), former product manager @unity3d, arma
+  modder. Game ai, networking, terrain.
+- [David Finol](https://davidmfinol.website/), creator of
+  [Card Game Simulator](https://www.cardgamesimulator.com/) and Software Engineer at
+  [JPMorgan Chase & Co](https://www.jpmorganchase.com/).
+
+See [About us](https://game.ci/about) for more details.
+
+[unity-docker-versions]: /docs/docker/versions
+[discord]: https://game.ci/discord
+[common-issues]: /docs/troubleshooting/common-issues
