@@ -2,7 +2,6 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import ThePerksSection from '@site/src/components/pages/home/section/the-perks-section';
 import OpeningSection from '@site/src/components/pages/home/section/opening-section';
-import GettingStarted from '@site/src/components/pages/home/section/getting-started';
 import SponsorsSection from '@site/src/components/pages/home/section/sponsors-section';
 import VisualRepresentationOfWhatWeDoSection from '@site/src/components/pages/home/section/visual-representation-of-what-we-do';
 import OurVisionSection from '@site/src/components/pages/home/section/our-vision-section';
@@ -15,7 +14,7 @@ export default function Home(): React.JSX.Element {
   return (
     <Layout>
       <OpeningSection />
-      <GettingStarted />
+      {/* <GettingStarted /> */}
       <OurVisionSection />
       <VisualRepresentationOfWhatWeDoSection />
       <ThePerksSection />

@@ -42,7 +42,7 @@ function VersionsAntdWrapper() {
   return <Versions />;
 }
 
-export default function VersionsPage(): JSX.Element {
+export default function VersionsPage(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout

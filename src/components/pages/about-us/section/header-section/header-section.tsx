@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HeaderSection = (): JSX.Element => {
+const HeaderSection = (): React.JSX.Element => {
   return (
     <div className="2xl:container 2xl:mx-auto py-4 sm:py-6 lg:px-20 md:pt-8 md:px-6 px-4">
       <div className="relative">

@@ -3,23 +3,20 @@ import React from 'react';
 import cx from 'classnames';
 import styles from '@site/src/components/pages/home/section/section.module.scss';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
-import Section from '@site/src/components/pages/home/section/section';
 
 const GettingStarted = () => {
   return (
-    <Section className={styles.gettingStartedSection}>
+    <span className={styles.gettingStartedSection}>
       <FadeIntoView>
-        <h2 className={cx('text-center text-5xl font-bold mb-10', styles.title)}>
-          Get Started Using:
-        </h2>
+        <h2 className={cx('text-center font-bold mb-4', styles.subtitle)}>Get Started Using:</h2>
       </FadeIntoView>
 
-      <FadeIntoView>
-        <div className="mt-6 inline-flex gap-10 flex-col lg:flex-row">
+      <FadeIntoView className={styles.gettingStartedLinks}>
+        <div className="w-full mt-6 inline-flex gap-10 flex-col md:flex-row items-center pb-16">
           <Link to="/docs/github/getting-started" className={styles.button}>
             <span>
               <svg
-                width="240"
+                height="9.5vmin"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="143.88 384 480.25 129.87"
                 fill="none"
@@ -42,7 +39,7 @@ const GettingStarted = () => {
           <Link to="/docs/gitlab/getting-started" className={styles.button}>
             <span>
               <svg
-                width="240"
+                height="9.5vmin"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="148.83 115 693.75 150"
                 fill="none"
@@ -61,7 +58,12 @@ const GettingStarted = () => {
           </Link>
           <Link to="/docs/circleci/getting-started" className={styles.button}>
             <span>
-              <svg width="240" viewBox="0 0 120 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                height="9.5vmin"
+                viewBox="0 0 120 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"
@@ -73,7 +75,7 @@ const GettingStarted = () => {
           </Link>
         </div>
       </FadeIntoView>
-    </Section>
+    </span>
   );
 };
 
