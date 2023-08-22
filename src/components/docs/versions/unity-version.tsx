@@ -1,17 +1,15 @@
-import React from 'react';
-import { Collapse } from 'antd';
+import React, { useState } from 'react';
 import Builds from '@site/src/components/docs/versions/builds';
 import DateTime from '@site/src/components/docs/versions/date-time';
 import ShowAndCopyChangeSetHashButton from '@site/src/components/docs/versions/show-and-copy-change-set-hash-button';
 import Spinner from '@site/src/components/molecules/spinner';
-
-const { Panel } = Collapse;
+import styles from './unity-version.module.scss';
 
 interface Props {
   data: { [key: string]: any };
 }
 
-const UnityVersion = ({ data, ...props }: Props) => {
+const UnityVersion = ({ data }: Props) => {
   const {
     NO_ID_FIELD: id,
     status,
@@ -35,13 +33,13 @@ const UnityVersion = ({ data, ...props }: Props) => {
     deprecated: '⭕',
   };
 
+  const [enabled, setEnabled] = useState(false);
+
   return (
-    <Panel
-      {...props}
-      // className={styles.panel}
-      header={
-        <>
-          <div style={{ display: 'inline-block', width: 30, paddingRight: 8, textAlign: 'center' }}>
+    <div>
+      <button className={styles.versionButton} type="button" onClick={() => setEnabled(!enabled)}>
+        <span>
+          <div style={{ display: 'inline-block', width: 30, paddingRight: 8 }}>
             {ciJobStatusToIconMap[status]}
           </div>
           <span>{id}</span>
@@ -50,16 +48,16 @@ const UnityVersion = ({ data, ...props }: Props) => {
             <span style={{ opacity: 0.6 }}>Last updated:</span>{' '}
             <DateTime utcSeconds={modifiedDate.seconds} />
           </span>
-        </>
-      }
-      key={id}
-    >
-      <Builds
-        ciJobId={id}
-        repoVersionInfo={repoVersionInfo}
-        editorVersionInfo={editorVersionInfo}
-      />
-    </Panel>
+        </span>
+      </button>
+      {enabled && (
+        <Builds
+          ciJobId={id}
+          repoVersionInfo={repoVersionInfo}
+          editorVersionInfo={editorVersionInfo}
+        />
+      )}
+    </div>
   );
 };
 

@@ -49,7 +49,7 @@ export default function VersionsPage(): JSX.Element {
       title={`${siteConfig.title} - Docker images versions`}
       description="Docker images versions"
     >
-      <main>
+      <main style={{ minHeight: '100vh' }}>
         <Section className={styles.versionsSection}>
           <BrowserOnly fallback={<div>Loading...</div>}>
             {() => <VersionsAntdWrapper />}
