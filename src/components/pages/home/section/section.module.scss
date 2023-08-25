@@ -86,6 +86,10 @@
       height: 100%;
       justify-content: center;
       align-items: center;
+
+      img {
+        height: 9.5vmin;
+      }
     }
   }
 }
@@ -101,7 +105,23 @@
   color: var(--ifm-navbar-background-color);
 }
 
-.whoIsUsingGameCiSection {}
+.whoIsUsingGameCiSection {
+  .devsGrid {
+    @apply grid grid-cols-5 lg:grid-cols-10 gap-5;
+
+    .gridItem {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      transition: transform 0.25s;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+}
 
 .pricingSection {}
 
