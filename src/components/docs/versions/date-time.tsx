@@ -10,8 +10,9 @@ const options: Intl.DateTimeFormatOptions = {
   day: 'numeric',
   hour: 'numeric',
   minute: 'numeric',
-  second: 'numeric',
   timeZoneName: 'short',
+  timeZone: 'UTC',
+  hour12: true,
 };
 
 const DateTime = ({ utcSeconds }: Props) => {

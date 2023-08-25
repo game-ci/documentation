@@ -19,7 +19,7 @@ interface Props {
   editorVersionInfo;
 }
 
-const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props) => {
+const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo }: Props) => {
   const loading = <p>Fetching builds...</p>;
 
   const ciBuilds = useFirestore().collection('ciBuilds').where('relatedJobId', '==', ciJobId);
@@ -112,32 +112,30 @@ const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo, ...props }: Props
   //   },
   // ] as ColumnsType<any>;
 
-  // const expandable = {
-  //   rowExpandable: () => true,
-  //   // expandedRowClassName: () => styles.expandedContentRow,
-  //   expandedRowRender: (record) => (
-  //     <BuildFailureDetails
-  //       style={{ margin: 0 }}
-  //       ciJob={ciJobId}
-  //       editorVersionInfo={editorVersionInfo}
-  //       repoVersionInfo={repoVersionInfo}
-  //       ciBuild={record}
-  //     />
-  //   ),
-  // };
+  const expandable = {
+    expandedRowRender: (record) => (
+      <BuildFailureDetails
+        style={{ margin: 0 }}
+        ciJob={ciJobId}
+        editorVersionInfo={editorVersionInfo}
+        repoVersionInfo={repoVersionInfo}
+        ciBuild={record}
+      />
+    ),
+  };
 
   return (
-    <table className="w-full table">
+    <table className="w-full max-w-screen-lg block border-collapse">
       <tr className={styles.tableRow}>
-        <td> </td>
-        <td className="text-center">Status</td>
-        <td>Build ID</td>
-        <td>Image type</td>
-        <td>OS</td>
-        <td>Target Platform</td>
+        <th> </th>
+        <th className="text-center">Status</th>
+        <th>Build ID</th>
+        <th>Image type</th>
+        <th>OS</th>
+        <th>Target Platform</th>
       </tr>
       {data.map((build) => (
-        <BuildRow build={build} />
+        <BuildRow build={build}>{expandable.expandedRowRender(build)}</BuildRow>
       ))}
     </table>
   );

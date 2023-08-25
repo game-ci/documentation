@@ -12,6 +12,11 @@
 }
 
 .expandedContentRow {
+  * {
+    white-space: pre-wrap;
+  }
+  height: 0;
+  overflow: hidden;
 }
 
 

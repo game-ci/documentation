@@ -58,7 +58,9 @@ const WhoIsUsingGameCiSection = () => {
           </a>
         </div>
       </div>
-      <h4>And more than 3500+ other developers</h4>
+      <h4>
+        <i>And more than 3,500 other developers</i>
+      </h4>
     </Section>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import CodeBlock from '@theme/CodeBlock';
 import Spinner from '@site/src/components/molecules/spinner';
 import styles from './builds.module.scss';
 
@@ -9,19 +8,23 @@ const mapBuildStatusToIcon = {
   published: '✅',
 };
 
-interface Props {
+type Props = {
   build: {
     [key: string]: any;
   };
-}
-export default function BuildRow({ build }: Props) {
+  children: React.JSX.Element | React.JSX.Element[];
+};
+export default function BuildRow({ children, build }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <>
       <tr className={styles.tableRow}>
-        <td onClick={() => setExpanded(!expanded)} className="text-center">
-          {expanded ? '-' : '+'}
+        <td
+          onClick={() => setExpanded(!expanded)}
+          className="text-center select-none cursor-pointer"
+        >
+          {expanded ? '➖' : '➕'}
         </td>
         <td className="text-center">{mapBuildStatusToIcon[build.status]}</td>
         <td>
@@ -36,14 +39,8 @@ export default function BuildRow({ build }: Props) {
         <td>{build.buildInfo.targetPlatform}</td>
       </tr>
       {expanded && (
-        <tr>
-          <td colSpan={6}>
-            <CodeBlock language="json">
-              {
-                '{ "t": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tenetur harum, labore cupiditate tempore non fuga quasi laudantium eum eius minus expedita animi esse quis. Eius atque dolores laborum mollitia eaque."}'
-              }
-            </CodeBlock>
-          </td>
+        <tr className={styles.expandedContentRow}>
+          <td colSpan={6}>{children}</td>
         </tr>
       )}
     </>
