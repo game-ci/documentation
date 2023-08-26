@@ -1,17 +1,18 @@
-import React, { useRef } from 'react';
+import React from 'react';
+
+import styles from './tooltip.module.scss';
 
 interface Props {
   content: string;
-  isHidden: boolean;
+  children: React.JSX.Element | React.JSX.Element[] | string;
 }
 
-export default function Tooltip({ content, isHidden }: Props) {
-  const tooltipDiv: React.MutableRefObject<HTMLDivElement> = useRef(null);
-
-  setInterval(() => {
-    if (isHidden) return;
-
-    tooltipDiv.current.scrollIntoView();
-  }, 10);
-  return <div ref={tooltipDiv}>{content}</div>;
+export default function Tooltip({ children, content }: Props) {
+  return (
+    // For some odd reason, inline-flex fixes a small bug where the div is bigger than what it is supposed to be
+    <div className="group relative inline-flex">
+      {children}
+      <span className={`group-hover:block ${styles.tooltipContent}`}>{content}</span>
+    </div>
+  );
 }

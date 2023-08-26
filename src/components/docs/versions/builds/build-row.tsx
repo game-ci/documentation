@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import DockerImageLinkOrRetryButton, {
+  type Record,
+} from '@site/src/components/docs/versions/docker-image-link-or-retry-button';
 import Spinner from '@site/src/components/molecules/spinner';
+import Tooltip from '@site/src/components/molecules/tooltip/tooltip';
 import styles from './builds.module.scss';
 
 const mapBuildStatusToIcon = {
@@ -9,13 +13,32 @@ const mapBuildStatusToIcon = {
 };
 
 type Props = {
-  build: {
-    [key: string]: any;
-  };
   children: React.JSX.Element | React.JSX.Element[];
+  build: Record;
 };
+
+const CopyToClipboard = (copyString: string) => {
+  navigator.clipboard.writeText(copyString);
+};
+
 export default function BuildRow({ children, build }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const [toolbarContent, setToolbarContent] = useState('Click to copy');
+
+  const MapBuildStatusToElement = (status: string) => {
+    const icon = mapBuildStatusToIcon[status];
+
+    switch (status) {
+      case 'started':
+        return <Spinner type="slow" />;
+      case 'failed':
+        return <Tooltip content={build.failure?.reason}>{icon}</Tooltip>;
+      case 'published':
+        return icon;
+      default:
+        return status;
+    }
+  };
 
   return (
     <>
@@ -26,13 +49,30 @@ export default function BuildRow({ children, build }: Props) {
         >
           {expanded ? '➖' : '➕'}
         </td>
-        <td className="text-center">{mapBuildStatusToIcon[build.status]}</td>
+        <td className="text-center">{MapBuildStatusToElement(build.status)}</td>
         <td>
-          <a
-            href={`https://hub.docker.com/layers/unityci/editor/${build.buildInfo.baseOs}-${build.buildInfo.editorVersion}-${build.buildInfo.targetPlatform}-${build.buildInfo.repoVersion}/images/${build.dockerInfo.digest}`}
-          >
-            {build.buildId}
-          </a>
+          <span>
+            {/* <a
+              href={`https://hub.docker.com/layers/unityci/editor/${build.buildInfo.baseOs}-${build.buildInfo.editorVersion}-${build.buildInfo.targetPlatform}-${build.buildInfo.repoVersion}/images/${build.dockerInfo.digest}`}
+            > */}
+            <Tooltip content={toolbarContent}>
+              <button
+                onClick={() => {
+                  CopyToClipboard(build.buildId);
+                  setToolbarContent('Copied to clipboard!');
+                }}
+                onMouseLeave={() => {
+                  setToolbarContent('Click to copy');
+                }}
+                type="button"
+              >
+                {build.buildId}
+              </button>
+            </Tooltip>
+
+            {/* </a> */}
+            <DockerImageLinkOrRetryButton record={build} />
+          </span>
         </td>
         <td>{build.imageType}</td>
         <td>{build.buildInfo.baseOs}</td>
