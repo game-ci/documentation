@@ -123,7 +123,26 @@
   }
 }
 
-.pricingSection {}
+.pricingSection {
+  > div {
+    background-color: var(--brand-primary);
+  }
+  .vscButton {
+    svg {
+      @apply w-5 h-5;
+    }
+    @apply rounded-md p-1 mx-1 aspect-square w-11 h-11 transition-all duration-300;
+    background-color: transparent;
+    border: 1px solid var(--brand-secondary);
+    outline: none;
+    cursor: pointer;
+
+  }
+  .vscButton.selected {
+    @apply border-4;
+    border-color: var(--brand-primary);
+  }
+}
 
 .gallerySection {}
 
