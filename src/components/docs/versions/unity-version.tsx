@@ -66,8 +66,8 @@ const UnityVersion = ({ data }: Props) => {
           </div>
           <span>{id}</span>
           <ShowAndCopyChangeSetHashButton changeSet={editorVersionInfo.changeSet} />
-          <span className="opacity-50">
-            <span style={{ opacity: 0.6 }}> - Last updated: </span>
+          <span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}> - Last updated: </span>
             <DateTime utcSeconds={modifiedDate.seconds} />
           </span>
         </span>
