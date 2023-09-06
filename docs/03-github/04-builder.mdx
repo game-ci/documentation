@@ -376,6 +376,18 @@ This is useful if your manifest has a dependency on a private GitHub repo.
 
 _**required:** `false`_ _**default:** `""`_
 
+#### sshPublicKeysDirectoryPath
+
+SSH directory path to mount in the container on `~/.ssh`. Must be used with `sshAgent`.
+
+It is recommended to have only public keys in this directory, and rely on `sshAgent` to manage
+private keys.
+
+This is useful if your manifest has a dependency on multiple private GitHub repos and you need to
+use multiple SSH deploy keys.
+
+_**required:** `false`_ _**default:** ``_
+
 #### gitPrivateToken
 
 Github private token to pull from github.
@@ -503,6 +515,46 @@ steps:
   - uses: game-ci/unity-builder@v3
     with:
       sshAgent: ${{ env.SSH_AUTH_SOCK }}
+```
+
+### Multiple private Github repositories
+
+Github deploy SSH keys are unique per repository. If you have multiple private repositories in your
+packages/manifest.json, you will need to add multiple SSH keys, and use the `webfactory/ssh-agent`
+action to manage them and use the right key for each repository.
+
+In order for `webfactory/ssh-agent` to work inside the container, you will need to upload the public
+keys, ssh config and set the git url mirroring configurations in the container. You can do that by
+using `sshPublicKeysDirectoryPath` and setting the `GIT_CONFIG_EXTENSIONS` environment variable:
+
+```yaml
+- uses: webfactory/ssh-agent@v0.8.0
+  with:
+  ssh-private-key: |
+    ${{ secrets.FIRST_KEY }}
+    ${{ secrets.NEXT_KEY }}
+    ${{ secrets.ANOTHER_KEY }}
+
+- name: Prepare SSH config for unity builder
+  run: |
+    mkdir $HOME/.ssh_docker
+    cp $HOME/.ssh/config $HOME/.ssh_docker/
+    cp $HOME/.ssh/key* $HOME/.ssh_docker/
+    cp $HOME/.ssh/known_hosts $HOME/.ssh_docker/
+    sed -i 's/\/home\/runner/\/root/g' $HOME/.ssh_docker/config
+    sudo chown -R root:root $HOME/.ssh_docker
+    GIT_CONFIG_EXTENSIONS=$(git config --list | grep '^url\.')
+    {
+      echo 'GIT_CONFIG_EXTENSIONS<<EOF'
+      echo "$GIT_CONFIG_EXTENSIONS"
+      echo EOF
+    } >> "$GITHUB_ENV"
+  shell: bash
+
+- uses: game-ci/unity-builder@v3
+  with:
+    sshAgent: ${{ env.SSH_AUTH_SOCK }}
+    sshPublicKeysDirectoryPath: ${{ env.HOME }}/.ssh_docker
 ```
 
 ## UPM authentication using .upmconfig.toml
