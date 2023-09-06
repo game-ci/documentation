@@ -519,12 +519,13 @@ steps:
 
 ### Multiple private Github repositories
 
-Github deploy SSH keys are unique per repository. If you have multiple private repositories in your
-packages/manifest.json, you will need to add multiple SSH keys, and use the `webfactory/ssh-agent`
-action to manage them and use the right key for each repository.
+[GitHub Deploy Keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys)
+are SSH keys that can only be set up on repository level. If you have multiple private repositories
+in your packages/manifest.json, you will need to add a Github Deploy Key for each one, and use the
+`webfactory/ssh-agent` action to manage them and use the right SSH key for each repository.
 
 In order for `webfactory/ssh-agent` to work inside the container, you will need to upload the public
-keys, ssh config and set the git url mirroring configurations in the container. You can do that by
+keys, SSH config and set the git url mirroring configurations in the container. You can do that by
 using `sshPublicKeysDirectoryPath` and setting the `GIT_CONFIG_EXTENSIONS` environment variable:
 
 ```yaml
