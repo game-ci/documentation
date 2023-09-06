@@ -552,7 +552,7 @@ using `sshPublicKeysDirectoryPath` and setting the `GIT_CONFIG_EXTENSIONS` envir
     } >> "$GITHUB_ENV"
   shell: bash
 
-- uses: game-ci/unity-builder@v3
+- uses: game-ci/unity-builder@v3.1.0
   with:
     sshAgent: ${{ env.SSH_AUTH_SOCK }}
     sshPublicKeysDirectoryPath: ${{ env.HOME }}/.ssh_docker
