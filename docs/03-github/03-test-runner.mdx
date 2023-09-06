@@ -362,6 +362,18 @@ This is useful if your manifest has a dependency on a private GitHub repo.
 
 _**required:** `false`_ _**default:** ``_
 
+#### sshPublicKeysDirectoryPath
+
+SSH directory path to mount in the container on `~/.ssh`. Must be used with `sshAgent`.
+
+It is recommended to have only public keys in this directory, and rely on `sshAgent` to manage
+private keys.
+
+This is useful if your manifest has a dependency on multiple private GitHub repos and you need to
+use multiple SSH deploy keys.
+
+_**required:** `false`_ _**default:** ``_
+
 #### gitPrivateToken
 
 GitHub Private Access Token (PAT) to pull from GitHub.
