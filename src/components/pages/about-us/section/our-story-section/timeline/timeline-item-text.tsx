@@ -1,11 +1,11 @@
 import React from 'react';
 
 interface Props {
-  title: string | JSX.Element;
-  subTitle: string | JSX.Element;
+  title: string | React.JSX.Element;
+  subTitle: string | React.JSX.Element;
 }
 
-const TimelineItemText = ({ title, subTitle }: Props): JSX.Element => {
+const TimelineItemText = ({ title, subTitle }: Props): React.JSX.Element => {
   return (
     <div className="w-auto">
       <h2 className="-mt-2 font-semibold text-xl leading-5 ">{title}</h2>
