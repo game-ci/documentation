@@ -25,7 +25,7 @@ You may also view the markdown files directly at the following links:
 - [Getting Started with GameCI](docs/02-getting-started)
 - [Github Actions](docs/03-github)
 - [Gitlab Pipelines](docs/05-gitlab)
-- [CircleCi<](docs/11-circleci)
+- [CircleCi](docs/11-circleci)
 - [Docker](docs/08-docker)
 - [Github Cloud Runner](docs/03-github-cloud-runner)
 - [Troubleshooting](docs/09-troubleshooting)
@@ -33,13 +33,13 @@ You may also view the markdown files directly at the following links:
 
 ## Building the Docs Site
 
-Built with [Docusaurus 2.](https://docusaurus.io/)
+Built with [Docusaurus 2](https://docusaurus.io/).
 
 This project has a hard dependancy on Node16. You will need to make sure that you have the proper
 version of node installed to avoid errors.
 
-- [Install Node16 on Ubuntu](https://joshtronic.com/2021/05/09/how-to-install-nodejs-16-on-ubuntu-2004-lts/)
-- [Install Node16 using brew](https://apple.stackexchange.com/a/207883)
+- [Install NodeJS v18 on Ubuntu](https://joshtronic.com/2022/04/24/how-to-install-nodejs-18-on-ubuntu-2004-lts/)
+- [Install NodeJS v18 using brew](https://apple.stackexchange.com/a/207883)
 
 This project relies on yarn for package management. You will need to install yarn in order to build
 and test the documentation site.
