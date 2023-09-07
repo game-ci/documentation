@@ -42,14 +42,14 @@ function VersionsAntdWrapper() {
   return <Versions />;
 }
 
-export default function VersionsPage(): JSX.Element {
+export default function VersionsPage(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
       title={`${siteConfig.title} - Docker images versions`}
       description="Docker images versions"
     >
-      <main>
+      <main style={{ minHeight: '100vh' }}>
         <Section className={styles.versionsSection}>
           <BrowserOnly fallback={<div>Loading...</div>}>
             {() => <VersionsAntdWrapper />}

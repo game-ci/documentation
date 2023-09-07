@@ -4,7 +4,7 @@ import OurStory from '@site/src/components/pages/about-us/section/our-story-sect
 import HeaderSection from '@site/src/components/pages/about-us/section/header-section/header-section';
 import TheTeamSection from '@site/src/components/pages/about-us/section/the-team-section/the-team-section';
 
-export default function About(): JSX.Element {
+export default function About(): React.JSX.Element {
   return (
     <Layout wrapperClassName="layout">
       <HeaderSection />
