@@ -29,7 +29,7 @@ license file and add it as a secret.
 Then, define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
@@ -48,7 +48,7 @@ Make sure you have set up these variables in the activation step.
 Define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   env:
     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -66,7 +66,7 @@ floating license will be acquired before the tests run, and returned after.
 Example of use:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   with:
     projectPath: path/to/your/project
     unityLicensingServer: [url to your license server]
@@ -89,7 +89,7 @@ To indicate that the test runner is being run for a Unity package rather than a 
 the [`packageMode`](#packagemode) configuration option to `true`.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   with:
     packageMode: true
 ```
@@ -100,7 +100,7 @@ Make sure that you explicitly pass the [`unityVersion`](#unityversion) argument,
 for the test runner to test Unity packages.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   with:
     unityVersion: [your desired Unity version]
 ```
@@ -160,7 +160,7 @@ in order to view the tests results from
 [a check run](https://docs.github.com/en/rest/guides/getting-started-with-the-checks-api#about-check-runs).
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   with:
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -193,7 +193,7 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 `id` of the test step.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   id: myTestStep
 ```
 
@@ -266,7 +266,7 @@ Specific docker image that should be used for testing the project. If packageMod
 image must have [`jq`](https://jqlang.github.io/jq/) installed.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   with:
     customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
@@ -293,7 +293,7 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 Parameters without a value will be considered booleans (with a value of true).
 
 ```yaml
-- uses: game-ci/unity-test-runner@v2
+- uses: game-ci/unity-test-runner@v3
   with:
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
 ```
@@ -304,7 +304,10 @@ _**required:** `false`_ _**default:** `""`_
 
 The type of tests to be run by the test runner.
 
-Options are: `All`, `PlayMode`, and `EditMode`.
+Options are: `All`, `PlayMode`, `EditMode`, and `Standalone`.
+
+Note: `All` only runs `PlayMode` and `EditMode`. You must explicitly specify `Standalone` for it to
+run.
 
 _**required:** `false`_ _**default:** `All`_
 
@@ -356,6 +359,18 @@ _**required:** `false`_ _**default:** `false`_
 SSH Agent path to forward to the container.
 
 This is useful if your manifest has a dependency on a private GitHub repo.
+
+_**required:** `false`_ _**default:** ``_
+
+#### sshPublicKeysDirectoryPath
+
+SSH directory path to mount in the container on `~/.ssh`. Must be used with `sshAgent`.
+
+It is recommended to have only public keys in this directory, and rely on `sshAgent` to manage
+private keys.
+
+This is useful if your manifest has a dependency on multiple private GitHub repos and you need to
+use multiple SSH deploy keys.
 
 _**required:** `false`_ _**default:** ``_
 
@@ -426,6 +441,7 @@ jobs:
         testMode:
           - playmode
           - editmode
+          - standalone
     steps:
       - uses: actions/checkout@v2
         with:
@@ -436,7 +452,7 @@ jobs:
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-      - uses: game-ci/unity-test-runner@v2
+      - uses: game-ci/unity-test-runner@v3
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -486,7 +502,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - uses: game-ci/unity-test-runner@v2
+      - uses: game-ci/unity-test-runner@v3
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}

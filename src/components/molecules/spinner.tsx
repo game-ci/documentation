@@ -1,5 +1,6 @@
 import React from 'react';
-import { AiOutlineLoading3Quarters, FaSpinner } from 'react-icons/all';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { FaSpinner } from 'react-icons/fa';
 import { ThreeDots } from '@site/src/components/molecules/spinner/three-dots';
 import styles from './spinner.module.scss';
 

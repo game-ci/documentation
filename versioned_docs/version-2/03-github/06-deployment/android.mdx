@@ -1,0 +1,252 @@
+# Deploy to Google Play
+
+This guide is intended to help with automating Android builds to upload to the Play Store. If you
+just need to produce an APK, the [unity-builder](https://game.ci/docs/github/builder) action will do
+that. However, if you intend to distribute your game on the Play Store, either for public
+distribution or a beta track, this guide is for you.
+
+### 1. Install Fastlane
+
+[Fastlane](https://docs.fastlane.tools/getting-started/ios/setup/) is a tool that can facilitate
+building and submitting your Android apps to Google, and is the easiest way to deploy your Unity
+project to Android for Play Store distribution.
+
+To configure Fastlane for your GitHub Actions workflow runners, you will need to locally set up a
+`Gemfile` and `Fastfile` within your project. A `Gemfile` specifies what Ruby dependencies are
+needed to set up and run Fastlane (which is written in Ruby), and a `Fastfile` will be how you
+configure your Android deployment settings. We will set up the `Gemfile` now, and the `Fastfile` in
+a later step.
+
+You will need your local machine to have
+[Ruby](https://www.ruby-lang.org/en/documentation/installation/) installed, as well as Bundler. If
+you have Ruby installed but are unsure if you have Bundler, you can run the following to install it:
+
+```bash
+gem install bundler
+```
+
+From there, create a file called `Gemfile` in the root of your git repository with following
+content:
+
+```ruby title="Gemfile"
+source "https://rubygems.org"
+gem "fastlane"
+```
+
+Then run `bundle install`. This will create an additional `Gemfile.lock` file in the root of your
+project.
+
+Commit both `Gemfile` and `Gemfile.lock` to your repo.
+
+### 2. Create a Google Play Service Account
+
+To programmatically access the Google Play Console, you will need a dedicated Google Play service
+account with API access.
+
+Follow the
+["Setup" section of the Fastlane Supply documentation](https://docs.fastlane.tools/actions/supply/)
+to create a service account.
+
+After the last step, it will tell you to test the connection to the Google Play Store, and then add
+your JSON file path to your Appfile. You can do the first step if you would like (you may need to
+run `bundle exec fastlane` instead of just `fastlane`), but don't worry about the Appfile, as we
+will be be creating that in the next step.
+
+Instead, create a Repository Secret in your GitHub repository by going to Settings -> Secrets and
+clicking the "New repository secret" button in the top-right. It should be titled
+`GOOGLE_PLAY_KEY_FILE` and its value should be the plaintext contents of the downloaded JSON file.
+
+### 3. Generate an upload key and keystore
+
+Distributing an app via the Google Play Store requires uploading an unsigned Android App Bundle
+(AAB) file and letting Google codesign your app for you using Play App Signing. In order to do this,
+you need to create an upload signing key, which you will then sign your app with.
+
+In Unity, while Android is your selected build platform, open Player Settings. Under "Publishing
+Settings", click the "Keystore Manager" button to open the keystore manager. Click the "Keystore"
+dropdown, and then "Create New" > "Anywhere" to create a new keystore file. You can select any file
+location, just note where it is.
+
+Fill out all the fields in this form. Both of the password and password confirmation fields (so,
+four password fields total) should contain the same password. Click "Add key" when you're done. In
+Player Settings, confirm that the "Custom Keystore" checkbox is checked, and the correct keystore
+path, keystore password, alias name, and alias password are set. Be sure to commit and push these
+changes to your git repository.
+
+If you would rather use Android Studio to generate an upload key and keystore, you can follow
+[Google's guide](https://developer.android.com/studio/publish/app-signing#generate-key) and then
+manually select that keystore within the Unity Player Settings. It doesn't matter as long as you end
+up with a valid `.keystore` file and Unity is configured to use that custom keystore.
+
+Be sure to keep your `.keystore` file and password handy, as we will be using them in future steps.
+We recommend that you **not** check your `.keystore` file into git, as this can reduce security. If
+your workflow requires developers to be able to manually build the project, we recommend adding the
+`.keystore` file to your `.gitignore` (if you want to keep it in your project directory) and finding
+an alternate way to transfer it between developers, such as a shared password manager that supports
+file uploads.
+
+Next, you will need to add the keystore information to your GitHub repository.
+
+Begin by base64-encoding the contents of your `.keystore` file. On a Linux or MacOS command-line
+prompt, you can use the `base64` command to do so: `base64 user.keystore` (assuming you're in the
+correct working directory and your keystore file is named `user.keystore`). In Windows PowerShell,
+the following command will generate the same results:
+`[convert]::ToBase64String((Get-Content -path "user.keystore" -Encoding byte))`
+
+Add four Repository Secrets in your GitHub repository by going to Settings -> Secrets and clicking
+the "New repository secret" button in the top-right. `ANDROID_KEYSTORE_BASE64` should contain the
+base64'd version of your keystore file's contents, and `ANDROID_KEYSTORE_PASS`,
+`ANDROID_KEYALIAS_NAME`, and `ANDROID_KEYALIAS_PASS` should contain your keystore's password, alias
+name, and alias password respectively. If you followed the instructions above, the keystore password
+and alias password will be the same.
+
+### 4. Manually upload a build to Google Play
+
+In order to automate submission to the Google Play store, Google requires you to have already
+manually uploaded a version of your app to the Google Play Console. You also need to get your app
+out of the "Draft" status if you want to deploy anything but draft releases.
+
+To begin, build your game in Unity. Ensure that the "Build App Bundle (Google Play)" checkbox is
+checked in the Build Settings, and that the keystore from the previous step is selected in the
+Publishing Settings section of the Player Settings. If both of these are correct, your build should
+produce an `.aab` file that has been signed with your upload key.
+
+In the Google Play Console, select "Internal Testing" from the left-side menu (or an alternate track
+if you want to do a public production or beta released). Click "Create new release", and drag in an
+AAB you've manually built in Unity (or an existing GitHub Actions workflow). Fill out the rest of
+the required fields, then click Save.
+
+Before you can programmatically deploy any release that is not a "Draft" release, you'll need to
+manually submit your app for review at least once to get it out of "Draft" status. Depending on
+where you are in the game production lifecycle, you may not want to this during initial setup, but
+be aware this is something you will need to do before you can use GameCI to release new live updates
+to a production build.
+
+### 5. Set up Fastlane
+
+At this point, your Google Play Console app listing should be ready to accept programmatic uploads,
+but you still need to configure Fastlane. Within your project directory, create a directory called
+`fastlane`, and then create two files within that directory, `Appfile` and `Fastfile`.
+
+```ruby title="fastlane/Appfile"
+for_platform :android do
+  package_name(ENV["ANDROID_PACKAGE_NAME"])
+  json_key_file(ENV["GOOGLE_PLAY_KEY_FILE_PATH"])
+end
+```
+
+```ruby title="fastlane/Fastfile"
+platform :android do
+  desc "Upload a new Android version to the production Google Play Store"
+  lane :production do
+    upload_to_play_store(track: 'production', release_status: 'completed', aab: "#{ENV['ANDROID_BUILD_FILE_PATH']}")
+  end
+
+  desc "Upload a new Android internal version to Google Play"
+  lane :internal do
+    upload_to_play_store(track: 'internal', release_status: 'completed', aab: "#{ENV['ANDROID_BUILD_FILE_PATH']}")
+  end
+end
+```
+
+If you would like to upload to other tracks (namely, `alpha` or `beta`), you can create additional
+lanes that look the same as the `:production` and `:internal` lanes except for the name and `track`
+parameter. Additionally, if you want to create draft releases (which will be necessary until you've
+manually pushed at least one build through the manual submission process), you will want to switch
+`release_status` from `completed` to `draft`.
+
+### 6. Add jobs to your GitHub workflow
+
+The following workflow establishes two jobs. The first builds your game into an AAB file, and the
+second uploads that generated bundle to the Play Store.
+
+```yaml title=".github/workflows/main.yml"
+jobs:
+  buildForAndroidPlatform:
+    name: Build For Android Platform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jlumbroso/free-disk-space@v1.2.0
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-Android
+      - uses: game-ci/unity-builder@v2
+        with:
+          targetPlatform: Android
+          androidAppBundle: true
+          androidKeystoreName: user # This file won't exist, but this property needs to exist.
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+          androidTargetSdkVersion: AndroidApiLevel31
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-Android
+          path: build/Android
+
+  releaseToGooglePlay:
+    name: Release to the Google Play Store
+    runs-on: ubuntu-latest
+    needs: buildForAndroidPlatform
+    env:
+      GOOGLE_PLAY_KEY_FILE: ${{ secrets.GOOGLE_PLAY_KEY_FILE }}
+      GOOGLE_PLAY_KEY_FILE_PATH:
+        ${{ format('{0}/fastlane/google-fastlane.json', github.workspace) }}
+      ANDROID_BUILD_FILE_PATH: ${{ format('{0}/build/Android/Android.aab', github.workspace) }}
+      ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Download Android Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-Android
+          path: build/Android
+      - name: Add Authentication
+        run: echo "$GOOGLE_PLAY_KEY_FILE" > $GOOGLE_PLAY_KEY_FILE_PATH
+      - name: Set up Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+      - name: Upload to Google Play Internal
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'android internal' # Change to upload to a different lane
+      - name: Cleanup to avoid storage limit
+        if: always()
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: build-Android
+```
+
+### 7. Add secrets to your Github repo
+
+On your project's GitHub repo page, add a number of Repository Secrets by going to Settings ->
+Secrets and clicking the "New repository secret" button in the top-right.
+
+- **ANDROID_KEYSTORE_BASE64** : Base64 of your keystore, generated in step 3
+- **ANDROID_KEYSTORE_PASS**: Password for your keystore
+- **ANDROID_KEYALIAS_NAME**: Name of the alias in your keystore
+- **ANDROID_KEYALIAS_PASS**: Password for the alias in your keystore
+- **GOOGLE_PLAY_KEY_FILE**: The contents of the Google Account Service .json file from step 2
+- **ANDROID_PACKAGE_NAME**: Your application package name (e.g com.company.application)
+
+If you get build failures around the keystore being invalid, _please_ confirm that your keystore
+base64, alias, and two passwords are correct, as that is a common source of failure. If you want to
+double-check your keystore has been correctly encoded as valid base64, you can locally recreate your
+keystore by manually running:
+
+```bash
+cat [keystore file] | base64 --decode > user.keystore
+```
+
+swapping in the name of a text file containing the base64 value. This will create a new keystore
+that you can attempt to manually build from in Unity. On Windows, this would be:
+
+```powershell
+[Text.Encoding]::Utf8.GetString([Convert]::FromBase64String('base 64 value')) | Out-File -FilePath .\user.keystore
+```

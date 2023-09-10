@@ -1,9 +1,9 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Versions from '@site/src/components/docs/versions/versions';
-
 import { useColorMode } from '@docusaurus/theme-common';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import Versions from '@site/src/components/docs/versions/versions';
 import Section from '@site/src/components/pages/home/section/section';
 import styles from '@site/src/components/pages/home/section/section.module.scss';
 
@@ -42,16 +42,18 @@ function VersionsAntdWrapper() {
   return <Versions />;
 }
 
-export default function VersionsPage(): JSX.Element {
+export default function VersionsPage(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
       title={`${siteConfig.title} - Docker images versions`}
       description="Docker images versions"
     >
-      <main>
+      <main style={{ minHeight: '100vh' }}>
         <Section className={styles.versionsSection}>
-          <VersionsAntdWrapper />
+          <BrowserOnly fallback={<div>Loading...</div>}>
+            {() => <VersionsAntdWrapper />}
+          </BrowserOnly>
         </Section>
       </main>
     </Layout>

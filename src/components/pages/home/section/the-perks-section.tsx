@@ -1,7 +1,7 @@
 import React from 'react';
+import cx from 'classnames';
 import Section from '@site/src/components/pages/home/section/section';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
-import cx from 'classnames';
 import styles from './section.module.scss';
 
 const cards = [

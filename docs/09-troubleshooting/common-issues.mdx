@@ -92,11 +92,11 @@ here][unity-docker-versions].
 
 In this particular case, it is also important to look for the last part of the docker image which is
 the version for GameCI. `-0` means it is the latest `v0.x.x` version of the docker images. `v0.x.x`
-version is out of date as we moved to Version 1 as shown on
+and `v1.x.x` are out of date as we moved to Version 2 as shown on
 [github.com/game-ci/docker/releases](https://github.com/game-ci/docker/releases). We are not
-publishing images for `v0.x.x` anymore.
+publishing images for `v0.x.x` or `v1.x.x` anymore.
 
-The correct image should be `unityci/editor:2021.3.0f1-android-1`.
+The correct image should be `unityci/editor:2021.3.0f1-android-2`.
 
 You can also test this locally:
 
@@ -106,24 +106,24 @@ docker pull unityci/editor:2021.3.0f1-android-0
 # Error response from daemon: manifest for unityci/editor:2021.3.0f1-android-0 not found: manifest unknown: manifest unknown
 
 # right
-docker pull unityci/editor:2021.3.0f1-android-1
-# 2021.3.0f1-android-1: Pulling from unityci/editor
+docker pull unityci/editor:2021.3.0f1-android-2
+# 2021.3.0f1-android-2: Pulling from unityci/editor
 # [...]
 ```
 
 #### Github Actions
 
-You need to make sure you are using Github Actions v2, check for the version of your actions in your
+You need to make sure you are using Github Actions v3, check for the version of your actions in your
 `.github/workflows/*.yml` files.
 
 ```diff
-- uses: game-ci/unity-builder@v1
-+ uses: game-ci/unity-builder@v2
+- uses: game-ci/unity-builder@v2
++ uses: game-ci/unity-builder@v3
 ```
 
 #### Gitlab CI
 
-Set the `IMAGE_VERSION` to 1 in
+Set the `IMAGE_VERSION` to 2 in
 [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml#L12)
 
 ### Scripts have compiler errors.
@@ -216,6 +216,25 @@ engine and CI/CD:
   project specifically or is it with Unity or GameCI?
 - Try to search for error keywords in your message such as `error`, `failed`, `exception`, etc.
 - Read the error message closely to understand what's going on.
+
+### No space left on device
+
+#### Error
+
+```plaintext
+docker: failed to register layer: ApplyLayer exit status 1 stdout:  stderr: write /opt/unity/Editor/Data/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.8/lib/linux/x86_64/libFuzzer.a: no space left on device.
+```
+
+#### Solution
+
+The GitHub-hosted runners often do not have enough disk space for game dev projects. To work around
+this limitation, you could try to use the
+[Free Disk Space (Ubuntu)](https://github.com/marketplace/actions/free-disk-space-ubuntu) action at
+the start of your workflow. If you still require additional disk space for your project, you could
+try using
+[Self-hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
+or using
+[Cloud Runners](https://game.ci/docs/github-cloud-runner/game-ci-vs-cloud-runner#large-github-projects).
 
 ## Still having problems?
 
