@@ -227,7 +227,8 @@ Parameters without a value will be considered booleans (with a value of true).
 
 There are 2 main use cases:
 
-- To pass your own custom parameters to be used with `buildMethod` above
+- To pass your own custom parameters to be used with `buildMethod` above. Note environment variables
+  set in the workflow file will not be available in the environment running Unity, so use this mechanism instead.
 - To pass [Unity Build Options](https://docs.unity3d.com/ScriptReference/BuildOptions.html) (for
   example, `customParameters: -standaloneBuildSubtarget Server` will do server builds)
 
