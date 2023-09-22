@@ -1,0 +1,319 @@
+---
+toc_max_heading_level: 4
+---
+
+# Debian Machine Setup
+
+Steps for manual configuration and provisioning of Debian 12 server systems. These steps will also
+upgrade a Debain 11 system to Debian 12. This guide assumes and recommends that the user is starting
+from a fresh installation. If you unfamiliar with the installation process for Debian, see the links
+below before progressing.
+
+- [How to Install Debian](https://www.linuxtechi.com/how-to-install-debian-11-bullseye/)
+
+- [Debian 12 ISO Image](https://cdimage.debian.org/cdimage/weekly-builds/amd64/iso-dvd/debian-testing-amd64-DVD-1.iso)
+
+## Base Packages
+
+1. Log in to your host as the root user
+
+2. Add required the apt sources and upgrade your system to the latest version.
+
+```bash
+cat << EOF > /etc/apt/sources.list
+deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+
+deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+
+deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+EOF
+```
+
+3. Apply system updates and upgrades
+
+Update the package list and upgrade system components prior to installing other software. Reboot
+after the process completes.
+
+```bash
+# run as root
+apt-get update && \
+apt-get upgrade -y && \
+apt-get full-upgrade -y
+
+reboot
+```
+
+4. Install base utilities
+
+The following is a curated set of base packages that are dependancies for steps later in the guide
+and helpful in general.
+
+```bash
+# Run as root
+apt-get update && \
+  apt-get install -y wireguard \
+  openresolv \
+  ssh-import-id \
+  sudo \
+  curl \
+  tmux \
+  netplan.io \
+  apt-transport-https \
+  ca-certificates \
+  software-properties-common \
+  htop \
+  git-extras \
+  rsyslog \
+  fail2ban \
+  vim \
+  gpg \
+  open-iscsi \
+  nfs-common \
+  ncdu \
+  iotop && \
+  sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
+  sudo chmod +x /usr/bin/yq && \
+  sudo systemctl enable fail2ban && \
+  sudo systemctl start fail2ban
+```
+
+## Setup the admin user
+
+1. Create the user
+
+```bash
+export NEW_USER="<some new user here>"
+useradd -s /bin/bash -d /home/$NEW_USER/ -m -G sudo $NEW_USER
+```
+
+2. Grant passwordless sudo permission
+
+```bash
+echo "$NEW_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+```
+
+3. Import an ssh key
+
+   - If you have a Github, GitLab, or Launchpad account, you can use `ssh-import-id` to install you
+     ssh public-key into your host.
+
+     - [Adding a new SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=linux)
+     - [Use SSH keys to communicate with GitLab ](https://docs.gitlab.com/ee/user/ssh.html)
+     - [launchpad.net](https://launchpad.net/)
+
+   - If you do not have one of the above, you can always upload your key manually as described in
+     [SSH Copy ID for Copying SSH Keys to Servers](https://www.ssh.com/academy/ssh/copy-id) from
+     [ssh.com](https://www.ssh.com).
+
+   Example usage for `ssh-import-id`:
+
+   ```bash
+   # Github
+   sudo -u $NEW_USER ssh-import-id-gh <github username>
+
+   # Gitlab
+   URL="https://gitlab.exampledomain.com/%s.keys" sudo -u $NEW_USER ssh-import-id <gitlab username>
+   ```
+
+4. Add the user to relevant groups
+
+```bash
+usermod -a -G kvm $NEW_USER
+usermod -a -G docker $NEW_USER
+```
+
+5. Craete a password for the user
+
+```bash
+passwd $NEW_USER
+```
+
+6. Log out of the root account and log back in as the new user.
+
+## Install Docker
+
+1. Download the docker gpg key
+
+```bash
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+```
+
+2. Add the apt package source
+
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+3. Update the apt package list and install Docker
+
+```bash
+sudo apt-get update && sudo apt-get install -y docker-ce
+```
+
+## install Docker Compose
+
+:::infoThis step is optional :::
+
+The default apt package lists provide a very outdated version of docker compose. Below are the steps
+required to install a current version.
+
+1. Find the latest version by visiting https://github.com/docker/compose/releases
+
+```bash
+export COMPOSE_VERSION="2.17.3"
+```
+
+2. Create a directory for the binary
+
+```bash
+mkdir -p ~/.docker/cli-plugins/
+```
+
+3. Download the binary
+
+```bash
+curl -SL https://github.com/docker/compose/releases/download/v$COMPOSE_VERSION/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+```
+
+4. Make it executable
+
+```bash
+chmod +x ~/.docker/cli-plugins/docker-compose
+```
+
+## Install NVIDIA GPU Drivers
+
+:::infoThis step is optional :::
+
+Debain's built-in driver installation process is more reliable than Ubuntu's, but readers are still
+advised to get their driver installaer directly from NVIDIA. Instuctions for apt installation are
+included for completeness.
+
+### Download and INstall from Nvidia
+
+1. Install required packages
+
+```bash
+# Run as root
+apt-get install -y gcc \
+firmware-misc-nonfree \
+linux-headers-amd64 \
+linux-headers-`uname -r`
+```
+
+2. Find your driver version and download the installer
+
+You can find both gaming and data-center drivers using the nvidia web tool, however cloud and vps
+users will need to refer to their provider's documentation for installation instructions as many
+providers will require you to use GRID drivers instead.
+
+    - Nvidia's web tool: https://www.nvidia.com/download/index.aspx.
+
+    - Alternatively, you can download a specific driver version using curl
+
+    ```bash
+    export DRIVER_VERSION=""
+
+    # GeForce Cards
+    curl --progress-bar -fL -O "https://us.download.nvidia.com/XFree86/Linux-x86_64/$DRIVER_VERSION/NVIDIA-Linux-x86_64-$DRIVER_VERSION.run"
+
+    # Datacenter Cards
+    curl --progress-bar -fL -O "https://us.download.nvidia.com/tesla/$DRIVER_VERSION/NVIDIA-Linux-x86_64-$DRIVER_VERSION.run"
+    ```
+
+3. Run the Installer
+
+It is required to run the driver from the system console, it cannot be installed from an X-session.
+If you used a desktop image instead of a server image you will need to disable your session
+managaer.
+
+    ```bash
+    sudo bash "NVIDIA-Linux-x86_64-*.run"
+    ```
+
+### Download and Install from Apt
+
+This will not work for data-center cards or hosts which require GRID drvers.
+
+```bash
+sudo apt-get install nvidia-driver
+```
+
+## Install the Nvidia Container Toolkit
+
+:::infoThis step is optional :::
+
+The nvidia container toolkit allows containes to access the GPU resources of the underlying host
+machine. Requires that the GPU drivers are already installed on the host. See the official docs
+here: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+
+1. Set your system distribution name to debian11 as workaround until nvidia adds official debian12
+   support
+
+```bash
+distribution=debian11
+```
+
+2. Download the gpg key and add the repo to your apt sources
+
+```bash
+curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+&& curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+```
+
+3. Update apt packages and install the container toolkit
+
+```bash
+sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+```
+
+4. Set `nvidia` the default container runtime
+
+```bash
+sudo nvidia-ctk runtime configure --runtime=docker --set-as-default
+```
+
+5. Restart the docker service
+
+```bash
+sudo systemctl restart docker
+```
+
+6. Test that it is working by running one of Nvidia's
+   [sample workloads](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/sample-workload.html).
+
+## Install the Prometheus metrics exporter
+
+:::infoThis step is optional :::
+
+1. Log in as, or assume the root user.
+
+2. Download the metrics exporter application
+
+```bash
+wget -O /opt/node_exporter-1.6.1.linux-amd64.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz && \
+```
+
+3. Extract the archive and copy into place
+
+```bash
+tar -xvf /opt/node_exporter-1.6.1.linux-amd64.tar.gz -C /opt && \
+rm /opt/node_exporter-1.6.1.linux-amd64.tar.gz && \
+ln -s node_exporter-1.6.1.linux-amd64 /opt/node_exporter
+```
+
+4. Download and create the system service
+
+```bash
+wget https://raw.githubusercontent.com/small-hack/smol-metal/main/node-exporter.service && \
+sudo mv node-exporter.service /etc/systemd/system/node-exporter.service && \
+systemctl daemon-reload && \
+systemctl enable node-exporter && \
+systemctl restart node-exporter
+```

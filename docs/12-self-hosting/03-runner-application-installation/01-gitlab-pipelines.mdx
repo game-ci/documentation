@@ -1,0 +1,223 @@
+---
+toc_max_heading_level: 4
+---
+
+import RepoPage from '/assets/images/gl-runner-repo-page.png';
+import CiMenu from '/assets/images/gl-runner-cicd-menu.png';
+import CiSettings from '/assets/images/gl-runner-cicd-settings.png';
+import NewRunner from '/assets/images/gl-runner-new-runner.png';
+import SelectOS from '/assets/images/gl-runner-select-os.png';
+import SelectTags from '/assets/images/gl-runner-tags.png';
+import CreateRunner from '/assets/images/gl-runner-create-runner.png';
+import RegisterRunner from '/assets/images/gl-runner-register-runner.png';
+import AccessTokenSelect from '/assets/images/gl-runner-access-token-select.png';
+import TokenScreen from '/assets/images/gl-runner-access-token-screen.png';
+import TokenName from '/assets/images/gl-runner-token-name.png';
+import TokenRole from '/assets/images/gl-runner-token-role.png';
+import TokenCreate from '/assets/images/gl-runner-token-create-button.png';
+import TokenComplete from '/assets/images/gl-runner-token-complete.png';
+
+# Gitlab Pipelines
+
+Gitlab pipeline runners support multiple installation and runtime configurations. This guide will
+create a very basic runner using the `shell` executor in order to avoid running docker-in-docker.
+You may find more in-depth information regarding Gitlab Runners at the following links:
+
+- [Gitlab Runner](https://docs.gitlab.com/runner/)
+- [Install GitLab Runner](https://docs.gitlab.com/runner/install/)
+- [Configuring GitLab Runner](https://docs.gitlab.com/runner/configuration/)
+
+## Manual
+
+1. Download and install the gitlab runner application on your host
+
+   ```bash
+   # Download the binary for your system
+   sudo curl -L --output /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
+
+   # Give it permission to execute
+   sudo chmod +x /usr/local/bin/gitlab-runner
+
+   # Create a GitLab Runner user
+   sudo useradd --comment 'GitLab Runner' --create-home gitlab-runner --shell /bin/bash
+
+   # Install and run as a service
+   sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
+   sudo gitlab-runner start
+   ```
+
+2. Log in to Gitlab and navigate to the repo you want to create a runner for
+
+<div style={{ textAlign: 'center' }}>
+  <img src={RepoPage} width="600" />
+</div>
+<br />
+<br />
+
+3. From the menu on the left, select `Settings` then choose `CI/CD` from the pop-out list.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={CiMenu} width="600" />
+</div>
+<br />
+<br />
+
+4. Find the `Runners` section and click the `expand` button
+
+<div style={{ textAlign: 'center' }}>
+  <img src={CiSettings} width="600" />
+</div>
+<br />
+<br />
+
+5. Select `New Project Runner`
+
+<div style={{ textAlign: 'center' }}>
+  <img src={NewRunner} width="600" />
+</div>
+<br />
+<br />
+
+6. Choose `Linux` as the operating system
+
+<div style={{ textAlign: 'center' }}>
+  <img src={SelectOS} width="600" />
+</div>
+<br />
+<br />
+
+7. Optionally, check the `Run untagged jobs` box if you would liek your runner to be the default for
+   all jobs.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={SelectTags} width="600" />
+</div>
+<br />
+<br />
+
+8. Click the `Create Runner` button at the bottom of the page
+
+<div style={{ textAlign: 'center' }}>
+  <img src={CreateRunner} width="600" />
+</div>
+<br />
+<br />
+
+9. Follow the instructions provided to register your runner
+
+<div style={{ textAlign: 'center' }}>
+  <img src={RegisterRunner} width="600" />
+</div>
+<br />
+<br />
+
+## Automated
+
+The following script will perform the same actions as described above automatically. This is usefull
+for those who would prefer ephemeral runners or to use a declarative workflow. You will need to
+provide your own project access-token to the script as an input value. For mor in-depth information
+see the following resources:
+
+- [Tutorial: Create, register, and run your own project runner](https://docs.gitlab.com/ee/tutorials/create_register_first_runner/)
+- [Tutorial: Automate runner creation and registration ](https://docs.gitlab.com/ee/tutorials/automate_runner_creation/index.html)
+- [Runner Executors](https://docs.gitlab.com/runner/executors/)
+
+1. From the main page of your Gitlab repository, select the `Settings` option from the menu on the
+   left.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={RepoPage} width="600" />
+</div>
+<br />
+<br />
+
+2. Select the `Access Tokens` menu
+
+<div style={{ textAlign: 'center' }}>
+  <img src={AccessTokenSelect} width="300" />
+</div>
+<br />
+<br />
+
+3. Select `Add new token`
+
+<div style={{ textAlign: 'center' }}>
+  <img src={TokenScreen} width="600" />
+</div>
+<br />
+<br />
+
+4. Give the new token a name and expiration date
+
+<div style={{ textAlign: 'center' }}>
+  <img src={TokenName} width="600" />
+</div>
+<br />
+<br />
+
+5. Set the following role and scopes for the token:
+
+<div style={{ textAlign: 'center' }}>
+  <img src={TokenRole} width="600" />
+</div>
+<br />
+<br />
+
+6. Click the `Create Token` button
+
+<div style={{ textAlign: 'center' }}>
+  <img src={TokenCreate} width="700" />
+</div>
+<br />
+<br />
+
+7. Save the token string somewhere secure
+
+<div style={{ textAlign: 'center' }}>
+  <img src={TokenComplete} width="700" />
+</div>
+<br />
+<br />
+
+8. Copy and paste the following int your terminal to create the script, or download it from (link
+   here TODO)
+
+   ```bash
+   /usr/bin/cat << 'EOF' > runner.sh
+   #!/bin/bash
+
+   export DOWNLOAD_URL="https://gitlab-runner-downloads.s3.amazonaws.com/latest/deb/gitlab-runner_amd64.deb"
+
+   curl -LJO "${DOWNLOAD_URL}"
+   sudo dpkg -i gitlab-runner_amd64.deb
+
+   export GITLAB_URL=$1
+   export PROJECT_ID=$2
+   export GITLAB_TOKEN=$3
+
+   RETURN=$(curl --silent --request POST --url "$GITLAB_URL/api/v4/user/runners" \
+     --data "runner_type=project_type" \
+     --data "project_id=$PROJECT_ID" \
+     --data "description=gameci runner" \
+     --data "tag_list=" \
+     --header "PRIVATE-TOKEN: $GITLAB_TOKEN")
+
+   TOKEN=$(echo $RETURN |jq -r '.token')
+
+   sudo gitlab-runner register \
+     --non-interactive \
+     --name "gameci-runner" \
+     --url "$GITLAB_URL" \
+     --token "$TOKEN" \
+     --executor "shell" \
+     --docker-image ubuntu:latest
+
+   sudo usermod -aG docker gitlab-runner
+   EOF
+   ```
+
+9. Run the script as follows:
+
+   ```bash
+   bash ./runner.sh <gitlab-url> <project-id> <project-token>
+   ```

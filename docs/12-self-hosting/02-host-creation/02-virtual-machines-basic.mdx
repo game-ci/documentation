@@ -1,0 +1,142 @@
+---
+toc_max_heading_level: 4
+---
+
+# Creating a Virtual Machine
+
+You may find yourself with the requirement for multiple runners, runners of differing
+configurations, or different operating systems but only have access to a single Host. In this case,
+you can split your Host into multiple runners using virtualization.
+
+## Multipass
+
+Multipass is a lightweight VM manager for Linux, Windows and macOS. It's designed to provide a
+cloud-like Ubuntu environment with a single command. It uses KVM on Linux, Hyper-V on Windows and
+HyperKit on macOS to run the VM with minimal overhead. It can also use VirtualBox on Windows and
+macOS. Multipass supports cloud-init and auto-install for vm configuration.
+
+- [multipass](https://multipass.run/)
+- [github.com/canonical/multipass](https://github.com/canonical/multipass)
+- [cloud-init](https://cloud-init.io/)
+
+### Install
+
+Windows:
+
+- https://multipass.run/docs/installing-on-windows
+- https://multipass.run/docs/windows-tutorial
+
+MacOS:
+
+- https://multipass.run/docs/installing-on-macos
+- https://multipass.run/docs/mac-tutorial
+
+Linux:
+
+- Install via apt + snap
+
+  ```bash
+  sudo apt update
+  sudo apt install -y snapd
+  sudo snap install core
+  sudo snap install multipass
+  export PATH="$PATH:/snap/bin"
+  ```
+
+### Create a VM on a Linux host
+
+- Set options
+
+  ```bash
+  #program verbosity
+  export VERBOSITY="-vvvvv"
+  export DEBUG="true"
+  export SQUASH="false"
+
+  # Virtual Machine Configuration
+  export VM_NAME="test"
+  export VM_IMAGE="jammy"
+  export VM_CPUS="4"
+  export VM_DISK="32G"
+  export VM_MEM="4G"
+  export VM_IP="none"
+  export VM_USER="max"
+  export VM_KEY=""
+  export VM_IP=""
+  export SSH_PORT="22"
+
+  # temporary files
+  export VM_INIT="cloud-init.yaml"
+  export VM_KEY_FILE="$(pwd)/$VM_USER"
+  ```
+
+- Create an ssh-key for the admin user
+
+  ```bash
+  yes | ssh-keygen -C "$VM_USER" \
+          -f "$VM_KEY_FILE" \
+          -N '' \
+          -t rsa -q
+
+  VM_KEY=$(cat "$VM_KEY_FILE".pub)
+  ```
+
+- Create the cloud-init config file:
+
+  ```yaml
+  cat << EOF > ${VM_INIT}
+  #cloud-config
+  groups:
+    - docker
+  users:
+    - default
+    - name: ${VM_USER}
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      shell: /bin/bash
+      groups: docker, admin, sudo, users
+      no_ssh_fingerprints: true
+      ssh-authorized-keys:
+        - ${VM_KEY}
+  packages:
+    - docker.io
+    - docker-compose
+  runcmd:
+    - [ sed , -i , "s/#Port 22/Port ${SSH_PORT}/g" , /etc/ssh/sshd_config ]
+    - [ sed , -i , "s/#PermitRootLogin prohibit-password/PermitRootLogin no/g" , /etc/ssh/sshd_config ]
+  EOF
+  ```
+
+- Start the VM
+
+  ```bash
+  multipass launch --name $VM_NAME \
+    --cpus $VM_CPUS \
+    --disk $VM_DISK \
+    --mem $VM_MEM \
+    $VM_IMAGE \
+    --cloud-init $VM_INIT \
+    --timeout 300 \
+    $VERBOSITY
+  ```
+
+- Get the ip address and ssh into the vm.
+
+SSH:
+
+```bash
+export VM_IP=$(multipass info $VM_NAME | grep IPv4 |awk '{print $2}')
+ssh -i $VM_KEY_FILE \
+        $VM_USER@$VM_IP \
+        -o StrictHostKeyChecking=no \
+        -p $SSH_PORT \
+        -t \
+        /bin/bash
+```
+
+CLI:
+
+```bash
+multipass shell runner
+```
+
+## QEMU/KVM

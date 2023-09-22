@@ -1,0 +1,130 @@
+---
+toc_max_heading_level: 4
+---
+
+import RepoPage from '/assets/images/gh-runner-repo-page.png';
+import ActionsTab from '/assets/images/gh-runner-actions-tab.png';
+import NewRunner from '/assets/images/gh-runner-new-runner.png';
+import RunnerSettings from '/assets/images/gh-runner-settings.png';
+
+# Github Actions
+
+The Github actions runner application is quite easy to install. The following is the most basic
+method. For more in-depth guidance please refer to the official documentation:
+
+- [About self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
+- [Hosting your own runners](https://docs.github.com/en/actions/hosting-your-own-runners)
+- [Using self-hosted runners in a workflow](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/using-self-hosted-runners-in-a-workflow)
+
+## Manual Setup
+
+1. Log in to [Github](https://github.com/) and navigate to the repo you would like to set up a
+   runner for and from the top menu of the repo's page, select the `settings` tab
+
+<div style={{ textAlign: 'center' }}>
+  <img src={RepoPage} width="700" />
+</div>
+<br />
+<br />
+
+2. From them menu on the left, expand the `Actions` menu then select the `Runners` option
+
+<div style={{ textAlign: 'center' }}>
+  <img src={ActionsTab} width="700" />
+</div>
+<br />
+<br />
+
+3. Click the `New self-hosted runner` button to bring up the runner installation instructions.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={NewRunner} width="700" />
+</div>
+<br />
+<br />
+
+4. Select the `Linux` runner option, then follow the on-screen instructions to download, install,
+   and configure the runner application.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={RunnerSettings} width="700" />
+</div>
+<br />
+
+5. Update your workflow file to use your self hosted runner by setting the `runs-on` valueto
+   `self-hosted` as shown in the example below.
+
+   ```yaml
+   name: learn-github-actions
+   on: [push]
+   jobs:
+     check-bats-version:
+       runs-on: self-hosted
+       steps:
+         - uses: actions/checkout@v4
+         - uses: actions/setup-node@v3
+           with:
+             node-version: '14'
+         - run: npm install -g bats
+         - run: bats -v
+   ```
+
+## Automated Setup
+
+The following script will perform the same actions as described above automatically. This is usefull
+for those who would prefer ephemeral runners or to use a declarative workflow. You will need to
+provide your own access-token to the script as an input value.
+
+1. Copy and paste the following int your terminal to create the script, or download it from (link
+   here TODO)
+
+   ```bash
+   /usr/bin/cat << 'EOF' > runner.sh
+   #!/bin/bash
+
+   # url for github api endpoint
+   base_api_url="https://api.github.com"
+
+   # Username or Org name
+   owner=$1
+
+   # Name of the repository to create a runner for
+   repo=$2
+
+   # Access token
+   token=$3
+
+   # Runner platform
+   runner_plat=linux
+
+   # Get a authorized token for your repo/org
+   export RUNNER_TOKEN=$(curl -s -X POST ${base_api_url}/repos/${owner}/${repo}/actions/runners/registration-token -H "accept: application/vnd.github.everest-preview+json" -H "authorization: token ${token}" | jq -r '.token')
+
+   # Find the latest version of the runner software
+   latest_version_label=$(curl -s -X GET 'https://api.github.com/repos/actions/runner/releases/latest' | jq -r '.tag_name')
+   latest_version=$(echo ${latest_version_label:1})
+
+   # Assemble the string-value for the runner application archive
+   runner_file="actions-runner-${runner_plat}-x64-${latest_version}.tar.gz"
+
+   # Assemble the download URL
+   runner_url="https://github.com/actions/runner/releases/download/${latest_version_label}/${runner_file}"
+
+   # Download and extract the archive
+   wget -O ${runner_file} ${runner_url}
+   tar xzf "./${runner_file}"
+
+   # Install and configure the application without prompting for user-input
+   ./config.sh --url https://github.com/${owner}/${repo} --token ${RUNNER_TOKEN} --unattended
+
+   ./svc.sh install
+   sudo ./svc.sh start
+   sudo ./svc.sh status
+   EOF
+   ```
+
+2. Run the script as follows:
+
+   ```bash
+   bash ./runner.sh <github-username> <repo-name> <access-token>
+   ```
