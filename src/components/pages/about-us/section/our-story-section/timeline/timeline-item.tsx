@@ -5,12 +5,12 @@ import TimelineItemBullet from '@site/src/components/pages/about-us/section/our-
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 
 interface Props {
-  title: string | React.JSX.Element;
-  subTitle: string | React.JSX.Element;
+  title: string | JSX.Element;
+  subTitle: string | JSX.Element;
   right?: boolean;
 }
 
-const TimelineItem = ({ title, subTitle, right }: Props): React.JSX.Element => {
+const TimelineItem = ({ title, subTitle, right }: Props): JSX.Element => {
   return (
     <>
       {right ? (

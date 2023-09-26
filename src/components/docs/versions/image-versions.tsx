@@ -1,9 +1,9 @@
+import { Select } from 'antd';
 import React, { useState } from 'react';
 import SignInSignOutButton from '@site/src/components/auth/sign-in-sign-out-button';
 import UnityVersions from './unity-versions';
-import styles from './unity-version.module.scss';
 
-// const { Option } = Select;
+const { Option } = Select;
 
 interface Props {
   versions: { [key: string]: any }[];
@@ -11,29 +11,29 @@ interface Props {
 
 const ImageVersions = ({ versions }: Props) => {
   const [selectedVersion, setSelectedVersion] = useState<any>(versions[0].NO_ID_FIELD);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
-    <main className={styles.versionsPanel}>
-      <h1>Supported Editor Versions</h1>
+    <main>
+      <h1>Versions</h1>
 
       <div>
         <span>Docker repo version: </span>
-
-        <select onChange={(event) => setSelectedVersion(event.target.value)}>
+        <Select defaultValue={selectedVersion} onChange={setSelectedVersion} loading={isLoading}>
           {versions.map((version) => {
             const { NO_ID_FIELD: id } = version;
 
             return (
-              <option key={id} value={id}>
+              <Option key={id} value={id}>
                 {id}
-              </option>
+              </Option>
             );
           })}
-        </select>
+        </Select>
         <SignInSignOutButton style={{ float: 'right' }} />
       </div>
 
-      <UnityVersions selectedRepoVersion={selectedVersion} />
+      <UnityVersions selectedRepoVersion={selectedVersion} setIsLoading={setIsLoading} />
     </main>
   );
 };

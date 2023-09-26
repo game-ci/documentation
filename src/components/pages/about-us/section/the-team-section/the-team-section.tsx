@@ -65,7 +65,7 @@ const membersPerTwo = [
   ],
 ];
 
-const TheTeamSection = (): React.JSX.Element => {
+const TheTeamSection = (): JSX.Element => {
   return (
     <div className="py-12 px-0 md:px-14 xl:px-8 flex justify-center items-center flex-col">
       <h1 className="text-xl md:text-2xl xl:text-4xl tracking-wider leading-5 md:leading-6 xl:leading-9 text-center">

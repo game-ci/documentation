@@ -1,14 +1,14 @@
-import React from 'react';
+import { Collapse } from 'antd';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import UnityVersion from '@site/src/components/docs/versions/unity-version';
-import MajorEditorVersion from './major-editor-version';
 
 interface Props {
   selectedRepoVersion: string | undefined;
-  // setIsLoading: Dispatch<SetStateAction<boolean>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const UnityVersions = ({ selectedRepoVersion }: Props) => {
+const UnityVersions = ({ selectedRepoVersion, setIsLoading }: Props) => {
   if (!selectedRepoVersion) return null;
 
   const ciJobs = useFirestore()
@@ -20,11 +20,12 @@ const UnityVersions = ({ selectedRepoVersion }: Props) => {
 
   const { status, data } = useFirestoreCollectionData<{ [key: string]: any }>(ciJobs);
   const isLoading = status === 'loading';
+  useEffect(() => {
+    setIsLoading(isLoading);
+  });
 
   const loading = <p>Fetching versions...</p>;
   const failures = isLoading ? [] : data.filter((version) => version.status === 'failed');
-
-  const versions = {};
 
   if (data) {
     // Sorting the data based on the version numbers to maintain the version order
@@ -61,21 +62,6 @@ const UnityVersions = ({ selectedRepoVersion }: Props) => {
 
       return patchBNumber - patchANumber;
     });
-
-    // Sort versions into organized array by major version number
-    data.map((version) => {
-      // Ignore if version is older than 2018.x
-      if (Number.parseInt(version.editorVersionInfo.major, 10) <= 2017) return version;
-
-      if (!versions[version.editorVersionInfo.major])
-        versions[version.editorVersionInfo.major] = [];
-
-      versions[version.editorVersionInfo.major] = [
-        ...versions[version.editorVersionInfo.major],
-        version,
-      ];
-      return version;
-    });
   }
 
   return (
@@ -83,21 +69,20 @@ const UnityVersions = ({ selectedRepoVersion }: Props) => {
       {failures.length > 0 && (
         <>
           <h3>Current failures</h3>
-          {failures.map((version) => (
-            <UnityVersion key={version.NO_ID_FIELD} data={version} />
-          ))}
+          <Collapse accordion style={{ marginBottom: 24 }}>
+            {failures.map((version) => (
+              <UnityVersion key={version.NO_ID_FIELD} data={version} />
+            ))}
+          </Collapse>
         </>
       )}
 
-      <div className="mt-4">
+      <h3>All versions</h3>
+      <Collapse accordion>
         {isLoading
           ? loading
-          : Object.keys(versions)
-              .reverse()
-              .map((major) => (
-                <MajorEditorVersion versionString={major} versions={versions[major]} />
-              ))}
-      </div>
+          : data.map((version) => <UnityVersion key={version.NO_ID_FIELD} data={version} />)}
+      </Collapse>
     </main>
   );
 };

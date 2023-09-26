@@ -1,5 +1,4 @@
 import React from 'react';
-import Tooltip from '../../molecules/tooltip/tooltip';
 
 interface Props {
   utcSeconds: number;
@@ -11,8 +10,8 @@ const options: Intl.DateTimeFormatOptions = {
   day: 'numeric',
   hour: 'numeric',
   minute: 'numeric',
+  second: 'numeric',
   timeZoneName: 'short',
-  hour12: true,
 };
 
 const DateTime = ({ utcSeconds }: Props) => {
@@ -20,13 +19,7 @@ const DateTime = ({ utcSeconds }: Props) => {
 
   date.setUTCSeconds(utcSeconds);
 
-  return (
-    <Tooltip content={`${date.toLocaleString('en-GB', options)}`}>
-      <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
-        <u>( ... )</u>
-      </span>
-    </Tooltip>
-  );
+  return <span>{`${date.toLocaleString('en-GB', options)}`}</span>;
 };
 
 export default DateTime;
