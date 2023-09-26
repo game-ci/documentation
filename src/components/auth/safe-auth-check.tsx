@@ -23,11 +23,7 @@ export function SafeClaimsCheck({ user, fallback, children, requiredClaims }: Cl
 }
 
 // Apply fix while this is not merged https://github.com/FirebaseExtended/reactfire/pull/336
-export function SafeAuthCheck({
-  fallback,
-  children,
-  requiredClaims,
-}: AuthCheckProps): React.JSX.Element {
+export function SafeAuthCheck({ fallback, children, requiredClaims }: AuthCheckProps): JSX.Element {
   const { data: user } = useUser<firebase.User>();
 
   if (user) {

@@ -34,7 +34,7 @@ const Profile = ({
   title,
   continent,
   social,
-}: Props): React.JSX.Element => {
+}: Props): JSX.Element => {
   return (
     <div
       className={cx(

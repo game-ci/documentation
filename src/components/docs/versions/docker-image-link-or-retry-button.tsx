@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import React, { useState } from 'react';
 import { HiOutlineRefresh } from 'react-icons/hi';
 import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
@@ -5,31 +6,24 @@ import DockerImageLink from '@site/src/components/docs/versions/docker-image-lin
 import { useAuthenticatedEndpoint } from '@site/src/core/hooks/use-authenticated-endpoint';
 import { useNotification } from '@site/src/core/hooks/use-notification';
 import Spinner from '@site/src/components/molecules/spinner';
-import Tooltip from '@site/src/components/molecules/tooltip/tooltip';
-
-type Record = {
-  buildId: string;
-  relatedJobId: string;
-  buildInfo: {
-    baseOs: string;
-    editorVersion: string;
-    targetPlatform: string;
-    repoVersion: string;
-  };
-  dockerInfo: {
-    digest: string;
-    imageRepo: string;
-    imageName: string;
-  };
-  status: string;
-  [key: string]: any;
-};
 
 interface Props {
-  record: Record;
+  record: {
+    buildId: string;
+    relatedJobId: string;
+    buildInfo: {
+      baseOs: string;
+      editorVersion: string;
+      targetPlatform: string;
+      repoVersion: string;
+    };
+    dockerInfo: {
+      imageRepo: string;
+      imageName: string;
+    };
+    status: string;
+  };
 }
-
-export { Record };
 
 const DockerImageLinkOrRetryButton = ({ record }: Props) => {
   const { buildInfo, dockerInfo, buildId, relatedJobId, status } = record;
@@ -61,7 +55,7 @@ const DockerImageLinkOrRetryButton = ({ record }: Props) => {
 
   return (
     <SimpleAuthCheck fallback={<span />} requiredClaims={{ admin: true }}>
-      <Tooltip content={`Delete tag "${imageTag}" then click this retry button.`}>
+      <Tooltip title={`Delete tag "${imageTag}" then click this retry button.`}>
         <button
           type="button"
           onClick={onClick}
