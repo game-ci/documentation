@@ -12,6 +12,33 @@ not the easiest thing to solve. Here are some tips:
 - Your username should be an email
 - Confirm you are able to connect on Unity's website using your credentials
 
+:::caution
+
+**Unity no longer supports manual activation of Personal licenses**
+
+When activating your Personal Unity license, you may encounter an issue where only the "Unity Pro or
+Plus" option is available, preventing the activation of a Personal license. Here is a workaround to
+resolve this:
+
+1. Visit [license.unity3d.com](https://license.unity3d.com/manual) and upload the
+   `Unity_v20XX.X.XXXX.alf` file.
+2. On the "Activate your license" page, if the "Personal" option is not available, right-click on
+   the page and choose "Inspect" to open the browser's developer tools.
+3. Find the line of HTML that looks like this:
+   `<div class="option option-personal clear" style="display: none;">`.
+4. Delete `display: none;` from the `style` attribute to make the "Personal" option visible.
+5. Now you should be able to select the "Personal" option and proceed with the activation.
+
+You can discuss this issue or find additional assistance in the
+[related Discord conversation](https://discord.com/channels/710946343828455455/1138586951604248666)
+or [GitHub ticket](https://github.com/game-ci/documentation/issues/408).
+
+_For future reference, activating a license from the command line as documented on
+[Unity's Manual Page](https://docs.unity3d.com/Manual/ManagingYourUnityLicense.html) might be an
+alternative solution._
+
+:::
+
 :::caution Known issue with Unity activation on gitlab-ci: empty license file
 
 If you are having troubles with Unity activation with gitlab-ci, there is currently an issue with
