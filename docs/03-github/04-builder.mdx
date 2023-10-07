@@ -612,7 +612,7 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
       - if: matrix.targetPlatform == 'Android'
-        uses: jlumbroso/free-disk-space@v1.2.0
+        uses: jlumbroso/free-disk-space@v1.3.0
       - uses: game-ci/unity-builder@v3
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
