@@ -1,0 +1,19 @@
+# Overview
+
+## Types of Hosts
+
+1. Bare-Metal
+
+"Bare Metal" means that your host OS is running directly on a piece of hardware without any
+virtulization. This reduces the complexity of deploymnet at the cost of increased time and effort
+for re-provisioning the host.
+
+2. Virtual Machines
+
+Virtual Machines are a software-defined layer of abstraction atop a Bare-Metal host which makes
+deployments more consistent and easier to manage declaratively. This greaty reduces the difficulty
+of re-deployment and creates the conditions required for securely running multiple guests within the
+same physical host. Virtual Machines can also be used to create hosts that run different operating
+systems (Windows, MacOS) or architectures (ARM) than the host machine. This added functionality
+comes at the cost of added complexity, a slight performance penalty, and you need to already have a
+Bare-Metal host on which to run the VMs.

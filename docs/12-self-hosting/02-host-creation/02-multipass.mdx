@@ -1,0 +1,143 @@
+---
+toc_max_heading_level: 4
+---
+
+# Multipass
+
+:::info Multipass only creates Ubuntu VMs :::
+
+Multipass is a light-weight Virtual Machine Manager for Linux, Windows and MacOS. It's designed for
+developers who want to quickly create a fresh Ubuntu environment with a single command. It uses the
+native hypervisor for whichever platform it is installed on (KVM on Linux, Hyper-V on Windows and
+HyperKit on MacOS) to run VMs with minimal overhead. It can also use VirtualBox on Windows and
+MacOS.
+
+- [Official Webite](https://multipass.run/)
+- [Official Github Repo](https://github.com/canonical/multipass)
+
+## installation
+
+To install multipass on Linux use the commands below.
+
+```bash
+sudo apt-get install snapd
+sudo snap install core
+sudo snap install multipass
+```
+
+For installation on Windows and MacOS, refer to the official installation instructions:
+
+- [How to install Multipass on Windows](https://multipass.run/docs/installing-on-windows)
+- [How to install Multipass on macOS](https://multipass.run/docs/installing-on-macos)
+
+## Creating a VM
+
+1. Set values
+
+```bash
+# The name of the Virtual Machine
+export VM_NAME="gameci"
+
+# The name of the user to create
+export VM_USER="vmadmin"
+
+# Number of CPU cores to allocate to the VM
+export VM_CPUS="2"
+
+# Amount of Disk Space to allocate to the VM.
+# Cannot exceed available on host.
+export VM_DISK="32G"
+
+# Amount of RAM to allocate to the VM.
+# Cannot exceed available RAM on host.
+export VM_MEM="8G"
+
+# Set path on MacOS systems
+export PATH="$PATH:/usr/local/bin/multipass"
+
+# Set path on Linux system
+export PATH="$PATH:/usr/local/bin/multipass"
+```
+
+2. Create an ssh-key for authenticating with the VM
+
+```bash
+ssh-keygen -C $VM_USER -f runner
+```
+
+3. Add the public ssh-key to a cloud-init file
+
+See the [cloud init](https://cloudinit.readthedocs.io/en/latest/topics/examples.html) docs for more
+examples.
+
+```bash
+VM_KEY=$(cat runner.pub)
+
+cat << EOF > cloud-init.yaml
+#cloud-config
+groups:
+  - docker
+users:
+  - default
+  - name: ${VM_USER}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: docker, admin, sudo, users
+    no_ssh_fingerprints: true
+    ssh-authorized-keys:
+      - ${VM_KEY}
+packages:
+  - docker.io
+runcmd:
+  - [ sed , -i , "s/#PermitRootLogin prohibit-password/PermitRootLogin no/g" , /etc/ssh/sshd_config ]
+EOF
+```
+
+4. Start the VM
+
+See the [multipass launch](https://multipass.run/docs/launch-command) command docs for more
+information.
+
+```bash
+export VERBOSITY="-vvvvvv"
+
+/snap/bin/multipass launch --name $VM_NAME \
+  --cpus $VM_CPUS \
+  --disk $VM_DISK \
+  --mem $VM_MEM \
+  --cloud-init cloud-init.yaml \
+  $VERBOSITY
+```
+
+4. Get the VM's IP address
+
+```bash
+VM_IP=$(/snap/bin/multipass list |grep "${VM_NAME}" |awk '{print $3}')
+```
+
+5. Connect to the VM via ssh or cli
+
+ssh:
+
+```bash
+ssh -i runner $VM_USER@$VM_IP -o StrictHostKeyChecking=no -vvvv
+```
+
+CLI:
+
+```bash
+multipass shell $VM_NAME
+```
+
+6. Install the runner application using one of the guides below:
+
+   - [Github Actions](../04-runner-application-installation/02-github-actions.mdx)
+   - [Gitlab Pipelines](../04-runner-application-installation/01-gitlab-pipelines.mdx)
+
+7. Cleanup when finished
+
+```bash
+/snap/bin/multipass stop $VM_NAME
+/snap/bin/multipass delete $VM_NAME
+/snap/bin/multipass purge
+```

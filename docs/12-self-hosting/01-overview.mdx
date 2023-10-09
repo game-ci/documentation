@@ -43,32 +43,33 @@ This guide is tested on devics which meet the following requirements:
 :::info Support for GPU-acceleration within containerized environments is limited to Nvidia hardware
 only at this time. :::
 
-## Host Creation Methods
+## Host Creation Guides
 
-### 1. Bare-Metal (Easiest)
+"Host Creation" in this context is the process for installing an operating system onto a piece of
+physical (also called "Bare Metal") or virtualized hardware. Instructions for installation on OS on
+a bare-metal host and guides for creating virtual machines can be found in the
+[Host Creation](./02-host-creation/01-overview.mdx) directory.
 
-"Bare Metal" means that your host OS is running directly on a piece of hardware without any
-virtulization. This reduces the complexity of deploymnet at the cost of increased time and effort
-for re-provisioning the host. The following guides will walk you through the installation process on
-a bare-metal host.
+## Host Provisioning Guides
 
-- Install Ubuntu 22.04 on a local machine
-- Install Debian 12 on a local machine
+"Provisioning" here refers to the process of installing additional resources onto, and the
+configuration of your host beyond installing the base operating-system. Once you can sign into your
+VM or Bare-Metal host, follow the appropriate guide to complete the provisioning process.
 
-### 2. Virtual Machines (Intermediate)
+- [Ubuntu 22.04 Setup](./03-host-provisioning/02-ubuntu-setup.mdx)
 
-Virtual Machines are a software-defined layer of abstraction atop a Bare-Metal host which makes
-deployments more consistent and easier to manage declaratively. This greaty reduces the difficulty
-of re-deployment and creates the conditions required for securely running multiple guests within the
-same physical host. Virtual Machines can also be used to create hosts that run different operating
-systems (Windows, MacOS) or architectures (ARM) than the host machines. This added functionality
-comes at the cost of added complexity, a slight performance penalty, and you need to already have a
-Bare-Metal host on which to run the VMs.
+- [Debian 12 Setup](./03-host-provisioning/01-debian-setup.mdx)
 
-- Basic Virtual Machine creation with Multipass
-- Advanced Virtual Machine creation with QEMU
+## Runner Application Installation
 
-### 3. Cloud-Init (Advanced)
+Once your host has been provisioned, you will then need to install the appropriate runner
+application. The guides below will walk you through that process.
+
+- [Github Actions](./04-runner-application-installation/02-github-actions.mdx)
+
+- [GitLab Pipelines](./04-runner-application-installation/01-gitlab-pipelines.mdx)
+
+## Declarative workflow using Cloud-Init (Advanced)
 
 Cloud-Init is a software package that automates the initialization of cloud instances during system
 boot and has become the industry standard solution for operating system customization. Cloud-Init is
@@ -80,19 +81,3 @@ bare-metal systems running Ubuntu.
   [PXEless](https://github.com/cloudymax/pxeless)
 - Using cloud-init with Multipass for automated provisioning
 - Use your cloud-init config to deploy VMs in the cloud
-
-## Host Provisioning Methods
-
-"Provisioning" here refers to the process of installing additional resources onto, and the
-configuration of your host beyond installing the base operating-system. Once you can sign into your
-VM or Bare-Metal host, follow the appropriate guide to complete the provisioning process.
-
-- [Ubuntu 22.04 Setup](./ubuntu-setup)
-
-- [Debian 12 Setup](./debian-setup)
-
-## Runner Application Installation
-
-- [Github Actions](./github-actions)
-
-- [GitLab Pipelines](./gitlab-pipelines)
