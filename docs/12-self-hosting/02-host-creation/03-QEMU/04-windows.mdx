@@ -1,0 +1,129 @@
+import Vnc from '/assets/images/vnc-connection.png';
+import Virtio from '/assets/images/win10-virtio-drivers.png';
+
+# Windows
+
+1. Configure the Virtual Machine options
+
+```bash
+# The name of the Virtual Machine
+export VM_NAME="gameci"
+
+# Number of physical CPU cores to allocate to the VM
+export PHYSICAL_CORES="2"
+
+# Number of threads per core.
+# Set this to `1` for CPUs that do not support hyperthrading
+export THREADS="1"
+export SMP=$(( $PHYSICAL_CORES * $THREADS ))
+
+# Amount of Disk Space to allocate to the VM.
+# Cannot exceed available on host.
+export DISK_SIZE="32G"
+
+# Amount of RAM to allocate to the VM.
+# Cannot exceed available RAM on host.
+export MEMORY="8G"
+
+# IP address where host may be reached. Do not use `localhost`.
+export HOST_ADDRESS="SOME IP HERE"
+
+# Port number to expose on the host for VNC
+export VNC_PORT="0"
+```
+
+2. Select a Windows ISO
+
+```yaml
+Windows:
+  Windows10: 'https://www.itechtics.com/?dl_id=173'
+  server2019-core: 'https://go.microsoft.com/fwlink/p/?LinkID=2195167&clcid=0x409&culture=en-us&country=US'
+  Tiny10: https://ia902609.us.archive.org/27/items/tiny-10-NTDEV/tiny10%2023h1%20x64.iso
+  Tiny11: https://ia800509.us.archive.org/27/items/tiny11-23h2/tiny11%2023H2%20x64.iso
+```
+
+3. Donwload installer
+
+```bash
+export IMAGE_URL="https://www.itechtics.com/?dl_id=173"
+export IMAGE_NAME=windows.iso
+wget -c -O "$IMAGE_NAME" "$IMAGE_URL" -q --show-progress
+```
+
+4. Download virtual-disk drivers
+
+```bash
+wget -O "virtio-drivers.iso" "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/virtio-win-0.1.240.iso"
+```
+
+5. Create the virtual disk
+
+```bash
+qemu-img create -f qcow2 disk.qcow2 $DISK_SIZE &>/dev/null
+```
+
+6. Create new guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host,kvm="off",hv_vendor_id="null" \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -drive id=disk0,if=virtio,cache=none,format=qcow2,file=disk.qcow2 \
+  -drive file=windows.iso,index=1,media=cdrom \
+  -drive file=virtio-drivers.iso,index=2,media=cdrom \
+  -boot menu=on \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+boot existing guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host,kvm="off",hv_vendor_id="null",check="off",hypervisor="off" \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=disk,iothread=io \
+  -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+  -drive file=Win10.iso,index=1,media=cdrom \
+  -drive file=virtio-win-0.1.215.iso,index=2,media=cdrom \
+  -boot menu=on \
+  -serial none \
+  -parallel none \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+7. Connect to the VM using VNC
+
+- In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={Vnc} width="600" />;
+</div>
+<br />
+<br />
+
+8. Install the virtio driver in the VM during the windows installation process.
+
+The following video demonstrates the installation process (the driver installation happening at the
+35 second mark):
+[KubeVirt: installing Microsoft Windows from an ISO](https://kubevirt.io/assets/2020-02-14-KubeVirt-installing_Microsoft_Windows_from_an_iso/kubevirt_install_windows.mp4)
+
+<div style={{ textAlign: 'center' }}>
+  <img src={Virtio} width="600" />;
+</div>
+<br />
+<br />

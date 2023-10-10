@@ -1,0 +1,492 @@
+---
+toc_max_heading_level: 4
+---
+
+# About QEMU
+
+[QEMU](https://www.qemu.org/documentation/) is an open source machine emulator and virtualizer. It
+can be used for **system emulation**, where it provides a virtual model of an entire machine to run
+a guest OS or it may work with a another hypervisor like KVM or Xen. QEMU can also provide **user
+mode emulation**, where QEMU can launch processes compiled for one CPU on another CPU via emulation.
+
+QEMU is special amongst its counterparts for a couple important reasons:
+
+- Like [ESXi](https://www.vmware.com/nl/products/esxi-and-esx.html), its capable of PCIe-passthrough
+  for GPUs
+  ([VirtualBox](https://docs.oracle.com/en/virtualization/virtualbox/6.0/user/guestadd-video.html)
+  cant help us here)
+- Unlike ESXi, it's free
+- When used with KVM, QEMU provides near-native levels of performance.
+- Can be used inside Kubernetes via [Kubevirt](https://kubevirt.io/)
+- It's fast. QEMU can create a new fully-featured VM in seconds. That's not quite as fast as
+  [LXD](https://linuxcontainers.org/lxd/introduction/),
+  [FireCracker](https://firecracker-microvm.github.io/), or
+  [Cloud-Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor) (formerly
+  [NEMU](https://github.com/intel/nemu)), but its far more mature, featureful, and thoroughly
+  documented.
+- Unlike a [system container (LDX)](https://linuxcontainers.org/lxd/introduction/) or
+  [Multipass](https://multipass.run/docs) it can also create Windows and MacOS guests.
+- [Unlike Firecracker](https://github.com/firecracker-microvm/firecracker/issues/849#issuecomment-464731628)
+  it supports pinning memmory addresses (and thus PCIe-passthrough) where firecracker cannot because
+  it would break their core feature of over-subscription.
+
+These qualities make QEMU well-suited for those seeking a highly-performant ad fully-featured
+hypervisor.
+
+## Requirements
+
+- Linux host running Debian12 or Ubuntu 22.04
+- VNC viewer software installed on the machien you will use to access the VM
+  - [TightVNC](https://www.tightvnc.com/download.php) (Windows)
+  - [Remina](https://remmina.org/) (Linux)
+  - [TigerVNC](https://formulae.brew.sh/formula/tiger-vnc)(MacOS)
+
+## Setup
+
+- Install QEMU and its dependancies
+
+  ```bash
+  sudo apt-get install -y qemu-kvm \
+          bridge-utils \
+          virtinst\
+          ovmf \
+          qemu-utils \
+          cloud-image-utils \
+          tmux \
+          whois \
+          git \
+          jq \
+          git-extras \
+          guestfs-tools \
+          bridge-utils
+  ```
+
+## Configure the Virtual Machine options
+
+```bash
+# The name of the Virtual Machine
+export VM_NAME="gameci"
+
+# The name of the user to create
+export VM_USER="vmadmin"
+
+# Number of physical CPU cores to allocate to the VM
+export PHYSICAL_CORES="2"
+
+# Number of threads per core.
+# Set this to `1` for CPUs that do not support hyperthrading
+export THREADS="1"
+export SMP=$(( $PHYSICAL_CORES * $THREADS ))
+
+# Amount of Disk Space to allocate to the VM.
+# Cannot exceed available on host.
+export DISK_SIZE="32G"
+
+# Amount of RAM to allocate to the VM.
+# Cannot exceed available RAM on host.
+export MEMORY="8G"
+
+# IP address where host may be reached. Do not use `localhost`.
+export HOST_ADDRESS="SOME IP HERE"
+
+# Port used by SSH on the host
+export HOST_SSH_PORT="22"
+
+# Port to use when forwarding SSH to the VM
+export VM_SSH_PORT="1234"
+
+# Port number to expose on the host for VNC
+export VNC_PORT="0"
+```
+
+### Linux Guest (Cloud Image)
+
+"Cloud-Images" are lightweight (usually under 700Mb) snapshots of a configured OS created by a
+publisher for use with public and private clouds. These images provide a way to repeatably create
+identical copies of a machine across platforms. We will use cloud-init to customize the cloud-image
+immediately upon booting, prior to user-space initialization.
+
+1. Create an SSH Key
+
+```bash
+yes |ssh-keygen -C "$VM_USER" \
+    -f runner \
+    -N '' \
+    -t rsa
+```
+
+2. Create a password
+
+```bash
+# Install the mkpasswd utility
+sudo apt install -y whois
+
+read PW_STRING
+export PASSWORD=$(mkpasswd -m sha-512 --rounds=4096 "$PW_STRING" -s "saltsaltlettuce")
+```
+
+3. Create a cloud-init file
+
+```bash
+VM_KEY=$(cat runner.pub)
+
+/bin/cat << EOF > cloud-init.yaml
+#cloud-config
+hostname: runner
+disable_root: false
+network:
+  config: disabled
+users:
+  - name: ${VM_USER}
+    groups: users, admin, sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: ${PASSWORD}
+    ssh_authorized_keys:
+      - ${VM_KEY}
+EOF
+```
+
+4. Create a cloud-init disk
+
+```bash
+cloud-localds seed.img cloud-init.yaml
+```
+
+5. Choose a cloud-image to use as the base OS:
+
+```yaml
+Debian:
+  12: 'https://laotzu.ftp.acc.umu.se/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2'
+Ubuntu:
+  focal: 'https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img'
+  jammy: 'https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img'
+  lunar: 'https://cloud-images.ubuntu.com/lunar/current/lunar-server-cloudimg-amd64.img'
+```
+
+6. Download the image with `wget`
+
+```bash
+export CLOUD_IMAGE_URL="https://laotzu.ftp.acc.umu.se/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
+export CLOUD_IMAGE_NAME=$(basename -- "$CLOUD_IMAGE_URL")
+wget -c -O "$CLOUD_IMAGE_NAME" "$CLOUD_IMAGE_URL" -q --show-progress
+```
+
+7. Create a virtual disk using the cloud-image as a read-only backing file.
+
+```bash
+qemu-img create -b ${CLOUD_IMAGE_NAME} -f qcow2 \
+    -F qcow2 disk.qcow2 \
+    "$DISK_SIZE" 1> /dev/null
+```
+
+8. Create new guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=disk,iothread=io \
+  -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+  -drive if=virtio,format=raw,file=seed.img,index=0,media=disk \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+or Boot an existing guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=disk,iothread=io \
+  -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+9. Connect to VM over SSH
+
+- Copy the ssh private key `runner` to the machine you wish to connect to the VM with.
+- Connect to the vm using the format `ssh -i runner $VM_USER@$HOST_ADDRESS -p$VM_SSH_PORT`
+
+10. Connect tot he VM using VNC
+
+- In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+
+### Linux Guest (Live-ISO)
+
+Live-ISO installers usually contain the full set of requirements for installing a operating system
+as well as extra content for optional features. These images are much heavier than cloud-images and
+are generally 2-8Gb in size. Unlike cloud-images, Live-ISO installers can also be used to image
+phyiscal machines.
+
+1. Choose an ISO file:
+
+```yaml
+Ubuntu:
+  - https://mirror.mijn.host/ubuntu-releases/22.04.3/ubuntu-22.04.3-live-server-amd64.iso
+Debian12:
+  - https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso
+```
+
+> When using Debian12 as the source image, you may need to manually add a boot-entry to the
+> virtual-machine bios after installation. That process is shown in-detail here:
+> [proxmox.com/wiki/OVMF/UEFI_Boot_Entries](https://pve.proxmox.com/wiki/OVMF/UEFI_Boot_Entries)
+
+2. Download the installer
+
+```bash
+export IMAGE_URL="https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso"
+export IMAGE_NAME=$(basename -- "$IMAGE_URL")
+wget -c -O "$IMAGE_NAME" "$IMAGE_URL" -q --show-progress
+```
+
+3. Create an empty disk where the OS will be installed.
+
+```bash
+qemu-img create -f qcow2 disk.qcow2 $DISK_SIZE &>/dev/null
+```
+
+4. Create a new guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host,kvm="off",hv_vendor_id="null" \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -cdrom $IMAGE_NAME \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=disk,iothread=io \
+  -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+  -device intel-hda \
+  -device hda-duplex \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+or boot existing guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host,kvm="off",hv_vendor_id="null" \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=disk,iothread=io \
+  -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+  -device intel-hda \
+  -device hda-duplex \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+9. Connect to VM over SSH
+
+- Copy the ssh private key `runner` to the machine you wish to connect to the VM with.
+- Connect to the vm using the format `ssh -i runner $VM_USER@$HOST_ADDRESS -p$VM_SSH_PORT`
+
+10. Connect tot he VM using VNC
+
+- In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+
+### Windows Guest
+
+1. Select a Windows ISO
+
+```yaml
+Windows:
+  Windows10: 'https://www.itechtics.com/?dl_id=173'
+  server2019-core: 'https://go.microsoft.com/fwlink/p/?LinkID=2195167&clcid=0x409&culture=en-us&country=US'
+  Tiny10: https://ia902609.us.archive.org/27/items/tiny-10-NTDEV/tiny10%2023h1%20x64.iso
+  Tiny11: https://ia800509.us.archive.org/27/items/tiny11-23h2/tiny11%2023H2%20x64.iso
+```
+
+2. Donwload installer
+
+```bash
+export IMAGE_URL="https://www.itechtics.com/?dl_id=173"
+export IMAGE_NAME=windows.iso
+wget -c -O "$IMAGE_NAME" "$IMAGE_URL" -q --show-progress
+```
+
+3. Download virtual-disk drivers
+
+```bash
+wget -O "virtio-drivers.iso" "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/virtio-win-0.1.240.iso"
+```
+
+4. Create the virtual disk
+
+```bash
+qemu-img create -f qcow2 disk.qcow2 $DISK_SIZE &>/dev/null
+```
+
+5. Create new guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host,kvm="off",hv_vendor_id="null" \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -drive id=disk0,if=virtio,cache=none,format=qcow2,file=disk.qcow2 \
+  -drive file=windows.iso,index=1,media=cdrom \
+  -drive file=virtio-drivers.iso,index=2,media=cdrom \
+  -boot menu=on \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+boot existing guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu host,kvm="off",hv_vendor_id="null",check="off",hypervisor="off" \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=disk,iothread=io \
+  -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+  -drive file=Win10.iso,index=1,media=cdrom \
+  -drive file=virtio-win-0.1.215.iso,index=2,media=cdrom \
+  -boot menu=on \
+  -serial none \
+  -parallel none \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -usbdevice tablet \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+### MacOS Guest
+
+MacOS guests utilize the open-source project https://github.com/kholia/OSX-KVM.
+
+1. Clone the repo and cd into the new directory
+
+```bash
+git clone --depth 1 --recursive https://github.com/kholia/OSX-KVM.git
+cd OSX-KVM
+```
+
+2. Choose and download an installer using the included script
+
+```bash
+./fetch-macOS-v2.py
+# 1. High Sierra (10.13)
+# 2. Mojave (10.14)
+# 3. Catalina (10.15)
+# 4. Big Sur (11.7)
+# 5. Monterey (12.6)
+# 6. Ventura (13) - RECOMMENDED
+# 7. Sonoma (14)
+# Choose a product to download (1-6): 6
+```
+
+3. Convert the downloaded BaseSystem.dmg file into the BaseSystem.img file.
+
+```bash
+sudo apt-get install -y dmg2img && \
+dmg2img -i BaseSystem.dmg BaseSystem.img
+```
+
+4. Create a virtual disk image where MacOS will be installed.
+
+```bash
+qemu-img create -f qcow2 mac_hdd_ng.img $DISK_SIZE &>/dev/null
+```
+
+5. Create new guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -device usb-ehci,id=ehci \
+  -device nec-usb-xhci,id=xhci \
+  -global nec-usb-xhci.msi=off \
+  -device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" \
+  -drive if=pflash,format=raw,readonly=on,file="OVMF_CODE.fd" \
+  -drive if=pflash,format=raw,file="OVMF_VARS-1024x768.fd" \
+  -smbios type=2 \
+  -device ich9-intel-hda -device hda-duplex \
+  -device ich9-ahci,id=sata \
+  -drive id=OpenCoreBoot,if=none,snapshot=on,format=qcow2,file="OpenCore/OpenCore.qcow2" \
+  -device ide-hd,bus=sata.2,drive="OpenCoreBoot" \
+  -device ide-hd,bus=sata.3,drive="InstallMedia" \
+  -drive id=InstallMedia,if=none,file="BaseSystem.img",format=raw \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=MacHDD,iothread=io \
+  -drive id=MacHDD,if=none,cache=none,format=qcow2,aio=threads,file="mac_hdd_ng.img" \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -usbdevice tablet \
+  -device usb-kbd,bus=ehci.0 \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+Boot existing guest:
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -device usb-ehci,id=ehci \
+  -device nec-usb-xhci,id=xhci \
+  -global nec-usb-xhci.msi=off \
+  -device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" \
+  -drive if=pflash,format=raw,readonly=on,file="OVMF_CODE.fd" \
+  -drive if=pflash,format=raw,file="OVMF_VARS-1024x768.fd" \
+  -smbios type=2 \
+  -device ich9-intel-hda -device hda-duplex \
+  -device ich9-ahci,id=sata \
+  -drive id=OpenCoreBoot,if=none,snapshot=on,format=qcow2,file="OpenCore/OpenCore.qcow2" \
+  -device ide-hd,bus=sata.2,drive="OpenCoreBoot" \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=MacHDD,iothread=io \
+  -drive id=MacHDD,if=none,cache=none,format=qcow2,aio=threads,file="mac_hdd_ng.img" \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -usbdevice tablet \
+  -device usb-kbd,bus=ehci.0 \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
