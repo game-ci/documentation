@@ -6,10 +6,12 @@ import Ssh from '/assets/images/ssh-connection.png';
 Cloud-Images are lightweight (usually under 700Mb) snapshots of a configured OS created by a
 publisher for use with public and private clouds. These images provide a way to repeatably create
 identical copies of a machine across platforms. Cloud-Image based systems are best used for
-epehemeral or immutable workloads and then discarded after each run. We will use cloud-init to
+ephemeral or immutable workloads and then discarded after each run. We will use cloud-init to
 customize the cloud-image immediately upon booting, prior to user-space initialization.
 
-1. Configure the Virtual Machine options
+## Setup
+
+### 1. Configure VM options
 
 ```bash
 # The name of the Virtual Machine
@@ -22,7 +24,7 @@ export VM_USER="vmadmin"
 export PHYSICAL_CORES="2"
 
 # Number of threads per core.
-# Set this to `1` for CPUs that do not support hyperthrading
+# Set this to `1` for CPUs that do not support hyper-threading
 export THREADS="1"
 export SMP=$(( $PHYSICAL_CORES * $THREADS ))
 
@@ -47,7 +49,7 @@ export VM_SSH_PORT="1234"
 export VNC_PORT="0"
 ```
 
-2. Create an SSH Key
+### 2. Create an SSH Key
 
 ```bash
 yes |ssh-keygen -C "$VM_USER" \
@@ -56,7 +58,7 @@ yes |ssh-keygen -C "$VM_USER" \
     -t rsa
 ```
 
-3. Create a password
+### 3. Create a password
 
 ```bash
 # Install the mkpasswd utility
@@ -66,7 +68,7 @@ read PW_STRING
 export PASSWORD=$(mkpasswd -m sha-512 --rounds=4096 "$PW_STRING" -s "saltsaltlettuce")
 ```
 
-4. Create a cloud-init file
+### 4. Create a cloud-init file
 
 ```bash
 VM_KEY=$(cat runner.pub)
@@ -89,13 +91,13 @@ users:
 EOF
 ```
 
-5. Create a cloud-init disk
+### 5. Create a cloud-init disk
 
 ```bash
 cloud-localds seed.img cloud-init.yaml
 ```
 
-6. Choose a cloud-image to use as the base OS:
+### 6. Choose a cloud-image to use as the base OS:
 
 ```yaml
 Debian:
@@ -106,7 +108,7 @@ Ubuntu:
   lunar: 'https://cloud-images.ubuntu.com/lunar/current/lunar-server-cloudimg-amd64.img'
 ```
 
-7. Download the image with `wget`
+### 7. Download the image with `wget`
 
 ```bash
 export CLOUD_IMAGE_URL="https://laotzu.ftp.acc.umu.se/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
@@ -114,7 +116,7 @@ export CLOUD_IMAGE_NAME=$(basename -- "$CLOUD_IMAGE_URL")
 wget -c -O "$CLOUD_IMAGE_NAME" "$CLOUD_IMAGE_URL" -q --show-progress
 ```
 
-8. Create a virtual disk using the cloud-image as a read-only backing file.
+### 8. Create a virtual disk using the cloud-image as a read-only backing file.
 
 ```bash
 qemu-img create -b ${CLOUD_IMAGE_NAME} -f qcow2 \
@@ -122,7 +124,9 @@ qemu-img create -b ${CLOUD_IMAGE_NAME} -f qcow2 \
     "$DISK_SIZE" 1> /dev/null
 ```
 
-9. Create new guest:
+## Create the VM
+
+### New guest
 
 ```bash
 sudo qemu-system-x86_64 \
@@ -142,7 +146,7 @@ sudo qemu-system-x86_64 \
   -vnc $HOST_ADDRESS:$VNC_PORT
 ```
 
-or Boot an existing guest:
+### Boot existing guest
 
 ```bash
 sudo qemu-system-x86_64 \
@@ -161,7 +165,9 @@ sudo qemu-system-x86_64 \
   -vnc $HOST_ADDRESS:$VNC_PORT
 ```
 
-10. Connect to VM over SSH
+## Connect to the VM
+
+### Connect over SSH
 
 - Copy the ssh private key `runner` to the machine you wish to connect to the VM with.
 - Connect to the vm using the format `ssh -i runner $VM_USER@$HOST_ADDRESS -p$VM_SSH_PORT`
@@ -172,9 +178,9 @@ sudo qemu-system-x86_64 \
 <br />
 <br />
 
-11. Connect tot he VM using VNC
+### Connect using VNC
 
-- In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
 
 <div style={{ textAlign: 'center' }}>
   <img src={Vnc} width="600" />;

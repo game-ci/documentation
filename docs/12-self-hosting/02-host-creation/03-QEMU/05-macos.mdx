@@ -15,7 +15,15 @@ import Hackintosh from '/assets/images/macos-hackintosh.png';
 
 # MacOS
 
-MacOS guests utilize the open-source project [OSX-KVM](https://github.com/kholia/OSX-KVM).
+For MacOS guests, we will utilize the open-source project
+[OSX-KVM](https://github.com/kholia/OSX-KVM) wich will help you create a **Virtual Hackintosh**.
+Such a system can be used for a variety of purposes (e.g. software builds, testing, reversing work)
+However, such a system lacks graphical acceleration, a reliable sound sub-system, USB 3
+functionality and other similar things. To enable these things, take a look their
+[notes](https://github.com/kholia/OSX-KVM/blob/master/notes.md). Older AMD CPU(s) are known to be
+problematic but modern AMD Ryzen processors work just fine.
+
+## Setup
 
 ### 1. Configure the Virtual Machine options
 
@@ -27,11 +35,11 @@ export VM_NAME="gameci"
 export PHYSICAL_CORES="2"
 
 # Number of threads per core.
-# Set this to `1` for CPUs that do not support hyperthrading
+# Set this to `1` for CPUs that do not support hyper-threading
 export THREADS="1"
 export SMP=$(( $PHYSICAL_CORES * $THREADS ))
 
-# Macos uses much more disk space than linux or windows.
+# Macos uses much more disk space than Linux or windows due to Xcode tools etc...
 # A minimum of 64G is advised.
 export DISK_SIZE="64G"
 
@@ -86,7 +94,9 @@ dmg2img -i BaseSystem.dmg BaseSystem.img
 qemu-img create -f qcow2 mac_hdd_ng.img $DISK_SIZE &>/dev/null
 ```
 
-### 6. Create new guest:
+## Create the VM
+
+### Create new guest
 
 ```bash
 sudo qemu-system-x86_64 \
@@ -118,7 +128,7 @@ sudo qemu-system-x86_64 \
   -vnc $HOST_ADDRESS:$VNC_PORT
 ```
 
-#### Alternatively, boot an existing guest
+### Boot an existing guest
 
 ```bash
 sudo qemu-system-x86_64 \
@@ -148,9 +158,11 @@ sudo qemu-system-x86_64 \
   -vnc $HOST_ADDRESS:$VNC_PORT
 ```
 
-### 7. Connect to the VM using VNC to continue the installation process.
+## MacOS Installation
 
-- In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+### 1. Connect to the VM using VNC.
+
+In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
 
 <div style={{ textAlign: 'center' }}>
   <img src={Vnc} width="600" />
@@ -158,7 +170,9 @@ sudo qemu-system-x86_64 \
 <br />
 <br />
 
-### 8. select install media (macOS Base System) using arrow-keys and press enter
+### 2. Select install media
+
+Choose the 'macOS Base System' option using arrow-keys to select and enter to confirm.
 
 <div style={{ textAlign: 'center' }}>
   <img src={InstallMedia} width="600" />
@@ -166,7 +180,7 @@ sudo qemu-system-x86_64 \
 <br />
 <br />
 
-### 9. Enter the disk utility
+### 3. Enter the disk utility
 
 <div style={{ textAlign: 'center' }}>
   <img src={DiskUtility} width="600" />
@@ -174,7 +188,7 @@ sudo qemu-system-x86_64 \
 <br />
 <br />
 
-### 10. Format and rename the empty storage volumes
+### 4. Format and rename the empty storage volumes
 
 These should show up as `Apple Inc. VirtIO Block Media` in your Disk Utility window. Select the
 `Erase` tool to reformat the volumes and change the name to `Macintosh HD`.
@@ -185,7 +199,7 @@ These should show up as `Apple Inc. VirtIO Block Media` in your Disk Utility win
 <br />
 <br />
 
-### 11. Quit the disk utility
+### 5. Quit the disk utility
 
 <div style={{ textAlign: 'center' }}>
   <img src={QuitDisk} width="600" />
@@ -193,7 +207,7 @@ These should show up as `Apple Inc. VirtIO Block Media` in your Disk Utility win
 <br />
 <br />
 
-### 12. Choose the `Reinstall MacOS` option from the main menu
+### 6. Choose the `Reinstall MacOS` option from the main menu
 
 <div style={{ textAlign: 'center' }}>
   <img src={Reinstall} width="600" />
@@ -201,7 +215,7 @@ These should show up as `Apple Inc. VirtIO Block Media` in your Disk Utility win
 <br />
 <br />
 
-### 13. Choose your formatted volumes as the install location
+### 7. Choose your formatted volumes as the install location
 
 <div style={{ textAlign: 'center' }}>
   <img src={InstallLocation} width="600" />
@@ -209,7 +223,7 @@ These should show up as `Apple Inc. VirtIO Block Media` in your Disk Utility win
 <br />
 <br />
 
-### 14. Monitor the install process
+### 8. Monitor the install process
 
 The VM will reboot several times during the installation process. After the first reboot, you will
 have a new option named 'macOS Installer'. Select this option as your boot device.
@@ -230,7 +244,7 @@ for all subsequent reboots.
 <br />
 <br />
 
-### 15. Boot into MacOS and complete the account creation process
+### 9. Boot into MacOS and complete the account creation process
 
 Finally, your VM should boot into the MacOS user setup screen and allow you to create your account.
 
@@ -240,7 +254,7 @@ Finally, your VM should boot into the MacOS user setup screen and allow you to c
 <br />
 <br />
 
-### 16. Enable 'Remote Login' from the 'Sharing' menu in System Settings
+### 10. Enable 'Remote Login' from the 'Sharing' menu in System Settings
 
 <div style={{ textAlign: 'center' }}>
   <img src={RemoteLogin} width="600" />
@@ -248,7 +262,7 @@ Finally, your VM should boot into the MacOS user setup screen and allow you to c
 <br />
 <br />
 
-### 17. Connect to the VM over SSH
+### 11. Connect to the VM over SSH
 
 - Connect to the vm using the format `ssh <USER_NAME>@$HOST_ADDRESS -p$VM_SSH_PORT`
 

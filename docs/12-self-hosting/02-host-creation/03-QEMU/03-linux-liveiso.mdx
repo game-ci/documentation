@@ -7,9 +7,11 @@ import Debian from '/assets/images/debian-grub.png';
 Live-ISO installers usually contain the full set of requirements for installing a operating system
 as well as extra content for optional features. These images are much heavier than cloud-images and
 are generally 2-8Gb in size. Unlike cloud-images, Live-ISO installers can also be used to image
-phyiscal machines and are suited for use in long-lived virtual-private servers.
+physical machines and are suited for use in long-lived virtual-private servers.
 
-1. Configure the Virtual Machine options
+## Setup
+
+### 1. Configure the Virtual Machine options
 
 ```bash
 # The name of the Virtual Machine
@@ -19,7 +21,7 @@ export VM_NAME="gameci"
 export PHYSICAL_CORES="2"
 
 # Number of threads per core.
-# Set this to `1` for CPUs that do not support hyperthrading
+# Set this to `1` for CPUs that do not support hyper-threading
 export THREADS="1"
 export SMP=$(( $PHYSICAL_CORES * $THREADS ))
 
@@ -44,7 +46,7 @@ export VM_SSH_PORT="1234"
 export VNC_PORT="0"
 ```
 
-2. Choose or create an ISO file:
+### 2. Choose or create an ISO file:
 
 - For Ubuntu images, tools like [Cubic](https://github.com/PJ-Singh-001/Cubic) or
   [PXEless](github.com/cloudymax/pxeless) can be used to create customized ISO installers.
@@ -61,7 +63,7 @@ export VNC_PORT="0"
     - https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso
   ```
 
-3. Download the installer
+### 3. Download the installer
 
 ```bash
 export IMAGE_URL="https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso"
@@ -69,13 +71,15 @@ export IMAGE_NAME=$(basename -- "$IMAGE_URL")
 wget -c -O "$IMAGE_NAME" "$IMAGE_URL" -q --show-progress
 ```
 
-4. Create an empty disk where the OS will be installed.
+### 4. Create an empty disk where the OS will be installed.
 
 ```bash
 qemu-img create -f qcow2 disk.qcow2 $DISK_SIZE &>/dev/null
 ```
 
-5. Create a new guest:
+## Create the VM
+
+### Create new guest:
 
 ```bash
 sudo qemu-system-x86_64 \
@@ -97,7 +101,7 @@ sudo qemu-system-x86_64 \
   -vnc $HOST_ADDRESS:$VNC_PORT
 ```
 
-or boot existing guest:
+### Boot existing guest:
 
 ```bash
 sudo qemu-system-x86_64 \
@@ -118,9 +122,9 @@ sudo qemu-system-x86_64 \
   -vnc $HOST_ADDRESS:$VNC_PORT
 ```
 
-6. Connect to the VM via VNC
+### Connect to the VM via VNC
 
-   In your VNC software, use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+In your VNC software, use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
 
 <div style={{ textAlign: 'center' }}>
   <img src={Vnc} width="600" />;
@@ -128,8 +132,10 @@ sudo qemu-system-x86_64 \
 <br />
 <br />
 
-7. Follow the instructions for Debain/Ubuntu installation using the guides in the
-   [Bare-Metal](docs/12-self-hosting/02-host-creation/02-bare-metal.mdx) section.
+### Complete the installation
+
+Follow the instructions for Debain/Ubuntu installation using the guides in the
+[Bare-Metal](docs/12-self-hosting/02-host-creation/02-bare-metal.mdx) section.
 
 <div style={{ textAlign: 'center' }}>
   <img src={Debian} width="600" />;
