@@ -14,7 +14,7 @@ This guide will cover two basic methods for hosting CI/CD runners: Bare-Metal an
 Containerized hosts will not be discussed because of their inherent reliance on insecure practices
 such as
 [Docker-in-Docker](http://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/),
-[Priviledged Continers](https://www.trendmicro.com/en_th/research/19/l/why-running-a-privileged-container-in-docker-is-a-bad-idea.html)
+[Privileged Containers](https://www.trendmicro.com/en_th/research/19/l/why-running-a-privileged-container-in-docker-is-a-bad-idea.html)
 and the additional tooling required to mitigate those risks such as
 [Kaniko](https://github.com/GoogleContainerTools/kaniko) or
 [Kata Containers](https://katacontainers.io/).
@@ -27,28 +27,25 @@ situation and constraints. For the purpose of this guide we will make the follow
 - 💻 User already has their own hardware
 - 💸 Budget is $0
 - 🛠️ FOSS tools should be prioritized where possible
-- 📜 We define `Self-Hosting` in this context to refer to a user taking responsibilty for the
+- 📜 We define `Self-Hosting` in this context to refer to a user taking responsibility for the
   operating-system level configuration and life-cycle-management of a given compute resource (metal,
   on-prem, cloud VM, VPS etc...)
 
 ## Requirements
 
-This guide is tested on devics which meet the following requirements:
+This guide is tested on devices which meet the following requirements:
 
 - x86 or amd64 processor
 - Ubuntu 22.04 LTS Server or Debian 12 Bookworm
 - Root access to the operating system
 - Network connectivity
 
-:::info Support for GPU-acceleration within containerized environments is limited to Nvidia hardware
-only at this time. :::
-
 ## Host Creation Guides
 
 "Host Creation" in this context is the process for installing an operating system onto a piece of
-physical (also called "Bare Metal") or virtualized hardware. Instructions for installation on OS on
-a bare-metal host and guides for creating virtual machines can be found in the
-[Host Creation](./02-host-creation/01-overview.mdx) directory.
+physical (also called "Bare Metal") or virtualised hardware. Instructions for installation on OS on
+a bare-metal host and guides for creating virtual machines can be found in the 'Host Creation'
+directory.
 
 ## Host Provisioning Guides
 
@@ -56,25 +53,25 @@ a bare-metal host and guides for creating virtual machines can be found in the
 configuration of your host beyond installing the base operating-system. Once you can sign into your
 VM or Bare-Metal host, follow the appropriate guide to complete the provisioning process.
 
-- [Ubuntu 22.04 Setup](./03-host-provisioning/02-ubuntu-setup.mdx)
+- [Ubuntu 22.04 Setup](./04-host-provisioning/02-ubuntu-setup.mdx)
 
-- [Debian 12 Setup](./03-host-provisioning/01-debian-setup.mdx)
+- [Debian 12 Setup](./04-host-provisioning/01-debian-setup.mdx)
 
 ## Runner Application Installation
 
 Once your host has been provisioned, you will then need to install the appropriate runner
 application. The guides below will walk you through that process.
 
-- [Github Actions](./04-runner-application-installation/02-github-actions.mdx)
+- [Github Actions](./05-runner-application-installation/02-github-actions.mdx)
 
-- [GitLab Pipelines](./04-runner-application-installation/01-gitlab-pipelines.mdx)
+- [GitLab Pipelines](./05-runner-application-installation/01-gitlab-pipelines.mdx)
 
 ## Declarative workflow using Cloud-Init (Advanced)
 
 Cloud-Init is a software package that automates the initialization of cloud instances during system
 boot and has become the industry standard solution for operating system customization. Cloud-Init is
 directly integrated into nearly every operating system which publishes a cloud-image, as well as
-supported by most cloud-providers and virtual machine managers. Cloud-init can also provision
+supported by most cloud-providers and virtual machine managers. Cloud-Init can also provision
 bare-metal systems running Ubuntu.
 
 - Create custom Ubuntu installation images based on cloud-init using

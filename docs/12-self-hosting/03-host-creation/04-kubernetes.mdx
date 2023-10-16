@@ -1,0 +1,166 @@
+# Kubernetes
+
+## k3s Quick Start
+
+I advise using [K3s](https://k3s.io/) as it's very easy to deploy on Bare Metal and VMs as
+Single-Node cluster. This example shows a minimum-viable deployment.
+
+## Dependencies
+
+### Install helm
+
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+### install the Minio client
+
+Docs: https://min.io/docs/minio/linux/reference/minio-mc.html
+
+```bash
+wget https://dl.min.io/client/mc/release/linux-amd64/mc -O $HOME/minio-binaries/mc
+
+chmod +x $HOME/minio-binaries/mc
+
+export PATH=$PATH:$HOME/minio-binaries/
+```
+
+### install k9s (optional)
+
+```bash
+wget https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz
+tar xvf k9s_Linux_amd64.tar.gz
+sudo mv k9s /usr/local/bin
+```
+
+### Download the k3s installer
+
+```bash
+curl -sfL https://get.k3s.io > k3s-install.sh
+```
+
+## Create the cluster
+
+### install k3s
+
+```bash
+bash k3s-install.sh --disable=traefik
+```
+
+### Wait for node to be ready
+
+    ```bash
+    sudo k3s kubectl get node
+    NAME   STATUS   ROLES                  AGE   VERSION
+    vm0    Ready    control-plane,master   1m   v1.27.4+k3s1
+    ```
+
+### Make an accessible version of the kubeconfig
+
+```bash
+sudo cp /etc/rancher/k3s/k3s.yaml ~/k3s.yaml
+sudo chown $USER:$USER ~/k3s.yaml
+export KUBECONFIG=~/k3s.yaml
+```
+
+## Deploy Minio
+
+Create a minimal minio deployment as your S3-compatible storage provider.
+
+### Download helm chart
+
+```bash
+helm repo add minio https://charts.min.io/
+```
+
+### Deploy Minio via Helm
+
+```bash
+read USERNAME && \
+read PASSWORD && \
+helm install \
+  --set resources.requests.memory=512Mi \
+  --set replicas=1 \
+  --set persistence.size=32Gi \
+  --set mode=standalone \
+  --set rootUser=$USERNAME,rootPassword=$PASSWORD \
+  --set consoleService.type=LoadBalancer \
+  --set consoleService.port=80 \
+  --set service.type=NodePort \
+  --generate-name minio/minio
+```
+
+## Setup Users and Buckets
+
+### 1. Get the LoadBalancer's External-IP address
+
+```console
+friend@vm0:~$ kubectl get svc
+NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)          AGE
+kubernetes                 ClusterIP      10.43.0.1       <none>           443/TCP          6h31m
+minio-1697277405           NodePort       10.43.124.40    <none>           9000:32000/TCP   6h31m
+minio-1697277405-console   LoadBalancer   10.43.116.107   192.168.50.160   80:31179/TCP     6h31m
+```
+
+### 2. Set an alias for your server:
+
+```bash
+mc alias set myminio http://$LOADBALANCER_IP:32000 $USERNAME $PASSWORD
+```
+
+### 3. Test the connection:
+
+```bash
+mc admin info myminio
+```
+
+### 4. Create a GameCI user
+
+Create a new user:
+
+```bash
+mc admin user add myminio gameci
+```
+
+Enter a password when prompted:
+
+```console
+Enter Secret Key:
+Added user `gameci` successfully.
+```
+
+### 5. Create an Access Key
+
+Create an access key for the GameCI user, we will use this as credentials for our cicd runner.
+
+```bash
+mc admin user svcacct add myminio gameci
+```
+
+### 6. Create an artifact storage bucket
+
+```bash
+mc mb myminio/artifacts --with-versioning
+```
+
+### 7. Grant GameCI account access
+
+```bash
+mc admin policy attach myminio readwrite --user gameci
+```
+
+Update your alias:
+
+```bash
+mc alias set myminio http://$LOADBALANCER_IP:32000 $ACCESS_KEY $SECRET_KEY
+```
+
+### Visit the Minio UI at `http://<node-ip-address>`
+
+## Uninstall
+
+```bash
+/usr/local/bin/k3s-uninstall.sh
+```

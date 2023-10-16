@@ -1,0 +1,273 @@
+import Vnc from '/assets/images/vnc-connection.png';
+import Ssh from '/assets/images/ssh-connection.png';
+import InstallLocation from '/assets/images/macos-choose-install-location.png';
+import FormatDisk from '/assets/images/macos-format-disk.png';
+import QuitDisk from '/assets/images/macos-quit-disk-utility.png';
+import Reinstall from '/assets/images/macos-reinstall.png';
+import CreateAccount from '/assets/images/macos-create-account.png';
+import BootMedia from '/assets/images/macos-select-boot-media.png';
+import BootMedia2 from '/assets/images/macos-select-boot-media2.png';
+import DiskUtility from '/assets/images/macos-select-disk-utility.png';
+import InstallMedia from '/assets/images/macos-select-install-media.png';
+import MacosSsh from '/assets/images/macos-ssh.png';
+import RemoteLogin from '/assets/images/macos-remote-login.png';
+import Hackintosh from '/assets/images/macos-hackintosh.png';
+
+# MacOS
+
+For MacOS guests, we will utilize the open-source project
+[OSX-KVM](https://github.com/kholia/OSX-KVM) which will help you create a **Virtual Hackintosh**.
+Such a system can be used for a variety of purposes (e.g. software builds, testing, reversing work)
+However, such a system lacks graphical acceleration, a reliable sound sub-system, USB 3
+functionality and other similar things. To enable these things, take a look their
+[notes](https://github.com/kholia/OSX-KVM/blob/master/notes.md). Older AMD CPU(s) are known to be
+problematic but modern AMD Ryzen processors work just fine.
+
+## Setup
+
+### 1. Configure the Virtual Machine options
+
+```bash
+# The name of the Virtual Machine
+export VM_NAME="gameci"
+
+# Number of physical CPU cores to allocate to the VM
+export PHYSICAL_CORES="2"
+
+# Number of threads per core.
+# Set this to `1` for CPUs that do not support hyper-threading
+export THREADS="1"
+export SMP=$(( $PHYSICAL_CORES * $THREADS ))
+
+# MacOS uses much more disk space than Linux or windows due to Xcode tools etc...
+# A minimum of 64G is advised.
+export DISK_SIZE="64G"
+
+# Amount of RAM to allocate to the VM.
+# Cannot exceed available RAM on host.
+export MEMORY="8G"
+
+# IP address where host may be reached. Do not use `localhost`.
+export HOST_ADDRESS="SOME IP HERE"
+
+# Port used by SSH on the host
+export HOST_SSH_PORT="22"
+
+# Port to use when forwarding SSH to the VM
+export VM_SSH_PORT="1234"
+
+# Port number to expose on the host for VNC
+export VNC_PORT="0"
+```
+
+### 2. Clone the repo and cd into the new directory
+
+```bash
+git clone --depth 1 --recursive https://github.com/kholia/OSX-KVM.git
+cd OSX-KVM
+```
+
+### 3. Choose and download an installer using the included script
+
+```bash
+./fetch-macOS-v2.py
+# 1. High Sierra (10.13)
+# 2. Mojave (10.14)
+# 3. Catalina (10.15)
+# 4. Big Sur (11.7)
+# 5. Monterey (12.6)
+# 6. Ventura (13) - RECOMMENDED
+# 7. Sonoma (14)
+# Choose a product to download (1-6): 6
+```
+
+### 4. Convert the downloaded BaseSystem.dmg file into the BaseSystem.img file.
+
+```bash
+sudo apt-get install -y dmg2img && \
+dmg2img -i BaseSystem.dmg BaseSystem.img
+```
+
+### 5. Create a virtual disk image where MacOS will be installed.
+
+```bash
+qemu-img create -f qcow2 mac_hdd_ng.img $DISK_SIZE &>/dev/null
+```
+
+## Create the VM
+
+### Create new guest
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -device usb-ehci,id=ehci \
+  -device nec-usb-xhci,id=xhci \
+  -global nec-usb-xhci.msi=off \
+  -device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" \
+  -drive if=pflash,format=raw,readonly=on,file="OVMF_CODE.fd" \
+  -drive if=pflash,format=raw,file="OVMF_VARS-1024x768.fd" \
+  -smbios type=2 \
+  -device ich9-intel-hda -device hda-duplex \
+  -device ich9-ahci,id=sata \
+  -drive id=OpenCoreBoot,if=none,snapshot=on,format=qcow2,file="OpenCore/OpenCore.qcow2" \
+  -device ide-hd,bus=sata.2,drive="OpenCoreBoot" \
+  -device ide-hd,bus=sata.3,drive="InstallMedia" \
+  -drive id=InstallMedia,if=none,file="BaseSystem.img",format=raw \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=MacHDD,iothread=io \
+  -drive id=MacHDD,if=none,cache=none,format=qcow2,aio=threads,file="mac_hdd_ng.img" \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -usbdevice tablet \
+  -device usb-kbd,bus=ehci.0 \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+### Boot an existing guest
+
+```bash
+sudo qemu-system-x86_64 \
+  -machine accel=kvm,type=q35 \
+  -cpu Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check \
+  -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+  -m "$MEMORY" \
+  -device usb-ehci,id=ehci \
+  -device nec-usb-xhci,id=xhci \
+  -global nec-usb-xhci.msi=off \
+  -device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" \
+  -drive if=pflash,format=raw,readonly=on,file="OVMF_CODE.fd" \
+  -drive if=pflash,format=raw,file="OVMF_VARS-1024x768.fd" \
+  -smbios type=2 \
+  -device ich9-intel-hda -device hda-duplex \
+  -device ich9-ahci,id=sata \
+  -drive id=OpenCoreBoot,if=none,snapshot=on,format=qcow2,file="OpenCore/OpenCore.qcow2" \
+  -device ide-hd,bus=sata.2,drive="OpenCoreBoot" \
+  -object iothread,id=io \
+  -device virtio-blk-pci,drive=MacHDD,iothread=io \
+  -drive id=MacHDD,if=none,cache=none,format=qcow2,aio=threads,file="mac_hdd_ng.img" \
+  -serial stdio -vga virtio -parallel none \
+  -device virtio-net-pci,netdev=network \
+  -usbdevice tablet \
+  -device usb-kbd,bus=ehci.0 \
+  -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
+  -vnc $HOST_ADDRESS:$VNC_PORT
+```
+
+## MacOS Installation
+
+### 1. Connect to the VM using VNC.
+
+In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={Vnc} width="600" />
+</div>
+<br />
+<br />
+
+### 2. Select install media
+
+Choose the 'macOS Base System' option using arrow-keys to select and enter to confirm.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={InstallMedia} width="600" />
+</div>
+<br />
+<br />
+
+### 3. Enter the disk utility
+
+<div style={{ textAlign: 'center' }}>
+  <img src={DiskUtility} width="600" />
+</div>
+<br />
+<br />
+
+### 4. Format and rename the empty storage volumes
+
+These should show up as `Apple Inc. VirtIO Block Media` in your Disk Utility window. Select the
+`Erase` tool to reformat the volumes and change the name to `Macintosh HD`.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={FormatDisk} width="600" />
+</div>
+<br />
+<br />
+
+### 5. Quit the disk utility
+
+<div style={{ textAlign: 'center' }}>
+  <img src={QuitDisk} width="600" />
+</div>
+<br />
+<br />
+
+### 6. Choose the `Reinstall MacOS` option from the main menu
+
+<div style={{ textAlign: 'center' }}>
+  <img src={Reinstall} width="600" />
+</div>
+<br />
+<br />
+
+### 7. Choose your formatted volumes as the install location
+
+<div style={{ textAlign: 'center' }}>
+  <img src={InstallLocation} width="600" />
+</div>
+<br />
+<br />
+
+### 8. Monitor the install process
+
+The VM will reboot several times during the installation process. After the first reboot, you will
+have a new option named 'MacOS Installer'. Select this option as your boot device.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={BootMedia} width="600" />
+</div>
+<br />
+<br />
+
+When the first stage of the installation has completed, the 'MacOS Installer' option will change to
+'Macintosh HD' (or whatever you named your drive). Continue to select this option as the boot device
+for all subsequent reboots.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={BootMedia2} width="600" />
+</div>
+<br />
+<br />
+
+### 9. Boot into MacOS and complete the account creation process
+
+Finally, your VM should boot into the MacOS user setup screen and allow you to create your account.
+
+<div style={{ textAlign: 'center' }}>
+  <img src={CreateAccount} width="600" />
+</div>
+<br />
+<br />
+
+### 10. Enable 'Remote Login' from the 'Sharing' menu in System Settings
+
+<div style={{ textAlign: 'center' }}>
+  <img src={RemoteLogin} width="600" />
+</div>
+<br />
+<br />
+
+### 11. Connect to the VM over SSH
+
+- Connect to the vm using the format `ssh <USER_NAME>@$HOST_ADDRESS -p$VM_SSH_PORT`
+
+<div style={{ textAlign: 'center' }}>
+  <img src={MacosSsh} width="600" />
+</div>
+<br />
+<br />
