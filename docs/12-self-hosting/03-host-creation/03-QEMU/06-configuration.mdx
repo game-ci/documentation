@@ -62,22 +62,22 @@ adapters CANNOT be used as bridge devices.
 
 - Network adapter's IP address
 
-The IP address for the network adapter should be listed in the output of `ip -a`. In the example
-above it is `192.168.50.101/32`.
+  The IP address for the network adapter should be listed in the output of `ip -a`. In the example
+  above it is `192.168.50.101/32`.
 
-3. The default gateway
+- The default gateway
 
-Use the command `route -n` to display the routing table. The default gateway should be the first
-entry under the 'GATEWAY' header.
+  Use the command `route -n` to display the routing table. The default gateway should be the first
+  entry under the 'GATEWAY' header.
 
-```bash
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-0.0.0.0         192.168.50.1    0.0.0.0         UG    0      0        0 enp0s31f6
-10.42.0.0       0.0.0.0         255.255.255.0   U     0      0        0 cni0
-10.42.0.0       0.0.0.0         255.255.0.0     U     0      0        0 flannel-wg
-172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
-```
+  ```bash
+  Kernel IP routing table
+  Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+  0.0.0.0         192.168.50.1    0.0.0.0         UG    0      0        0 enp0s31f6
+  10.42.0.0       0.0.0.0         255.255.255.0   U     0      0        0 cni0
+  10.42.0.0       0.0.0.0         255.255.0.0     U     0      0        0 flannel-wg
+  172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+  ```
 
 ### Run the Script
 
@@ -166,7 +166,7 @@ Since our vm will be making DHCP requests, we should assign it a mac-address.
 
 ## GPU Passthrough
 
-### 1. Enabling IOMMU
+### Enabling IOMMU
 
 With QEMU, we are able to pass PCIe devices such as GPUs from the host to the guest using VFIO which
 can provide native-level performance. You will need to make sure that
@@ -174,20 +174,20 @@ can provide native-level performance. You will need to make sure that
 Informatiweb.net has some good examples of this process in
 [this thread](https://us.informatiweb.net/tutorials/it/bios/enable-iommu-or-vt-d-in-your-bios.html).
 
-1. Enable IOMMU
+- Enable IOMMU
 
-Enable IOMMU by changing the `GRUB_CMDLINE_LINUX_DEFAULT` line in your `/etc/default/grub` file to
-the following:
+  Enable IOMMU by changing the `GRUB_CMDLINE_LINUX_DEFAULT` line in your `/etc/default/grub` file to
+  the following:
 
-    ```bash
-    GRUB_CMDLINE_LINUX_DEFAULT="iommu=pt amd_iommu=on intel_iommu=on"
-    ```
+  ```bash
+  GRUB_CMDLINE_LINUX_DEFAULT="iommu=pt amd_iommu=on intel_iommu=on"
+  ```
 
-2. Run `sudo update-grub`
+- Run `sudo update-grub`
 
-3. Reboot the host
+- Reboot the host
 
-### 2. Verify IOMMU Compatibility
+### Verify IOMMU Compatibility
 
 Now that IOMMU is enabled we should be able to find devices in the `/sys/kernel/iommu_groups`
 directory. Use the following command to check if IOMMU is working. If everything works, the output
@@ -197,57 +197,57 @@ will be a number higher than 0. If the output is 0, your system does not support
 sudo find /sys/kernel/iommu_groups/ -type l |grep -c "/sys/kernel/iommu_groups/"
 ```
 
-### 3. Assign the `vfio-pci` driver
+### Assign the `vfio-pci` driver
 
 To assign the correct driver to your GPU we will need to download the `driverctl` utility.
 Afterwards we will need to locate the PCI bus-ID for our GPU, then use that information with
 driverctl to assign the vfio-pci driver.
 
-1. Install `driverctl`
+- Install `driverctl`
 
-```bash
-sudo apt-get install -y driverctl
-```
+  ```bash
+  sudo apt-get install -y driverctl
+  ```
 
-2. Get the GPU PCI bus-ID
+- Get the GPU PCI bus-ID
 
-The ID you are looking for will be the first value from the left.
+  The ID you are looking for will be the first value from the left.
 
-```bash
-export GPU_BRAND="nvidia"
-lspci |grep -ai ${GPU_BRAND} |grep VGA
-```
+  ```bash
+  export GPU_BRAND="nvidia"
+  lspci |grep -ai ${GPU_BRAND} |grep VGA
+  ```
 
-Output:
+  Output:
 
-```bash
-1:00.0 VGA compatible controller: NVIDIA Corporation GP104 [GeForce GTX 1080] (rev a1)
-```
+  ```bash
+  1:00.0 VGA compatible controller: NVIDIA Corporation GP104 [GeForce GTX 1080] (rev a1)
+  ```
 
-3. Assign the driver
+- Assign the driver
 
-Show available device by running the following command:
+  Show available device by running the following command:
 
-```bash
-sudo driverctl show-devices
-```
+  ```bash
+  sudo driverctl show-devices
+  ```
 
-Output:
+  Output:
 
-```bash
-0000:00:00.0 skl_uncore
-0000:00:01.0 pcieport
-0000:00:14.0 xhci_hcd
-0000:00:14.2 intel_pch_thermal
-0000:00:16.0 (none)
-0000:00:17.0 ahci
-0000:00:1f.0 (none)
-0000:00:1f.2 (none)
-0000:00:1f.4 i801_smbus
-0000:00:1f.6 e1000e
-0000:01:00.0 nvidia
-0000:01:00.1 snd_hda_intel
-```
+  ```bash
+  0000:00:00.0 skl_uncore
+  0000:00:01.0 pcieport
+  0000:00:14.0 xhci_hcd
+  0000:00:14.2 intel_pch_thermal
+  0000:00:16.0 (none)
+  0000:00:17.0 ahci
+  0000:00:1f.0 (none)
+  0000:00:1f.2 (none)
+  0000:00:1f.4 i801_smbus
+  0000:00:1f.6 e1000e
+  0000:01:00.0 nvidia
+  0000:01:00.1 snd_hda_intel
+  ```
 
 - [SOURCE](https://leduccc.medium.com/simple-dgpu-passthrough-on-a-dell-precision-7450-ebe65b2e648e)
 
