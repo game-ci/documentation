@@ -1,0 +1,262 @@
+# Extra Config Options
+
+## 1. Port forwarding
+
+By default, the provided QEMU examples create a VM inside of a private, virtual network. In this
+configuration network traffic must be forwarded to the VM through the host via opening ports.
+
+- Example where RDP is being forwarded through the host to the VM:
+
+  ```bash
+  -netdev user,id=network,hostfwd=tcp::3389-:3389
+  ```
+
+- If you need to forward more ports, you may do so by adding another `hostfwd` argument to the
+  `-netdev` entry. This may become inconvenient when many ports need to be opened.
+
+  ```bash
+  -netdev user,id=network,hostfwd=tcp::3389-:3389,hostfwd=tcp::22-:22,hostfwd=tcp::80-:80
+  ```
+
+## 2. Bridged Networks
+
+It is possible to create virtual machines on the host network, however it requires additional
+configuration of the host. This is accomplished by:
+
+1. Converting the Host's network device into a bridge.
+2. Creating a tap device controlled by the bridge.
+3. Allowing IP traffic forwarding over the bridge.
+4. Assigning the tap device to the virtual machine.
+
+This process is NOT recommended for inexperienced users as performing the steps incorrectly will
+result in a complete loss of network connectivity to the host machine which will require a reboot,
+manual intervention, and potentially require re-imaging the machine. Be aware that wireless network
+adapters CANNOT be used as bridge devices.
+
+### Required Info
+
+1. Network adapter name
+
+You will need to find the name of your primary network adapter. This is hard to automate because the
+name will change based on vendor, type of network adapter, and number of PCIe devices attached to
+the host. Use the command `ip -a` to show the network devices for your machine:
+
+```bash
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: enp0s31f6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 90:1b:0e:f3:86:e0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.50.101/32 scope global enp0s31f6
+       valid_lft forever preferred_lft forever
+    inet6 2a01:4f8:a0:3383::2/64 scope global
+       valid_lft forever preferred_lft forever
+    inet6 fe80::921b:eff:fef3:86e0/64 scope link
+       valid_lft forever preferred_lft forever
+```
+
+In this example, the primary network adapter is `enp0s31f6`.
+
+2. Network adapter's IP address
+
+The IP address for the network adapter should be listed in the output of `ip -a`. In the example
+above it is `192.168.50.101/32`.
+
+3. The default gateway
+
+Use the command `route -n` to display the routing table. The default gateway should be the first
+entry under the 'GATEWAY' header.
+
+```bash
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.50.1    0.0.0.0         UG    0      0        0 enp0s31f6
+10.42.0.0       0.0.0.0         255.255.255.0   U     0      0        0 cni0
+10.42.0.0       0.0.0.0         255.255.0.0     U     0      0        0 flannel-wg
+172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+```
+
+### Run the Script
+
+You will need to run these steps as a script unless you have physical access to a keyboard for the
+host machine, otherwise you will lose connection when the network restarts. Running as a script
+prevents this awkward issue.
+
+- This must be run from the `root` user account
+
+  ```bash
+  export NETWORK_DEVICE=""
+  export IP_ADDRESS=""
+  export DEFAULT_GATEWAY=""
+  export TAP_NUMBER="0"
+
+  /bin/cat << EOF > cloud-init.yaml
+  #!/bin/bash -
+
+  # Treat unset variables as an error
+  set -o nounset
+
+  # create a bridge
+  sudo ip link add br0 type bridge
+  sudo ip link set br0 up
+  sudo ip link set ${NETWORK_DEVICE} up
+
+  #########################################################################
+  # network will drop here unless next step are automated in same session #
+  #########################################################################
+
+  # add the real ethernet interface to the bridge
+  sudo ip link set ${NETWORK_DEVICE} master br0
+
+  # remove all ip assignments from real interface
+  sudo ip addr flush dev ${NETWORK_DEVICE}
+
+  # give the bridge the real interface's old IP
+  sudo ip addr add ${IP_ADDRESS}/24 brd + dev br0
+
+  # add the default GW
+  sudo ip route add default via ${DEFAULT_GATEWAY} dev br0
+
+  # add a tap device for the user
+  sudo ip tuntap add dev tap${TAP_NUMBER} mode tap user root
+  sudo ip link set dev tap${TAP_NUMBER} up
+
+  # attach the tap device tot he bridge.
+  sudo ip link set tap${TAP_NUMBER} master br0
+
+  # Enable forwarding
+  iptables -F FORWARD
+  iptables -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+  sysctl -w net.ipv4.ip_forward=1
+
+  ##########################
+  # troubleshooting tips   #
+  ##########################
+  #
+  # Show bridge status
+  # brctl show
+  #
+  # Show verbose of single item
+  # an active process must be attached to a device for it to not be "disabled"
+  # brctl showstp br0
+  #
+  EOF
+  ```
+
+### Adjust QEMU command
+
+Since our vm will be making DHCP requests, we should assign it a mac-address.
+
+- Use the following command to generate a MAC address, or make up your own:
+
+  ```bash
+  openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/:$//'
+  ```
+
+- Populate the values below with your own, then use them to replace the existing `-device` and
+  `-netdev` options in the QEMU command.
+
+  ```bash
+  -device virtio-net-pci,netdev=network,mac=$MAC_ADDRESS \
+  -netdev tap,id=network,ifname=tap$TAP_NUMBER,script=no,downscript=no \
+  ```
+
+## 3. GPU Passthrough
+
+### 1. Enabling IOMMU
+
+With QEMU, we are able to pass PCIe devices such as GPUs from the host to the guest using VFIO which
+can provide native-level performance. You will need to make sure that
+`Intel Virtualization Technology` and `Intel VT-d`, or `IOMMU` are enabled in your BIOS.
+Informatiweb.net has some good examples of this process in
+[this thread](https://us.informatiweb.net/tutorials/it/bios/enable-iommu-or-vt-d-in-your-bios.html).
+
+1. Enable IOMMU
+
+Enable IOMMU by changing the `GRUB_CMDLINE_LINUX_DEFAULT` line in your `/etc/default/grub` file to
+the following:
+
+    ```bash
+    GRUB_CMDLINE_LINUX_DEFAULT="iommu=pt amd_iommu=on intel_iommu=on"
+    ```
+
+2. Run `sudo update-grub`
+
+3. Reboot the host
+
+### 2. Verify IOMMU Compatibility
+
+Now that IOMMU is enabled we should be able to find devices in the `/sys/kernel/iommu_groups`
+directory. Use the following command to check if IOMMU is working. If everything works, the output
+will be a number higher than 0. If the output is 0, your system does not support IOMMU.
+
+```bash
+sudo find /sys/kernel/iommu_groups/ -type l |grep -c "/sys/kernel/iommu_groups/"
+```
+
+### 3. Assign the `vfio-pci` driver
+
+To assign the correct driver to your GPU we will need to download the `driverctl` utility.
+Afterwards we will need to locate the PCI bus-ID for our GPU, then use that information with
+driverctl to assign the vfio-pci driver.
+
+1. Install `driverctl`
+
+```bash
+sudo apt-get install -y driverctl
+```
+
+2. Get the GPU PCI bus-ID
+
+The ID you are looking for will be the first value from the left.
+
+```bash
+export GPU_BRAND="nvidia"
+lspci |grep -ai ${GPU_BRAND} |grep VGA
+```
+
+Output:
+
+```bash
+1:00.0 VGA compatible controller: NVIDIA Corporation GP104 [GeForce GTX 1080] (rev a1)
+```
+
+3. Assign the driver
+
+Show available device by running the following command:
+
+```bash
+sudo driverctl show-devices
+```
+
+Output:
+
+```bash
+0000:00:00.0 skl_uncore
+0000:00:01.0 pcieport
+0000:00:14.0 xhci_hcd
+0000:00:14.2 intel_pch_thermal
+0000:00:16.0 (none)
+0000:00:17.0 ahci
+0000:00:1f.0 (none)
+0000:00:1f.2 (none)
+0000:00:1f.4 i801_smbus
+0000:00:1f.6 e1000e
+0000:01:00.0 nvidia
+0000:01:00.1 snd_hda_intel
+```
+
+- [SOURCE](https://leduccc.medium.com/simple-dgpu-passthrough-on-a-dell-precision-7450-ebe65b2e648e)
+
+```bash
+/bin/bash -c "curl -fsSL https://raw.githubusercontent.com/cloudymax/Scrap-Metal/main/virtual-machines/host-config-resources/iommu-groups.sh"
+```
+
+The output of the above script will list all IOMMU groups, as well as the PCI ID, a description of
+each of your PCI devices, and at the end of the line is the IOMMU ID that we require. You will need
+to find the group number that your graphics card belongs to, and the IOMMU IDs of each item in that
+group. In the case of the example blow, the IOMMU IDs we need are `10de:1f08`, `10de:10f9`,
+`10de:1ada`, and `10de:1adb`.

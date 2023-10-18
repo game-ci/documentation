@@ -6,7 +6,7 @@ import Ssh from '/assets/images/ssh-connection.png';
 Cloud-Images are lightweight (usually under 700Mb) snapshots of a configured OS created by a
 publisher for use with public and private clouds. These images provide a way to repeatably create
 identical copies of a machine across platforms. Cloud-Image based systems are best used for
-ephemeral or immutable workloads and then discarded after each run. We will use cloud-init to
+ephemeral or immutable workloads and then discarded after each run. We will use Cloud-Init to
 customize the cloud-image immediately upon booting, prior to user-space initialization.
 
 ## Setup
@@ -68,7 +68,11 @@ read PW_STRING
 export PASSWORD=$(mkpasswd -m sha-512 --rounds=4096 "$PW_STRING" -s "saltsaltlettuce")
 ```
 
-### 4. Create a cloud-init file
+### 4. Create a Cloud-Init file
+
+See the [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/topics/examples.html) official docs
+for more information about Cloud-Init. More advanced templates are available in the
+[Host Provisioning](../../04-host-provisioning/03-Cloud-Init.mdx) directory.
 
 ```bash
 VM_KEY=$(cat runner.pub)
@@ -91,10 +95,10 @@ users:
 EOF
 ```
 
-### 5. Create a cloud-init disk
+### 5. Create a Cloud-Init disk
 
 ```bash
-cloud-localds seed.img cloud-init.yaml
+cloud-localds seed.img Cloud-Init.yaml
 ```
 
 ### 6. Choose a cloud-image to use as the base OS:

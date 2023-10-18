@@ -6,14 +6,21 @@ directly integrated into nearly every operating system which publishes a cloud-i
 supported by most cloud-providers and virtual machine managers. Cloud-Init can also provision
 bare-metal systems running Ubuntu.
 
-- Create custom Ubuntu installation images based on cloud-init using
+- Create custom Ubuntu installation images based on Cloud-Init using
   [PXEless](https://github.com/cloudymax/pxeless)
-- Using cloud-init with Multipass or QEMU for automated provisioning
-- Use your cloud-init config to deploy VMs in the cloud
+- Using Cloud-Init with Multipass or QEMU for automated provisioning
+- Use your Cloud-Init config to deploy VMs in the cloud
+
+Additional Cloud-Init resources:
+
+- [My Magical Adventure With Cloud-Init](https://christine.website/blog/cloud-init-2021-06-04) by
+  [Xe Iaso](https://xeiaso.net/)
+- [Cloud-Init Examples by Canonical](https://cloudinit.readthedocs.io/en/latest/reference/examples.html)
+- [Cloud-Init official GitHub repo](https://github.com/canonical/cloud-init)
 
 ## Ubuntu Template
 
-This cloud-init template automates the non-optional provisioning steps from the
+This Cloud-Init template automates the non-optional provisioning steps from the
 [Ubuntu Machine Setup](./02-ubuntu-setup.mdx) guide.
 
 ```bash
@@ -101,7 +108,7 @@ EOF
 
 ## Debian Template
 
-This cloud-init template automates the non-optional provisioning steps from the
+This Cloud-Init template automates the non-optional provisioning steps from the
 [Debian Machine Setup](./01-debian-setup.mdx) guide.
 
 ```bash
