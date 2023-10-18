@@ -40,22 +40,24 @@ This guide is tested on devices which meet the following requirements:
 - Root access to the operating system
 - Network connectivity
 
-## Host Creation Guides
+## Host Creation
 
-"Host Creation" in this context is the process for installing an operating system onto a piece of
-physical (also called "Bare Metal") or virtualised hardware. Instructions for installation on OS on
-a bare-metal host and guides for creating virtual machines can be found in the 'Host Creation'
-directory.
+"Host Creation" in this context is the process of installing an operating system onto a piece of
+physical hardware, or the creation and configuration of virtualised compute resources.
 
-## Host Provisioning Guides
+- [Bare-Metal](./03-host-creation/02-bare-metal.mdx)
+- [Virtual Machines using Multipass](./03-host-creation/02-multipass.mdx)
+- [Virtual Machines using QEMU](./03-host-creation/03-QEMU/01-overview.mdx)
+
+## Host Provisioning
 
 "Provisioning" here refers to the process of installing additional resources onto, and the
-configuration of your host beyond installing the base operating-system. Once you can sign into your
-VM or Bare-Metal host, follow the appropriate guide to complete the provisioning process.
+configuration of your host beyond installing the base operating-system. Both manual and declarative
+workflows are supported.
 
-- [Ubuntu 22.04 Setup](./04-host-provisioning/02-ubuntu-setup.mdx)
-
-- [Debian 12 Setup](./04-host-provisioning/01-debian-setup.mdx)
+- [Manual Ubuntu 22.04 Setup](./04-host-provisioning/02-ubuntu-setup.mdx)
+- [Manual Debian 12 Setup](./04-host-provisioning/01-debian-setup.mdx)
+- [Declarative provisioning via Cloud-Init](./04-host-provisioning/03-cloud-init/01-about.mdx)
 
 ## Runner Application Installation
 
@@ -63,18 +65,4 @@ Once your host has been provisioned, you will then need to install the appropria
 application. The guides below will walk you through that process.
 
 - [Github Actions](./05-runner-application-installation/02-github-actions.mdx)
-
 - [GitLab Pipelines](./05-runner-application-installation/01-gitlab-pipelines.mdx)
-
-## Declarative workflow using Cloud-Init (Advanced)
-
-Cloud-Init is a software package that automates the initialization of cloud instances during system
-boot and has become the industry standard solution for operating system customization. Cloud-Init is
-directly integrated into nearly every operating system which publishes a cloud-image, as well as
-supported by most cloud-providers and virtual machine managers. Cloud-Init can also provision
-bare-metal systems running Ubuntu.
-
-- Create custom Ubuntu installation images based on cloud-init using
-  [PXEless](https://github.com/cloudymax/pxeless)
-- Using cloud-init with Multipass for automated provisioning
-- Use your cloud-init config to deploy VMs in the cloud

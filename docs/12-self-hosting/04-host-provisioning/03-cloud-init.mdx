@@ -1,0 +1,198 @@
+# Declarative Provisioning using Cloud-Init
+
+Cloud-Init is a software package that automates the initialization of cloud instances during system
+boot and has become the industry standard solution for operating system customization. Cloud-Init is
+directly integrated into nearly every operating system which publishes a cloud-image, as well as
+supported by most cloud-providers and virtual machine managers. Cloud-Init can also provision
+bare-metal systems running Ubuntu.
+
+- Create custom Ubuntu installation images based on cloud-init using
+  [PXEless](https://github.com/cloudymax/pxeless)
+- Using cloud-init with Multipass or QEMU for automated provisioning
+- Use your cloud-init config to deploy VMs in the cloud
+
+## Ubuntu Template
+
+This cloud-init template automates the non-optional provisioning steps from the
+[Ubuntu Machine Setup](./02-ubuntu-setup.mdx) guide.
+
+```bash
+/bin/cat << EOF > cloud-init.yaml
+#cloud-config
+disable_root: false
+network:
+  config: disabled
+users:
+  - name: ${VM_USER}
+    groups: users, admin, docker, sudo, kvm
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: ${PASSWORD}
+    ssh_authorized_keys:
+      - ${VM_KEY}
+package_update: true
+package_upgrade: true
+packages:
+  - wireguard
+  - ssh-import-id
+  - sudo
+  - curl
+  - tmux
+  - netplan.io
+  - apt-transport-https
+  - ca-certificates
+  - software-properties-common
+  - htop
+  - git-extras
+  - rsyslog
+  - fail2ban
+  - vim
+  - gpg
+  - open-iscsi
+  - nfs-common
+  - ncdu
+  - zip
+  - unzip
+  - iotop
+  - gcc
+  - ubuntu-drivers-common
+  - kmod
+  - make
+  - pkg-config
+  - libvulkan1
+runcmd:
+  #####################
+  # Install linux headers
+  - linux-headers-generic
+  ######################
+  # Install YQ
+  - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
+  - chmod +x /usr/bin/yq
+  ######################
+  # Install Docker
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list
+  - sudo apt-get update
+  - sudo apt-get install -y docker-ce
+  ########################
+  # Install Docker Compose
+  - sudo -u ${VM_USER} -i mkdir -p /home/${VM_USER}/.docker/cli-plugins/
+  - sudo -u ${VM_USER} -i curl -SL https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-linux-x86_64 -o  /home/${VM_USER}/.docker/cli-plugins/docker-compose
+  - sudo chmod +x /home/${VM_USER}/.docker/cli-plugins/docker-compose
+  ########################
+  # Brew and Python3
+  - wget https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+  - chmod +x /install.sh
+  - chmod 777 /install.sh
+  - sudo -u ${VM_USER} NONINTERACTIVE=1 /bin/bash /install.sh
+  - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${VM_USER}/.profile
+  - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/opt/python@3.11/libexec/bin >> /home/${VM_USER}/.profile
+  - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/bin/brew install python@3.11
+  - sudo chown -R ${VM_USER}:${VM_USER} /home/linuxbrew
+  - sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+  ########################
+  # Start fail2ban
+  - sudo systemctl enable fail2ban
+  - sudo systemctl start fail2ban
+  - reboot
+EOF
+```
+
+## Debian Template
+
+This cloud-init template automates the non-optional provisioning steps from the
+[Debian Machine Setup](./01-debian-setup.mdx) guide.
+
+```bash
+/bin/cat << EOF > cloud-init.yaml
+#cloud-config
+disable_root: false
+network:
+  config: disabled
+groups:
+  - docker
+users:
+  - name: ${VM_USER}
+    groups: users, admin, docker, sudo, kvm
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: ${PASSWORD}
+    ssh_authorized_keys:
+      - ${VM_KEY}
+write_files:
+- path: /etc/apt/sources.list
+  content: |
+    deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+    deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+
+    deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+    deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+
+    deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+    deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+package_update: true
+package_upgrade: true
+packages:
+  - wireguard
+  - ssh-import-id
+  - sudo
+  - curl
+  - tmux
+  - netplan.io
+  - apt-transport-https
+  - ca-certificates
+  - software-properties-common
+  - htop
+  - git-extras
+  - rsyslog
+  - fail2ban
+  - vim
+  - gpg
+  - open-iscsi
+  - nfs-common
+  - ncdu
+  - zip
+  - unzip
+  - iotop
+  - gcc
+  - firmware-misc-nonfree
+runcmd:
+  #####################
+  # Install linux headers
+  - linux-headers-amd64
+  - linux-headers-`uname -r`
+  ######################
+  # Install YQ
+  - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
+  - chmod +x /usr/bin/yq
+  ######################
+  # Install Docker
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - sudo apt-get update
+  - sudo apt-get install -y docker-ce
+  ########################
+  # Install Docker Compose
+  - sudo -u ${VM_USER} -i mkdir -p /home/${VM_USER}/.docker/cli-plugins/
+  - sudo -u ${VM_USER} -i curl -SL https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-linux-x86_64 -o  /home/${VM_USER}/.docker/cli-plugins/docker-compose
+  - sudo chmod +x /home/${VM_USER}/.docker/cli-plugins/docker-compose
+  ########################
+  # Brew and Python3
+  - wget https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+  - chmod +x /install.sh
+  - chmod 777 /install.sh
+  - sudo -u ${VM_USER} NONINTERACTIVE=1 /bin/bash /install.sh
+  - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${VM_USER}/.profile
+  - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/opt/python@3.11/libexec/bin >> /home/${VM_USER}/.profile
+  - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/bin/brew install python@3.11
+  - sudo chown -R ${VM_USER}:${VM_USER} /home/linuxbrew
+  - sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+  ########################
+  # Start fail2ban
+  - sudo systemctl enable fail2ban
+  - sudo systemctl start fail2ban
+  - reboot
+EOF
+```

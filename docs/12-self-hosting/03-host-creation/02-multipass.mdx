@@ -57,16 +57,27 @@ export PATH="$PATH:/usr/local/bin/multipass"
 export PATH="$PATH:/usr/local/bin/multipass"
 ```
 
-### 2. Create an ssh-key for authenticating with the VM
+### 2. Create a password
+
+```bash
+# Install the mkpasswd utility
+sudo apt install -y whois
+
+read PW_STRING
+export PASSWORD=$(mkpasswd -m sha-512 --rounds=4096 "$PW_STRING" -s "saltsaltlettuce")
+```
+
+### 3. Create an ssh-key for authenticating with the VM
 
 ```bash
 ssh-keygen -C $VM_USER -f runner
 ```
 
-### 3. Add the public ssh-key to a cloud-init file
+### 4. Add the public ssh-key and password to a cloud-init file
 
-See the [cloud init](https://cloudinit.readthedocs.io/en/latest/topics/examples.html) docs for more
-examples.
+See the [cloud init](https://cloudinit.readthedocs.io/en/latest/topics/examples.html) official docs
+for more information about cloud-init. More advanced templates are available in the
+[Host Provisioning](../04-host-provisioning/03-cloud-init.mdx) directory.
 
 ```bash
 VM_KEY=$(cat runner.pub)
@@ -82,12 +93,12 @@ users:
     shell: /bin/bash
     groups: docker, admin, sudo, users
     no_ssh_fingerprints: true
+    lock_passwd: false
+    passwd: ${PASSWORD}
     ssh-authorized-keys:
       - ${VM_KEY}
 packages:
   - docker.io
-runcmd:
-  - [ sed , -i , "s/#PermitRootLogin prohibit-password/PermitRootLogin no/g" , /etc/ssh/sshd_config ]
 EOF
 ```
 

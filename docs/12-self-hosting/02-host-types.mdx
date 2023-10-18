@@ -1,5 +1,6 @@
 import Virtualisation from '/assets/images/Virtualization.drawio.svg';
 import Metal from '/assets/images/Metal.drawio.svg';
+import Docker from '/assets/images/DockerHost.drawio.svg';
 
 # Types of Hosts
 
@@ -27,6 +28,22 @@ Bare-Metal host on which to run the VMs.
 
 <div style={{ textAlign: 'center' }}>
   <Virtualisation />
+</div>
+<br />
+<br />
+
+## Containers
+
+Containers are built on 'cgroups' (control groups), which are a feature of the Linux kernel that
+limits monitors, and isolates the resource usage of a collection of processes. This means that
+running containers on Linux is very lightweight form of virtualisation. However, on other operating
+systems which do not use the Linux kernel, a Linux virtual machine or translation-layer must be
+created to run containers. The manner by which each Operating System resolves this issue varies
+greatly as shown below. Because of this variance, the self-hosting documentation targets Linux as a
+means of avoiding excess complexity.
+
+<div style={{ textAlign: 'center' }}>
+  <Docker />
 </div>
 <br />
 <br />
