@@ -207,9 +207,9 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-- Install Drivers
+### Install Drivers
 
-  You should now see the disk selection screen without any available disk. This is because Windows
+- You should now see the disk selection screen without any available disk. This is because Windows
   cannot use the virtio disk we have created without adding drivers during the installation process.
 
   <div>
@@ -218,7 +218,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-  To install the required drivers, select the 'Load Driver' button, then select 'Browse' to open a
+- To install the required drivers, select the 'Load Driver' button, then select 'Browse' to open a
   file-explorer from which to choose the install media.
 
   <div>
@@ -227,7 +227,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-  The drivers are located in disk drive 'E' which should be named 'virtio-win-[version]'
+- The drivers are located in disk drive 'E' which should be named 'virtio-win-[version]'
 
   <div>
     <img src={VirtioDisk} width="400" />
@@ -235,9 +235,9 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-  Viostor (Required)
+#### Viostor (Required)
 
-  Find and select the 'Viostor' directory, then choose the directory that corresponds to your
+- Find and select the 'Viostor' directory, then choose the directory that corresponds to your
   operating system version. Choose the 'amd64' directory inside and click 'OK'.
 
   <div>
@@ -254,9 +254,9 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-  - NetKvm (Required)
+#### NetKvm (Required)
 
-  Repeat the same process from above to find and install the NetKVM driver
+- Repeat the same process from above to find and install the NetKVM driver
 
   <div>
     <img src={NetKvm} width="400" />
@@ -264,20 +264,21 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-  - Viogpudo (Optional)
+#### Viogpudo (Optional)
 
-  This driver will add more screen resolution options to the VNC display. The installation process
+- This driver will add more screen resolution options to the VNC display. The installation process
   is the same as the previous drivers.
 
-  <div>
-    <img src={VirtioGpu} width="400" />
-  </div>
-  <br />
-  <br />
+{' '}
+<div>
+  <img src={VirtioGpu} width="400" />
+</div>
+<br />
+<br />
 
-- Format and Partition Disk
+### Format and Partition Disk
 
-  With the drivers installed, we are now able to format and partition our virtual disk. Select
+- With the drivers installed, we are now able to format and partition our virtual disk. Select
   'Drive 0' then click 'new'.
 
   <div>
@@ -286,7 +287,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-  Select largest of the newly-created partitions, then click 'Next'.
+- Select largest of the newly-created partitions, then click 'Next'.
 
   <div>
     <img src={Partition} width="600" />
@@ -294,7 +295,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-  The install process should now begin. From this point you may simply follow the directions
+- The install process should now begin. From this point you may simply follow the directions
   on-screen. When the system reboots, allow the 'Press any key to boot from CD' prompt to time-out.
   This avoids restarting the setup process.
 
@@ -304,7 +305,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-## RDP
+### RDP
 
 - Enable RDP (Optional)
 
