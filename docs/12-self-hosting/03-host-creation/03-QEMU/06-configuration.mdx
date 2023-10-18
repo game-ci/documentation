@@ -1,4 +1,4 @@
-# Extra Config Options
+# Advanced Configuration Options
 
 ## Port forwarding
 
@@ -148,7 +148,7 @@ prevents this awkward issue.
 
 ### Adjust QEMU command
 
-Since our vm will be making DHCP requests, we should assign it a mac-address.
+Since our VM will be making DHCP requests, we should assign it a mac-address.
 
 - Use the following command to generate a MAC address, or make up your own:
 
@@ -249,14 +249,40 @@ driverctl to assign the vfio-pci driver.
   0000:01:00.1 snd_hda_intel
   ```
 
-- [SOURCE](https://leduccc.medium.com/simple-dgpu-passthrough-on-a-dell-precision-7450-ebe65b2e648e)
+  In the example above, we can see that the GPU's Bus ID `1:00.0` is present in the list and that
+  the driver currently assigned is `nvidia`. We can also see a second device in the same id-range:
+  `01.00.1` which is using an Intel driver. In order for passthrough to work properly, all devices
+  in the same id-range must use the `vfio-pci` driver.
 
-```bash
-/bin/bash -c "curl -fsSL https://raw.githubusercontent.com/cloudymax/Scrap-Metal/main/virtual-machines/host-config-resources/iommu-groups.sh"
-```
+  To change the drivers we will run the following:
 
-The output of the above script will list all IOMMU groups, as well as the PCI ID, a description of
-each of your PCI devices, and at the end of the line is the IOMMU ID that we require. You will need
-to find the group number that your graphics card belongs to, and the IOMMU IDs of each item in that
-group. In the case of the example blow, the IOMMU IDs we need are `10de:1f08`, `10de:10f9`,
-`10de:1ada`, and `10de:1adb`.
+  ```bash
+  sudo driverctl set-override 0000:01:00.0 vfio-pci
+  sudo driverctl set-override 0000:01:00.1 vfio-pci
+  ```
+
+### Adjust the QEMU command
+
+We can now use the information from the previous steps to adjust the QEMU command for the virtual
+machine. We will add a new `-device` option that points QEMU at our GPU.
+
+- Consumer GPUs
+
+  ```bash
+  export BUS_ID="1:00.0"
+  -device vfio-pci,host=${BUS_ID},multifunction=on,x-vga=on \
+  ```
+
+- Data Center GPUs with large amounts or VRAM
+
+  ```bash
+  export BUS_ID="1:00.0"
+  -device vfio-pci,host=${BUS_ID},multifunction=on -fw_cfg name=opt/ovmf/X-PciMmio64Mb,string=65536 \
+  ```
+
+- Disable virtual VGA device
+
+  If you plan to use your VM for full-screen applications then you may need to disable the virtual
+  display so that apps will properly choose the screen or headless display attached to the GPU. Do
+  this by changing `-vga virtio` to `-vga none`. You will then need to use x11vnc, xrdp, sunshine
+  etc.. to create a remote desktop session.

@@ -30,118 +30,118 @@ For installation on Windows and MacOS, refer to the official installation instru
 
 ## Creating a VM
 
-### 1. Set values
+- Set values
 
-```bash
-# The name of the Virtual Machine
-export VM_NAME="gameci"
+  ```bash
+  # The name of the Virtual Machine
+  export VM_NAME="gameci"
 
-# The name of the user to create
-export VM_USER="vmadmin"
+  # The name of the user to create
+  export VM_USER="vmadmin"
 
-# Number of CPU cores to allocate to the VM
-export VM_CPUS="2"
+  # Number of CPU cores to allocate to the VM
+  export VM_CPUS="2"
 
-# Amount of Disk Space to allocate to the VM.
-# Cannot exceed available on host.
-export VM_DISK="32G"
+  # Amount of Disk Space to allocate to the VM.
+  # Cannot exceed available on host.
+  export VM_DISK="32G"
 
-# Amount of RAM to allocate to the VM.
-# Cannot exceed available RAM on host.
-export VM_MEM="8G"
+  # Amount of RAM to allocate to the VM.
+  # Cannot exceed available RAM on host.
+  export VM_MEM="8G"
 
-# Set path on MacOS systems
-export PATH="$PATH:/usr/local/bin/multipass"
+  # Set path on MacOS systems
+  export PATH="$PATH:/usr/local/bin/multipass"
 
-# Set path on Linux system
-export PATH="$PATH:/usr/local/bin/multipass"
-```
+  # Set path on Linux system
+  export PATH="$PATH:/usr/local/bin/multipass"
+  ```
 
-### 2. Create a password
+- Create a password
 
-```bash
-# Install the mkpasswd utility
-sudo apt install -y whois
+  ```bash
+  # Install the mkpasswd utility
+  sudo apt install -y whois
 
-read PW_STRING
-export PASSWORD=$(mkpasswd -m sha-512 --rounds=4096 "$PW_STRING" -s "saltsaltlettuce")
-```
+  read PW_STRING
+  export PASSWORD=$(mkpasswd -m sha-512 --rounds=4096 "$PW_STRING" -s "saltsaltlettuce")
+  ```
 
-### 3. Create an ssh-key for authenticating with the VM
+- Create an ssh-key for authenticating with the VM
 
-```bash
-ssh-keygen -C $VM_USER -f runner
-```
+  ```bash
+  ssh-keygen -C $VM_USER -f runner
+  ```
 
-### 4. Add the public ssh-key and password to a cloud-init file
+- Add the public ssh-key and password to a cloud-init file
 
-See the [cloud init](https://cloudinit.readthedocs.io/en/latest/topics/examples.html) official docs
-for more information about cloud-init. More advanced templates are available in the
-[Host Provisioning](../04-host-provisioning/03-cloud-init.mdx) directory.
+  See the [cloud init](https://cloudinit.readthedocs.io/en/latest/topics/examples.html) official
+  docs for more information about cloud-init. More advanced templates are available in the
+  [Host Provisioning](../04-host-provisioning/03-cloud-init.mdx) directory.
 
-```bash
-VM_KEY=$(cat runner.pub)
+  ```bash
+  VM_KEY=$(cat runner.pub)
 
-cat << EOF > cloud-init.yaml
-#cloud-config
-groups:
-  - docker
-users:
-  - default
-  - name: ${VM_USER}
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    shell: /bin/bash
-    groups: docker, admin, sudo, users
-    no_ssh_fingerprints: true
-    lock_passwd: false
-    passwd: ${PASSWORD}
-    ssh-authorized-keys:
-      - ${VM_KEY}
-packages:
-  - docker.io
-EOF
-```
+  cat << EOF > cloud-init.yaml
+  #cloud-config
+  groups:
+    - docker
+  users:
+    - default
+    - name: ${VM_USER}
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      shell: /bin/bash
+      groups: docker, admin, sudo, users
+      no_ssh_fingerprints: true
+      lock_passwd: false
+      passwd: ${PASSWORD}
+      ssh-authorized-keys:
+        - ${VM_KEY}
+  packages:
+    - docker.io
+  EOF
+  ```
 
-### 4. Start the VM
+- Start the VM
 
-See the [multipass launch](https://multipass.run/docs/launch-command) command docs for more
-information.
+  See the [multipass launch](https://multipass.run/docs/launch-command) command docs for more
+  information.
 
-```bash
-export VERBOSITY="-vvvvvv"
+  ```bash
+  export VERBOSITY="-vvvvvv"
 
-/snap/bin/multipass launch --name $VM_NAME \
-  --cpus $VM_CPUS \
-  --disk $VM_DISK \
-  --mem $VM_MEM \
-  --cloud-init cloud-init.yaml \
-  $VERBOSITY
-```
+  /snap/bin/multipass launch --name $VM_NAME \
+    --cpus $VM_CPUS \
+    --disk $VM_DISK \
+    --mem $VM_MEM \
+    --cloud-init cloud-init.yaml \
+    $VERBOSITY
+  ```
 
-### 5. Get the VM's IP address
+- Get the VM's IP address
 
-```bash
-VM_IP=$(/snap/bin/multipass list |grep "${VM_NAME}" |awk '{print $3}')
-```
+  ```bash
+  VM_IP=$(/snap/bin/multipass list |grep "${VM_NAME}" |awk '{print $3}')
+  ```
 
-### 6. Connect to the VM via ssh or cli
+- Connect to the VM via ssh or cli
 
-ssh:
+  ssh:
 
-```bash
-ssh -i runner $VM_USER@$VM_IP -o StrictHostKeyChecking=no -vvvv
-```
+  ```bash
+  ssh -i runner $VM_USER@$VM_IP -o StrictHostKeyChecking=no -vvvv
+  ```
 
-CLI:
+  CLI:
 
-```bash
-multipass shell $VM_NAME
-```
+  ```bash
+  multipass shell $VM_NAME
+  ```
 
-### 7. Install the runner application
+- Install the runner application
 
-- [Github Actions](../05-runner-application-installation/02-github-actions.mdx)
-- [Gitlab Pipelines](../05-runner-application-installation/01-gitlab-pipelines.mdx)
+  - [Github Actions](../05-runner-application-installation/02-github-actions.mdx)
+  - [Gitlab Pipelines](../05-runner-application-installation/01-gitlab-pipelines.mdx)
 
 ## Cleanup
 
