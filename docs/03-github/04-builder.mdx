@@ -34,7 +34,7 @@ Create or edit the file called `.github/workflows/main.yml` and add a job to it.
 
 Personal licenses require a one-time manual activation step.
 
-Make sure you [acquire and activate](/docs/github/activation) your license file and add it as a
+Make sure you [acquire and activate](/docs/github/activation) your license file, and add it as a
 secret.
 
 Then, define the build step as follows:
@@ -490,8 +490,8 @@ keys for your project and then add to the `webfactory/ssh-agent`
   and make sure that you you use `git@github.com:USER/PROJECT.git` instead of email for `-C`
   parameter because we're going to use it as deploy key for a single project and
   `webfactory/ssh-agent` going to use that for checking which repository this key is related to .
-- Add the public_key to Deploy settings of your private git repository (
-  https://github.com/USER/PROJECT/settings/keys)
+- Add the public_key to Deploy settings of your private git repository
+  (https://github.com/USER/PROJECT/settings/keys)
 - Add private_key to Github secrets of the project that you want to build
   (https://github.com/USER/PROJECT/settings/secrets/actions) (key name should be SSH_PRIVATE_KEY )
 - Add github to ssh known hosts :
@@ -500,7 +500,7 @@ keys for your project and then add to the `webfactory/ssh-agent`
 name: 'Add GitHub to the SSH known hosts file'
 run: |
   mkdir -p -m 0700 /home/runner/.ssh
-  curl --silent https://api.github.com/meta  | jq --raw-output '"github.com "+.ssh_keys[]' >> /home/runner/.ssh/known_hosts
+  curl --silent https://api.github.com/meta | jq --raw-output '"github.com "+.ssh_keys[]' >> /home/runner/.ssh/known_hosts
   chmod 600 /home/runner/.ssh/known_hosts
 ```
 
