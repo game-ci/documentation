@@ -29,7 +29,7 @@ const UnityVersion = ({ data }: Props) => {
     created: `${Math.random() < 0.5 ? '👷‍♀️' : '👷‍♂️'}`,
     scheduled: <Spinner type="dots" />,
     inProgress: <Spinner type="pulse" />,
-    completed: '✔',
+    completed: '✅',
     failed: '😢',
     superseded: '⏩',
     deprecated: '⭕',
