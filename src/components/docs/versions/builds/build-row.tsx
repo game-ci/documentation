@@ -45,9 +45,9 @@ export default function BuildRow({ children, build }: Props) {
       <tr className={styles.tableRow}>
         <td
           onClick={() => setExpanded(!expanded)}
-          className="text-center select-none cursor-pointer"
+          className="text-center select-none cursor-pointer text-2xl"
         >
-          {expanded ? '➖' : '➕'}
+          {expanded ? '-' : '+'}
         </td>
         <td className="text-center">{MapBuildStatusToElement(build.status)}</td>
         <td>
