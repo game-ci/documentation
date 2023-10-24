@@ -14,3 +14,47 @@
   position: sticky;
   top: 45px !important; /* 46 from collapse header -1 for buggy border in dark mode */
 }
+
+.versionsPanel {
+  min-width: 75%;
+}
+
+.majorEditorVersion {
+  > button {
+    display: block;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-size: 2rem;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  border-bottom: 1px solid #fff;
+  width: 100%;
+  padding: 1.5em 0.5em;
+
+
+  .arrow {
+    transition: all 0.25s;
+
+    // Transform doesn't work on inline elements
+    display: inline-block;
+  }
+
+  &:first-of-type {
+    border-top: 1px solid #fff;
+  }
+}
+
+.versionButton {
+  background: none;
+  outline: none;
+  border: none;
+  width: 100%;
+
+  text-align: left;
+  font-family: var(--ifm-heading-font-family);
+  cursor: pointer;
+  font-size: 1em;
+}
