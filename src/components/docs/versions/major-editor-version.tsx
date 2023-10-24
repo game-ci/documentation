@@ -21,6 +21,7 @@ export default function MajorEditorVersion({ versionString, versions }: Props) {
           className={styles.arrow}
           style={{
             transform: `rotateZ(${enabled ? '90deg' : 0})`,
+            fontSize: '1.5rem',
           }}
         >
           &#9654; {/* ▶ */}
