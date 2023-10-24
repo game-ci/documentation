@@ -3,8 +3,6 @@ import SignInSignOutButton from '@site/src/components/auth/sign-in-sign-out-butt
 import UnityVersions from './unity-versions';
 import styles from './unity-version.module.scss';
 
-// const { Option } = Select;
-
 interface Props {
   versions: { [key: string]: any }[];
 }
