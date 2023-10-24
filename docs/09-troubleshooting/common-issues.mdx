@@ -268,8 +268,7 @@ collectively consume a significant amount of disk space.
 1. **Parallel Execution**: A straightforward workaround is to execute the tests and builds in
    parallel rather than sequentially. This ensures that each runner (or CI job) utilizes its own
    docker image, thereby avoiding cumulative disk usage. By structuring your CI workflow to execute
-   these jobs concurrently, each job can independently manage its disk space. For a parallel
-   execution example, refer to
+   these jobs concurrently, each job can independently manage its disk space. You can refer to
    [our Github 'Parallel execution of Tests and Builds' example](/docs/github/getting-started#parallel-execution-of-tests-and-builds).
 
 2. **Free Up Disk Space**: Use the
