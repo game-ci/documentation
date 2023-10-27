@@ -454,6 +454,23 @@ to avoid any conflicts.
 
 _**required:** `false`_ _**default:** `"/github/workspace"`_
 
+#### dockerCpuLimit
+
+Number of CPU cores to assign the Windows docker container. Defaults to all available cores. Can
+accept fractional values, ie 0.5 for half of a cpu core's execution time. This only applies to
+Windows containers.
+
+_**required:** `false`_ _**default:** `""`_
+
+#### dockerMemoryLimit
+
+Amount of memory to assign the Windows docker container. Defaults to 75% of total system memory
+rounded down to the nearest gigabyte when no value is provided. Format should be `Xg` where `X` is
+the number of gigabytes to allocate, ie `4g` for 4 gigabytes. You can also use `m` instead to
+specify a value in megabytes. This only applies to Windows containers.
+
+_**required:** `false`_ _**default:** `""`_
+
 ## Outputs
 
 Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where
