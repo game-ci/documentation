@@ -466,10 +466,16 @@ _**required:** `false`_ _**default:** `""`_
 Amount of memory to assign the docker container. Defaults to 95% of total system memory rounded down
 to the nearest megabyte on Linux and 80% on Windows when no value is specified. On unrecognized
 platforms, defaults to 75% of total system memory. To manually specify a value, use the format
-
 \<number\>\<unit\>, where unit is either m or g. ie: 512m = 512 megabytes and 4g = 4 gigabytes.
 
 _**required:** `false`_ _**default:** `""`_
+
+#### dockerIsolationMode
+
+Isolation mode to use for the docker container. Can be one of process, hyperv, or default. Only
+applicable on Windows.
+
+_**required:** `false`_ _**default:** `"default"`_
 
 ## Outputs
 
