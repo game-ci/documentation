@@ -9,7 +9,33 @@ as well as extra content for optional features. These images are much heavier th
 are generally 2-8Gb in size. Unlike cloud-images, Live-ISO installers can also be used to image
 physical machines and are suited for use in long-lived virtual-private servers.
 
-## Setup
+## Download or create an ISO file:
+
+- For Ubuntu images, tools like [Cubic](https://github.com/PJ-Singh-001/Cubic) or
+  [PXEless](github.com/cloudymax/pxeless) can be used to create customized ISO installers.
+
+- When using Debian 12 as the source image, you may need to manually add a boot-entry to the
+  virtual-machine bios after installation. That process is shown in-detail here:
+  [proxmox.com/wiki/OVMF/UEFI_Boot_Entries](https://pve.proxmox.com/wiki/OVMF/UEFI_Boot_Entries)
+
+- Official Ubuntu and Debian images can be downloaded from:
+
+  ```yaml
+  Ubuntu:
+    - https://mirror.mijn.host/ubuntu-releases/22.04.3/ubuntu-22.04.3-live-server-amd64.iso
+  Debian12:
+    - https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso
+  ```
+
+- Download the ISO file
+
+  ```bash
+  export IMAGE_URL="https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso"
+  export IMAGE_NAME=$(basename -- "$IMAGE_URL")
+  wget -c -O "$IMAGE_NAME" "$IMAGE_URL" -q --show-progress
+  ```
+
+## VM Setup
 
 - Configure the Virtual Machine options
 
@@ -44,32 +70,6 @@ physical machines and are suited for use in long-lived virtual-private servers.
 
   # Port number to expose on the host for VNC
   export VNC_PORT="0"
-  ```
-
-- Choose or create an ISO file:
-
-  - For Ubuntu images, tools like [Cubic](https://github.com/PJ-Singh-001/Cubic) or
-    [PXEless](github.com/cloudymax/pxeless) can be used to create customized ISO installers.
-
-  - When using Debian 12 as the source image, you may need to manually add a boot-entry to the
-    virtual-machine bios after installation. That process is shown in-detail here:
-    [proxmox.com/wiki/OVMF/UEFI_Boot_Entries](https://pve.proxmox.com/wiki/OVMF/UEFI_Boot_Entries)
-
-  - Official Ubuntu and Debian images can be downloaded from:
-
-    ```yaml
-    Ubuntu:
-      - https://mirror.mijn.host/ubuntu-releases/22.04.3/ubuntu-22.04.3-live-server-amd64.iso
-    Debian12:
-      - https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso
-    ```
-
-- Download the installer
-
-  ```bash
-  export IMAGE_URL="https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/debian-12.1.0-amd64-DVD-1.iso"
-  export IMAGE_NAME=$(basename -- "$IMAGE_URL")
-  wget -c -O "$IMAGE_NAME" "$IMAGE_URL" -q --show-progress
   ```
 
 - Create an empty disk where the OS will be installed.

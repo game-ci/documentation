@@ -2,7 +2,7 @@
 toc_max_heading_level: 4
 ---
 
-# Get Started with QEMU
+# Install QEMU
 
 [QEMU](https://www.qemu.org/documentation/) (short for "Quick Emulator") is a generic and open
 source machine emulator and virtualiser.
@@ -29,14 +29,12 @@ by Sumit Ghosh
 - Unlike ESXi, it's free.
 - When used with KVM, QEMU provides near-native levels of performance.
 - Can be used inside Kubernetes via [Kubevirt](https://kubevirt.io/)
-- It's fast. QEMU can create a new fully-featured VM in seconds. That's not quite as fast as
-  [LXD](https://linuxcontainers.org/lxd/introduction/),
+- It's fast - not quite as fast as [LXD](https://linuxcontainers.org/lxd/introduction/),
   [Firecracker](https://firecracker-microvm.github.io/), or
   [Cloud-Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor) (formerly
   [NEMU](https://github.com/intel/nemu)), but its far more mature, has a larger community, and more
   documentation available.
-- Unlike a [system container (LDX)](https://linuxcontainers.org/lxd/introduction/) or
-  [Multipass](https://multipass.run/docs) it can also create Windows and MacOS guests.
+- Unlike [Multipass](https://multipass.run/docs) it can also create Windows and MacOS guests.
 - [Unlike Firecracker](https://github.com/firecracker-microvm/firecracker/issues/849#issuecomment-464731628)
   it supports pinning memory addresses (and thus PCIe-passthrough) where firecracker cannot because
   it would break their core feature of over-subscription.

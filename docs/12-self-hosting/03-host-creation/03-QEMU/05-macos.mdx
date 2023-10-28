@@ -23,7 +23,14 @@ functionality and other similar things. To enable these things, take a look thei
 [notes](https://github.com/kholia/OSX-KVM/blob/master/notes.md). Older AMD CPU(s) are known to be
 problematic but modern AMD Ryzen processors work just fine.
 
-## Setup
+## VM Setup
+
+- Clone the repo and cd into the new directory
+
+  ```bash
+  git clone --depth 1 --recursive https://github.com/kholia/OSX-KVM.git
+  cd OSX-KVM
+  ```
 
 - Configure the Virtual Machine options
 
@@ -60,12 +67,7 @@ problematic but modern AMD Ryzen processors work just fine.
   export VNC_PORT="0"
   ```
 
-- Clone the repo and cd into the new directory
-
-  ```bash
-  git clone --depth 1 --recursive https://github.com/kholia/OSX-KVM.git
-  cd OSX-KVM
-  ```
+## Download an Installer
 
 - Choose and download an installer using the included script
 
@@ -158,17 +160,18 @@ problematic but modern AMD Ryzen processors work just fine.
     -vnc $HOST_ADDRESS:$VNC_PORT
   ```
 
-## MacOS Installation
+## Connect to the VM using VNC.
 
-- Connect to the VM using VNC.
+In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
 
-  In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+{' '}
+<div style={{ textAlign: 'center' }}>
+  <img src={Vnc} width="600" />
+</div>
+<br />
+<br />
 
-  <div style={{ textAlign: 'center' }}>
-    <img src={Vnc} width="600" />
-  </div>
-  <br />
-  <br />
+## Format Virtual Drive
 
 - Select install media
 
@@ -206,6 +209,8 @@ problematic but modern AMD Ryzen processors work just fine.
   </div>
   <br />
   <br />
+
+## Install MacOS
 
 - Choose the `Reinstall MacOS` option from the main menu
 

@@ -9,7 +9,26 @@ identical copies of a machine across platforms. Cloud-Image based systems are be
 ephemeral or immutable workloads and then discarded after each run. We will use Cloud-Init to
 customize the cloud-image immediately upon booting, prior to user-space initialization.
 
-## Setup
+## Download a Cloud-Image
+
+- Choose a cloud-image to use as the base OS:
+
+  ```yaml
+  Debian:
+    12: 'https://laotzu.ftp.acc.umu.se/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2'
+  Ubuntu:
+    jammy: 'https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img'
+  ```
+
+- Download the image with `wget`
+
+  ```bash
+  export CLOUD_IMAGE_URL="https://laotzu.ftp.acc.umu.se/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
+  export CLOUD_IMAGE_NAME=$(basename -- "$CLOUD_IMAGE_URL")
+  wget -c -O "$CLOUD_IMAGE_NAME" "$CLOUD_IMAGE_URL" -q --show-progress
+  ```
+
+## VM Setup
 
 - Configure VM options
 
@@ -49,6 +68,8 @@ customize the cloud-image immediately upon booting, prior to user-space initiali
   export VNC_PORT="0"
   ```
 
+### Credentials
+
 - Create an SSH Key
 
   ```bash
@@ -67,6 +88,8 @@ customize the cloud-image immediately upon booting, prior to user-space initiali
   read PW_STRING
   export PASSWORD=$(mkpasswd -m sha-512 --rounds=4096 "$PW_STRING" -s "saltsaltlettuce")
   ```
+
+### Cloud-init Config
 
 - Create a Cloud-Init file
 
@@ -95,29 +118,12 @@ customize the cloud-image immediately upon booting, prior to user-space initiali
   EOF
   ```
 
+### Disks
+
 - Create a Cloud-Init disk
 
   ```bash
   cloud-localds seed.img cloud-init.yaml
-  ```
-
-- Choose a cloud-image to use as the base OS:
-
-  ```yaml
-  Debian:
-    12: 'https://laotzu.ftp.acc.umu.se/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2'
-  Ubuntu:
-    focal: 'https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img'
-    jammy: 'https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img'
-    lunar: 'https://cloud-images.ubuntu.com/lunar/current/lunar-server-cloudimg-amd64.img'
-  ```
-
-- Download the image with `wget`
-
-  ```bash
-  export CLOUD_IMAGE_URL="https://laotzu.ftp.acc.umu.se/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
-  export CLOUD_IMAGE_NAME=$(basename -- "$CLOUD_IMAGE_URL")
-  wget -c -O "$CLOUD_IMAGE_NAME" "$CLOUD_IMAGE_URL" -q --show-progress
   ```
 
 - Create a virtual disk using the cloud-image as a read-only backing file.
