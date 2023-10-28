@@ -237,20 +237,56 @@ There are 2 possible solutions:
 
 #### Error
 
+Example when downloading an android docker image:
+
 ```plaintext
 docker: failed to register layer: ApplyLayer exit status 1 stdout:  stderr: write /opt/unity/Editor/Data/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.8/lib/linux/x86_64/libFuzzer.a: no space left on device.
 ```
 
+or when it's downloading a docker image for the windows target platform:
+
+```plaintext
+[...]
+6fad6f1176e0: Verifying Checksum
+6fad6f1176e0: Download complete
+docker: failed to register layer: write /opt/unity/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.visualeffectgraph/Documentation~/Images/EventContexts.png: no space left on device.
+```
+
+#### Explanation
+
+When executing multiple jobs sequentially in the same workflow, there can be potential disk space
+issues. For instance, if your workflow first executes tests on one docker image, such as
+`unityci/editor:ubuntu-2022.3.4f1-linux-il2cpp-2`, and subsequently runs a build on another target
+platform, e.g., `unityci/editor:ubuntu-2022.3.4f1-windows-mono-2`, it might run out of space during
+the build phase.
+
+This happens because each job might be downloading and using its separate docker image, which can
+collectively consume a significant amount of disk space.
+
 #### Solution
 
-The GitHub-hosted runners often do not have enough disk space for game dev projects. To work around
-this limitation, you could try to use the
-[Free Disk Space (Ubuntu)](https://github.com/marketplace/actions/free-disk-space-ubuntu) action at
-the start of your workflow. If you still require additional disk space for your project, you could
-try using
-[Self-hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
-or using
-[Cloud Runners](https://game.ci/docs/github-cloud-runner/game-ci-vs-cloud-runner#large-github-projects).
+1. **Parallel Execution**: A straightforward workaround is to execute the tests and builds in
+   parallel rather than sequentially. This ensures that each runner (or CI job) utilizes its own
+   docker image, thereby avoiding cumulative disk usage. By structuring your CI workflow to execute
+   these jobs concurrently, each job can independently manage its disk space. You can refer to
+   [our Github 'Parallel execution of Tests and Builds' example](/docs/github/getting-started#parallel-execution-of-tests-and-builds).
+
+2. **Free Up Disk Space**: Use the
+   [Free Disk Space (Ubuntu)](https://github.com/marketplace/actions/free-disk-space-ubuntu) action
+   at the start of your workflow to clear some space on the GitHub-hosted runner. This action can be
+   especially useful if only a small amount of additional space is needed.
+
+3. **Use Self-Hosted or Cloud Runners**: If your project inherently requires more disk space than
+   what GitHub-hosted runners provide, consider switching to
+   [Self-hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
+   or
+   [Cloud Runners](https://game.ci/docs/github-cloud-runner/game-ci-vs-cloud-runner#large-github-projects).
+   This would give you more control over the resources and disk space.
+
+---
+
+This revised section provides a clearer understanding of the issue and offers more directed
+solutions.
 
 ## General tips
 
