@@ -18,12 +18,105 @@ import NetKvm from '/assets/images/win10-netkvm.png';
 import FormatDisk from '/assets/images/win10-format-disk.png';
 import Partition from '/assets/images/win10-partitions.png';
 import Installing from '/assets/images/win10-installing.png';
+import DiskmarkVirtio from '/assets/images/diskmark-virtio.png';
+import DiskmarkSata from '/assets/images/diskmark-sata.png';
 
 # Windows
 
-With the use of KVM, QEMU is capable of creating Windows guests with near-native performance.
+Windows VMs on QEMU + KVM work very well provided that you have tailored your VM to match your
+needs. There are multiple possible combinations of images, hardware types, and installation methods
+that each have their own benefits and drawbacks.
 
-## Setup
+## Choosing an Image
+
+Since Windows is proprietary software, downloading an ISO is not as straight-forward as with Linux.
+
+- Server and Enterprise
+
+  Microsoft makes evaluation copies of it's server and enterprise images available through their
+  Evaluation Center. You will need to enter your contact details to obtain the image. These
+  evaluation images are multi-edition and therefore do not easily work for automated installation.
+
+  - [Windows Server 2022](https://info.microsoft.com/ww-landing-windows-server-2022.html)
+
+- Home and Pro
+
+  You can also obtain an image for Windows 10 from Microsoft. This is another multi-edition image
+  that cannot be easily automated due to the need to manually select the version to install during
+  the setup process.
+
+  - [Windows 10 Multi-edition](https://www.microsoft.com/nl-nl/software-download/windows10ISO)
+
+- Alternative Sources for single-edition images
+
+  For those who need a single-edition ISO which can be fully automated, it is easier to use 3rd
+  party services such as [https://uupdump.net/](https://uupdump.net/) to obtain the ISO image. There
+  is a decent guide [HERE](https://www.elevenforum.com/t/uup-dump-download-windows-insider-iso.344/)
+  on how to use the site.
+
+- Licenses
+
+  Be aware that all of the images above are unlicensed and it is up to you to obtain a valid
+  activation key for your installation. See
+  [this post](https://www.reddit.com/r/cheapwindowskeys/comments/wjvsae/cheap_windows_keys/) on
+  Reddit's /r/cheapwindowskeys for more information about how to acquire a license.
+
+- Rename your ISO file
+
+Once you have download your ISO image, rename it to `windows.iso` for compatibility with the rest of
+the commands in this guide.
+
+## Choosing a disk type
+
+There are two ways to create virtual disks covered in this guide: `Virtio` and `SATA`.
+
+- `Virtio` is more performant, but cannot be easily automated since the drivers must be manually
+  installed before Windows setup can start.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={DiskmarkVirtio} width="400" />
+  </div>
+  <br />
+
+- `SATA` drivers are supported natively by Windows and can easily be used for fully automated
+  installations. They are however, slower than `Virtio` drives.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={DiskmarkSata} width="400" />
+  </div>
+  <br />
+
+  > Testing performed using Qcow2 disk format, Windows 10 Pro Guest OS, and a Samsung 990 Pro SSD.
+  > For additional performance-tuning advice, see the article
+  > [Improving the performance of a Windows Guest on KVM/QEMU](https://leduccc.medium.com/improving-the-performance-of-a-windows-10-guest-on-qemu-a5b3f54d9cf5).
+
+## Creating an Answer file
+
+You can skip interactive steps of the Windows install process by using an answer-file. These are
+`.xml` config files which store system configuration data, similar to Cloud-Init or pre-seed on
+Linux. Answer files can only provide full-automation of the install process when using
+single-edition images. Multi-edition images will still require manual interaction to select a
+Windows version during setup.
+
+- You can use the website [Windows Answer File Generator](https://www.windowsafg.com/) to easily
+  create your own answer file.
+
+  Example of a pre-made answer file for Windows 10 with an auto-login admin account:
+
+  ```bash
+  wget -O ./config/autounattend.xml https://raw.githubusercontent.com/small-hack/smol-metal/main/autounattend.xml
+  ```
+
+- Answer files must be mounted in the root partition of the installation medium. That's usually a
+  USB drive but since we are using a virtual machine we will use an ISO file instead.
+
+  ```bash
+  mkdir ./config
+  mv $YOUR_ANSWER_FILE ./config/
+  mkisofs -o config.iso -J -r config
+  ```
+
+## VM Setup
 
 - Configure the Virtual Machine options
 
@@ -54,24 +147,6 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   export VNC_PORT="0"
   ```
 
-- Select a Windows ISO
-
-  ```yaml
-  Windows:
-    Windows10: 'https://www.itechtics.com/?dl_id=173'
-    server2019-core: 'https://go.microsoft.com/fwlink/p/?LinkID=2195167&clcid=0x409&culture=en-us&country=US'
-    Tiny10: https://ia902609.us.archive.org/27/items/tiny-10-NTDEV/tiny10%2023h1%20x64.iso
-    Tiny11: https://ia800509.us.archive.org/27/items/tiny11-23h2/tiny11%2023H2%20x64.iso
-  ```
-
-- Download an installer
-
-  ```bash
-  export IMAGE_URL="SOME_URL_HERE"
-  export IMAGE_NAME=windows.iso
-  wget -c -O "$IMAGE_NAME" "$IMAGE_URL" -q --show-progress
-  ```
-
 - Download virtual-disk drivers
 
   ```bash
@@ -81,10 +156,12 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
 - Create the virtual disk
 
   ```bash
-  qemu-img create -f qcow2 disk.qcow2 $DISK_SIZE &>/dev/null
+  qemu-img create -f qcow2 disk.qcow2 $DISK_SIZE
   ```
 
-## Create the VM
+## Creating the VM
+
+### Automated install With SATA Drive
 
 - Create new guest:
 
@@ -94,7 +171,50 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
     -cpu host,kvm="off",hv_vendor_id="null" \
     -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
     -m "$MEMORY" \
-    -drive id=disk0,if=virtio,cache=none,format=qcow2,file=disk.qcow2 \
+    -drive id=disk0,if=none,cache=none,format=qcow2,file=disk.qcow2 \
+    -device ahci,id=ahci -device ide-hd,drive=disk0,bus=ahci.0 \
+    -drive file=windows.iso,index=0,media=cdrom \
+    -drive file=virtio-drivers.iso,index=2,media=cdrom \
+    -drive file=config.iso,index=1,media=cdrom \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -usbdevice tablet \
+    -serial stdio -vga virtio -parallel none \
+    -device virtio-net-pci,netdev=network \
+    -netdev user,id=network,hostfwd=tcp::3389-:3389 \
+    -vnc $HOST_ADDRESS:$VNC_PORT
+  ```
+
+- Boot existing guest:
+
+  ```bash
+  sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+    -m "$MEMORY" \
+    -drive id=disk0,if=none,cache=none,format=qcow2,file=disk.qcow2 \
+    -device ahci,id=ahci -device ide-hd,drive=disk0,bus=ahci.0 \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -usbdevice tablet \
+    -serial stdio -vga virtio -parallel none \
+    -device virtio-net-pci,netdev=network \
+    -netdev user,id=network,hostfwd=tcp::3389-:3389 \
+    -vnc $HOST_ADDRESS:$VNC_PORT
+  ```
+
+### Manual Install With Virtio Drive
+
+- Create new guest:
+
+  ```bash
+  sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+    -m "$MEMORY" \
+    -object iothread,id=io \
+    -device virtio-blk-pci,drive=disk,iothread=io \
+    -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
     -drive file=windows.iso,index=1,media=cdrom \
     -drive file=virtio-drivers.iso,index=2,media=cdrom \
     -boot menu=on \
@@ -111,7 +231,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   ```bash
   sudo qemu-system-x86_64 \
     -machine accel=kvm,type=q35 \
-    -cpu host,kvm="off",hv_vendor_id="null",check="off",hypervisor="off" \
+    -cpu host,kvm="off",hv_vendor_id="null" \
     -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
     -m "$MEMORY" \
     -object iothread,id=io \
@@ -129,19 +249,17 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
     -vnc $HOST_ADDRESS:$VNC_PORT
   ```
 
-## Boot from CD
+### Boot from CD
 
-- Press any key to boot from the Live-ISO when prompted, then connect to the VM over VNC.
+Multi-edition images will prompt the user to 'Press any key to boot CD or DVD' as shown below. When
+you see this prompt, press enter.
 
-  > Some ISO images (like tiny11 and tiny10) will require you to quickly open a VNC connection to
-  > provide the key-press input or they will skip the boot option and you will need to restart the
-  > VM to try again.
-
-  <div>
-    <img src={BootFromCd} width="600" />
-  </div>
-  <br />
-  <br />
+{' '}
+<div>
+  <img src={BootFromCd} width="600" />
+</div>
+<br />
+<br />
 
 - Connect to the VM using VNC
 
@@ -153,7 +271,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-## Install Windows
+## Install Windows Manually
 
 - Select 'Install now'
 
@@ -207,10 +325,10 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-### Install Drivers
+### Install Drivers (Optional)
 
 - You should now see the disk selection screen without any available disk. This is because Windows
-  cannot use the virtio disk we have created without adding drivers during the installation process.
+  cannot use the virtio disks without adding drivers during the installation process.
 
   <div>
     <img src={DiskSelect} width="600" />
@@ -304,7 +422,7 @@ With the use of KVM, QEMU is capable of creating Windows guests with near-native
   <br />
   <br />
 
-### RDP
+## RDP
 
 - Enable RDP (Optional)
 

@@ -98,7 +98,7 @@ customize the cloud-image immediately upon booting, prior to user-space initiali
 - Create a Cloud-Init disk
 
   ```bash
-  cloud-localds seed.img Cloud-Init.yaml
+  cloud-localds seed.img cloud-init.yaml
   ```
 
 - Choose a cloud-image to use as the base OS:
@@ -177,6 +177,7 @@ customize the cloud-image immediately upon booting, prior to user-space initiali
   - Connect to the VM using the format `ssh -i runner $VM_USER@$HOST_ADDRESS -p$VM_SSH_PORT`
 
   {' '}
+
   <div style={{}}>
     <img src={Ssh} width="600" />;
   </div>

@@ -2,8 +2,9 @@
 
 ## Port forwarding
 
-By default, the provided QEMU examples create a VM inside of a private, virtual network. In this
-configuration network traffic must be forwarded to the VM through the host via opening ports.
+By default, the provided QEMU creates VMs inside of a private virtual network through
+[SLIRP networking](https://wiki.qemu.org/Documentation/Networking). In this configuration network
+traffic must be forwarded to the VM through the host via opening ports.
 
 - Example where RDP is being forwarded through the host to the VM:
 
@@ -28,10 +29,16 @@ configuration of the host. This is accomplished by:
 3. Allowing IP traffic forwarding over the bridge.
 4. Assigning the tap device to the virtual machine.
 
-This process is NOT recommended for inexperienced users as performing the steps incorrectly will
-result in a complete loss of network connectivity to the host machine which will require a reboot,
-manual intervention, and potentially require re-imaging the machine. Be aware that wireless network
-adapters CANNOT be used as bridge devices.
+Be aware that:
+
+- This process is NOT recommended for inexperienced users as performing the steps incorrectly will
+  result in a complete loss of network connectivity to the host machine which will require a reboot,
+  manual intervention, and potentially require re-imaging the machine.
+- Wireless network adapters CANNOT be used as bridge devices.
+- Many VPS and cloud-providers such as AWS and Equinix configure their networking in such a manner
+  that bridged networking in this way impossible.
+
+Proceed at your own risk.
 
 ### Required Info
 
@@ -39,7 +46,7 @@ adapters CANNOT be used as bridge devices.
 
   You will need to find the name of your primary network adapter. This is hard to automate because
   the name will change based on vendor, type of network adapter, and number of PCIe devices attached
-  to the host. Use the command `ip -a` to show the network devices for your machine:
+  to the host. Use the command `ip a` to show the network devices for your machine:
 
   ```bash
   1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
@@ -62,7 +69,7 @@ adapters CANNOT be used as bridge devices.
 
 - Network adapter's IP address
 
-  The IP address for the network adapter should be listed in the output of `ip -a`. In the example
+  The IP address for the network adapter should be listed in the output of `ip a`. In the example
   above it is `192.168.50.101/32`.
 
 - The default gateway
@@ -83,9 +90,9 @@ adapters CANNOT be used as bridge devices.
 
 You will need to run these steps as a script unless you have physical access to a keyboard for the
 host machine, otherwise you will lose connection when the network restarts. Running as a script
-prevents this awkward issue.
+prevents this awkward issue. The following commands must be run from the `root` user account.
 
-- This must be run from the `root` user account
+- Create the script
 
   ```bash
   export NETWORK_DEVICE=""
@@ -93,7 +100,7 @@ prevents this awkward issue.
   export DEFAULT_GATEWAY=""
   export TAP_NUMBER="0"
 
-  /bin/cat << EOF > cloud-init.yaml
+  /bin/cat << EOF > bridge.sh
   #!/bin/bash -
 
   # Treat unset variables as an error
@@ -104,9 +111,9 @@ prevents this awkward issue.
   sudo ip link set br0 up
   sudo ip link set ${NETWORK_DEVICE} up
 
-  #########################################################################
-  # network will drop here unless next step are automated in same session #
-  #########################################################################
+  ##########################################################
+  # network will drop here unless next steps are automated #
+  ##########################################################
 
   # add the real ethernet interface to the bridge
   sudo ip link set ${NETWORK_DEVICE} master br0
@@ -142,8 +149,24 @@ prevents this awkward issue.
   # Show verbose of single item
   # an active process must be attached to a device for it to not be "disabled"
   # brctl showstp br0
-  #
+
   EOF
+  ```
+
+- run the script
+
+  ```bash
+  sudo bash ./bridge.sh
+  ```
+
+- Verify the new bridge using `brctl show` and `ip a`
+
+  ```bash
+  brctl show
+  bridge name     bridge id               STP enabled     interfaces
+  br0             8000.e6f9f3d4d16b       yes             enp0s31f6
+                                                          tap0
+  docker0         8000.02422e6c0493       no
   ```
 
 ### Adjust QEMU command
@@ -162,6 +185,62 @@ Since our VM will be making DHCP requests, we should assign it a mac-address.
   ```bash
   -device virtio-net-pci,netdev=network,mac=$MAC_ADDRESS \
   -netdev tap,id=network,ifname=tap$TAP_NUMBER,script=no,downscript=no \
+  ```
+
+## Static IP Assignment
+
+When using a bridged network it is also possible to assign an IP address to your VM prior to
+creation. To do this, add a `netplan` configuration file to your Cloud-Init file, as well as a
+command to apply the new configuration.
+
+You will need to know the VM's network adapter name ahead of time which may take some trial and
+error, but it is generally `enp0s2` unless extra PCI devices are attached to the VM. In which case
+the final character may be a higher or lower number. Additionally you will need to know the IP
+address for the DNS name-server and default gateway.
+
+- Example:
+
+  ```yaml
+  #cloud-config
+  hostname: ${VM_NAME}
+  fqdn: ${VM_NAME}
+  disable_root: false
+  network:
+    config: disabled
+  users:
+    - name: ${USERNAME}
+      groups: users, admin, docker, sudo
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      shell: /bin/bash
+      lock_passwd: false
+      passwd: ${PASSWORD}
+  write_files:
+    - path: /etc/netplan/99-my-new-config.yaml
+      permissions: '0644'
+      content: |
+        network:
+          ethernets:
+            ${INTERFACE}:
+              dhcp4: no
+              dhcp6: no
+              addresses: [${DESIRED_IP_ADDRESS}/24]
+              routes:
+                - to: default
+                  via: ${DEFAULT_GATEWAY}
+              mtu: 1500
+              nameservers:
+                addresses: [${DNS_SERVER_IP}]
+          renderer: networkd
+          version: 2
+  runcmd:
+    ##############################################
+    # Apply the new config and remove the old one
+    - /usr/sbin/netplan --debug generate
+    - /usr/sbin/netplan --debug apply
+    - rm /etc/netplan/50*
+    ##############################################
+    # Give the network adapter time to come online
+    - sleep 5
   ```
 
 ## GPU Passthrough
@@ -229,7 +308,7 @@ driverctl to assign the vfio-pci driver.
   Show available device by running the following command:
 
   ```bash
-  sudo driverctl show-devices
+  sudo driverctl list-devices
   ```
 
   Output:
@@ -261,10 +340,34 @@ driverctl to assign the vfio-pci driver.
   sudo driverctl set-override 0000:01:00.1 vfio-pci
   ```
 
+  Run `sudo driverctl list-devices` again and you should now see the vfio-pci driver in use.
+
+  Output:
+
+  ```bash
+  0000:00:00.0 skl_uncore
+  0000:00:01.0 pcieport
+  0000:00:14.0 xhci_hcd
+  0000:00:14.2 intel_pch_thermal
+  0000:00:16.0 (none)
+  0000:00:17.0 ahci
+  0000:00:1f.0 (none)
+  0000:00:1f.2 (none)
+  0000:00:1f.4 i801_smbus
+  0000:00:1f.6 e1000e
+  0000:01:00.0 vfio-pci [*]
+  0000:01:00.1 vfio-pci [*]
+  ```
+
 ### Adjust the QEMU command
 
-We can now use the information from the previous steps to adjust the QEMU command for the virtual
-machine. We will add a new `-device` option that points QEMU at our GPU.
+You are now ready to pass the GPU to your VM by adding a new `-device` option to the QEMU command.
+
+> If you plan to use your VM for full-screen applications then you may need to disable the virtual
+> display so that apps will properly choose the display attached to the GPU instead of the RedHat
+> virtual display. Do this by changing `-vga virtio` to `-vga none`. You will need to use x11vnc,
+> xrdp, sunshine etc.. to create a new remote display as the default QEMU VNC server will now
+> display the QEMU console instead of a display.
 
 - Consumer GPUs
 
@@ -273,16 +376,32 @@ machine. We will add a new `-device` option that points QEMU at our GPU.
   -device vfio-pci,host=${BUS_ID},multifunction=on,x-vga=on \
   ```
 
-- Data Center GPUs with large amounts or VRAM
+- Data Center GPUs with large amounts of VRAM
 
   ```bash
   export BUS_ID="1:00.0"
   -device vfio-pci,host=${BUS_ID},multifunction=on -fw_cfg name=opt/ovmf/X-PciMmio64Mb,string=65536 \
   ```
 
-- Disable virtual VGA device
+- Nvidia vGPU devices
 
-  If you plan to use your VM for full-screen applications then you may need to disable the virtual
-  display so that apps will properly choose the screen or headless display attached to the GPU. Do
-  this by changing `-vga virtio` to `-vga none`. You will then need to use x11vnc, xrdp, sunshine
-  etc.. to create a remote desktop session.
+  ```bash
+  export VGPU="/sys/bus/mdev/devices/$VGPU_UUID"
+  -device vfio-pci,sysfsdev=${VGPU} -uuid $(uuidgen)
+  ```
+
+### Additional Reading
+
+- [GPU Passthrough on a Dell Precision 7540 and other high end laptops](https://leduccc.medium.com/simple-dgpu-passthrough-on-a-dell-precision-7450-ebe65b2e648e) -
+  leduccc
+
+- [Comprehensive guide to performance optimizations for gaming on virtual machines with KVM/QEMU and PCI passthrough](https://mathiashueber.com/performance-tweaks-gaming-on-virtual-machines/) -
+  Mathias Hüber
+
+- [gpu-virtualization-with-kvm-qemu](https://medium.com/@calerogers/gpu-virtualization-with-kvm-qemu-63ca98a6a172) -
+  Cale Rogers
+
+- [Faster Virtual Machines on Linux Hosts with GPU Acceleration](https://adamgradzki.com/2020/04/06/faster-virtual-machines-linux/) -
+  Adam Gradzki
+
+- [PCI VFIO options](https://www.kernel.org/doc/html/latest/driver-api/vfio-pci-device-specific-driver-acceptance.html?highlight=vfio%20pci)

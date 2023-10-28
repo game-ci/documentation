@@ -1,5 +1,22 @@
 # Kubernetes
 
+The guide below describes the process for setting up a minimum-viable Kubernetes environment on
+which to deploy GameCI CloudRunner without the need for any paid services. For this exercise we will
+use [K3s](https://k3s.io/), a lightweight Kubernetes distribution from
+[SUSE](https://www.suse.com/). This guide is meant for learning purposes and for self-hosting on
+internal/private networks. Please be aware of the following:
+
+- This is a single-node deployment meaning there is no redundancy or fail-over protection in the
+  event of a hardware failure or service outage. For instructions on deploying K3s with
+  High-Availability see
+  [Setting up a High-availability K3s Kubernetes Cluster for Rancher](https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-cluster-setup/k3s-for-rancher).
+
+- This configuration does not implement SSL/TLS encryption, Role-Based Access Controls, Admission
+  Policies, and other critical security features required for public-facing services in production.
+
+- No Backups or data-resiliency measure of any kind are configured. Alterations to the physical
+  machine, Disk Drives, or Persistent Volumes can result in total data-loss
+
 ## k3s Quick Start
 
 I advise using [K3s](https://k3s.io/) as it's very easy to deploy on Bare Metal and VMs as
@@ -15,7 +32,7 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 ```
 
-### install the Minio client
+### install the MinIO client
 
 Docs: https://min.io/docs/minio/linux/reference/minio-mc.html
 

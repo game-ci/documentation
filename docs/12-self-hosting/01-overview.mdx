@@ -4,15 +4,15 @@ toc_max_heading_level: 4
 
 # Overview
 
-Projects often encounter a constraint or requirement which make free-tier hosted CI/CD runners
+Projects often encounter a constraint or requirement which makes free-tier hosted CI/CD runners
 insufficient for their needs. In these cases hosting your own CI/CD runner can be a viable
 alternative to premium-tier services or subscriptions. Self-hosting may also provide access to
 resources that are simply not available on many CI/CD services such as GPUs, faster drives, and
 newer CPU models.
 
-This guide will cover two basic methods for hosting CI/CD runners: Bare-Metal and Virtual Machines.
-Containerized hosts will not be discussed because of their inherent reliance on insecure practices
-such as
+This guide will cover basic methods for hosting CI/CD runners on Bare-Metal, Virtual Machines, or
+using Cloud Runner. Containerized hosts will not be discussed because of their inherent reliance on
+insecure practices such as
 [Docker-in-Docker](http://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/),
 [Privileged Containers](https://www.trendmicro.com/en_th/research/19/l/why-running-a-privileged-container-in-docker-is-a-bad-idea.html)
 and the additional tooling required to mitigate those risks such as

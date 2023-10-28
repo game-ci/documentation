@@ -1,6 +1,13 @@
-import Virtualisation from '/assets/images/Virtualization.drawio.svg';
+import Virtualisation from '/assets/images/Virtualization.drawio.png';
 import Metal from '/assets/images/Metal.drawio.svg';
-import Docker from '/assets/images/DockerHost.drawio.svg';
+import Docker from '/assets/images/DockerHost.drawio.png';
+import Kubernetes from '/assets/images/kubernetes.drawio.png';
+import Layers from '/assets/images/k8s-layers.drawio.png';
+import Layer0 from '/assets/images/k8s-layer0.drawio.png';
+import Layer1 from '/assets/images/k8s-layer1.drawio.png';
+import Layer2 from '/assets/images/k8s-layer2.drawio.png';
+import Layers01 from '/assets/images/k8s-layers01.drawio.png';
+import Layers012 from '/assets/images/k8s-layers012.drawio.png';
 
 # Types of Hosts
 
@@ -11,9 +18,8 @@ virtualisation. This reduces the complexity of deployment at the cost of increas
 for re-provisioning the host.
 
 <div style={{ textAlign: 'center' }}>
-  <Metal />
+  <Metal width="500" />
 </div>
-<br />
 <br />
 
 ## Virtual Machines
@@ -27,10 +33,20 @@ comes at the cost of added complexity, a slight performance penalty, and you nee
 Bare-Metal host on which to run the VMs.
 
 <div style={{ textAlign: 'center' }}>
-  <Virtualisation />
+  <a target="\_blank" href={require('/assets/images/Virtualization.drawio.png').default}>
+    <img src={Virtualisation} width="500" />
+  </a>
 </div>
 <br />
-<br />
+
+Additional Reading:
+
+- [A Study of Performance and Security Across the Virtualization Spectrum](https://repository.tudelft.nl/islandora/object/uuid:34b3732e-2960-4374-94a2-1c1b3f3c4bd5/datastream/OBJ/download) -
+  Vincent van Rijn
+- [Hyper-converged infrastructure](https://en.wikipedia.org/wiki/Hyper-converged_infrastructure) -
+  Wikipedia
+- [Rethinking the PC](https://www.computerworld.com/article/3518849/rethinking-the-pc-why-virtual-machines-should-replace-operating-systems.html) -
+  Rob Enderle
 
 ## Containers
 
@@ -43,7 +59,69 @@ greatly as shown below. Because of this variance, the self-hosting documentation
 means of avoiding excess complexity.
 
 <div style={{ textAlign: 'center' }}>
-  <Docker />
+  <a target="\_blank" href={require('/assets/images/DockerHost.drawio.png').default}>
+    <img src={Docker} width="500" />
+  </a>
 </div>
 <br />
+
+Additional Reading:
+
+- [The Mental Model Of Docker Container Shipping](https://bernhardwenzel.com/2022/the-mental-model-of-docker-container-shipping/) -
+  Bernhard Wenzel
+- [Why is Docker-in-Docker considered bad?](https://devops.stackexchange.com/questions/676/why-is-docker-in-docker-considered-bad)
+- [Why it is recommended to run only one process in a container?](https://devops.stackexchange.com/questions/447/why-it-is-recommended-to-run-only-one-process-in-a-container)
+
+## Kubernetes (Cloud Runner)
+
+Kubernetes is somewhat of a combination of all other host types. Since it is an API, it must be
+installed on an existing host (called a "Node") which is usually either a VM or physical device. A
+Kubernetes "Cluster" is usually made up of 3 or more nodes - though you can have as few as one, or
+as many 5,000 per cluster.
+
 <br />
+<div style={{ textAlign: 'center' }}>
+  <a target="\_blank" href={require('/assets/images/k8s-layer0.drawio.png').default}>
+    <img src={Layer0} width="700" />
+  </a>
+  <br />
+</div>
+<br />
+
+Once installed, Kubernetes creates
+[standardised interfaces](https://matt-rickard.com/kubernetes-interfaces) to control the hardware &
+software components of the underlying nodes (networking, storage, GPUs, CPU cores etc...) as well as
+a distributed key-value store which facilitates communication between all nodes in the cluster.
+
+<br />
+<div style={{ textAlign: 'center' }}>
+  <a target="\_blank" href={require('/assets/images/k8s-layers01.drawio.png').default}>
+    <img src={Layers01} width="750" />
+  </a>
+  <br />
+</div>
+<br />
+
+With the underlying hardware abstracted into a generic pool of resources, Kubernetes is then able to
+re-compose those assets into isolated environments called "Namespaces" where it deploys
+containerised workloads in groups called "Pods". This layer of Kubernetes is very similar to a
+typical container host but with many more features for multi-tenancy, security, and life-cycle
+management.
+
+<br />
+<div style={{ textAlign: 'center' }}>
+  <a target="\_blank" href={require('/assets/images/k8s-layers012.drawio.png').default}>
+    <img src={Layers012} width="800" />
+  </a>
+</div>
+<br />
+
+Additional Reading:
+
+- [Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/) - kubernetes.io
+- [A visual guide to Kubernetes networking fundamentals](https://opensource.com/article/22/6/kubernetes-networking-fundamentals) -
+  Nived Velayudhan
+- [Thinking about the complexity of the Kubernetes ecosystem](https://erkanerol.github.io/post/complexity-of-kubernetes/) -
+  Erkan Erol
+- [Ephemeral, Idempotent and Immutable Infrastructure ](https://cloudnativenow.com/topics/ephemeral-idempotent-and-immutable-infrastructure/) -
+  Marc Hornbeek
