@@ -79,9 +79,20 @@ Single-Node cluster. This example shows a minimum-viable deployment.
 - Make an accessible version of the kubeconfig
 
   ```bash
-  sudo cp /etc/rancher/k3s/k3s.yaml ~/k3s.yaml
-  sudo chown $USER:$USER ~/k3s.yaml
-  export KUBECONFIG=~/k3s.yaml
+  mkdir -p ~/.config/kube
+
+  sudo cp /etc/rancher/k3s/k3s.yaml ~/.config/kube/config
+
+  sudo chown $USER:$USER ~/.config/kube/config
+
+  export KUBECONFIG=~/.config/kube/config
+
+  ```
+
+- Base64 encode the kubeconfig and add it to your github repo secrets
+
+  ```bash
+  /bin/cat $KUBECONFIG |base64 -w 0
   ```
 
 ## Deploy Minio
@@ -154,11 +165,16 @@ Create a minimal minio deployment as your S3-compatible storage provider.
 
 - Create an Access Key
 
-Create an access key for the GameCI user, we will use this as credentials for our cicd runner.
+  Create an access key for the GameCI user, we will use this as credentials for our cicd runner.
 
-```bash
-mc admin user svcacct add myminio gameci
-```
+  ```bash
+  mc admin user svcacct add myminio gameci
+  ```
+
+- Create Repo Secrets
+
+  Add the `Access Key` and `Secret Key` to your GitHub repo secrets as `AWS_ACCESS_KEY_ID` and
+  `AWS_SECRET_ACCESS_KEY`.
 
 - Create an artifact storage bucket
 
