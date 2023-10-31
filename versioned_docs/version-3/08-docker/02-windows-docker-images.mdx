@@ -1,0 +1,271 @@
+# Windows docker images
+
+Windows images are used for some features available only in windows. The main reason is usually
+building an IL2CPP version of the application.
+
+To build applications effectively in terms of build time, the very base image is a .NET framework
+4.8. It's cached on GitHub actions runners and we truly need .NET. The base Windows image can be
+found in
+[https://github.com/game-ci/docker](https://github.com/game-ci/docker/blob/main/images/windows/base/Dockerfile).
+
+## Features
+
+- Git
+- Choco package manager
+
+## Limitations
+
+### Microsoft does not allow redistribution of Visual Studio build tools
+
+Microsoft does not permit publishing images with VS Build tools which are needed for IL2CPP builds
+[`discussion`](https://github.com/microsoft/Windows-Containers/issues/102#issuecomment-827170844).
+
+You will encounter exceptions in the Unity log similar to
+`error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools installed for il2cpp builds.`
+
+<details>
+  <summary>Expand this section for a full log example.</summary>
+
+```
+error: Could not set up a toolchain for Architecture x64. Make sure you have the right build tools
+installed for il2cpp builds. Details: IL2CPP C++ code builder is unable to build C++ code. In order
+to build C++ code for Windows Desktop, you must have one of these installed: * Visual Studio 2022 or
+newer with C++ compilers and Windows 10 SDK (recommended) * Visual Studio 2019 with C++ compilers and
+Windows 10 SDK * Visual Studio 2017 with C++ compilers and Windows 10 SDK * Visual Studio 2015 with
+C++ compilers and Windows 10 SDK Visual Studio 2017 (or newer) is detected using `vswhere.exe` as well
+as VSCOMNTOOLS environment variables. Visual Studio 2015 is detected by looking at "SOFTWARE\Microsoft\VisualStudio\14.0_Config\InstallDir"
+in the registry as well as VSCOMNTOOLS environment variables. Windows 10 SDK is detected by looking
+at "SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0\InstallationFolder" in the registry.
+Unable to detect any compatible Visual Studio installation! * Found Visual Studio 2022 installation
+without C++ tool components Windows 10 SDK is not installed. You can install from here: https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/
+```
+
+</details>
+
+There are two options to avoid this obstacle:
+
+1. (_Recommended_) Inject/mount Microsoft Visual Studio with VC++ and Windows 10 SDK from the host
+   system into the container during runtime.
+2. Build a custom image and push it to a docker registry.
+
+#### Option 1. Injecting VC++ from the host system into the container
+
+> These instructions have been validated with Visual Studio 2022 and Unity 2021 LTS.
+
+_Install Visual Studio Build Tools_
+
+The recommended way to install the correct dependencies on the host is with
+[Chocolatey](https://chocolatey.org/). This works with Windows 10/11, Windows Server, and Windows
+Server Core.
+
+```powershell
+choco install visualstudio2022-workload-vctools --no-progress -y
+```
+
+There is a way to install the same dependencies from the graphical
+[Visual Studio Installer](https://visualstudio.microsoft.com/downloads/), but the workload component
+options in the installer frequently change.
+
+_The following directories need to be bind-mounted into the container_
+
+- C:\Program Files (x86)\Windows Kits
+- C:\Program Files (x86)\Microsoft Visual Studio
+- C:\Program Files\Microsoft Visual Studio
+- C:\ProgramData\Microsoft\VisualStudio
+
+> Please confirm all of the above directories exist in your installation. Some may be missing and
+> things might still work OK without them. Omit the missing directories in the following steps.
+
+_Docker run example_
+
+```powershell
+docker run `
+  -v "C:\Program Files (x86)\Windows Kits:C:\Program Files (x86)\Windows Kits" `
+  -v "C:\Program Files (x86)\Microsoft Visual Studio:C:\Program Files (x86)\Microsoft Visual Studio" `
+  -v "C:\Program Files\Microsoft Visual Studio:C:\Program Files\Microsoft Visual Studio"
+  -v "C:\ProgramData\Microsoft\VisualStudio:C:\ProgramData\Microsoft\VisualStudio" `
+  unityci/editor:windows-$env:UNITY_VERSION-windows-il2cpp-$env:UNITY_IMAGE_VERSION
+```
+
+_Gitlab runner config.toml example_
+
+```toml
+#...
+volumes = [
+  "C:\\Program Files (x86)\\Windows Kits:C:\\Program Files (x86)\\Windows Kits",
+  "C:\\Program Files\\Microsoft Visual Studio:C:\\Program Files\\Microsoft Visual Studio",
+  "C:\\Program Files (x86)\\Microsoft Visual Studio:C:\\Program Files (x86)\\Microsoft Visual Studio",
+  "C:\\ProgramData\\Microsoft\\VisualStudio:C:\\ProgramData\\Microsoft\\VisualStudio"
+]
+#...
+```
+
+#### Option 2. Building a custom image
+
+```dockerfile
+ARG UNITY_VERSION=''
+ARG UNITY_IMAGE_VERSION='1'
+
+FROM unityci/editor:windows-${UNITY_VERSION}-windows-il2cpp-${UNITY_IMAGE_VERSION}
+
+RUN choco install visualstudio2022-workload-vctools --no-progress -y
+```
+
+### Licenses are not valid between containers runs
+
+This behaviour is different to Ubuntu containers where it's possible to use a single license for
+even a few different runners.
+
+In Windows, it's necessary to acquire a license every time and return it after a building process.
+License files for every run are identical apart from the last four symbols of the machine hash code.
+This restriction has not been solved yet
+
+#### Scripting example
+
+The simplest way is to write a couple of scripts (copied from
+[`Unity3d docs`](https://docs.unity3d.com/Manual/ManagingYourUnityLicense.html)) and wrap it to the
+try-finally block
+
+**Note**: Path to Unity3d is
+`C:\Program Files\Unity\Hub\Editor\{UNITY_EDITOR_VERSION}\Editor\Unity.exe`
+
+```powershell
+try {
+  build.ps1
+} finally {
+  return-license.ps1
+}
+```
+
+#### GitLab example
+
+```
+unity-windows-il2cpp-build:
+  variables:
+    UPM_CACHE_ROOT: $CI_PROJECT_DIR/.upm
+    UNITY_IMAGE_VERSION: "1"
+    UNITY_MODULE: "il2cpp"
+    UNITY_IMAGE_PREFIX: "unityci/editor"
+    # Do not use quotes around this argument
+    UNITY_EXECUTABLE: C:\Program Files\Unity\Hub\Editor\$UNITY_VERSION\Editor\Unity.exe
+    BUILD_COMMAND: "BuildCommand.PerformBuild"
+    BUILD_TARGET: "Win64"
+    BUILD_NAME: "example"
+    BUILD_PATH: "dist/"
+  image: $UNITY_IMAGE_PREFIX:windows-$UNITY_VERSION-$UNITY_MODULE-$UNITY_IMAGE_VERSION
+  tags:
+    - Docker-Windows
+  cache:
+    - key: "$UNITY_VERSION-$BUILD_TARGET-Library"
+      paths:
+        - $CI_PROJECT_DIR/Library/
+    - key: "unity3d"
+      paths:
+        - $UPM_CACHE_ROOT
+  artifacts:
+    expire_in: "1 day"
+    paths:
+      - dist
+  needs:
+    - get-unity-version
+  script:
+    - |
+      try {
+        & $env:UNITY_EXECUTABLE `
+        -projectPath $env:CI_PROJECT_DIR `
+        -quit `
+        -batchmode `
+        -nographics `
+        -buildTarget $env:BUILD_TARGET `
+        -executeMethod $env:BUILD_COMMAND `
+        -logFile - `
+        -username $env:UNITY_USERNAME `
+        -password $env:UNITY_PASSWORD `
+        -serial $env:UNITY_SERIAL `
+        | Out-Host
+      }
+      finally {
+        & $env:UNITY_EXECUTABLE `
+        -quit `
+        -batchmode `
+        -nographics `
+        -logFile - `
+        -username $env:UNITY_USERNAME `
+        -password $env:UNITY_PASSWORD `
+        -returnlicense `
+        | Out-Host
+      }
+```
+
+## Troubleshooting: GitLab
+
+### Gitlab doesn't have (or has few) shared docker-windows runners
+
+There is no other option right now, but
+[use a private runner](https://docs.gitlab.com/runner/install/). Please, set the `docker-windows`
+type of the runner
+
+Default docker-for-windows settings are very resource-mean. It uses a single core and 1Gb of RAM.
+That's why the custom configuration is highly recommended
+
+**config.toml**
+
+```toml
+#...
+[runners.docker]
+  cpus = "12"
+  memory = "13g"
+  hostname = "dockerImage"
+#...
+```
+
+**Note:** `hostname` doesn't influence the performance, but one day can help with license
+association to a machine
+
+### Default shell for GitLab Runner is PowerShell Core
+
+GitLab Runner changed the default docker-windows executor shell in v14 to PowerShell Core which is a
+newer version of PowerShell than is distributed with base windows container images.
+
+There are two workarounds:
+
+1. (_Recommended_) Manually specify the shell in the config to be the pre-v14 default.
+2. Build a custom image including PowerShell Core and push it to a docker registry.
+
+_Option 1: Change it in the `config.toml`_
+
+```toml
+[[runners]]
+  shell = "powershell"
+```
+
+_Option 2: Install PowerShell Core_
+
+```dockerfile
+ARG UNITY_VERSION=''
+ARG UNITY_IMAGE_VERSION='1'
+
+FROM unityci/editor:windows-${UNITY_VERSION}-windows-il2cpp-${UNITY_IMAGE_VERSION}
+
+RUN choco install pwsh --no-progress -y
+```
+
+Then push it to a docker registry. Installing `pwsh` during a pipeline doesn't help.
+
+### Git-ssh dependency package checkout fails
+
+The base image `windowsservercore` is too old and has some outdated packages. One of them, `OpenSSH`
+has [a bug](https://github.com/PowerShell/Win32-OpenSSH/issues/1263) that breaks the remote
+repository signature check.
+
+The best option here is to replace it with something more recent
+
+```powershell
+# Manually remove an old ssh-agent service
+sc.exe delete ssh-agent
+choco install openssh -params '"/SSHAgentFeature"' --no-progress -y
+$env:GIT_SSH="C:\Program Files\OpenSSH-Win64\ssh.exe"
+```
+
+**Note:** `ssh-add` must be used from a different location,
+`C:\Program Files\OpenSSH-Win64\ssh-add.exe`

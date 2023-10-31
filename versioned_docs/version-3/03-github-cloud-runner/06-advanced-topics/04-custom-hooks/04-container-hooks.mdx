@@ -1,0 +1,13 @@
+# Container Hooks
+
+Custom docker container steps can be run as part of the standard build workflow. Custom steps can
+also be run standalone.
+
+Custom steps can be specified via the CustomSteps parameter or via Custom Step files.
+
+```yaml
+- name: upload
+  image: amazon/aws-cli
+  commands: |
+    echo "hello world!"
+```

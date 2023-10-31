@@ -50,7 +50,7 @@ jobs:
         uses: game-ci/unity-request-activation-file@v2
       # Upload artifact (Unity_v20XX.X.XXXX.alf)
       - name: Expose as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.getManualLicenseFile.outputs.filePath }}
           path: ${{ steps.getManualLicenseFile.outputs.filePath }}
@@ -132,7 +132,7 @@ floating license will be acquired before the build, and returned after.
 Example of use:
 
 ```yaml
-- uses: game-ci/unity-builder@v3
+- uses: game-ci/unity-builder@v4
   with:
     targetPlatform: WebGL
     unityLicensingServer: [url to your license server]
