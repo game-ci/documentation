@@ -1,6 +1,7 @@
 import Vnc from '/assets/images/vnc-connection.png';
 import Virtio from '/assets/images/win10-virtio-drivers.png';
 import BootFromCd from '/assets/images/boot-from-cd.png';
+import BootFromCd2 from '/assets/images/boot-from-cd2.png';
 import RDP from '/assets/images/win10-rdp.png';
 import Install from '/assets/images/win10-install.png';
 import Lang from '/assets/images/win10-language.png';
@@ -251,16 +252,23 @@ Windows version during setup.
 
 ### Boot from CD
 
-Multi-edition images will prompt the user to 'Press any key to boot CD or DVD' as shown below. When
-you see this prompt, press enter.
+- Multi-edition images will prompt the user to 'Press any key to boot CD or DVD' as shown below.
+  When you see this prompt, press enter.
 
-{' '}
+  <div style={{ textAlign: 'center' }}>
+    <img src={BootFromCd} width="600" />
+  </div>
+  <br />
+  <br />
 
-<div style={{ textAlign: 'center' }}>
-  <img src={BootFromCd} width="600" />
-</div>
-<br />
-<br />
+- Other ISO images may not present the 'Press Enter' prompt to the serial console, instead you will
+  need to press enter after you see the following:
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={BootFromCd2} width="600" />
+  </div>
+  <br />
+  <br />
 
 - Connect to the VM using VNC
 

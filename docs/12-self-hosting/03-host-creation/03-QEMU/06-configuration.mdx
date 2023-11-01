@@ -1,10 +1,19 @@
 # Advanced Configuration Options
 
+The following are advanced configuration options for QEMU Virtual Machines that users may find
+useful but carry significant risks for system corruption and data-loss. Many of the processes below
+are hardware-level options which will differ greatly across hardware types and vendors. Users are
+advised to proceed with caution and the understanding that support is provided on a 'best-effort'
+basis only.
+
 ## Port forwarding
 
 By default, the provided QEMU creates VMs inside of a private virtual network through
 [SLIRP networking](https://wiki.qemu.org/Documentation/Networking). In this configuration network
 traffic must be forwarded to the VM through the host via opening ports.
+
+Exposing your machine to public networks is a security risk. Users should take appropriate measures
+to secure any public-facing services.
 
 - Example where RDP is being forwarded through the host to the VM:
 
