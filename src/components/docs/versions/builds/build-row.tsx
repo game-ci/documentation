@@ -45,16 +45,13 @@ export default function BuildRow({ children, build }: Props) {
       <tr className={styles.tableRow}>
         <td
           onClick={() => setExpanded(!expanded)}
-          className="text-center select-none cursor-pointer"
+          className="text-center select-none cursor-pointer text-2xl"
         >
-          {expanded ? '➖' : '➕'}
+          {expanded ? '-' : '+'}
         </td>
         <td className="text-center">{MapBuildStatusToElement(build.status)}</td>
         <td>
           <span>
-            {/* <a
-              href={`https://hub.docker.com/layers/unityci/editor/${build.buildInfo.baseOs}-${build.buildInfo.editorVersion}-${build.buildInfo.targetPlatform}-${build.buildInfo.repoVersion}/images/${build.dockerInfo.digest}`}
-            > */}
             <Tooltip content={toolbarContent}>
               <button
                 onClick={() => {
@@ -69,8 +66,6 @@ export default function BuildRow({ children, build }: Props) {
                 {build.buildId}
               </button>
             </Tooltip>
-
-            {/* </a> */}
             <DockerImageLinkOrRetryButton record={build} />
           </span>
         </td>

@@ -5,7 +5,7 @@ interface Props {
   right?: boolean;
 }
 
-const TimelineItemBullet = ({ right }: Props): React.JSX.Element => {
+const TimelineItemBullet = ({ right }: Props): JSX.Element => {
   const positions = !right
     ? [
         { cx: 54, cy: 6, r: 5.5 },

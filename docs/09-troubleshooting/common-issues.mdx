@@ -12,6 +12,33 @@ not the easiest thing to solve. Here are some tips:
 - Your username should be an email
 - Confirm you are able to connect on Unity's website using your credentials
 
+:::caution
+
+**Unity no longer supports manual activation of Personal licenses**
+
+When activating your Personal Unity license, you may encounter an issue where only the "Unity Pro or
+Plus" option is available, preventing the activation of a Personal license. Here is a workaround to
+resolve this:
+
+1. Visit [license.unity3d.com](https://license.unity3d.com/manual) and upload the
+   `Unity_v20XX.X.XXXX.alf` file.
+2. On the "Activate your license" page, if the "Personal" option is not available, right-click on
+   the page and choose "Inspect" to open the browser's developer tools.
+3. Find the line of HTML that looks like this:
+   `<div class="option option-personal clear" style="display: none;">`.
+4. Delete `display: none;` from the `style` attribute to make the "Personal" option visible.
+5. Now you should be able to select the "Personal" option and proceed with the activation.
+
+You can discuss this issue or find additional assistance in the
+[related Discord conversation](https://discord.com/channels/710946343828455455/1138586951604248666)
+or [GitHub ticket](https://github.com/game-ci/documentation/issues/408).
+
+_For future reference, activating a license from the command line as documented on
+[Unity's Manual Page](https://docs.unity3d.com/Manual/ManagingYourUnityLicense.html) might be an
+alternative solution._
+
+:::
+
 :::caution Known issue with Unity activation on gitlab-ci: empty license file
 
 If you are having troubles with Unity activation with gitlab-ci, there is currently an issue with
@@ -206,6 +233,61 @@ There are 2 possible solutions:
 - Remove emojis from all environment variables (and thus workflow files), or
 - Upgrade your project and workflow to use Unity editor version 2020.2 or later.
 
+### No space left on device
+
+#### Error
+
+Example when downloading an android docker image:
+
+```plaintext
+docker: failed to register layer: ApplyLayer exit status 1 stdout:  stderr: write /opt/unity/Editor/Data/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.8/lib/linux/x86_64/libFuzzer.a: no space left on device.
+```
+
+or when it's downloading a docker image for the windows target platform:
+
+```plaintext
+[...]
+6fad6f1176e0: Verifying Checksum
+6fad6f1176e0: Download complete
+docker: failed to register layer: write /opt/unity/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.visualeffectgraph/Documentation~/Images/EventContexts.png: no space left on device.
+```
+
+#### Explanation
+
+When executing multiple jobs sequentially in the same workflow, there can be potential disk space
+issues. For instance, if your workflow first executes tests on one docker image, such as
+`unityci/editor:ubuntu-2022.3.4f1-linux-il2cpp-2`, and subsequently runs a build on another target
+platform, e.g., `unityci/editor:ubuntu-2022.3.4f1-windows-mono-2`, it might run out of space during
+the build phase.
+
+This happens because each job might be downloading and using its separate docker image, which can
+collectively consume a significant amount of disk space.
+
+#### Solution
+
+1. **Parallel Execution**: A straightforward workaround is to execute the tests and builds in
+   parallel rather than sequentially. This ensures that each runner (or CI job) utilizes its own
+   docker image, thereby avoiding cumulative disk usage. By structuring your CI workflow to execute
+   these jobs concurrently, each job can independently manage its disk space. You can refer to
+   [our Github 'Parallel execution of Tests and Builds' example](/docs/github/getting-started#parallel-execution-of-tests-and-builds).
+
+2. **Free Up Disk Space**: Use the
+   [Free Disk Space (Ubuntu)](https://github.com/marketplace/actions/free-disk-space-ubuntu) action
+   at the start of your workflow to clear some space on the GitHub-hosted runner. This action can be
+   especially useful if only a small amount of additional space is needed.
+
+3. **Use Self-Hosted or Cloud Runners**: If your project inherently requires more disk space than
+   what GitHub-hosted runners provide, consider switching to
+   [Self-hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
+   or
+   [Cloud Runners](https://game.ci/docs/github-cloud-runner/game-ci-vs-cloud-runner#large-github-projects).
+   This would give you more control over the resources and disk space.
+
+---
+
+This revised section provides a clearer understanding of the issue and offers more directed
+solutions.
+
 ## General tips
 
 These are tips that are usually applicable to problems you may encounter while working with a game
@@ -216,25 +298,6 @@ engine and CI/CD:
   project specifically or is it with Unity or GameCI?
 - Try to search for error keywords in your message such as `error`, `failed`, `exception`, etc.
 - Read the error message closely to understand what's going on.
-
-### No space left on device
-
-#### Error
-
-```plaintext
-docker: failed to register layer: ApplyLayer exit status 1 stdout:  stderr: write /opt/unity/Editor/Data/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.8/lib/linux/x86_64/libFuzzer.a: no space left on device.
-```
-
-#### Solution
-
-The GitHub-hosted runners often do not have enough disk space for game dev projects. To work around
-this limitation, you could try to use the
-[Free Disk Space (Ubuntu)](https://github.com/marketplace/actions/free-disk-space-ubuntu) action at
-the start of your workflow. If you still require additional disk space for your project, you could
-try using
-[Self-hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
-or using
-[Cloud Runners](https://game.ci/docs/github-cloud-runner/game-ci-vs-cloud-runner#large-github-projects).
 
 ## Still having problems?
 

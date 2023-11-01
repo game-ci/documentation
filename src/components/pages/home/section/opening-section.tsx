@@ -1,11 +1,13 @@
 import React, { createRef } from 'react';
+import { Typography } from 'antd';
 import { useColorMode } from '@docusaurus/theme-common';
 import GameCiLogo from '@site/static/assets/images/game-ci-brand-logo-wordmark.svg';
 import GameCiLogoLight from '@site/static/assets/images/game-ci-brand-logo-wordmark-light.svg';
 import Section from '@site/src/components/pages/home/section/section';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 import styles from './section.module.scss';
-import GettingStarted from './getting-started';
+
+const { Title } = Typography;
 
 const OpeningSection = () => {
   const ref = createRef<HTMLDivElement>();
@@ -26,31 +28,27 @@ const OpeningSection = () => {
       </FadeIntoView>
 
       <FadeIntoView delay={150}>
-        <h1 className={`${styles.title} text-sm md:text-2xl`}>
+        <Title level={1} className={styles.title}>
           The fastest and <strong>easiest</strong> way to automatically test and build your game
           projects
-        </h1>
+        </Title>
       </FadeIntoView>
 
-      <GettingStarted />
-
-      <button
-        type="button"
-        onClick={scrollToNextSection}
-        className="hidden md:block"
-        style={{
-          fontSize: '7vmin',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          position: 'absolute',
-          bottom: '0',
-          left: '50%',
-          transform: 'translateX(-50%)',
-        }}
-      >
-        ⇩
-      </button>
+      <FadeIntoView delay={300}>
+        <button
+          type="button"
+          onClick={scrollToNextSection}
+          style={{
+            marginTop: '15vh',
+            fontSize: '7vmin',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          ⇩
+        </button>
+      </FadeIntoView>
     </Section>
   );
 };

@@ -4,42 +4,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 10vh 10vw;
   background: var(--ifm-navbar-background-color);
 
-  &:nth-of-type(even) {
-    background-color: var(--ifm-navbar-background-color-dark) !important;
-  }
-
   color: var(--brand-text);
 
-}
-
-.title {
-  color: var(--brand-primary);
-  width: 70vmin;
-  text-align: center;
-}
-
-.subtitle {
-  color: var(--brand-primary);
-  text-align: center;
-  font-size: 7vmin;
+  .title {
+    color: var(--brand-primary);
+    width: 70vmin;
+    text-align: center;
+  }
 }
 
 .openingSection {
   min-height: calc(100vh - 64px);
+
+  user-select: none;
   padding: 0;
-  position: relative;
 
   .logo {
-    user-select: none;
-    height: 35vmin;
-    width: 35vmin;
+    height: 50vmin;
+    width: 50vmin;
   }
 
   .title {
     color: var(--ifm-navbar-background-link-color);
+    font-size: 3.5vmin;
   }
 }
 
@@ -66,31 +57,11 @@
 }
 
 .gettingStartedSection {
-  margin-top: 3em;
   .button {
-    border: 2px solid rgb(83, 86, 90);
+    color: var(--brand-text);
+    border: 2px solid var(--brand-text);
     border-radius: 3px;
-    padding: 10px 25px;
-
-    transition: all 0.25s;
-    width: 200px;
-
-    &:hover {
-      transform: scale(1.1);
-      background-color: rgb(84, 86, 88);
-    }
-
-    span {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      justify-content: center;
-      align-items: center;
-
-      img {
-        height: 9.5vmin;
-      }
-    }
+    padding: 4px 16px;
   }
 }
 
@@ -105,49 +76,8 @@
   color: var(--ifm-navbar-background-color);
 }
 
-.whoIsUsingGameCiSection {
-  .devsGrid {
-    @apply grid grid-cols-5 lg:grid-cols-10 gap-5;
+.whoIsUsingGameCiSection {}
 
-    .gridItem {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      transition: transform 0.25s;
-
-      &:hover {
-        transform: scale(1.2);
-      }
-    }
-  }
-}
-
-.pricingSection {
-  > div {
-    background-color: var(--brand-primary);
-  }
-  .vscButton {
-    svg {
-      @apply w-5 h-5;
-    }
-    @apply rounded-md p-1 mx-1 aspect-square w-11 h-11 transition-all duration-300;
-    background-color: transparent;
-    border: 1px solid var(--brand-secondary);
-    outline: none;
-    cursor: pointer;
-
-  }
-  .vscButton.selected {
-    @apply border-4;
-    border-color: var(--brand-primary);
-  }
-}
+.pricingSection {}
 
 .gallerySection {}
-
-
-.versionsSection {
-  min-height: 100vh;
-  justify-content: flex-start;
-}
