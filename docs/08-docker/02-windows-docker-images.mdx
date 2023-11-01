@@ -104,7 +104,7 @@ volumes = [
 
 ```dockerfile
 ARG UNITY_VERSION=''
-ARG UNITY_IMAGE_VERSION='1'
+ARG UNITY_IMAGE_VERSION='3'
 
 FROM unityci/editor:windows-${UNITY_VERSION}-windows-il2cpp-${UNITY_IMAGE_VERSION}
 
@@ -143,7 +143,7 @@ try {
 unity-windows-il2cpp-build:
   variables:
     UPM_CACHE_ROOT: $CI_PROJECT_DIR/.upm
-    UNITY_IMAGE_VERSION: "1"
+    UNITY_IMAGE_VERSION: "3"
     UNITY_MODULE: "il2cpp"
     UNITY_IMAGE_PREFIX: "unityci/editor"
     # Do not use quotes around this argument
@@ -243,7 +243,7 @@ _Option 2: Install PowerShell Core_
 
 ```dockerfile
 ARG UNITY_VERSION=''
-ARG UNITY_IMAGE_VERSION='1'
+ARG UNITY_IMAGE_VERSION='3'
 
 FROM unityci/editor:windows-${UNITY_VERSION}-windows-il2cpp-${UNITY_IMAGE_VERSION}
 

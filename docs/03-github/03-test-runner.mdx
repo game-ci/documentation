@@ -29,7 +29,7 @@ license file and add it as a secret.
 Then, define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   with:
@@ -48,7 +48,7 @@ Make sure you have set up these variables in the activation step.
 Define the test step as follows:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   env:
     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -66,7 +66,7 @@ floating license will be acquired before the tests run, and returned after.
 Example of use:
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   with:
     projectPath: path/to/your/project
     unityLicensingServer: [url to your license server]
@@ -89,7 +89,7 @@ To indicate that the test runner is being run for a Unity package rather than a 
 the [`packageMode`](#packagemode) configuration option to `true`.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   with:
     packageMode: true
 ```
@@ -100,7 +100,7 @@ Make sure that you explicitly pass the [`unityVersion`](#unityversion) argument,
 for the test runner to test Unity packages.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   with:
     unityVersion: [your desired Unity version]
 ```
@@ -160,7 +160,7 @@ in order to view the tests results from
 [a check run](https://docs.github.com/en/rest/guides/getting-started-with-the-checks-api#about-check-runs).
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   with:
     githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -193,7 +193,7 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 `id` of the test step.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   id: myTestStep
 ```
 
@@ -266,7 +266,7 @@ Specific docker image that should be used for testing the project. If packageMod
 image must have [`jq`](https://jqlang.github.io/jq/) installed.
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   with:
     customImage: 'unityci/editor:2020.1.14f1-base-0'
 ```
@@ -293,7 +293,7 @@ Parameters must start with a hyphen (`-`) and may be followed by a value (withou
 Parameters without a value will be considered booleans (with a value of true).
 
 ```yaml
-- uses: game-ci/unity-test-runner@v3
+- uses: game-ci/unity-test-runner@v4
   with:
     customParameters: -profile SomeProfile -someBoolean -someValue exampleValue
 ```
@@ -420,6 +420,30 @@ See [Testing Unity packages](#testing-unity-packages) for more information.
 
 _**required:** `false`_ _**default:** `false`_
 
+#### dockerCpuLimit
+
+Number of CPU cores to assign the Windows docker container. Defaults to all available cores when no
+value is specified. Can accept fractional values, ie 0.5 for half of a cpu core's execution time.
+
+_**required:** `false`_ _**default:** `""`_
+
+#### dockerMemoryLimit
+
+Amount of memory to assign the docker container. Defaults to 95% of total system memory rounded down
+to the nearest megabyte on Linux and 80% on Windows when no value is specified. On unrecognized
+platforms, defaults to 75% of total system memory. To manually specify a value, use the format
+\<number\>\<unit\>, where unit is either m or g. ie: 512m = 512 megabytes and 4g = 4 gigabytes.
+
+_**required:** `false`_ _**default:** `""`_
+
+#### dockerIsolationMode
+
+Isolation mode to use for the docker container. Can be one of process, hyperv, or default. Default
+will pick the default mode as described by Microsoft where server versions use process and desktop
+versions use hyperv. Only applicable on Windows
+
+_**required:** `false`_ _**default:** `"default"`_
+
 ## Complete example
 
 A complete workflow that tests all modes separately could look like this:
@@ -452,7 +476,7 @@ jobs:
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-      - uses: game-ci/unity-test-runner@v3
+      - uses: game-ci/unity-test-runner@v4
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -502,7 +526,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
-      - uses: game-ci/unity-test-runner@v3
+      - uses: game-ci/unity-test-runner@v4
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
