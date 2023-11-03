@@ -456,25 +456,31 @@ _**required:** `false`_ _**default:** `"/github/workspace"`_
 
 #### dockerCpuLimit
 
-Number of CPU cores to assign the Windows docker container. Defaults to all available cores when no
-value is specified. Can accept fractional values, ie 0.5 for half of a cpu core's execution time.
+Number of CPU cores to assign to the Docker container. Defaults to all available cores when no value
+is specified. Can accept fractional values, e.g., 0.5 for half of a CPU core's execution time.
 
 _**required:** `false`_ _**default:** `""`_
 
 #### dockerMemoryLimit
 
-Amount of memory to assign the docker container. Defaults to 95% of total system memory rounded down
-to the nearest megabyte on Linux and 80% on Windows when no value is specified. On unrecognized
-platforms, defaults to 75% of total system memory. To manually specify a value, use the format
-\<number\>\<unit\>, where unit is either m or g. ie: 512m = 512 megabytes and 4g = 4 gigabytes.
+Amount of memory to assign to the Docker container. Defaults to 95% of total system memory rounded
+down to the nearest megabyte on Linux and 80% on Windows. If the platform is unrecognized, it
+defaults to 75% of total system memory. To manually specify a value, use the format
+\<number\>\<unit\>. The units can be:
+
+- `m`: Megabytes (e.g., 512m = 512 megabytes)
+- `g`: Gigabytes (e.g., 4g = 4 gigabytes)
 
 _**required:** `false`_ _**default:** `""`_
 
 #### dockerIsolationMode
 
-Isolation mode to use for the docker container. Can be one of process, hyperv, or default. Default
-will pick the default mode as described by Microsoft where server versions use process and desktop
-versions use hyperv. Only applicable on Windows
+Isolation mode to use for the Docker container when running on Windows. Can be one of:
+
+- `process`
+- `hyperv`
+- `default`: This mode will choose the recommended mode as described by Microsoft. Server versions
+  will use `process`, while desktop versions will use `hyperv`.
 
 _**required:** `false`_ _**default:** `"default"`_
 
