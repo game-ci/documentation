@@ -2,7 +2,7 @@
 toc_max_heading_level: 4
 ---
 
-# Overview
+# About Self-Hosting
 
 Projects often encounter a constraint or requirement which makes free-tier hosted CI/CD runners
 insufficient for their needs. In these cases hosting your own CI/CD runner can be a viable
@@ -19,7 +19,17 @@ and the additional tooling required to mitigate those risks such as
 [Kaniko](https://github.com/GoogleContainerTools/kaniko) or
 [Kata Containers](https://katacontainers.io/).
 
-## Constraints
+## 📚 Prerequisite Knowledge
+
+Users of this guide should already be familiar with the Linux command-line, Shell scripting, and
+have a basic grasp of CI/CD concepts. For users who are not familiar with these concepts, we have
+included some resources for you to start your learning journey below.
+
+- [Techworld with Nana](https://www.youtube.com/@TechWorldwithNana)
+- [DevOps Toolit](https://www.youtube.com/@DevOpsToolkit)
+- [Introduction to Bash Scripting](https://itsfoss.com/bash-scripting-tutorial/)
+
+## 📋 Constraints
 
 There are many ways to self-host CI/CD runners, and which one is best for you will depend on your
 own situation and constraints. For the purpose of this guide we will make the following assumptions:
@@ -31,7 +41,15 @@ own situation and constraints. For the purpose of this guide we will make the fo
   operating-system level configuration and life-cycle-management of a given compute resource (metal,
   on-prem, cloud VM, VPS etc...)
 
-## Power Consumption
+## ⚠️ Security Disclaimer
+
+This guide strives to maintain a balance between convenience and security for the sake of usability.
+The examples included in this guide are intended for use with on-prem hardware without public IP
+addresses accessible from external networks. Security is a constantly moving target which requires
+continuous effort to maintain. Users should conduct their own security review before using the
+following techniques on production or public systems.
+
+## ⚡️ Power Costs
 
 Hosting your own runners also comes with an increase in power consumption. This will vary based on
 the hardware you use and the prices of energy in your area. Below are some useful resources for
@@ -40,7 +58,7 @@ discovering the potential energy costs of self-hosting.
 - https://outervision.com/power-supply-calculator
 - https://energyusecalculator.com/electricity_computer.htm
 
-## Requirements
+## 💻 System Requirements
 
 This guide is tested on devices which meet the following requirements:
 
@@ -49,7 +67,9 @@ This guide is tested on devices which meet the following requirements:
 - Root access to the operating system
 - Network connectivity
 
-## Host Creation
+## 📎 Quick Links:
+
+### Host Creation
 
 "Host Creation" in this context is the process of installing an operating system onto a piece of
 physical hardware, or the creation and configuration of virtualised compute resources.
@@ -58,7 +78,7 @@ physical hardware, or the creation and configuration of virtualised compute reso
 - [Virtual Machines using Multipass](./03-host-creation/02-multipass.mdx)
 - [Virtual Machines using QEMU](./03-host-creation/03-QEMU/01-overview.mdx)
 
-## Host Provisioning
+### Host Provisioning
 
 "Provisioning" here refers to the process of installing additional resources onto, and the
 configuration of your host beyond installing the base operating-system. Both manual and declarative
@@ -68,7 +88,7 @@ workflows are supported.
 - [Manual Debian 12 Setup](./04-host-provisioning/01-debian-setup.mdx)
 - [Declarative provisioning via Cloud-Init](./04-host-provisioning/03-cloud-init/01-about.mdx)
 
-## Runner Application Installation
+### Runner Application Installation
 
 Once your host has been provisioned, you will then need to install the appropriate runner
 application. The guides below will walk you through that process.
