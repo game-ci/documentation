@@ -484,6 +484,26 @@ Isolation mode to use for the Docker container when running on Windows. Can be o
 
 _**required:** `false`_ _**default:** `"default"`_
 
+#### containerRegistryRepository
+
+Container registry and repository to pull the image from. Only applicable if `customImage` is not
+set.
+
+This allows you to host your own images and still leverage the logic to automatically determine the
+editor version and target platform. Accepts images from other registries too, for example
+`ghcr.io/namespace/imagename` for Github Container Registry.
+
+_**required:** `false`_ _**default:** `"unityci/editor"`_
+
+#### containerRegsitryImageVersion
+
+Container registry image version. Only applicable if `customImage` is not set.
+
+This allows you to roll back the image version to a previous version if needed or even use your own
+version numbering for custom built and maintained registries.
+
+_**required:** `false`_ _**default:** `"3"`_
+
 ## Outputs
 
 Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where
