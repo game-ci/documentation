@@ -153,7 +153,7 @@ customize the cloud-image immediately upon booting, prior to user-space initiali
     -drive if=virtio,format=raw,file=seed.img,index=0,media=disk \
     -bios /usr/share/ovmf/OVMF.fd \
     -usbdevice tablet \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 - Boot existing guest
@@ -172,7 +172,7 @@ customize the cloud-image immediately upon booting, prior to user-space initiali
     -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
     -bios /usr/share/ovmf/OVMF.fd \
     -usbdevice tablet \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 ## Connect to the VM

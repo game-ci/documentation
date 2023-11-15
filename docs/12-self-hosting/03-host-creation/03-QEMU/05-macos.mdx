@@ -127,7 +127,7 @@ problematic but modern AMD Ryzen processors work just fine.
     -usbdevice tablet \
     -device usb-kbd,bus=ehci.0 \
     -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 - Boot an existing guest
@@ -157,7 +157,7 @@ problematic but modern AMD Ryzen processors work just fine.
     -usbdevice tablet \
     -device usb-kbd,bus=ehci.0 \
     -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 ## Connect to the VM using VNC.

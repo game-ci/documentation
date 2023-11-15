@@ -99,7 +99,7 @@ physical machines and are suited for use in long-lived virtual-private servers.
     -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
     -bios /usr/share/ovmf/OVMF.fd \
     -usbdevice tablet \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 - Boot existing guest:
@@ -120,7 +120,7 @@ physical machines and are suited for use in long-lived virtual-private servers.
     -netdev user,id=network,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \
     -bios /usr/share/ovmf/OVMF.fd \
     -usbdevice tablet \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 ## Connect via VNC

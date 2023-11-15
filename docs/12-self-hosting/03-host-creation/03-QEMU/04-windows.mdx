@@ -182,7 +182,7 @@ Windows version during setup.
     -serial stdio -vga virtio -parallel none \
     -device virtio-net-pci,netdev=network \
     -netdev user,id=network,hostfwd=tcp::3389-:3389 \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 - Boot existing guest:
@@ -200,7 +200,7 @@ Windows version during setup.
     -serial stdio -vga virtio -parallel none \
     -device virtio-net-pci,netdev=network \
     -netdev user,id=network,hostfwd=tcp::3389-:3389 \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 ### Manual Install With Virtio Drive
@@ -224,7 +224,7 @@ Windows version during setup.
     -serial stdio -vga virtio -parallel none \
     -device virtio-net-pci,netdev=network \
     -netdev user,id=network,hostfwd=tcp::3389-:3389 \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 - Boot existing guest:
@@ -247,7 +247,7 @@ Windows version during setup.
     -serial stdio -vga virtio -parallel none \
     -device virtio-net-pci,netdev=network \
     -netdev user,id=network,hostfwd=tcp::3389-:3389 \
-    -vnc $HOST_ADDRESS:$VNC_PORT
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
   ```
 
 ### Boot from CD
