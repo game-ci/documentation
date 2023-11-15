@@ -118,12 +118,12 @@ To know which docker images are available, you can visit the list of [all suppor
 here][unity-docker-versions].
 
 In this particular case, it is also important to look for the last part of the docker image which is
-the version for GameCI. `-0` means it is the latest `v0.x.x` version of the docker images. `v0.x.x`
-and `v1.x.x` are out of date as we moved to Version 2 as shown on
+the version for GameCI. `-0` means it is the latest `v0.x.x` version of the docker images. `v0.x.x`,
+`v1.x.x`, and `v2.x.x` are out of date as we moved to Version 3 as shown on
 [github.com/game-ci/docker/releases](https://github.com/game-ci/docker/releases). We are not
-publishing images for `v0.x.x` or `v1.x.x` anymore.
+publishing images for `v0.x.x`, `v1.x.x`, `v2.x.x` anymore.
 
-The correct image should be `unityci/editor:2021.3.0f1-android-2`.
+The correct image should be `unityci/editor:2021.3.0f1-android-3`.
 
 You can also test this locally:
 
@@ -133,24 +133,24 @@ docker pull unityci/editor:2021.3.0f1-android-0
 # Error response from daemon: manifest for unityci/editor:2021.3.0f1-android-0 not found: manifest unknown: manifest unknown
 
 # right
-docker pull unityci/editor:2021.3.0f1-android-2
-# 2021.3.0f1-android-2: Pulling from unityci/editor
+docker pull unityci/editor:2021.3.0f1-android-3
+# 2021.3.0f1-android-3: Pulling from unityci/editor
 # [...]
 ```
 
 #### Github Actions
 
-You need to make sure you are using Github Actions v3, check for the version of your actions in your
+You need to make sure you are using Github Actions v4, check for the version of your actions in your
 `.github/workflows/*.yml` files.
 
 ```diff
-- uses: game-ci/unity-builder@v2
-+ uses: game-ci/unity-builder@v3
+- uses: game-ci/unity-builder@v3
++ uses: game-ci/unity-builder@v4
 ```
 
 #### Gitlab CI
 
-Set the `IMAGE_VERSION` to 2 in
+Set the `IMAGE_VERSION` to 3 in
 [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml#L12)
 
 ### Scripts have compiler errors.

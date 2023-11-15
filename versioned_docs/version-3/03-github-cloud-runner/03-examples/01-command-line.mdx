@@ -1,0 +1,49 @@
+# Command Line
+
+_Preview Support Only_
+
+You can install Game CI locally and start cloud runner jobs from the command line or by integrating
+your own tools. All parameters in [API Reference](../api-reference) can be specified as command line
+input fields.
+
+# Install
+
+Currently (development)
+
+```bash
+git clone https://github.com/game-ci/unity-builder.git
+yarn install
+yarn run cli -m {mode parameter} --projectPath {Your project path} {... other command line parameters}
+```
+
+# Planned (does not work currently)
+
+We plan to offer support for Game CI via Deno. This will enable fast, typescript native runtime and
+you will be able to access this via the following:
+
+```bash
+dpx game-ci build
+```
+
+# Help
+
+_You can run `yarn run cli -h` or `yarn run cli --help` to list all modes and paramters with
+descriptions_
+
+# Main Command Parameters
+
+- Default: `cli` (runs a standard build workflow)
+- See API Reference "Modes"
+
+# Keeping command line parameters short
+
+You can avoid specifying long command line input for credentials by using environment variables or
+[the input override feature](../advanced-topics/configuration-override#example) to shorten commands
+signficantly.
+
+This enables you to provide a command to pull input, e.g you can pull from a file or from a secret
+manager.
+
+```bash
+yarn run cli --populateOverride true --pullInputList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --inputPullCommand="gcloud secrets versions access 1 --secret=\"{0}\""
+```

@@ -166,13 +166,13 @@ jobs:
     name: Build For Android Platform
     runs-on: ubuntu-latest
     steps:
-      - uses: jlumbroso/free-disk-space@v1.2.0
-      - uses: actions/checkout@v3
+      - uses: jlumbroso/free-disk-space@v1.3.1
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: Library
           key: Library-Android
-      - uses: game-ci/unity-builder@v3
+      - uses: game-ci/unity-builder@v4
         with:
           targetPlatform: Android
           androidExportType: androidAppBundle
@@ -181,7 +181,7 @@ jobs:
           androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
           androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
-          androidTargetSdkVersion: AndroidApiLevel31
+          androidTargetSdkVersion: AndroidApiLevel33
       - uses: actions/upload-artifact@v3
         with:
           name: build-Android
@@ -199,9 +199,9 @@ jobs:
       ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download Android Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build-Android
           path: build/Android
@@ -210,15 +210,15 @@ jobs:
       - name: Set up Fastlane
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          ruby-version: 3.2
           bundler-cache: true
       - name: Upload to Google Play Internal
-        uses: maierj/fastlane-action@v2.0.1
+        uses: maierj/fastlane-action@v3.0.0
         with:
           lane: 'android internal' # Change to upload to a different lane
       - name: Cleanup to avoid storage limit
         if: always()
-        uses: geekyeggo/delete-artifact@v1
+        uses: geekyeggo/delete-artifact@v2
         with:
           name: build-Android
 ```

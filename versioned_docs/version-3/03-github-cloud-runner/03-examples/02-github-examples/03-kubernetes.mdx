@@ -1,0 +1,51 @@
+# Kubernetes
+
+## Requirements
+
+- You must have a Kubernetes cluster setup and ready that supports persistent volumes.
+- Create a kubeconfig and encode it as base64.
+
+## K8s Credentials
+
+Setup the following as `env` variables for the GitHub build step:
+
+- `kubeConfig` (should be encoded as base64)
+
+## Configuration For Kubernetes Cloud Runner Jobs
+
+Refer to [Configuration page](../../api-reference) or the [example below](#example).
+
+### Allowed CPU/Memory Combinations
+
+- `0.25 vCPU` - 0.5 GB, 1 GB, 2 GB
+- `0.5 vCPU` - 1 GB, 2 GB, 3 GB, 4 GB
+- `1 vCPU` - 2 GB, 3 GB, 4 GB, 5 GB, 6 GB, 7 GB, 8 GB
+- `2 vCPU` - Between 4 GB and 16 GB in 1-GB increments
+- `4 vCPU` - Between 8 GB and 30 GB in 1-GB increments
+
+#### Summary Of Format
+
+- Values are represented as 1024:1 GB or CPU.
+
+Do not include the vCPU or GB suffix.
+
+### Example
+
+```yaml
+- uses: game-ci/unity-builder@cloud-runner-develop
+  id: k8s-unity-build
+  with:
+    providerStrategy: k8s
+    versioning: None
+    projectPath: `your path here`
+    unityVersion: `unity version here`
+    targetPlatform: ${{ matrix.targetPlatform }}
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    # You may want to export your builds somewhere external so you can access it:
+    containerHookFiles: aws-s3-upload-build
+```
+
+_[Custom Steps](../../advanced-topics/custom-hooks/container-hooks)_
+
+A full workflow example can be seen in builder's
+[Cloud Runner GitHub sourcecode for AWS Pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/cloud-runner-k8s-pipeline.yml).

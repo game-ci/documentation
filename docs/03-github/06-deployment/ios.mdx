@@ -185,10 +185,10 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
           bundler-cache: true
 
       - name: Build iOS
@@ -219,10 +219,10 @@ jobs:
   generate_certs:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
           bundler-cache: true
 
       - name: Build iOS
@@ -429,18 +429,18 @@ jobs:
     name: Build for iOS
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: Library
           key: Library-iOS
 
-      - uses: game-ci/unity-builder@v3
+      - uses: game-ci/unity-builder@v4
         with:
           targetPlatform: iOS
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: build-iOS
           path: build/iOS
@@ -451,10 +451,10 @@ jobs:
     needs: buildForiOSPlatform
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Download iOS Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build-iOS
           path: build/iOS
@@ -485,7 +485,7 @@ jobs:
 
       - name: Cleanup to avoid storage limit
         if: always()
-        uses: geekyeggo/delete-artifact@v1
+        uses: geekyeggo/delete-artifact@v2
         with:
           name: build-iOS
 ```

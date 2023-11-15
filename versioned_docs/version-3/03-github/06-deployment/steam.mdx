@@ -1,0 +1,156 @@
+# Deploy to Steam
+
+This page assumes you are registered as a [partner](https://partner.steamgames.com/) with Steam and
+that you are familiar with
+[using SteamPipe to upload your builds to Steam](https://partner.steamgames.com/doc/sdk/uploading).
+
+### 1. Create a Steam Build Account
+
+Create a specialised builder account that only has access to `Edit App Metadata` and
+`Publish App Changes To Steam`.
+
+See [the docs](https://partner.steamgames.com/doc/sdk/uploading#Build_Account).
+
+### 2. Add jobs to main.yml
+
+```yaml title=".github/workflows/main.yml"
+jobs:
+  buildForWindowsAndLinux:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+    outputs:
+      buildVersion: ${{ steps.build.outputs.buildVersion }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key:
+            Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**',
+            'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+      - uses: game-ci/unity-builder@v3
+        id: build
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          versioning: Semantic
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+  deployToSteam:
+    needs: [buildForWindowsAndLinux]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Download StandaloneWindows64 Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Build-StandaloneWindows64
+          path: build/StandaloneWindows64
+      - name: Download StandaloneLinux64 Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Build-StandaloneLinux64
+          path: build/StandaloneLinux64
+      - uses: game-ci/steam-deploy@v3
+        with:
+          username: ${{ secrets.STEAM_USERNAME }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          appId: ${{ secrets.STEAM_APP_ID }}
+          buildDescription: v${{ needs.buildForWindowsAndLinux.outputs.buildVersion }}
+          rootPath: build
+          depot1Path: StandaloneWindows64
+          depot2Path: StandaloneLinux64
+          releaseBranch: prerelease
+```
+
+### 3. Add GitHub Secrets
+
+- **STEAM_USERNAME**: The username of the Steam Build Account that you created in step 1.
+- **STEAM_CONFIG_VDF**: See the step "Setup Steam Authentication" below.
+- **STEAM_APP_ID**: The identifier of your app on steam. You can find it on your
+  [dashboard](https://partner.steamgames.com/dashboard).
+
+### 4. Setup Steam Authentication
+
+Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard. This means
+that simply using username and password isn't enough to authenticate with Steam. However, it is
+possible to go through the MFA process only once by following these steps:
+
+1. Install [Valve's offical steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your
+   local machine. All following steps will also be done on your local machine.
+1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA
+   code. If so, type in the MFA code that was emailed to your builder account's email address.
+1. Validate that the MFA process is complete by running `steamcmd +login <username> +quit` again. It
+   should not ask for the MFA code again.
+1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file.
+   Use `cat config/config.vdf | base64 > config_base64.txt` on _Linux_ to encode the file, if you
+   are a on _Windows_ device, use
+   `certutil -encode -f .\config\config.vdf tmp.b64 && findstr /v /c:- tmp.b64 > config_base64.txt`.
+   Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
+1. `If:` when running the action you recieve another MFA code via email, run
+   `steamcmd +set_steam_guard_code <code>` on your local machine and repeat the `config.vdf`
+   encoding and replace secret `STEAM_CONFIG_VDF` with its contents.
+
+If your builder account uses MFA through the Steam Guard App, the `steam-deploy` app can use a TOTP
+instead of the above configuration. Generating a TOTP is outside the scope of this guide, as it is
+simpler to follow the above steps.
+
+### 5. Additional Configuration
+
+You can configure these to better match your use case.
+
+#### totp
+
+Deploys to Steam using a TOTP. If this is passed, `configVdf` is not required.
+
+#### buildDescription
+
+The identifier for this specific build, which helps you identify it in steam.
+
+It is recommended to use the semantic version of the build for this.
+
+#### rootPath
+
+The root path to your builds. This is the base of which depots will search your files.
+
+#### depot[X]Path
+
+Where X is any number between 1 and 9 (inclusive both).
+
+The relative path following your root path for the files to be included in this depot.
+
+If your appId is 125000 then the depots 125001 ... 125009 will be assumed.
+
+#### firstDepotIdOverride
+
+You can use this to override the ID of the first depot in case the IDs do not start as described in
+depot[X]Path (e.g. for DLCs).
+
+If your firstDepotId is 125000 then, regardless of the used appId, the depots 125000 ... 125008 will
+be assumed.
+
+#### releaseBranch
+
+The branch within steam that this build will be automatically put live on.
+
+Note that the `default` branch
+[has been observed to not work](https://github.com/game-ci/steam-deploy/issues/19) as a release
+branch, presumably because it is potentially dangerous.
