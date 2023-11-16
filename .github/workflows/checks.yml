@@ -9,44 +9,44 @@ jobs:
     name: Code formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - uses: c-hive/gha-yarn-cache@v2
+          cache: 'yarn'
       - run: yarn
       - run: yarn verify:formatting
   codeStyles:
     name: Code styles
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - uses: c-hive/gha-yarn-cache@v2
+          cache: 'yarn'
       - run: yarn
       - run: yarn verify:code-styles
   types:
     name: Types check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - uses: c-hive/gha-yarn-cache@v2
+          cache: 'yarn'
       - run: yarn
       - run: yarn typecheck
   tests:
     name: Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - uses: c-hive/gha-yarn-cache@v2
+          cache: 'yarn'
       - run: yarn
       - run: yarn test --coverage
       - run: bash <(curl -s https://codecov.io/bash)
