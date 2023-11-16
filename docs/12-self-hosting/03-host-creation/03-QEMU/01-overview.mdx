@@ -1,0 +1,72 @@
+---
+toc_max_heading_level: 4
+---
+
+# Install QEMU
+
+[QEMU](https://www.qemu.org/documentation/) (short for "Quick Emulator") is a generic and open
+source machine emulator and virtualiser.
+
+When used as a machine emulator, QEMU can run OSes and programs made for one machine (e.g. an ARM
+board) on a different machine (e.g. your own PC). By using dynamic translation, it achieves very
+good performance.
+
+When used as a virtualiser, QEMU achieves near native performance by executing the guest code
+directly on the host CPU. QEMU supports virtualisation when executing under the Xen hypervisor or
+using the KVM kernel module in Linux. When using KVM, QEMU can virtualise x86, server and embedded
+PowerPC, 64-bit POWER, S390, 32-bit and 64-bit ARM, and MIPS guests.
+
+See also:
+[Virtualization and Hypervisors: Explaining QEMU, KVM, and Libvirt](https://sumit-ghosh.com/articles/virtualization-hypervisors-explaining-qemu-kvm-libvirt/)
+by Sumit Ghosh
+
+## Why use QEMU?
+
+- Like [ESXi](https://www.vmware.com/nl/products/esxi-and-esx.html), its capable of PCIe-passthrough
+  for GPUs. This is in contrast with [Firecracker](https://firecracker-microvm.github.io/) and
+  [VirtualBox](https://docs.oracle.com/en/virtualization/virtualbox/6.0/user/guestadd-video.html)
+  which cannot.
+- Unlike ESXi, it's free.
+- When used with KVM, QEMU provides near-native levels of performance.
+- Can be used inside Kubernetes via [Kubevirt](https://kubevirt.io/)
+- It's fast - not quite as fast as [LXD](https://linuxcontainers.org/lxd/introduction/),
+  [Firecracker](https://firecracker-microvm.github.io/), or
+  [Cloud-Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor) (formerly
+  [NEMU](https://github.com/intel/nemu)), but its far more mature, has a larger community, and more
+  documentation available.
+- Unlike [Multipass](https://multipass.run/docs) it can also create Windows and MacOS guests.
+- [Unlike Firecracker](https://github.com/firecracker-microvm/firecracker/issues/849#issuecomment-464731628)
+  it supports pinning memory addresses (and thus PCIe-passthrough) where firecracker cannot because
+  it would break their core feature of over-subscription.
+- Can be run in a micro-vm configuration to achieve a smaller memory footprint (Inspired by
+  Firecracker).
+
+These qualities make QEMU well-suited for those seeking a highly-performant and fully-featured
+hypervisor.
+
+## Requirements
+
+- Linux host running Debian 12 or Ubuntu 22.04
+- VNC viewer software installed on the machine you will use to access the VM
+  - [TightVNC](https://www.tightvnc.com/download.php) (Windows)
+  - [Remina](https://remmina.org/) (Linux)
+  - [TigerVNC](https://formulae.brew.sh/formula/tiger-vnc) (MacOS)
+
+## Installation
+
+- Install QEMU and its dependencies
+
+  ```bash
+  sudo apt-get install -y qemu-kvm \
+          bridge-utils \
+          virtinst\
+          ovmf \
+          qemu-utils \
+          cloud-image-utils \
+          tmux \
+          whois \
+          git \
+          jq \
+          git-extras \
+          guestfs-tools
+  ```

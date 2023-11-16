@@ -1,0 +1,456 @@
+import Vnc from '/assets/images/vnc-connection.png';
+import Virtio from '/assets/images/win10-virtio-drivers.png';
+import BootFromCd from '/assets/images/boot-from-cd.png';
+import BootFromCd2 from '/assets/images/boot-from-cd2.png';
+import RDP from '/assets/images/win10-rdp.png';
+import Install from '/assets/images/win10-install.png';
+import Lang from '/assets/images/win10-language.png';
+import Serial from '/assets/images/win10-serial.png';
+import Version from '/assets/images/win10-version.png';
+import Eula from '/assets/images/win10-eula.png';
+import CustomInstall from '/assets/images/win10-custom-install.png';
+import DiskSelect from '/assets/images/win10-disk-select.png';
+import DriverBrowse from '/assets/images/win10-driver-browse.png';
+import InstallDriver from '/assets/images/win10-install-driver.png';
+import VirtioDisk from '/assets/images/win10-driver-disk.png';
+import Viostor from '/assets/images/win10-viostor.png';
+import VirtioGpu from '/assets/images/win10-virtiogpu.png';
+import NetKvm from '/assets/images/win10-netkvm.png';
+import FormatDisk from '/assets/images/win10-format-disk.png';
+import Partition from '/assets/images/win10-partitions.png';
+import Installing from '/assets/images/win10-installing.png';
+import DiskmarkVirtio from '/assets/images/diskmark-virtio.png';
+import DiskmarkSata from '/assets/images/diskmark-sata.png';
+
+# Windows
+
+Windows VMs on QEMU + KVM work very well provided that you have tailored your VM to match your
+needs. There are multiple possible combinations of images, hardware types, and installation methods
+that each have their own benefits and drawbacks.
+
+## Choosing an Image
+
+Since Windows is proprietary software, downloading an ISO is not as straight-forward as with Linux.
+
+- Server and Enterprise
+
+  Microsoft makes evaluation copies of it's server and enterprise images available through their
+  Evaluation Center. You will need to enter your contact details to obtain the image. These
+  evaluation images are multi-edition and therefore do not easily work for automated installation.
+
+  - [Windows Server 2022](https://info.microsoft.com/ww-landing-windows-server-2022.html)
+
+- Home and Pro
+
+  You can also obtain an image for Windows 10 from Microsoft. This is another multi-edition image
+  that cannot be easily automated due to the need to manually select the version to install during
+  the setup process.
+
+  - [Windows 10 Multi-edition](https://www.microsoft.com/nl-nl/software-download/windows10ISO)
+
+- Alternative Sources for single-edition images
+
+  For those who need a single-edition ISO which can be fully automated, it is easier to use 3rd
+  party services such as [https://uupdump.net/](https://uupdump.net/) to obtain the ISO image. There
+  is a decent guide [HERE](https://www.elevenforum.com/t/uup-dump-download-windows-insider-iso.344/)
+  on how to use the site.
+
+- Licenses
+
+  Be aware that all of the images above are unlicensed and it is up to you to obtain a valid
+  activation key for your installation. See
+  [this post](https://www.reddit.com/r/cheapwindowskeys/comments/wjvsae/cheap_windows_keys/) on
+  Reddit's /r/cheapwindowskeys for more information about how to acquire a license.
+
+- Rename your ISO file
+
+Once you have download your ISO image, rename it to `windows.iso` for compatibility with the rest of
+the commands in this guide.
+
+## Choosing a disk type
+
+There are two ways to create virtual disks covered in this guide: `Virtio` and `SATA`.
+
+- `Virtio` is more performant, but cannot be easily automated since the drivers must be manually
+  installed before Windows setup can start.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={DiskmarkVirtio} width="400" />
+  </div>
+  <br />
+
+- `SATA` drivers are supported natively by Windows and can easily be used for fully automated
+  installations. They are however, slower than `Virtio` drives.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={DiskmarkSata} width="400" />
+  </div>
+  <br />
+
+  > Testing performed using Qcow2 disk format, Windows 10 Pro Guest OS, and a Samsung 990 Pro SSD.
+  > For additional performance-tuning advice, see the article
+  > [Improving the performance of a Windows Guest on KVM/QEMU](https://leduccc.medium.com/improving-the-performance-of-a-windows-10-guest-on-qemu-a5b3f54d9cf5).
+
+## Creating an Answer file
+
+You can skip interactive steps of the Windows install process by using an answer-file. These are
+`.xml` config files which store system configuration data, similar to Cloud-Init or pre-seed on
+Linux. Answer files can only provide full-automation of the install process when using
+single-edition images. Multi-edition images will still require manual interaction to select a
+Windows version during setup.
+
+- You can use the website [Windows Answer File Generator](https://www.windowsafg.com/) to easily
+  create your own answer file.
+
+  Example of a pre-made answer file for Windows 10 with an auto-login admin account:
+
+  ```bash
+  wget -O ./config/autounattend.xml https://raw.githubusercontent.com/small-hack/smol-metal/main/autounattend.xml
+  ```
+
+- Answer files must be mounted in the root partition of the installation medium. That's usually a
+  USB drive but since we are using a virtual machine we will use an ISO file instead.
+
+  ```bash
+  mkdir ./config
+  mv $YOUR_ANSWER_FILE ./config/
+  mkisofs -o config.iso -J -r config
+  ```
+
+## VM Setup
+
+- Configure the Virtual Machine options
+
+  ```bash
+  # The name of the Virtual Machine
+  export VM_NAME="gameci"
+
+  # Number of physical CPU cores to allocate to the VM
+  export PHYSICAL_CORES="2"
+
+  # Number of threads per core.
+  # Set this to `1` for CPUs that do not support hyper-threading
+  export THREADS="1"
+  export SMP=$(( $PHYSICAL_CORES * $THREADS ))
+
+  # Amount of Disk Space to allocate to the VM.
+  # Cannot exceed available on host.
+  export DISK_SIZE="32G"
+
+  # Amount of RAM to allocate to the VM.
+  # Cannot exceed available RAM on host.
+  export MEMORY="8G"
+
+  # IP address where host may be reached. Do not use `localhost`.
+  export HOST_ADDRESS="SOME IP HERE"
+
+  # Port number to expose on the host for VNC
+  export VNC_PORT="0"
+  ```
+
+- Download virtual-disk drivers
+
+  ```bash
+  wget -O "virtio-drivers.iso" "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/virtio-win-0.1.240.iso"
+  ```
+
+- Create the virtual disk
+
+  ```bash
+  qemu-img create -f qcow2 disk.qcow2 $DISK_SIZE
+  ```
+
+## Creating the VM
+
+### Automated install With SATA Drive
+
+- Create new guest:
+
+  ```bash
+  sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+    -m "$MEMORY" \
+    -drive id=disk0,if=none,cache=none,format=qcow2,file=disk.qcow2 \
+    -device ahci,id=ahci -device ide-hd,drive=disk0,bus=ahci.0 \
+    -drive file=windows.iso,index=0,media=cdrom \
+    -drive file=virtio-drivers.iso,index=2,media=cdrom \
+    -drive file=config.iso,index=1,media=cdrom \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -usbdevice tablet \
+    -serial stdio -vga virtio -parallel none \
+    -device virtio-net-pci,netdev=network \
+    -netdev user,id=network,hostfwd=tcp::3389-:3389 \
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
+  ```
+
+- Boot existing guest:
+
+  ```bash
+  sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+    -m "$MEMORY" \
+    -drive id=disk0,if=none,cache=none,format=qcow2,file=disk.qcow2 \
+    -device ahci,id=ahci -device ide-hd,drive=disk0,bus=ahci.0 \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -usbdevice tablet \
+    -serial stdio -vga virtio -parallel none \
+    -device virtio-net-pci,netdev=network \
+    -netdev user,id=network,hostfwd=tcp::3389-:3389 \
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
+  ```
+
+### Manual Install With Virtio Drive
+
+- Create new guest:
+
+  ```bash
+  sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+    -m "$MEMORY" \
+    -object iothread,id=io \
+    -device virtio-blk-pci,drive=disk,iothread=io \
+    -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+    -drive file=windows.iso,index=1,media=cdrom \
+    -drive file=virtio-drivers.iso,index=2,media=cdrom \
+    -boot menu=on \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -usbdevice tablet \
+    -serial stdio -vga virtio -parallel none \
+    -device virtio-net-pci,netdev=network \
+    -netdev user,id=network,hostfwd=tcp::3389-:3389 \
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
+  ```
+
+- Boot existing guest:
+
+  ```bash
+  sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp $SMP,sockets=1,cores="$PHYSICAL_CORES",threads="$THREADS",maxcpus=$SMP \
+    -m "$MEMORY" \
+    -object iothread,id=io \
+    -device virtio-blk-pci,drive=disk,iothread=io \
+    -drive if=none,id=disk,cache=none,format=qcow2,aio=threads,file=disk.qcow2 \
+    -drive file=virtio-drivers.iso,index=2,media=cdrom \
+    -boot menu=on \
+    -serial none \
+    -parallel none \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -usbdevice tablet \
+    -serial stdio -vga virtio -parallel none \
+    -device virtio-net-pci,netdev=network \
+    -netdev user,id=network,hostfwd=tcp::3389-:3389 \
+    -vnc "$HOST_ADDRESS":"$VNC_PORT"
+  ```
+
+### Boot from CD
+
+- Multi-edition images will prompt the user to 'Press any key to boot CD or DVD' as shown below.
+  When you see this prompt, press enter.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={BootFromCd} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Other ISO images may not present the 'Press Enter' prompt to the serial console, instead you will
+  need to press enter after you see the following:
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={BootFromCd2} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Connect to the VM using VNC
+
+  In your VNC software use the address format `$HOST_ADDRESS:$VNC_PORT` to connect to the VM.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Vnc} width="600" />
+  </div>
+  <br />
+  <br />
+
+## Install Windows Manually
+
+- Select 'Install now'
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Install} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Set language and region
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Lang} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Product Key
+
+  Enter your key or select "I don't have a product key" to skip.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Serial} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Select Version
+
+  Choose a windows version to install, using a 'Pro' version is advised.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Version} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Accept the EULA
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Eula} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Select 'Custom Install'
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={CustomInstall} width="600" />
+  </div>
+  <br />
+  <br />
+
+### Install Drivers (Optional)
+
+- You should now see the disk selection screen without any available disk. This is because Windows
+  cannot use the virtio disks without adding drivers during the installation process.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={DiskSelect} width="600" />
+  </div>
+  <br />
+  <br />
+
+- To install the required drivers, select the 'Load Driver' button, then select 'Browse' to open a
+  file-explorer from which to choose the install media.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={DriverBrowse} width="600" />
+  </div>
+  <br />
+  <br />
+
+- The drivers are located in disk drive 'E' which should be named 'virtio-win-[version]'
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={VirtioDisk} width="400" />
+  </div>
+  <br />
+  <br />
+
+#### Viostor (Required)
+
+- Find and select the 'Viostor' directory, then choose the directory that corresponds to your
+  operating system version. Choose the 'amd64' directory inside and click 'OK'.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Viostor} width="400" />
+  </div>
+  <br />
+  <br />
+
+  Click 'Next' on the following screen to install the driver.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={InstallDriver} width="600" />
+  </div>
+  <br />
+  <br />
+
+#### NetKvm (Required)
+
+- Repeat the same process from above to find and install the NetKVM driver
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={NetKvm} width="400" />
+  </div>
+  <br />
+  <br />
+
+#### Viogpudo (Optional)
+
+- This driver will add more screen resolution options to the VNC display. The installation process
+  is the same as the previous drivers.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={VirtioGpu} width="400" />
+  </div>
+  <br />
+  <br />
+
+### Format and Partition Disk
+
+- With the drivers installed, we are now able to format and partition our virtual disk. Select
+  'Drive 0' then click 'new'.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={FormatDisk} width="600" />
+  </div>
+  <br />
+  <br />
+
+- Select largest of the newly-created partitions, then click 'Next'.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Partition} width="600" />
+  </div>
+  <br />
+  <br />
+
+- The install process should now begin. From this point you may simply follow the directions
+  on-screen. When the system reboots, allow the 'Press any key to boot from CD' prompt to time-out.
+  This avoids restarting the setup process.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={Installing} width="600" />
+  </div>
+  <br />
+  <br />
+
+## RDP
+
+- Enable RDP (Optional)
+
+  If you would like a more performant remote desktop, consider using RDP instead of VNC. The
+  required port for VNC `3389` is already forwarded in the commands above, the guide below will
+  guide you through enabling RDP.
+
+  - https://www.helpwire.app/blog/how-to-allow-rdp-windows-10/
+
+  You will also need an RDP client to access the VM. See the official Microsoft recommended clients
+  list here:
+  https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/remote-desktop-clients
+
+- Connect to the VM using RDP (Optional)
+
+  To connect to the VM with your RDP client, use the host's IP address as the 'PC Name'.
+
+  <div style={{ textAlign: 'center' }}>
+    <img src={RDP} width="400" />
+  </div>
+  <br />
+  <br />

@@ -1,0 +1,97 @@
+---
+toc_max_heading_level: 4
+---
+
+# About Self-Hosting
+
+Projects often encounter a constraint or requirement which makes free-tier hosted CI/CD runners
+insufficient for their needs. In these cases hosting your own CI/CD runner can be a viable
+alternative to premium-tier services or subscriptions. Self-hosting may also provide access to
+resources that are simply not available on many CI/CD services such as GPUs, faster drives, and
+newer CPU models.
+
+This guide will cover basic methods for hosting CI/CD runners on Bare-Metal, Virtual Machines, or
+using Cloud Runner. Containerized hosts will not be discussed because of their inherent reliance on
+insecure practices such as
+[Docker-in-Docker](http://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/),
+[Privileged Containers](https://www.trendmicro.com/en_th/research/19/l/why-running-a-privileged-container-in-docker-is-a-bad-idea.html)
+and the additional tooling required to mitigate those risks such as
+[Kaniko](https://github.com/GoogleContainerTools/kaniko) or
+[Kata Containers](https://katacontainers.io/).
+
+## 📚 Prerequisite Knowledge
+
+Users of this guide should already be familiar with the Linux command-line, Shell scripting, and
+have a basic grasp of CI/CD concepts. For users who are not familiar with these concepts, we have
+included some resources for you to start your learning journey below.
+
+- [Techworld with Nana](https://www.youtube.com/@TechWorldwithNana)
+- [DevOps Toolkit](https://www.youtube.com/@DevOpsToolkit)
+- [Introduction to Bash Scripting](https://itsfoss.com/bash-scripting-tutorial/)
+
+## 📋 Constraints
+
+There are many ways to self-host CI/CD runners, and which one is best for you will depend on your
+own situation and constraints. For the purpose of this guide we will make the following assumptions:
+
+- 💻 User already has their own hardware
+- 💸 Budget for new hardware, software, or services is $0
+- 🛠️ FOSS tools should be prioritized where possible
+- 📜 We define `Self-Hosting` in this context to refer to a user taking responsibility for the
+  operating-system level configuration and life-cycle-management of a given compute resource (metal,
+  on-prem, cloud VM, VPS etc...)
+
+## ⚠️ Security Disclaimer
+
+This guide strives to maintain a balance between convenience and security for the sake of usability.
+The examples included in this guide are intended for use with on-prem hardware without public IP
+addresses accessible from external networks. Security is a constantly moving target which requires
+continuous effort to maintain. Users should conduct their own security review before using the
+following techniques on production or public systems.
+
+## ⚡️ Power Costs
+
+Hosting your own runners also comes with an increase in power consumption. This will vary based on
+the hardware you use and the prices of energy in your area. Below are some useful resources for
+discovering the potential energy costs of self-hosting.
+
+- https://outervision.com/power-supply-calculator
+- https://energyusecalculator.com/electricity_computer.htm
+
+## 💻 System Requirements
+
+This guide is tested on devices which meet the following requirements:
+
+- x86 or amd64 processor
+- Ubuntu 22.04 LTS Server or Debian 12 Bookworm
+- Root access to the operating system
+- Network connectivity
+
+## 📎 Quick Links:
+
+### Host Creation
+
+"Host Creation" in this context is the process of installing an operating system onto a piece of
+physical hardware, or the creation and configuration of virtualised compute resources.
+
+- [Bare-Metal](./03-host-creation/02-bare-metal.mdx)
+- [Virtual Machines using Multipass](./03-host-creation/02-multipass.mdx)
+- [Virtual Machines using QEMU](./03-host-creation/03-QEMU/01-overview.mdx)
+
+### Host Provisioning
+
+"Provisioning" here refers to the process of installing additional resources onto, and the
+configuration of your host beyond installing the base operating-system. Both manual and declarative
+workflows are supported.
+
+- [Manual Ubuntu 22.04 Setup](./04-host-provisioning/02-ubuntu-setup.mdx)
+- [Manual Debian 12 Setup](./04-host-provisioning/01-debian-setup.mdx)
+- [Declarative provisioning via Cloud-Init](./04-host-provisioning/03-cloud-init/01-about.mdx)
+
+### Runner Application Installation
+
+Once your host has been provisioned, you will then need to install the appropriate runner
+application. The guides below will walk you through that process.
+
+- [Github Actions](./05-runner-application-installation/02-github-actions.mdx)
+- [GitLab Pipelines](./05-runner-application-installation/01-gitlab-pipelines.mdx)
