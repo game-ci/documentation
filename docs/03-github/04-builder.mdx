@@ -402,7 +402,7 @@ _**required:** `false`_ _**default:** `""`_
 
 Run the container as the host user based on the file permissions of the cloned project that gets
 mounted to the container. This is useful if you are using a self-hosted runner and need the
-generated files from the contianer to be owned by the same user as the runner host. This solves most
+generated files from the container to be owned by the same user as the runner host. This solves most
 permission errors without requiring the runner agent to run as root. This option shouldn't be needed
 on Github Hosted runners as the systems are automatically wiped each run so we default to `false`.
 Self-Hosted runners generally will want to set this to `true`.
