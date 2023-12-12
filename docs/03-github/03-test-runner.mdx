@@ -450,6 +450,44 @@ Isolation mode to use for the Docker container when running on Windows. Can be o
 
 _**required:** `false`_ _**default:** `"default"`_
 
+#### containerRegistryRepository
+
+Container registry and repository to pull the image from. Only applicable if `customImage` is not
+set.
+
+This allows you to host your own images and still leverage the logic to automatically determine the
+editor version and target platform. Accepts images from other registries too, for example
+`ghcr.io/namespace/imagename` for Github Container Registry.
+
+_**required:** `false`_ _**default:** `"unityci/editor"`_
+
+#### containerRegistryImageVersion
+
+Container registry image version. Only applicable if `customImage` is not set.
+
+This allows you to roll back the image version to a previous version if needed or even use your own
+version numbering for custom built and maintained registries.
+
+_**required:** `false`_ _**default:** `"3"`_
+
+#### runAsHostUser
+
+Run the container as the host user based on the file permissions of the cloned project that gets
+mounted to the container. This is useful if you are using a self-hosted runner and need the
+generated files from the container to be owned by the same user as the runner host. This solves most
+permission errors without requiring the runner agent to run as root. This option shouldn't be needed
+on Github Hosted runners as the systems are automatically wiped each run so we default to `false`.
+Self-Hosted runners generally will want to set this to `true`.
+
+_**required:** `false`_ _**default:** `false`_
+
+#### chownFilesTo
+
+User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build
+artifacts.
+
+_**required:** `false`_ _**default:** `""`_
+
 ## Complete example
 
 A complete workflow that tests all modes separately could look like this:
@@ -486,6 +524,8 @@ jobs:
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
@@ -536,6 +576,8 @@ jobs:
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           packageMode: true
           projectPath: ${{ matrix.projectPath }}
