@@ -175,6 +175,9 @@ To be able to access the test results, they need to be uploaded as artifacts.
 To do this, it is recommended to use the official Github Actions
 [upload artifact action](https://github.com/marketplace/actions/upload-a-build-artifact).
 
+Provide write permissions for your workflow: go to `Settings` > `Actions` > `General` > `Workflow permissions`
+and choose `Read and write permissions`. By default it is set to `Read repository content and packages permissions`.
+
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
