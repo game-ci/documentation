@@ -156,13 +156,13 @@ The test results can be viewed from a
 
 To get this functionality, you need to do the following:
 
-1. Provide a
+1. Provide write permissions for your workflow: go to `Settings` > `Actions` > `General` >
+   `Workflow permissions` and choose `Read and write permissions`. By default it is set to
+   `Read repository content and packages permissions`.
+2. Provide a
    [GitHub Token](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret)
    in order to view the tests results from
    [a check run](https://docs.github.com/en/rest/guides/getting-started-with-the-checks-api#about-check-runs).
-2. Provide write permissions for your workflow: go to `Settings` > `Actions` > `General` >
-   `Workflow permissions` and choose `Read and write permissions`. By default it is set to
-   `Read repository content and packages permissions`.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v4
