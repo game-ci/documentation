@@ -515,6 +515,15 @@ version numbering for custom built and maintained registries.
 
 _**required:** `false`_ _**default:** `"3"`_
 
+#### skipActivation
+
+Skips the activation step. This is useful for Mac self-hosted runners as the Unity process runs on
+the host so activation/deactivation can conflict with parallel running jobs. This should only be
+used for Mac self-hosted runners that already have a license activated. Running in any other
+configuration will result in a failed build due to inactive licenses.
+
+_**required:** `false`_ _**default:** `false`_
+
 ## Outputs
 
 Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where
