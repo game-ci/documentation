@@ -94,6 +94,20 @@ the [`packageMode`](#packagemode) configuration option to `true`.
     packageMode: true
 ```
 
+#### Using a scoped registry
+
+When testing a Unity package that has dependencies inside a scoped registry, you can set the
+[`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) to ensure those
+depedencies can be resolved.
+
+```yaml
+- uses: game-ci/unity-test-runner@v4
+  with:
+    scopedRegistryUrl: https://example.com/registry
+    registryScopes: 'com.example, com.example.tools.physics'
+```
+
+
 #### Passing a unityVersion
 
 Make sure that you explicitly pass the [`unityVersion`](#unityversion) argument, as it's necessary
@@ -139,9 +153,6 @@ potential workarounds.
 - The test runner can only test packages on Linux runners - Windows runners are currently not
   supported (this issue is being tracked
   [here](https://github.com/game-ci/unity-test-runner/issues/224))
-- Packages with dependencies outside of the Unity Registry have not been tested an may or may not
-  work with the test runner (this issue is being tracked
-  [here](https://github.com/game-ci/unity-test-runner/issues/225)).
 - There is currently no caching set up for the testing of Unity packages (this issue is being
   tracked [here](https://github.com/game-ci/unity-test-runner/issues/226)).
 - If using the [`customImage`](#customImage) parameter to use a custom Docker image to test the
@@ -419,9 +430,27 @@ Whether the tests are being run for a Unity package instead of a Unity project.
 If true, the action can only be run on Linux runners, and any custom docker image passed to this
 action must have [`jq`](https://jqlang.github.io/jq/) installed.
 
-NOTE: may not work properly for packages with dependencies outside of the Unity Registry.
+NOTE: packages with dependencies outside of the Unity Registry need to utilize the 
+[`scopedRegistryUrl`](#scopedRegistryUrl) to resolve the dependencies correctly.
 
 See [Testing Unity packages](#testing-unity-packages) for more information.
+
+_**required:** `false`_ _**default:** `false`_
+
+#### scopedRegistryUrl
+
+The Url of the UPM registry to use for resolving package dependencies. Only applicable if 
+packageMode is true. When setting this value, you must also provide [`registryScopes`](#registryScopes)
+
+_**required:** `false`_ _**default:** `false`_
+
+#### registryScopes
+
+Defines the scopes of a registry and its associated packages, see 
+[the Unity Documentation](https://docs.unity3d.com/Manual/upm-scoped.html]) for further information 
+on scopes. Provide as a comma separated list, e.g. 'com.example, com.example.tools.physics'.
+
+NOTE: Required if scopedRegistry is set, otherwise ignored.
 
 _**required:** `false`_ _**default:** `false`_
 
