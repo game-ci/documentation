@@ -107,6 +107,24 @@ depedencies can be resolved.
     registryScopes: 'com.example, com.example.tools.physics'
 ```
 
+#### Authentication with a private scoped registry
+
+If your package has dependencies that are hosted in a private UPM registry, then you will need
+to supply a valid authentication token for your registry as an environment variable. Setup the 
+[`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) as usual, but
+also include a `UPM_REGISTRY_TOKEN` when defining your Unity License. 
+
+```yaml
+- uses: game-ci/unity-test-runner@v4
+  env:
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    UPM_REGISTRY_TOKEN: ${{ secrets.UPM_REGISTRY_TOKEN }}
+  with:
+    pscopedRegistryUrl: https://example.com/registry
+    registryScopes: 'com.example'
+```
 
 #### Passing a unityVersion
 
