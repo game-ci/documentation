@@ -524,6 +524,14 @@ configuration will result in a failed build due to inactive licenses.
 
 _**required:** `false`_ _**default:** `false`_
 
+#### enableGpu
+
+Omits passing the `-nographics` parameter when launching Unity to perform the build. Useful when
+using runners that have GPU available, and your build process utilizes Unity's graphics API during
+build. MacOS only.
+
+_**required:** `false`_ _**default:** `false`_
+
 ## Outputs
 
 Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where
