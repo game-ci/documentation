@@ -109,10 +109,10 @@ depedencies can be resolved.
 
 #### Authentication with a private scoped registry
 
-If your package has dependencies that are hosted in a private UPM registry, then you will need
-to supply a valid authentication token for your registry as an environment variable. Setup the 
-[`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) as usual, but
-also include a `UPM_REGISTRY_TOKEN` when defining your Unity License. 
+If your package has dependencies that are hosted in a private UPM registry, then you will need to
+supply a valid authentication token for your registry as an environment variable. Setup the
+[`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) as usual, but also
+include a `UPM_REGISTRY_TOKEN` when defining your Unity License.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v4
@@ -448,7 +448,7 @@ Whether the tests are being run for a Unity package instead of a Unity project.
 If true, the action can only be run on Linux runners, and any custom docker image passed to this
 action must have [`jq`](https://jqlang.github.io/jq/) installed.
 
-NOTE: packages with dependencies outside of the Unity Registry need to utilize the 
+NOTE: packages with dependencies outside of the Unity Registry need to utilize the
 [`scopedRegistryUrl`](#scopedRegistryUrl) to resolve the dependencies correctly.
 
 See [Testing Unity packages](#testing-unity-packages) for more information.
@@ -457,15 +457,16 @@ _**required:** `false`_ _**default:** `false`_
 
 #### scopedRegistryUrl
 
-The Url of the UPM registry to use for resolving package dependencies. Only applicable if 
-packageMode is true. When setting this value, you must also provide [`registryScopes`](#registryScopes)
+The Url of the UPM registry to use for resolving package dependencies. Only applicable if
+packageMode is true. When setting this value, you must also provide
+[`registryScopes`](#registryScopes)
 
 _**required:** `false`_ _**default:** `false`_
 
 #### registryScopes
 
-Defines the scopes of a registry and its associated packages, see 
-[the Unity Documentation](https://docs.unity3d.com/Manual/upm-scoped.html]) for further information 
+Defines the scopes of a registry and its associated packages, see
+[the Unity Documentation](https://docs.unity3d.com/Manual/upm-scoped.html]) for further information
 on scopes. Provide as a comma separated list, e.g. 'com.example, com.example.tools.physics'.
 
 NOTE: Required if scopedRegistry is set, otherwise ignored.
