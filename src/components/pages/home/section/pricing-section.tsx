@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import cx from 'classnames';
 import { SiGitlab, SiGithub, SiCircleci } from 'react-icons/si';
-
+import { useColorMode } from '@docusaurus/theme-common';
 import Section from '@site/src/components/pages/home/section/section';
 import styles from './section.module.scss';
 
@@ -30,13 +31,20 @@ const PricingSection = () => {
   const [minutes, setMinutes] = useState(0);
   const [currency, setCurrency] = useState('EUR');
   const [selectedVsc, setVsc] = useState(0);
+  const { colorMode } = useColorMode();
+  const isDarkTheme = colorMode === 'dark';
+
+  const backgroundClassName = isDarkTheme ? 'bg-black' : 'bg-white';
+  const totalPriceBackgroundClassName = isDarkTheme ? 'bg-gray-800' : 'bg-gray-200';
 
   return (
     <Section className={styles.pricingSection}>
-      <h1 className={styles.title}>Pricing calculator</h1>
+      <h2 className={cx('text-center text-5xl font-bold mb-10', styles.title)}>
+        Pricing calculator
+      </h2>
 
       <div className="p-3 rounded-md flex gap-3 h-52">
-        <div className="bg-black p-3 rounded-md flex flex-col justify-between">
+        <div className={`${backgroundClassName} p-3 rounded-md flex flex-col justify-between`}>
           <div>
             <button
               onClick={() => setVsc(0)}
@@ -74,12 +82,12 @@ const PricingSection = () => {
                   setMinutes(Number.parseInt(event.target.value, 10));
                 }}
               />
-              <span>{minutes <= 999 ? minutes : <>&infin;</>}</span>
+              <span className="w-8">{minutes <= 999 ? minutes : <>&infin;</>}</span>
             </div>
           </label>
         </div>
 
-        <div className="bg-black p-3 rounded-md flex flex-col justify-between">
+        <div className={`${backgroundClassName} p-3 rounded-md flex flex-col justify-between`}>
           <select onChange={(event) => setCurrency(event.target.value)}>
             <option value="EUR">EUR &euro;</option>
             <option value="USD">USD $</option>
@@ -89,8 +97,8 @@ const PricingSection = () => {
             <option value="RUB">RUB &#x20bd;</option>
             <option value="JYP">JYP &yen;</option>
           </select>
-          <span className="bg-gray-800 p-2 rounded-sm">
-            <h5 className="m-0">0.00 {currencyToSymbol(currency)}</h5>
+          <span className={`${totalPriceBackgroundClassName} p-2 rounded-sm`}>
+            <h5 className="m-0 text-center">0.00 {currencyToSymbol(currency)}</h5>
           </span>
         </div>
       </div>

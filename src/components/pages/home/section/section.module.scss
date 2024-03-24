@@ -110,7 +110,7 @@
     // TODO: revisit the choice of layout system when we have more users
     @apply flex gap-5 list-none ps-0 flex-wrap justify-center;
 
-    .tem {
+    .item {
       @apply bg-gray-800;
       display: flex;
       justify-content: center;
