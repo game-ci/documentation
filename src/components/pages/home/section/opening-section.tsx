@@ -10,8 +10,8 @@ import GettingStarted from './getting-started';
 const OpeningSection = () => {
   const ref = createRef<HTMLDivElement>();
 
-  const { isDarkTheme } = useColorMode();
-
+  const { colorMode } = useColorMode();
+  const isDarkTheme = colorMode === 'dark';
   const Logo = isDarkTheme ? GameCiLogo : GameCiLogoLight;
 
   const scrollToNextSection = () => {
