@@ -106,15 +106,24 @@
 }
 
 .whoIsUsingGameCiSection {
-  .devsGrid {
-    @apply grid grid-cols-5 lg:grid-cols-10 gap-5;
+  .devsList {
+    // TODO: revisit the choice of layout system when we have more users
+    @apply flex gap-5 list-none ps-0 flex-wrap justify-center;
 
-    .gridItem {
+    .tem {
+      @apply bg-gray-800;
       display: flex;
       justify-content: center;
       align-items: center;
-
+      width: 150px;
+      padding: 10px 25px;
       transition: transform 0.25s;
+      border-radius: 0.5rem;
+      min-height: 70px;
+
+      img {
+        display: block;
+      }
 
       &:hover {
         transform: scale(1.2);

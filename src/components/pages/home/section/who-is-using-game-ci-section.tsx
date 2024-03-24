@@ -1,39 +1,42 @@
 import React from 'react';
+import cx from 'classnames';
 import Section from '@site/src/components/pages/home/section/section';
 import styles from './section.module.scss';
 
-const gridItems: GridItems = [
+const list: DeveloperInfo[] = [
   {
     url: 'https://www.madronagames.com/',
-    imgSrc: '/assets/images/devs/madronagames-logo.png',
-    altText: 'Madrona Games',
+    logoUrl: '/assets/images/devs/madronagames-logo.png',
+    name: 'Madrona Games',
   },
   {
     url: 'https://totemastudio.com/',
-    imgSrc: '/assets/images/devs/totemastudio-logo.svg',
-    altText: 'Totema Studios',
+    logoUrl: '/assets/images/devs/totemastudio-logo.svg',
+    name: 'Totema Studios',
   },
 ];
 
-type GridItems = {
+type DeveloperInfo = {
   url: string;
-  imgSrc: string;
-  altText: string;
-}[];
+  logoUrl: string;
+  name: string;
+};
 
 const WhoIsUsingGameCiSection = () => {
   return (
     <Section className={styles.whoIsUsingGameCiSection}>
-      <h1>Developers that chose us</h1>
-      <div className={styles.devsGrid}>
-        {gridItems.map((item) => (
-          <div className={styles.gridItem}>
+      <h2 className={cx('text-center text-5xl font-bold mb-10', styles.title)}>
+        Developers that chose us
+      </h2>
+      <ul className={styles.devsList}>
+        {list.map((item) => (
+          <li key={item.name} className={styles.item}>
             <a href={item.url}>
-              <img src={item.imgSrc} alt={item.altText} />
+              <img src={item.logoUrl} alt={item.name} />
             </a>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
       <h4>
         <i>And more than 3,500 other developers</i>
       </h4>
