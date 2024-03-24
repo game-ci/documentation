@@ -8,7 +8,7 @@
   background: var(--ifm-navbar-background-color);
 
   &:nth-of-type(even) {
-    background-color: var(--ifm-navbar-background-color-dark) !important;
+    background-color: var(--ifm-navbar-background-color-dark);
   }
 
   color: var(--brand-text);
