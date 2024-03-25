@@ -1,4 +1,5 @@
 import React, { createRef } from 'react';
+import cx from 'classnames';
 import { useColorMode } from '@docusaurus/theme-common';
 import GameCiLogo from '@site/static/assets/images/game-ci-brand-logo-wordmark.svg';
 import GameCiLogoLight from '@site/static/assets/images/game-ci-brand-logo-wordmark-light.svg';
@@ -26,7 +27,7 @@ const OpeningSection = () => {
       </FadeIntoView>
 
       <FadeIntoView delay={150}>
-        <h1 className={`${styles.title} text-sm md:text-2xl`}>
+        <h1 className={cx('text-sm md:text-2xl', styles.title)}>
           The fastest and <strong>easiest</strong> way to automatically test and build your game
           projects
         </h1>
