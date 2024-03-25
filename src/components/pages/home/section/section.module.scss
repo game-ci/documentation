@@ -4,33 +4,42 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 10vh 10vw;
   background: var(--ifm-navbar-background-color);
 
+  &:nth-of-type(even) {
+    background-color: var(--ifm-navbar-background-color-dark);
+  }
+
   color: var(--brand-text);
 
-  .title {
-    color: var(--brand-primary);
-    width: 70vmin;
-    text-align: center;
-  }
+}
+
+.title {
+  color: var(--brand-primary);
+  width: 70vmin;
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--brand-primary);
+  text-align: center;
+  font-size: 7vmin;
 }
 
 .openingSection {
   min-height: calc(100vh - 64px);
-
-  user-select: none;
   padding: 0;
+  position: relative;
 
   .logo {
-    height: 50vmin;
-    width: 50vmin;
+    user-select: none;
+    height: 35vmin;
+    width: 35vmin;
   }
 
   .title {
     color: var(--ifm-navbar-background-link-color);
-    font-size: 3.5vmin;
   }
 }
 
@@ -57,17 +66,37 @@
 }
 
 .gettingStartedSection {
+  margin-top: 3em;
   .button {
-    color: var(--brand-text);
-    border: 2px solid var(--brand-text);
+    border: 2px solid rgb(83, 86, 90);
     border-radius: 3px;
-    padding: 4px 16px;
+    padding: 10px 25px;
+    transition: all 0.25s;
+    width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+
+    svg {
+      fill: var(--brand-text);
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      background-color: rgb(84, 86, 88);
+      
+      svg {
+        fill: white;
+      }
+    }
   }
 }
 
 .sponsorsSection {
-  .linkSpan {
-    color: var(--brand-text);
+  .logo {
+    width: 120px;
+    fill: var(--brand-text);
   }
 }
 
@@ -76,8 +105,58 @@
   color: var(--ifm-navbar-background-color);
 }
 
-.whoIsUsingGameCiSection {}
+.whoIsUsingGameCiSection {
+  .devsList {
+    // TODO: revisit the choice of layout system when we have more users
+    @apply flex gap-5 list-none ps-0 flex-wrap justify-center;
 
-.pricingSection {}
+    .item {
+      @apply bg-gray-800;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 150px;
+      padding: 10px 25px;
+      transition: transform 0.25s;
+      border-radius: 0.5rem;
+      min-height: 70px;
+
+      img {
+        display: block;
+      }
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
+.pricingSection {
+  > div {
+    background-color: var(--brand-primary);
+  }
+  .vscButton {
+    svg {
+      @apply w-5 h-5;
+    }
+    @apply rounded-md p-1 mx-1 aspect-square w-11 h-11 transition-all duration-300;
+    background-color: transparent;
+    border: 1px solid var(--brand-secondary);
+    outline: none;
+    cursor: pointer;
+
+  }
+  .vscButton.selected {
+    @apply border-4;
+    border-color: var(--brand-primary);
+  }
+}
 
 .gallerySection {}
+
+
+.versionsSection {
+  min-height: 100vh;
+  justify-content: flex-start;
+}

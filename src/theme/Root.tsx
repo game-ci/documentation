@@ -15,7 +15,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-function Root({ children }: Props): JSX.Element {
+function Root({ children }: Props): React.JSX.Element {
   return (
     <Provider store={store}>
       <FirebaseAppProvider firebaseConfig={config.firebase}>
