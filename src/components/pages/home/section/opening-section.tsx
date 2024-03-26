@@ -1,19 +1,12 @@
 import React, { createRef } from 'react';
-import cx from 'classnames';
-import { useColorMode } from '@docusaurus/theme-common';
 import GameCiLogo from '@site/static/assets/images/game-ci-brand-logo-wordmark.svg';
 import GameCiLogoLight from '@site/static/assets/images/game-ci-brand-logo-wordmark-light.svg';
 import Section from '@site/src/components/pages/home/section/section';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
-import styles from './section.module.scss';
 import GettingStarted from './getting-started';
 
 const OpeningSection = () => {
   const ref = createRef<HTMLDivElement>();
-
-  const { colorMode } = useColorMode();
-  const isDarkTheme = colorMode === 'dark';
-  const Logo = isDarkTheme ? GameCiLogo : GameCiLogoLight;
 
   const scrollToNextSection = () => {
     const element = ref.current.getBoundingClientRect();
@@ -21,34 +14,33 @@ const OpeningSection = () => {
   };
 
   return (
-    <Section ref={ref} className={styles.openingSection}>
+    <Section ref={ref} className="!py-0 !px-4 !min-h-[calc(100vh-60px)]">
       <FadeIntoView>
-        <Logo className={styles.logo} />
-      </FadeIntoView>
-
-      <FadeIntoView delay={150}>
-        <h1 className={cx('text-sm md:text-2xl', styles.title)}>
-          The fastest and <strong>easiest</strong> way to automatically test and build your game
-          projects
+        <h1>
+          <span className="invisible absolute w-0 h-0">GameCI</span>
+          <GameCiLogoLight className="block dark:hidden select-none w-full max-w-[320px] h-auto" />
+          <GameCiLogo className="hidden dark:block select-none w-full max-w-[320px] h-auto" />
         </h1>
       </FadeIntoView>
 
-      <GettingStarted />
+      <FadeIntoView delay={150}>
+        <h2 className="text-sm md:text-2xl text-center w-full max-w-[500px]">
+          The fastest and <strong>easiest</strong> way to automatically test and build your game
+          projects
+        </h2>
+      </FadeIntoView>
+
+      <FadeIntoView delay={200}>
+        <div className="mt-8 md:mt-12">
+          <GettingStarted />
+        </div>
+      </FadeIntoView>
 
       <button
         type="button"
         onClick={scrollToNextSection}
-        className="hidden md:block"
-        style={{
-          fontSize: '7vmin',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          position: 'absolute',
-          bottom: '0',
-          left: '50%',
-          transform: 'translateX(-50%)',
-        }}
+        className="hidden md:block bg-transparent border-none cursor-pointer text-7xl absolute bottom-0 mb-2 focus-visible:outline focus-visible:outline-2"
+        aria-label="Click to scroll to the next section"
       >
         ⇩
       </button>

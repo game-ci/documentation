@@ -1,33 +1,56 @@
 import Link from '@docusaurus/Link';
-import React from 'react';
-import cx from 'classnames';
-import styles from '@site/src/components/pages/home/section/section.module.scss';
-import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
+import React, { SVGProps, ComponentType } from 'react';
 import GitHubLogo from '@site/static/assets/images/icons/github.svg';
 import GitLabLogo from '@site/static/assets/images/icons/gitlab.svg';
 import CircleCiLogo from '@site/static/assets/images/icons/circleci.svg';
 
+const list = [
+  {
+    name: 'github',
+    logo: GitHubLogo,
+    url: '/docs/github/getting-started',
+  },
+  {
+    name: 'gitlab',
+    logo: GitLabLogo,
+    url: '/docs/gitlab/getting-started',
+  },
+  {
+    name: 'circleci',
+    logo: CircleCiLogo,
+    url: '/docs/circleci/getting-started',
+  },
+];
+
+type LinkButtonProps = {
+  url: string;
+  logo: ComponentType<SVGProps<SVGSVGElement>>;
+};
+
+const LinkButton = ({ url, logo: Logo }: LinkButtonProps) => (
+  <Link
+    to={url}
+    className="group flex items-center justify-center border-gray-600 border-solid rounded-sm border-2 px-6 py-3 w-[200px] h-[70px] transition-all duration-200 hover:scale-110 hover:bg-gray-600"
+  >
+    <Logo className="fill-brand-text-light dark:fill-brand-text-dark group-hover:fill-white" />
+  </Link>
+);
+
 const GettingStarted = () => {
   return (
-    <span className={styles.gettingStartedSection}>
-      <FadeIntoView>
-        <h2 className={cx('text-center font-bold mb-4', styles.subtitle)}>Get Started Using:</h2>
-      </FadeIntoView>
+    <>
+      <h2 className="text-center font-bold mb-4 text-3xl md:text-6xl text-primary-light dark:text-primary-dark">
+        Get Started Using:
+      </h2>
 
-      <FadeIntoView className={styles.gettingStartedLinks}>
-        <div className="w-full mt-6 inline-flex gap-10 flex-col md:flex-row items-center justify-center pb-16">
-          <Link to="/docs/github/getting-started" className={styles.button}>
-            <GitHubLogo />
-          </Link>
-          <Link to="/docs/gitlab/getting-started" className={styles.button}>
-            <GitLabLogo />
-          </Link>
-          <Link to="/docs/circleci/getting-started" className={styles.button}>
-            <CircleCiLogo />
-          </Link>
-        </div>
-      </FadeIntoView>
-    </span>
+      <ul className="list-none px-0 w-full mt-6 inline-flex gap-10 flex-col md:flex-row items-center justify-center pb-16">
+        {list.map(({ url, name, logo }) => (
+          <li key={name}>
+            <LinkButton url={url} logo={logo} />
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
 
