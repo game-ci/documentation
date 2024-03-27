@@ -1,7 +1,6 @@
 import React from 'react';
-import cx from 'classnames';
 import Section from '@site/src/components/pages/home/section/section';
-import styles from './section.module.scss';
+import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 
 const list: DeveloperInfo[] = [
   {
@@ -24,22 +23,22 @@ type DeveloperInfo = {
 
 const WhoIsUsingGameCiSection = () => {
   return (
-    <Section className={styles.whoIsUsingGameCiSection}>
-      <h2 className={cx('text-center text-5xl font-bold mb-10', styles.title)}>
-        Developers that chose us
-      </h2>
-      <ul className={styles.devsList}>
-        {list.map((item) => (
-          <li key={item.name} className={styles.item}>
-            <a href={item.url}>
-              <img src={item.logoUrl} alt={item.name} />
-            </a>
-          </li>
-        ))}
-      </ul>
-      <h4>
-        <i>And more than 3,500 other developers</i>
-      </h4>
+    <Section title="Developers that chose us">
+      <FadeIntoView>
+        <ul className="flex gap-5 list-none ps-0 flex-wrap justify-center">
+          {list.map((item) => (
+            <li
+              key={item.name}
+              className="focus-within:outline-primary-light dark:focus-within:outline-primary-dark focus-within:outline focus-within:outline-3 bg-gray-800 flex items-center justify-center w-[150px] px-6 py-2 transform rounded-sm duration-200 min-h-[70px] hover:scale-110"
+            >
+              <a href={item.url} className="focus:outline-none">
+                <img src={item.logoUrl} alt={item.name} className="block" />
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="italic font-bold">And more than 3,500 other developers</p>
+      </FadeIntoView>
     </Section>
   );
 };

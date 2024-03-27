@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import cx from 'classnames';
+import React, { ComponentType, MouseEventHandler, SVGProps, useState } from 'react';
 import { SiGitlab, SiGithub, SiCircleci } from 'react-icons/si';
-import { useColorMode } from '@docusaurus/theme-common';
 import Section from '@site/src/components/pages/home/section/section';
-import styles from './section.module.scss';
+import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
 
 const currencyToSymbol = (currency: string) => {
   switch (currency) {
@@ -27,81 +25,100 @@ const currencyToSymbol = (currency: string) => {
   }
 };
 
+const list = [
+  {
+    name: 'github',
+    logo: SiGithub,
+  },
+  {
+    name: 'gitlab',
+    logo: SiGitlab,
+  },
+  {
+    name: 'circleci',
+    logo: SiCircleci,
+  },
+];
+
+type ButtonProps = {
+  name: string;
+  isSelected: boolean;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+  logo: ComponentType<SVGProps<SVGSVGElement>>;
+};
+
+const Button = ({ name, onClick, isSelected, logo: Logo }: ButtonProps) => {
+  const isSelectedClassNames = isSelected
+    ? '!border-primary-light !dark:border-primary-dark border-4'
+    : '';
+
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-md p-1 mx-1 aspect-square w-11 h-11 transition-all duration-300 cursor-pointer bg-transparent border border-solid border-secondary-light dark:border-secondary-dark ${isSelectedClassNames}`}
+      type="button"
+    >
+      <Logo className="w-5 h-5" aria-label={name} />
+    </button>
+  );
+};
+
 const PricingSection = () => {
   const [minutes, setMinutes] = useState(0);
   const [currency, setCurrency] = useState('EUR');
-  const [selectedVsc, setVsc] = useState(0);
-  const { colorMode } = useColorMode();
-  const isDarkTheme = colorMode === 'dark';
-
-  const backgroundClassName = isDarkTheme ? 'bg-black' : 'bg-white';
-  const totalPriceBackgroundClassName = isDarkTheme ? 'bg-gray-800' : 'bg-gray-200';
+  const [selectedVsc, setVsc] = useState('github');
 
   return (
-    <Section className={styles.pricingSection}>
-      <h2 className={cx('text-center text-5xl font-bold mb-10', styles.title)}>
-        Pricing calculator
-      </h2>
-
-      <div className="p-3 rounded-md flex gap-3 h-52">
-        <div className={`${backgroundClassName} p-3 rounded-md flex flex-col justify-between`}>
-          <div>
-            <button
-              onClick={() => setVsc(0)}
-              className={`${styles.vscButton} ${selectedVsc === 0 && styles.selected}`}
-              type="button"
-            >
-              <SiGithub />
-            </button>
-            <button
-              onClick={() => setVsc(1)}
-              className={`${styles.vscButton} ${selectedVsc === 1 && styles.selected}`}
-              type="button"
-            >
-              <SiGitlab />
-            </button>
-            <button
-              onClick={() => setVsc(2)}
-              className={`${styles.vscButton} ${selectedVsc === 2 && styles.selected}`}
-              type="button"
-            >
-              <SiCircleci />
-            </button>
-            <br />
-          </div>
-          <label htmlFor="minutes">
-            <h4>Minutes:</h4>
-            <div className="flex items-center gap-1">
-              <input
-                id="minutes"
-                min={0}
-                max={1000}
-                defaultValue={0}
-                type="range"
-                onChange={(event) => {
-                  setMinutes(Number.parseInt(event.target.value, 10));
-                }}
-              />
-              <span className="w-8">{minutes <= 999 ? minutes : <>&infin;</>}</span>
+    <Section title="Pricing calculator">
+      <FadeIntoView>
+        <div className="p-3 rounded-md flex gap-3 h-52 bg-primary-light dark:bg-primary-dark">
+          <div className="bg-white dark:bg-black p-3 rounded-md flex flex-col justify-between">
+            <div>
+              {list.map(({ name, logo }) => (
+                <Button
+                  key={name}
+                  name={name}
+                  isSelected={selectedVsc === name}
+                  logo={logo}
+                  onClick={() => setVsc(name)}
+                />
+              ))}
             </div>
-          </label>
-        </div>
+            <label htmlFor="minutes">
+              <p className="font-bold">Minutes:</p>
+              <div className="flex items-center gap-1">
+                <input
+                  name="minutes"
+                  min={0}
+                  max={1000}
+                  defaultValue={0}
+                  type="range"
+                  step={10}
+                  onChange={(event) => {
+                    setMinutes(Number.parseInt(event.target.value, 10));
+                  }}
+                />
+                <span className="w-8">{minutes === 1000 ? <>&infin;</> : minutes}</span>
+              </div>
+            </label>
+          </div>
 
-        <div className={`${backgroundClassName} p-3 rounded-md flex flex-col justify-between`}>
-          <select onChange={(event) => setCurrency(event.target.value)}>
-            <option value="EUR">EUR &euro;</option>
-            <option value="USD">USD $</option>
-            <option value="ILS">ILS &#x20aa;</option>
-            <option value="CAD">CAD $</option>
-            <option value="AUD">AUD $</option>
-            <option value="RUB">RUB &#x20bd;</option>
-            <option value="JYP">JYP &yen;</option>
-          </select>
-          <span className={`${totalPriceBackgroundClassName} p-2 rounded-sm`}>
-            <h5 className="m-0 text-center">0.00 {currencyToSymbol(currency)}</h5>
-          </span>
+          <div className="bg-white dark:bg-black p-3 rounded-md flex flex-col justify-between">
+            <select onChange={(event) => setCurrency(event.target.value)} aria-label="currency">
+              <option value="EUR">EUR &euro;</option>
+              <option value="USD">USD $</option>
+              <option value="ILS">ILS &#x20aa;</option>
+              <option value="CAD">CAD $</option>
+              <option value="AUD">AUD $</option>
+              <option value="RUB">RUB &#x20bd;</option>
+              <option value="JYP">JYP &yen;</option>
+            </select>
+            <span className="bg-gray-200 dark:bg-gray-800 p-2 rounded-sm">
+              <p className="m-0 text-center font-bold">0.00 {currencyToSymbol(currency)}</p>
+            </span>
+          </div>
         </div>
-      </div>
+      </FadeIntoView>
     </Section>
   );
 };

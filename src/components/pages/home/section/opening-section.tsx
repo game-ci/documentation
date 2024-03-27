@@ -24,7 +24,7 @@ const OpeningSection = () => {
       </FadeIntoView>
 
       <FadeIntoView delay={150}>
-        <h2 className="text-sm md:text-2xl text-center w-full max-w-[500px]">
+        <h2 className="text-base md:text-2xl text-center w-full max-w-[500px]">
           The fastest and <strong>easiest</strong> way to automatically test and build your game
           projects
         </h2>

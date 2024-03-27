@@ -7,6 +7,10 @@ module.exports = {
           dark: '#3dc094',
           light: '#309976',
         },
+        secondary: {
+          dark: '#373445',
+          light: '#e9e0ff',
+        },
         'brand-text': {
           dark: '#f0f2f5',
           light: '#373445',
@@ -18,7 +22,7 @@ module.exports = {
           },
           darker: {
             dark: '#32303f',
-            light: '#ebeaec',
+            light: '#f2f2f2',
           },
         },
       },
