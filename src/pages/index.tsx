@@ -12,7 +12,7 @@ import WhoIsUsingGameCiSection from '@site/src/components/pages/home/section/who
 
 export default function Home(): React.JSX.Element {
   return (
-    <Layout>
+    <Layout description="The fastest and easiest way to automatically test and build your game projects">
       <OpeningSection />
       {/* <OurVisionSection /> */}
       {/* <VisualRepresentationOfWhatWeDoSection /> */}
