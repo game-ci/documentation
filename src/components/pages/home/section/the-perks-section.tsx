@@ -1,8 +1,6 @@
 import React from 'react';
-import cx from 'classnames';
 import Section from '@site/src/components/pages/home/section/section';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
-import styles from './section.module.scss';
 
 const cards = [
   {
@@ -32,7 +30,10 @@ const cards = [
       <p>
         GameCI is built by industry professionals across the globe. Please feel free to{' '}
         <strong>
-          join us on <a href="/discord">Discord</a>
+          join us on{' '}
+          <a href="/discord" className="text-primary-light dark:text-primary-dark" target="_blank">
+            Discord
+          </a>
         </strong>{' '}
         and have a chat!
       </p>
@@ -86,24 +87,21 @@ const cards = [
 
 const ThePerksSection = () => {
   return (
-    <Section className={styles.thePerksSection}>
-      <h2 className={cx(styles.title, 'text-center text-5xl font-bold mb-10')}>The perks</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <Section title="The perks">
+      <ul className="list-none ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((card, index) => (
-          <FadeIntoView key={card.title} delay={50 + index * 33}>
-            <div
-              key={card.title}
-              className="block p-6 h-full max-w-sm bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-900"
-            >
-              <h5 className={cx('mb-2 text-2xl font-bold tracking-tight', styles.cardTitle)}>
-                {card.title}
-              </h5>
-              <p className="font-normal text-gray-900 dark:text-gray-100">{card.content}</p>
-            </div>
-          </FadeIntoView>
+          <li key={card.title}>
+            <FadeIntoView delay={50 + index * 33} className="h-full">
+              <div className="block p-6 h-full max-w-sm bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-900">
+                <h5 className="mb-2 text-2xl font-bold tracking-tight text-primary-light dark:text-primary-dark">
+                  {card.title}
+                </h5>
+                <div className="font-normal text-gray-900 dark:text-gray-100">{card.content}</div>
+              </div>
+            </FadeIntoView>
+          </li>
         ))}
-      </div>
+      </ul>
     </Section>
   );
 };
