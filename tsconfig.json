@@ -4,6 +4,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "skipLibCheck": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "target": "es2015"
   }
 }
