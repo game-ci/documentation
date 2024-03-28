@@ -6,7 +6,7 @@ import { getUrlWithUtmParameters } from '@site/src/core/url';
 const list: DeveloperInfo[] = [
   {
     url: 'https://www.madronagames.com/',
-    logoUrl: '/assets/images/devs/madronagames-logo.png',
+    logoUrl: '/assets/images/devs/madronagames-logo.webp',
     name: 'Madrona Games',
   },
   {
