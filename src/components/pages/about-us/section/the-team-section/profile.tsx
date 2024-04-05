@@ -10,6 +10,7 @@ import {
   FaTwitter,
 } from 'react-icons/fa';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
+import { Continent } from './data/continent';
 
 interface Props {
   className?: string;
@@ -17,7 +18,7 @@ interface Props {
   name: string;
   title: string;
   image: string;
-  continent: 'Africa' | 'Americas' | 'Asia' | 'Europe';
+  continent: Continent;
   social: {
     website?: string;
     twitter?: string;
@@ -25,6 +26,17 @@ interface Props {
     github?: string;
   };
 }
+
+const getWebsiteIcon = (continent: Continent) => {
+  const Components = {
+    FaGlobeEurope,
+    FaGlobeAmericas,
+    FaGlobeAfrica,
+    FaGlobeAsia,
+  };
+  const Icon = Components[`FaGlobe${continent}`];
+  return <Icon />;
+};
 
 const Profile = ({
   className,
@@ -62,10 +74,7 @@ const Profile = ({
         {social.website && (
           <FadeIntoView delay={100}>
             <a href={social.website} target="_blank" rel="noreferrer">
-              {continent === 'Europe' && <FaGlobeEurope />}
-              {continent === 'Africa' && <FaGlobeAfrica />}
-              {continent === 'Americas' && <FaGlobeAmericas />}
-              {continent === 'Asia' && <FaGlobeAsia />}
+              {getWebsiteIcon(continent)}
             </a>
           </FadeIntoView>
         )}
@@ -99,7 +108,7 @@ const Profile = ({
 };
 
 Profile.defaultProps = {
-  nick: null,
+  nick: '',
   className: '',
 };
 
