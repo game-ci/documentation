@@ -27,7 +27,7 @@ const TimelineItemBullet = ({ right }: Props): React.JSX.Element => {
       ];
 
   return (
-    <div className={cx({ '-me-2 ms-1': !right, '-ms-2 me-1': right })}>
+    <div className={cx({ '-me-[0.45rem] ms-1': !right, '-ms-[0.45rem] me-1': right })}>
       <svg
         width="60"
         height="12"
@@ -36,8 +36,12 @@ const TimelineItemBullet = ({ right }: Props): React.JSX.Element => {
         xmlns="http://www.w3.org/2000/svg"
       >
         {positions.map((props, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <circle key={index} stroke="var(--brand-primary)" {...props} />
+          <circle
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            className="stroke-primary-light dark:stroke-primary-dark"
+            {...props}
+          />
         ))}
       </svg>
     </div>
