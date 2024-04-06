@@ -67,7 +67,7 @@ const Profile = ({
             </h3>
           )}
           <p className="text-lg leading-none text-center">{name}</p>
-          <p className="text-sm leading-none text-center text-softer">{title}</p>
+          <p className="text-sm leading-none text-center opacity-75">{title}</p>
         </div>
       </FadeIntoView>
 

@@ -63,10 +63,6 @@
   }
 }
 
-.text-softer {
-  @apply opacity-75
-}
-
 .footer {
   --ifm-footer-background-color: #373445;
 }
