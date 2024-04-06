@@ -15,13 +15,13 @@ const TimelineItem = ({ title, subTitle, right }: Props): React.JSX.Element => {
     <>
       {!!right && (
         <div
-          className={cx('border-0 border-solid border-primary', {
+          className={cx('border-0 border-solid border-primary-light dark:border-primary-dark', {
             'border-r-2': right,
           })}
         />
       )}
       <div
-        className={cx('pb-5 border-0 border-solid border-primary', {
+        className={cx('pb-5 border-0 border-solid border-primary-light dark:border-primary-dark', {
           'border-e-2': !right,
           'border-s-0 mb-0 pb-5': right,
         })}

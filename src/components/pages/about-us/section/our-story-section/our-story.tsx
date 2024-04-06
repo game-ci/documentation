@@ -6,9 +6,9 @@ import { david, gabLeRoux, webber, fisher } from '../the-team-section/data/team-
 
 const OurStory = () => {
   return (
-    <div className="2xl:container 2xl:mx-auto lg:py-16 lg:px-20 md:py-12 md:px-6 px-4">
-      <div className="flex lg:flex-row flex-col items-start lg:space-x-8">
-        <div className="w-full lg:w-7/12 p-5 bg-theme-highlight rounded-md">
+    <section className="2xl:container 2xl:mx-auto lg:py-8 lg:px-20 md:px-6 px-4">
+      <div className="flex lg:flex-row flex-col items-start lg:gap-8">
+        <div className="w-full lg:w-7/12 p-5 bg-background-highlight-light dark:bg-background-highlight-dark rounded-md">
           <FadeIntoView>
             <h2 className="font-bold lg:text-4xl text-3xl lg:leading-9 leading-7">Our Story</h2>
           </FadeIntoView>
@@ -21,7 +21,7 @@ const OurStory = () => {
             </p>
           </FadeIntoView>
         </div>
-        <div className="lg:pt-16 xl:pt-0 w-full lg:w-5/12 lg:mt-0 sm:mt-10 mt-8">
+        <div className="xl:pt-0 w-full lg:w-5/12 lg:mt-0 sm:mt-10 mt-8">
           <Timeline>
             <TimelineItem
               title="Founded (2019)"
@@ -82,7 +82,7 @@ const OurStory = () => {
           </Timeline>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

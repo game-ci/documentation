@@ -47,10 +47,11 @@ const Profile = ({
   continent,
   social,
 }: Props): React.JSX.Element => {
+  const displayName = nick || name;
   return (
     <div
       className={cx(
-        'w-64 xl:w-72 py-10 space-y-8 bg-white flex justify-center items-center flex-col shadow hover:shadow-xl transition duration-500 ease-in-out border rounded-lg border-gray-100 bg-theme-highlight',
+        'w-full py-10 space-y-8 bg-background-highlight-light dark:bg-background-highlight-dark flex justify-center items-center flex-col shadow hover:shadow-xl transition duration-500 ease-in-out border rounded-lg border-gray-100',
         className,
       )}
     >
@@ -70,10 +71,15 @@ const Profile = ({
         </div>
       </FadeIntoView>
 
-      <div className="flex flex-row space-x-2">
+      <div className="flex gap-2">
         {social.website && (
           <FadeIntoView delay={100}>
-            <a href={social.website} target="_blank" rel="noreferrer">
+            <a
+              href={social.website}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s website`}
+            >
               {getWebsiteIcon(continent)}
             </a>
           </FadeIntoView>
@@ -81,7 +87,12 @@ const Profile = ({
 
         {social.twitter && (
           <FadeIntoView delay={200}>
-            <a href={social.twitter} target="_blank" rel="noreferrer">
+            <a
+              href={social.twitter}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s Twitter`}
+            >
               <FaTwitter />
             </a>
           </FadeIntoView>
@@ -89,7 +100,12 @@ const Profile = ({
 
         {social.linkedIn && (
           <FadeIntoView delay={300}>
-            <a href={social.linkedIn} target="_blank" rel="noreferrer">
+            <a
+              href={social.linkedIn}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s Linkedin`}
+            >
               <FaLinkedin />
             </a>
           </FadeIntoView>
@@ -97,7 +113,12 @@ const Profile = ({
 
         {social.github && (
           <FadeIntoView delay={400}>
-            <a href={social.github} target="_blank" rel="noreferrer">
+            <a
+              href={social.github}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s Github`}
+            >
               <FaGithub />
             </a>
           </FadeIntoView>

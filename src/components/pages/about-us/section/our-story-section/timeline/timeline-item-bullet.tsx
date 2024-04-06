@@ -27,7 +27,7 @@ const TimelineItemBullet = ({ right }: Props): React.JSX.Element => {
       ];
 
   return (
-    <div className={cx('-mt-1', { '-me-2 ms-1': !right, '-ms-2 me-1': right })}>
+    <div className={cx({ '-me-2 ms-1': !right, '-ms-2 me-1': right })}>
       <svg
         width="60"
         height="12"
