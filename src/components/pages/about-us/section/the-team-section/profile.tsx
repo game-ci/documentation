@@ -27,6 +27,8 @@ interface Props {
   };
 }
 
+const ICON_SIZE = 20;
+
 const getWebsiteIcon = (continent: Continent) => {
   const Components = {
     FaGlobeEurope,
@@ -35,7 +37,7 @@ const getWebsiteIcon = (continent: Continent) => {
     FaGlobeAsia,
   };
   const Icon = Components[`FaGlobe${continent}`];
-  return <Icon />;
+  return <Icon size={ICON_SIZE} className="block" />;
 };
 
 const Profile = ({
@@ -51,12 +53,12 @@ const Profile = ({
   return (
     <div
       className={cx(
-        'w-full py-10 space-y-8 bg-background-highlight-light dark:bg-background-highlight-dark flex justify-center items-center flex-col shadow hover:shadow-xl transition duration-500 ease-in-out border rounded-lg border-gray-100',
+        'w-full py-10 space-y-4 md:space-y-8 bg-background-highlight-light dark:bg-background-highlight-dark flex justify-center items-center flex-col shadow hover:shadow-xl transition duration-500 ease-in-out border rounded-lg border-gray-100',
         className,
       )}
     >
       <FadeIntoView delay={100}>
-        <img className="w-20 xl:w-32 2xl:w-48 rounded-full" src={image} alt={name} />
+        <img className="w-24 md:w-36 2xl:w-48 rounded-full" src={image} alt={name} />
       </FadeIntoView>
 
       <FadeIntoView delay={200}>
@@ -93,7 +95,7 @@ const Profile = ({
               rel="noreferrer"
               title={`${displayName}'s Twitter`}
             >
-              <FaTwitter />
+              <FaTwitter size={ICON_SIZE} className="block" />
             </a>
           </FadeIntoView>
         )}
@@ -106,7 +108,7 @@ const Profile = ({
               rel="noreferrer"
               title={`${displayName}'s Linkedin`}
             >
-              <FaLinkedin />
+              <FaLinkedin size={ICON_SIZE} className="block" />
             </a>
           </FadeIntoView>
         )}
@@ -119,7 +121,7 @@ const Profile = ({
               rel="noreferrer"
               title={`${displayName}'s Github`}
             >
-              <FaGithub />
+              <FaGithub size={ICON_SIZE} className="block" />
             </a>
           </FadeIntoView>
         )}
