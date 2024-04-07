@@ -13,17 +13,17 @@ interface Props {
 const TimelineItem = ({ title, subTitle, right }: Props): React.JSX.Element => {
   return (
     <>
-      {right ? (
+      {!!right && (
         <div
-          className={cx('border-0 border-solid border-primary', {
-            'sm:border-r-2': right,
+          className={cx('border-0 border-solid border-primary-light dark:border-primary-dark', {
+            'border-r-2': right,
           })}
         />
-      ) : null}
+      )}
       <div
-        className={cx('pb-5 border-0 border-solid border-primary', {
-          'border-r-2': !right,
-          'border-l-2 sm:border-l-0 mb-5 sm:mb-0 sm:pb-5': right,
+        className={cx('pb-5 border-0 border-solid border-primary-light dark:border-primary-dark', {
+          'border-e-2': !right,
+          'border-s-0 mb-0 pb-5': right,
         })}
       >
         <FadeIntoView>
@@ -32,11 +32,11 @@ const TimelineItem = ({ title, subTitle, right }: Props): React.JSX.Element => {
 
             <TimelineItemText title={title} subTitle={subTitle} />
 
-            {right || <TimelineItemBullet right={right} />}
+            {!right && <TimelineItemBullet right={right} />}
           </div>
         </FadeIntoView>
       </div>
-      {right ? null : <div />}
+      {!right && <div />}
     </>
   );
 };

@@ -7,9 +7,9 @@ interface Props {
 
 const TimelineItemText = ({ title, subTitle }: Props): React.JSX.Element => {
   return (
-    <div className="w-auto">
-      <h2 className="-mt-2 font-semibold text-xl leading-5 ">{title}</h2>
-      <p className="font-normal text-base leading-6 mt-2 text-softer">{subTitle}</p>
+    <div className="w-full">
+      <h3 className="font-semibold text-xl leading-5">{title}</h3>
+      <p className="font-normal text-base leading-6 mt-2">{subTitle}</p>
     </div>
   );
 };
