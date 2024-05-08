@@ -283,10 +283,60 @@ collectively consume a significant amount of disk space.
    [Cloud Runners](https://game.ci/docs/github-cloud-runner/game-ci-vs-cloud-runner#large-github-projects).
    This would give you more control over the resources and disk space.
 
----
+### Failed to find a suitable OpenCL device for the GPU Lightmapper
 
-This revised section provides a clearer understanding of the issue and offers more directed
-solutions.
+#### Error
+
+```plaintext
+Error: Failed to find a suitable OpenCL device for the GPU Lightmapper. Please change your lightmapper or install the latest graphics driver.
+
+Error: Global Illumination requires a graphics device to render albedo.
+```
+
+#### Explanation
+
+This error occurs when Unity fails to find a suitable OpenCL device for the GPU Lightmapper. This
+can be due to a variety of reasons, such as:
+
+- The GPU Lightmapper is not supported on the current hardware.
+- The GPU Lightmapper is not supported on the current operating system.
+- The GPU Lightmapper is not supported on the current Unity version.
+- The GPU Lightmapper is not supported on the current graphics driver.
+
+In the context of CI/CD pipelines, this error can occur when running Unity in a headless mode on a
+virtual machine, a cloud-based CI/CD service, or a containerized environment as the GPU might not be
+available or supported.
+
+#### Solution
+
+You can change the lightmapper settings in your Unity project to use the **CPU Lightmapper**.
+
+I went ahead and looked for that setting to make it easier for anyone else getting this error to
+figure out how to at least bypass the error or try something.
+
+**How to find the Lightmapper settings**
+
+The "Progressive GPU Lightmapper" setting in Unity is used for baking lightmaps using the GPU, which
+can significantly speed up the process compared to CPU lightmapping. This feature is especially
+useful for high-quality lighting in complex scenes, but might be missing when running in a
+Dockerized environment such as in a CI/CD pipeline with GameCI.
+
+Here’s how to find and change the Lightmapper setting in Unity:
+
+1. **Open Unity** and load your project.
+2. **Open the Lighting Window**: Go to `Window` > `Rendering` > `Lighting`.
+3. **Lightmapping Settings**: In the Lighting window (scene tab), you'll see a **Lighting Settings**
+   section with a **Lighting Settings Asset**
+4. **Select the Lighting Settings Asset file**: Clicking on the asset will highlight it in your
+   Project window. Click on the asset to edit the values with the inspector.
+5. **Find the Lightmapping Settings**: Look for a dropdown labeled **Lightmapper**. If Realtime
+   Global Illumination and Baked Global Illumination aren't checked, the option won't be available
+   (it will be grayed out). Here, you have the option to select between :
+   - `Enlighten`
+   - `Progressive GPU (Preview)`
+   - `Progressive CPU`
+6. **Bake the Lightmaps**: After setting up your lightmapper, you can click `Generate Lighting` to
+   start baking the lightmaps using the selected option.
 
 ## General tips
 
