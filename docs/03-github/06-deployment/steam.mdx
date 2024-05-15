@@ -77,6 +77,7 @@ jobs:
           buildDescription: v${{ needs.buildForWindowsAndLinux.outputs.buildVersion }}
           rootPath: build
           depot1Path: StandaloneWindows64
+          depot1InstallScriptPath: StandaloneWindows64/install_script.vdf
           depot2Path: StandaloneLinux64
           releaseBranch: prerelease
 ```
@@ -136,6 +137,14 @@ The root path to your builds. This is the base of which depots will search your 
 Where X is any number between 1 and 9 (inclusive both).
 
 The relative path following your root path for the files to be included in this depot.
+
+If your appId is 125000 then the depots 125001 ... 125009 will be assumed.
+
+#### depot[X]InstallScriptPath
+
+Where X is any number between 1 and 9 (inclusive both).
+
+The relative path following your root path for the InstallScript to be included in this depot.
 
 If your appId is 125000 then the depots 125001 ... 125009 will be assumed.
 
