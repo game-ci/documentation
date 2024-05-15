@@ -25,7 +25,7 @@ jobs:
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
     outputs:
-      buildVersion: ${{ steps.build.outputs.buildVersion }}
+      buildVersion: ${{ steps.buildStep.outputs.buildVersion }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,7 +41,7 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
             Library-
       - uses: game-ci/unity-builder@v4
-        id: build
+        id: buildStep
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
