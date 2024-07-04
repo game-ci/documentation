@@ -20,9 +20,15 @@ namespace UnityBuilderAction
             Dictionary<string, string> options = GetValidatedOptions();
 
             // Set version for this build
-            PlayerSettings.bundleVersion = options["buildVersion"];
-            PlayerSettings.macOS.buildNumber = options["buildVersion"];
-            PlayerSettings.Android.bundleVersionCode = int.Parse(options["androidVersionCode"]);
+            if(options.TryGetValue("buildVersion", out string buildVersion) && buildVersion != "none")
+            {
+                PlayerSettings.bundleVersion = buildVersion;
+                PlayerSettings.macOS.buildNumber = buildVersion;
+            }
+            if(options.TryGetValue("androidVersionCode", out string versionCode) && versionCode != "0")
+            {
+                PlayerSettings.Android.bundleVersionCode = int.Parse(options["androidVersionCode"]);
+            }
 
             // Apply build target
             var buildTarget = (BuildTarget) Enum.Parse(typeof(BuildTarget), options["buildTarget"]);
