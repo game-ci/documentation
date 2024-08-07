@@ -74,6 +74,20 @@ Example of use:
     unityLicensingServer: [url to your license server]
 ```
 
+Additionally, if your licensing server has multiple product licenses configured, you can specify the
+product identifier(s) that will be requested. More information about multiple products can be found
+[here](https://docs.unity.com/licensing/en-us/manual/ServerSetup-test#Support_for_multiple_product_licenses).
+
+Example of use:
+
+```yaml
+- uses: game-ci/unity-test-runner@v4
+  with:
+    projectPath: path/to/your/project
+    unityLicensingServer: [url to your license server]
+    unityLicensingProductIds: [comma separated product ids]
+```
+
 That is all you need to test your project.
 
 ## Testing Projects with a private scoped registry
@@ -556,6 +570,19 @@ _**required:** `false`_ _**default:** `false`_
 
 User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build
 artifacts.
+
+_**required:** `false`_ _**default:** `""`_
+
+#### unityLicensingServer
+
+Sets the url to a unity license server for acquiring floating licenses.
+
+_**required:** `false`_ _**default:** `""`_
+
+#### unityLicensingProductIds
+
+Comma separated list of license product identifiers to request licenses for from the unity license
+server.
 
 _**required:** `false`_ _**default:** `""`_
 
