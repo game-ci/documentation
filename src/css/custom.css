@@ -9,7 +9,7 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #309976;
+  --ifm-color-primary: #2b896a;
   --ifm-color-primary-dark: #305a48;
   --ifm-color-primary-darker: #2d5544;
   --ifm-color-primary-darkest: #254638;
@@ -63,24 +63,6 @@
   }
 }
 
-.text-softer {
-  @apply opacity-75
-}
-
-.border-primary {
-  border-color: var(--brand-primary);
-}
-
 .footer {
   --ifm-footer-background-color: #373445;
-}
-
-.layout {
-  color: var(--brand-text);
-  background: var(--brand-background);
-}
-
-
-.bg-theme-highlight {
-  background: var(--theme-background);
 }

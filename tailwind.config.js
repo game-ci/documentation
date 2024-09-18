@@ -5,7 +5,7 @@ module.exports = {
       colors: {
         primary: {
           dark: '#3dc094',
-          light: '#309976',
+          light: '#2b896a',
         },
         secondary: {
           dark: '#373445',
@@ -15,6 +15,10 @@ module.exports = {
           dark: '#f0f2f5',
           light: '#373445',
         },
+        'brand-background': {
+          dark: '#23212b',
+          light: '#f0f2f5',
+        },
         background: {
           normal: {
             dark: '#373445',
@@ -23,6 +27,10 @@ module.exports = {
           darker: {
             dark: '#32303f',
             light: '#f2f2f2',
+          },
+          highlight: {
+            dark: '#363344',
+            light: '#ffffff',
           },
         },
       },

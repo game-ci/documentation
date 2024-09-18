@@ -32,6 +32,8 @@ Then, define the test step as follows:
 - uses: game-ci/unity-test-runner@v4
   env:
     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
   with:
     projectPath: path/to/your/project
     githubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -74,6 +76,22 @@ Example of use:
 
 That is all you need to test your project.
 
+## Testing Projects with a private scoped registry
+
+If your project has dependencies that are hosted in a private UPM registry, then you will need to
+supply a valid authentication token and URL for your registry as an environment variable.
+
+```yaml
+- uses: game-ci/unity-test-runner@v4
+  env:
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    UPM_REGISTRY_TOKEN: ${{ secrets.UPM_REGISTRY_TOKEN }}
+  with:
+    scopedRegistryUrl: https://example.com/registry
+```
+
 ## Testing Unity packages
 
 The test runner offers basic support for testing Unity packages, with [a few caveats](#caveats).
@@ -109,10 +127,10 @@ depedencies can be resolved.
 
 #### Authentication with a private scoped registry
 
-If your package has dependencies that are hosted in a private UPM registry, then you will need to
-supply a valid authentication token for your registry as an environment variable. Setup the
-[`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) as usual, but also
-include a `UPM_REGISTRY_TOKEN` when defining your Unity License.
+If your package has dependencies that are hosted in a private UPM registry, then testing it is
+similar to tesing a project. Setup the [`scopedRegistryUrl`](#scopedRegistryUrl) and
+[`registryScopes`](#registryScopes) as usual, but also include a `UPM_REGISTRY_TOKEN` when defining
+your Unity License.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v4

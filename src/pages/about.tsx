@@ -6,7 +6,7 @@ import TheTeamSection from '@site/src/components/pages/about-us/section/the-team
 
 export default function About(): React.JSX.Element {
   return (
-    <Layout wrapperClassName="layout">
+    <Layout wrapperClassName="text-brand-text-light dark:text-brand-text-dark bg-brand-background-light dark:bg-brand-background-dark">
       <HeaderSection />
       <OurStory />
       <TheTeamSection />

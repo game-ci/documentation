@@ -2,14 +2,15 @@ import React from 'react';
 import Timeline from '@site/src/components/pages/about-us/section/our-story-section/timeline/timeline';
 import TimelineItem from '@site/src/components/pages/about-us/section/our-story-section/timeline/timeline-item';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
+import { david, gabLeRoux, webber, fisher } from '../the-team-section/data/team-info';
 
 const OurStory = () => {
   return (
-    <div className="2xl:container 2xl:mx-auto lg:py-16 lg:px-20 md:py-12 md:px-6 px-4">
-      <div className="flex lg:flex-row flex-col items-start lg:space-x-8">
-        <div className="w-full lg:w-7/12 p-5 bg-theme-highlight rounded-md">
+    <section className="2xl:container 2xl:mx-auto lg:py-8 lg:px-20 md:px-6 px-4">
+      <div className="flex lg:flex-row flex-col items-start lg:gap-8">
+        <div className="w-full lg:w-7/12 p-5 bg-background-highlight-light dark:bg-background-highlight-dark rounded-md">
           <FadeIntoView>
-            <h2 className="font-bold lg:text-4xl text-3xl lg:leading-9 leading-7 ">Our Story</h2>
+            <h2 className="font-bold lg:text-4xl text-3xl lg:leading-9 leading-7">Our Story</h2>
           </FadeIntoView>
 
           <FadeIntoView>
@@ -20,23 +21,19 @@ const OurStory = () => {
             </p>
           </FadeIntoView>
         </div>
-        <div className="lg:pt-16 xl:pt-0 w-full lg:w-5/12 lg:mt-0 sm:mt-10 mt-8">
+        <div className="xl:pt-0 w-full lg:w-5/12 lg:mt-0 sm:mt-10 mt-8">
           <Timeline>
             <TimelineItem
               title="Founded (2019)"
               subTitle={
                 <>
                   GameCI was founded by{' '}
-                  <a href="https://takken.io?utm_source=game-ci" target="_blank" rel="noreferrer">
-                    Webber
+                  <a href={webber.social.website} target="_blank" rel="noreferrer">
+                    {webber.nick}
                   </a>{' '}
                   and{' '}
-                  <a
-                    href="https://gableroux.com?utm_source=game-ci"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    GabLeRoux
+                  <a href={gabLeRoux.social.website} target="_blank" rel="noreferrer">
+                    {gabLeRoux.nick}
                   </a>
                   .
                 </>
@@ -48,20 +45,12 @@ const OurStory = () => {
               title="Core Maintainers (2020)"
               subTitle={
                 <>
-                  <a
-                    href="https://davidmfinol.website?utm_source=game-ci"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    David
+                  <a href={david.social.website} target="_blank" rel="noreferrer">
+                    {david.nick}
                   </a>{' '}
                   and{' '}
-                  <a
-                    href="@site/src/components/pages/about-us/section/our-story-section/our-story"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Fisher
+                  <a href={fisher.social.github} target="_blank" rel="noreferrer">
+                    {fisher.nick}
                   </a>{' '}
                   joined as Core Maintainers.
                 </>
@@ -93,7 +82,7 @@ const OurStory = () => {
           </Timeline>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

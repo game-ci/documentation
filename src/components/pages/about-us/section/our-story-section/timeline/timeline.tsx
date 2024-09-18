@@ -6,7 +6,7 @@ interface Props {
 }
 
 const Timeline = ({ children }: Props): React.JSX.Element => {
-  return <div className="w-full grid sm:grid-cols-2 grid-cols-1">{children}</div>;
+  return <div className="w-full grid grid-cols-2">{children}</div>;
 };
 
 export default Timeline;

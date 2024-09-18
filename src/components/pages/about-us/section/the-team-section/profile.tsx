@@ -10,6 +10,7 @@ import {
   FaTwitter,
 } from 'react-icons/fa';
 import FadeIntoView from '@site/src/components/molecules/animations/fade-into-view';
+import { Continent } from './data/continent';
 
 interface Props {
   className?: string;
@@ -17,7 +18,7 @@ interface Props {
   name: string;
   title: string;
   image: string;
-  continent: 'Africa' | 'Americas' | 'Asia' | 'Europe';
+  continent: Continent;
   social: {
     website?: string;
     twitter?: string;
@@ -25,6 +26,19 @@ interface Props {
     github?: string;
   };
 }
+
+const ICON_SIZE = 20;
+
+const getWebsiteIcon = (continent: Continent) => {
+  const Components = {
+    FaGlobeEurope,
+    FaGlobeAmericas,
+    FaGlobeAfrica,
+    FaGlobeAsia,
+  };
+  const Icon = Components[`FaGlobe${continent}`];
+  return <Icon size={ICON_SIZE} className="block" />;
+};
 
 const Profile = ({
   className,
@@ -35,15 +49,16 @@ const Profile = ({
   continent,
   social,
 }: Props): React.JSX.Element => {
+  const displayName = nick || name;
   return (
     <div
       className={cx(
-        'w-64 xl:w-72 py-10 space-y-8 bg-white flex justify-center items-center flex-col shadow hover:shadow-xl transition duration-500 ease-in-out border rounded-lg border-gray-100 bg-theme-highlight',
+        'w-full py-10 space-y-4 md:space-y-8 bg-background-highlight-light dark:bg-background-highlight-dark flex justify-center items-center flex-col shadow hover:shadow-xl transition duration-500 ease-in-out border rounded-lg border-gray-100',
         className,
       )}
     >
       <FadeIntoView delay={100}>
-        <img className="w-20 xl:w-32 2xl:w-48 rounded-full" src={image} alt={name} />
+        <img className="w-24 md:w-36 2xl:w-48 rounded-full" src={image} alt={name} />
       </FadeIntoView>
 
       <FadeIntoView delay={200}>
@@ -54,42 +69,59 @@ const Profile = ({
             </h3>
           )}
           <p className="text-lg leading-none text-center">{name}</p>
-          <p className="text-sm leading-none text-center text-softer">{title}</p>
+          <p className="text-sm leading-none text-center opacity-75">{title}</p>
         </div>
       </FadeIntoView>
 
-      <div className="flex flex-row space-x-2">
+      <div className="flex gap-2">
         {social.website && (
           <FadeIntoView delay={100}>
-            <a href={social.website} target="_blank" rel="noreferrer">
-              {continent === 'Europe' && <FaGlobeEurope />}
-              {continent === 'Africa' && <FaGlobeAfrica />}
-              {continent === 'Americas' && <FaGlobeAmericas />}
-              {continent === 'Asia' && <FaGlobeAsia />}
+            <a
+              href={social.website}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s website`}
+            >
+              {getWebsiteIcon(continent)}
             </a>
           </FadeIntoView>
         )}
 
         {social.twitter && (
           <FadeIntoView delay={200}>
-            <a href={social.twitter} target="_blank" rel="noreferrer">
-              <FaTwitter />
+            <a
+              href={social.twitter}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s Twitter`}
+            >
+              <FaTwitter size={ICON_SIZE} className="block" />
             </a>
           </FadeIntoView>
         )}
 
         {social.linkedIn && (
           <FadeIntoView delay={300}>
-            <a href={social.linkedIn} target="_blank" rel="noreferrer">
-              <FaLinkedin />
+            <a
+              href={social.linkedIn}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s Linkedin`}
+            >
+              <FaLinkedin size={ICON_SIZE} className="block" />
             </a>
           </FadeIntoView>
         )}
 
         {social.github && (
           <FadeIntoView delay={400}>
-            <a href={social.github} target="_blank" rel="noreferrer">
-              <FaGithub />
+            <a
+              href={social.github}
+              target="_blank"
+              rel="noreferrer"
+              title={`${displayName}'s Github`}
+            >
+              <FaGithub size={ICON_SIZE} className="block" />
             </a>
           </FadeIntoView>
         )}
@@ -99,7 +131,7 @@ const Profile = ({
 };
 
 Profile.defaultProps = {
-  nick: null,
+  nick: '',
   className: '',
 };
 
