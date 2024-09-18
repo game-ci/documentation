@@ -4,7 +4,8 @@ import Section from '@site/src/components/pages/home/section/section';
 
 const SponsorsSection = () => {
   return (
-    <Section title="Sponsors" className="bg-white dark:bg-[#020612]">
+    // Would be nice if the banner had a dark mode that we could use for `dark:*`
+    <Section title="Sponsors" className="bg-white dark:bg-white">
       <FadeIntoView>
         <iframe
           title="Game CI Sponsors"
