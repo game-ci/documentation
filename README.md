@@ -35,7 +35,7 @@ You may also view the markdown files directly at the following links:
 
 Built with [Docusaurus 2](https://docusaurus.io/).
 
-This project has a hard dependency on Node16. You will need to make sure that you have the proper
+This project has a hard dependency on Node18. You will need to make sure that you have the proper
 version of node installed to avoid errors.
 
 - [Install NodeJS v18 on Ubuntu](https://joshtronic.com/2022/04/24/how-to-install-nodejs-18-on-ubuntu-2004-lts/)
