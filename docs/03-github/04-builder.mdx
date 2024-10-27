@@ -688,6 +688,30 @@ that directory. This action must be done before running the game-ci/unity-builde
     echo "token = \"${{ secrets.NPM_TOKEN }}\"" >> .upmconfig.toml
 ```
 
+## Using preprocessor macros
+
+If needed, Unity preprocessor directives can be set by adding a step to the build.
+
+```yaml
+steps:
+  - name: Apply csc.rsp (pre-processor symbols)
+    run: echo -define:MY_SYMBOL >> Assets/csc.rsp
+```
+
+To avoid warnings about "unapplied changes", add `Assets/csc.rsp` in your `.gitignore`
+
+Once set, you can then reference these preprocessor directives in code:
+
+```c
+void Start() {
+#if MY_SYMBOL
+  GetComponent<TMP_Text>().text = "I have a symbol!";
+#else
+  GetComponent<TMP_Text>().text = "I do not have a symbol...";
+#endif
+}
+```
+
 ## Complete example
 
 A complete workflow that builds every available platform could look like this:
