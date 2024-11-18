@@ -20,7 +20,7 @@ export default function Home(): React.JSX.Element {
       <SponsorsSection />
       <WhoIsUsingGameCiSection />
       {/* <CodeExamplesSection /> */}
-      <PricingSection />
+      {/* <PricingSection /> */}
       {/* <GallerySection /> */}
     </Layout>
   );
