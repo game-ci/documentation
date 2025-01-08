@@ -1,56 +1,87 @@
+import unityHubPreferencesLicensesAddButton from '/assets/images/unity-hub-preferences-licenses-add-button.png';
+
 # Activation
 
-All actions use a Unity installation, which needs to be activated.
+All Unity actions require activation.
 
-Unity differentiates their methods between `personal` and `professional` licenses.
+### Choosing the Right Activation Method
 
-Depending on whether you are using a free or paid version of Unity, you will need to follow the
-steps for either a [personal license](#personal-license) or a
-[professional license](#professional-license). Alternatively you can provide the url to a
-[License server](#license-server).
+To activate Unity, select the method that matches your license type:
+
+- If you're using the **free version**, follow the steps for a
+  [Personal License](#personal-license).
+- If you're using the **paid version**, such as Unity Plus or Pro, refer to the instructions for a
+  [Professional License](#professional-license).
+- For organizations using a **license server**, you can provide the server's URL as detailed in the
+  [License Server](#license-server) section.
+
+Choose the appropriate method to ensure your Unity environment is activated and ready for use.
 
 ## Personal license
 
-Follow these steps if you are using a free version of Unity.
+Follow these steps if you are using the free version of Unity.
 
-> _**Note:** Do NOT follow the steps for the personal license if you have a professional license._
+> _**Note:** Do not follow the steps for the personal license if you have a professional license._
 
-#### Mental model
+### Mental Model
 
-1. Activate a license for use on Github via a local machine
-2. Set the license as a secret
+1. **Activate the license locally**: Use Unity Hub to create a `.ulf` license file linked to your
+   Unity account.
+2. **Add the license to GitHub**: Store the `.ulf` file and Unity credentials as GitHub secrets for
+   use in CI builds.
 
-#### Activating a license file
+#### Setting Up Your Unity License
 
-1. Install [Unity Hub](https://unity.com/download) on your local machine.
-2. Log into Unity Hub with the Unity account that you are using for CI. Make sure you log into the
-   correct account or you may not activate the correct license.
-3. When prompted, activate your personal license. If you are not prompted, go to `Unity Hub` >
-   `Preferences` > `Licenses` > `Add` and choose `Get a free personal license`. You do not need to
-   install an editor on your local machine.
-4. Depending on the host you are using, find the `.ulf` file which is your Unity license in the
-   following paths:
+1. **Install Unity Hub**: Download and install [Unity Hub](https://unity.com/download) on your local
+   machine.
+2. **Log in to Unity Hub**: Use the Unity account linked to your CI setup to log in. Ensure you're
+   using the correct account to activate the intended license.
+3. **Activate Your License**: Manually activate by navigating to:
+
+   - `Unity Hub` > `Preferences` > `Licenses` and click the `Add` button
+   - Select **Get a free personal license**.
+
+   :::info Ensure File Creation
+
+   Even if a license appears in Unity Hub, a `.ulf` file may not have been created. To ensure the
+   file is generated, make sure to click the `Add` button and proceed with the activation steps. Do
+   not skip this step.
+
+   <img
+     src={unityHubPreferencesLicensesAddButton}
+     alt="Unity Hub Preferences Licenses Add Button"
+   />
+
+4. **Locate the `.ulf` file**: Depending on your operating system, the Unity license file will be
+   located in one of these paths:
 
    - Windows: `C:\ProgramData\Unity\Unity_lic.ulf`
    - Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
    - Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
 
-   If you have issues locating the file, ensure you've logged into Unity Hub AND activated your
-   license. Otherwise the file will not be present. Keep in mind these folders might be hidden by
-   default, you may need to reveal hidden files to see them.
+   If you have trouble locating the `.ulf` file, follow these steps:
 
-   > **Note:** The host platform you use to activate the license does not matter. You only need to
-   > get the ulf from the platform that is most convenient to you. For example, using Windows to
-   > activate your license and building on Ubuntu on Github is perfectly fine.
+   - **Check activation**: Ensure you’ve logged into Unity Hub and completed the step "3. Activate
+     Your License".
+   - **Reveal hidden files**: These folders may be hidden by default, so enable the option to view
+     hidden files in your file explorer.
+   - **Use any platform**: Licenses are not tied to a specific Unity version or platform. You can
+     activate the license on any operating system, such as Windows, and use it for builds on another
+     platform, like Ubuntu. Simply retrieve the `.ulf` file from the platform most convenient for
+     you.
 
-5. Open `Github` > `<Your repository>` > `Settings` > `Secrets and Variables` > `Actions`.
-6. Create the following secrets;
-   - `UNITY_LICENSE` - _(Copy the contents of your license file into here)_
-   - `UNITY_EMAIL` - _(Add the email address that you use to login to Unity)_
-   - `UNITY_PASSWORD` - _(Add the password that you use to login to Unity)_
-7. Return your personal license in Unity Hub on the local machine you used to ensure you aren't
-   using up one of the seats. You can do this by going to `Unity Hub` > `Preferences` > `Licenses`
-   and choose `Return license` on the Personal license listed in the window.
+5. **Add Secrets to GitHub**: Navigate to `GitHub` > `<Your repository>` > `Settings` >
+   `Secrets and Variables` > `Actions`. Then, create the following secrets:
+
+   - **`UNITY_LICENSE`**: Copy and paste the contents of your `.ulf` license file.
+   - **`UNITY_EMAIL`**: Enter the email address associated with your Unity account.
+   - **`UNITY_PASSWORD`**: Enter the password for your Unity account.
+
+6. **Return the License**: To free up the seat used during activation, return the license in Unity
+   Hub on the local machine you used. Go to:
+
+   - `Unity Hub` > `Preferences` > `Licenses`
+   - Select the **Personal license** listed and click **Return license**.
 
 **GameCI does not acquire nor store your Unity email, password, or license file contents. They are
 required for activating the license during build and test steps.**
