@@ -1,193 +1,213 @@
+import unityHubPreferencesLicensesAddButton from '/assets/images/unity-hub-preferences-licenses-add-button.png';
+
 # Activation
 
-There are a few methods available, if you're using gitlab-ci, the easiest method in the current
-documentation is using gitlab-ci.
+:::caution Having issues with activation?
 
-:::caution Known issue with Unity activation on gitlab-ci: empty license file
-
-If you are having troubles with Unity activation with gitlab-ci, there is currently an issue with
-recent Unity versions preventing us to retrieve a license file with actual content.
-
-For more details see the
-[following issue: get-activation-file succeeding but giving a 0kb file. Unity Version 2021.2.7f1](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/171)
-and
-[the workaround](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/issues/171#note_974622879).
-
-Don't hesitate to contribute and implement a fix 💝
+Check out the [Troubleshooting / Common Issues][common-issues] section.
 
 :::
 
-:::info Having issues with activation?
+To run Unity in a CI/CD pipeline, you need to activate your license. For specific details about how
+the activation process works, refer to the following scripts:
 
-Have a look at the [troubleshooting / common issues][common-issues] page.
+- [`ci/before_script.sh`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/ci/before_script.sh)
+- [`ci/after_script.sh`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/ci/after_script.sh)
+
+In this guide, we will cover
+
+- Activation methods for different license types.
+- Setting up your Unity license in GitLab CI/CD.
+
+## Choosing the Right Activation Method
+
+To activate Unity, select the method that matches your license type.
+
+- If you're using the **free version**, follow the steps for a
+  [Personal License](#personal-license).
+- If you're using a **paid** Unity subscription (Plus/Pro), see
+  [Professional License](#professional-license).
+- If your organization has a **license server**, see [License Server](#license-server).
+
+## Personal License
+
+Follow these steps **if you are using the free version** of Unity and do **not** have a serial from
+a paid plan. However, note that **Unity Personal** licenses produce a **“serial”** token in the
+`.ulf` file.
+
+The activation process for Unity Personal licenses is as follows:
+
+1. **Activate locally** with Unity Hub on your machine and **Locate the `.ulf`** (see the
+   OS-specific paths).
+2. **Extract the serial** from the `.ulf` file.
+3. **Store** serial and Unity credentials in GitLab’s CI/CD Variables:
+   - `UNITY_SERIAL` (extracted from `.ulf`)
+   - `UNITY_EMAIL`
+   - `UNITY_PASSWORD`
+
+### 1. Setting Up Your Unity License
+
+1. **Install Unity Hub**: Download and install [Unity Hub](https://unity.com/download) on your local
+   machine.
+2. **Log in to Unity Hub**: Use the Unity account linked to your CI setup to log in. Ensure you're
+   using the correct account to activate the intended license.
+3. **Activate Your License**: Manually activate by navigating to:
+
+   - `Unity Hub` > `Preferences` > `Licenses` and click the `Add` button
+   - Select **Get a free personal license**.
+
+   :::info Ensure File Creation
+
+   Even if a license appears in Unity Hub, a `.ulf` file may not have been created. To ensure the
+   file is generated, make sure to click the `Add` button and proceed with the activation steps. Do
+   not skip this step.
+
+   <img
+     src={unityHubPreferencesLicensesAddButton}
+     alt="Unity Hub interface showing the Preferences window with the Licenses tab selected and the Add button highlighted"
+   />
+
+4. **Locate the `.ulf` file**: Depending on your operating system, the Unity license file will be
+   located in one of these paths:
+
+   - Windows: `C:\ProgramData\Unity\Unity_lic.ulf`
+   - Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
+   - Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
+
+If you have trouble locating the `.ulf` file, follow these steps:
+
+- **Check activation**: Ensure you’ve logged into Unity Hub and completed the step "3. Activate Your
+  License".
+- **Reveal hidden files**: These folders may be hidden by default, so enable the option to view
+  hidden files in your file explorer.
+- **Use any platform**: Licenses are not tied to a specific Unity version or platform. You can
+  activate the license on any operating system, such as Windows, and use it for builds on another
+  platform, like Ubuntu. Simply retrieve the `.ulf` file from the platform most convenient for you.
+
+### 2. Extracting the Serial from a personal license
+
+1. **Extract your Unity serial** from the `.ulf` file:
+
+   This command decodes the internal `DeveloperData` field to reveal the **serial** used for
+   activation (even for Personal).
+
+   On macOS or Linux:
+
+   ```bash
+   cat Unity_lic.ulf | grep DeveloperData | sed -E 's/.*Value="([^"]+)".*/\1/' | base64 --decode
+   ```
+
+   On Windows using Powershell:
+
+   ```powershell
+   Get-Content Unity_lic.ulf | Select-String -Pattern 'DeveloperData' | ForEach-Object { $_ -replace '.*Value="([^"]+)".*', '$1' } | [System.Convert]::FromBase64String($_)
+   ```
+
+### 3. Storing the Serial in GitLab CI/CD
+
+**Add the extracted serial** to your GitLab project’s CI/CD Variables:
+
+- `UNITY_SERIAL`: The serial extracted from the `.ulf` file.
+- `UNITY_EMAIL`: The email address associated with your Unity account.
+- `UNITY_PASSWORD`: The password for your Unity account.
+
+:::caution Using "protected" variables will make them available only to protected branches
+
+Make sure you unchecked the "protected" checkbox for these variables if you want them to be
+available for all branches and merge requests.
 
 :::
 
-## Unity Personal
+You're all set! The pipeline will use these credentials to activate Unity automatically. 🎉
 
-### a. Using gitlab-ci
+---
 
-Once you've added all required files to your project (mainly
-[`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml)),
-there should be a manual step that can be triggered for activation.
+## Professional License
 
-1. Visit your project's settings > CI/CD > Variables and add `UNITY_USERNAME` and `UNITY_PASSWORD`
-   with your credentials. Make sure to use your Unity3d _email address_ for `UNITY_USERNAME`.
-1. Push your first commit to your project and visit CI/CD Pipelines.
-1. Locate your latest job, there should be a `play` button, click on it and click
-   `get-activation-file`
-1. Wait for the job to run and follow instructions in the console
+If you have **Unity Plus** or **Unity Pro**, you have an **official serial key** from
+[Unity subscriptions](https://id.unity.com/en/subscriptions). For **GitLab**:
 
-:::caution
+1. **Get your serial** (e.g., `XX-XXXX-XXXX-XXXX-XXXX-XXXX`).
+2. **Go to** _Settings → CI/CD → Variables_ in your GitLab project:
+   - `UNITY_SERIAL`
+   - `UNITY_EMAIL`
+   - `UNITY_PASSWORD`
 
-**Unity no longer supports manual activation of Personal licenses**
+:::caution Using "protected" variables will make them available only to protected branches
 
-When activating your Personal Unity license, you may encounter an issue where only the "Unity Pro or
-Plus" option is available, preventing the activation of a Personal license. Here is a workaround to
-resolve this:
-
-1. Visit [license.unity3d.com](https://license.unity3d.com/manual) and upload the
-   `Unity_v20XX.X.XXXX.alf` file.
-2. On the "Activate your license" page, if the "Personal" option is not available, right-click on
-   the page and choose "Inspect" to open the browser's developer tools.
-3. Find the line of HTML that looks like this:
-   `<div class="option option-personal clear" style="display: none;">`.
-4. Delete `display: none;` from the `style` attribute to make the "Personal" option visible.
-5. Now you should be able to select the "Personal" option and proceed with the activation.
-
-You can discuss this issue or find additional assistance in the
-[related Discord conversation](https://discord.com/channels/710946343828455455/1138586951604248666)
-or [GitHub ticket](https://github.com/game-ci/documentation/issues/408).
-
-_For future reference, activating a license from the command line as documented on
-[Unity's Manual Page](https://docs.unity3d.com/Manual/ManagingYourUnityLicense.html) might be an
-alternative solution._
+Make sure you unchecked the "protected" checkbox for these variables if you want them to be
+available for all branches and merge requests.
 
 :::
 
-### b. Locally
+You're all set! The pipeline will use these credentials to activate Unity automatically. 🎉
 
-All you need is [docker](https://www.docker.com/) installed on your machine.
+---
 
-1. Clone [this project](https://gitlab.com/game-ci/unity3d-gitlab-ci-example)
-2. Pull the docker image and run bash inside, passing Unity username and password to env
+## License Server
 
-   _hint: you should write this to a shell script and execute the shell script so you don't have
-   your credentials stored in your bash history_. Also make sure you use your Unity3d _email
-   address_ for `UNITY_USERNAME` env var.
+If your organization uses a **floating license server**, you can supply a server URL with the
+environment variable `UNITY_LICENSING_SERVER` in your GitLab variables. The pipeline (via
+`before_script.sh`) automatically tries to **acquire** a floating license at the start of the job
+and **return** it after. For example:
 
-   ```bash
-   UNITY_VERSION=2022.3.12f1
-   IMAGE=unityci/editor # https://hub.docker.com/r/unityci/editor
-   IMAGE_VERSION=3 # https://github.com/game-ci/docker/releases
-   DOCKER_IMAGE=$IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION
+```yaml
+variables:
+  UNITY_LICENSING_SERVER: 'ssl://your-license-server.company.com:443'
+```
 
-   docker run -it --rm \
-   -e "UNITY_USERNAME=username@example.com" \
-   -e "UNITY_PASSWORD=example_password" \
-   -e "TEST_PLATFORM=linux" \
-   -e "WORKDIR=/root/project" \
-   -v "$(pwd):/root/project" \
-   $DOCKER_IMAGE \
-   bash
-   ```
+:::caution Using "protected" variables will make them available only to protected branches
 
-   If your password contains a `!`, you can escape it like this (`example_pass!word`):
+Make sure you unchecked the "protected" checkbox for these variables if you want them to be
+available for all branches and merge requests.
 
-   ```bash
-   ...
-   -e "UNITY_PASSWORD=example_pass"'!'"word" \
-   ...
-   ```
+:::
 
-3. In Unity docker container's bash, run once like this, it will try to activate
+**No need** to set `UNITY_EMAIL`, `UNITY_PASSWORD`, or `UNITY_SERIAL` if you exclusively use the
+license server method.
 
-   ```bash
-   xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   unity-editor \
-   -logFile /dev/stdout \
-   -batchmode \
-   -nographics \
-   -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
-   ```
+You're all set! The pipeline will use the server to activate Unity automatically. 🎉
 
-4. Wait for output that looks like this:
+---
 
-   ```
-   LICENSE SYSTEM [2017723 8:6:38] Posting <?xml version="1.0" encoding="UTF-8"?><root><SystemInfo><IsoCode>en</IsoCode><UserName>[...]
-   ```
+## Debugging activation Locally with Docker
 
-   If you get the following error:
+To debug or confirm activation locally (instead of pushing every time), you can run:
 
-   > Can't activate Unity: No sufficient permissions while processing request HTTP error code 401
+```bash
+UNITY_VERSION=2022.3.12f1
+IMAGE=unityci/editor
+IMAGE_VERSION=3
+DOCKER_IMAGE="$IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION"
 
-   Make sure your credentials are valid. You may try to disable 2FA in your account and try again.
-   Once done, you should enable 2FA again for security reasons. See
-   [#11](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/issues/11) for more details.
+docker run -it --rm \
+  -e "UNITY_EMAIL=username@example.com" \
+  -e "UNITY_PASSWORD=example_password" \
+  -e "UNITY_SERIAL=EXA-MPLE-SERI-ALKE-Y123" \
+  -v "$(pwd):/root/project" \
+  $DOCKER_IMAGE \
+  bash
 
-5. Copy xml content and save as `unity3d.alf`
-6. Open https://license.unity3d.com/manual and answer questions
-7. Upload `unity3d.alf` for manual activation
-8. Download `Unity_v2018.x.ulf` (`Unity_v2019.x.ulf` for 2019 versions)
-9. Copy the content of `Unity_v2018.x.ulf` license file to your CI's environment variable
-   `UNITY_LICENSE`. _Note: if you are doing this on Windows, chances are the
-   [line endings will be wrong as explained here](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/issues/5#note_95831816).
-   Luckily for you,
-   [`.gitlab-ci.yml`](https://github.com/game-ci/unity3d-ci-example/blob/main/.gitlab-ci.yml) of the
-   example project solves this by removing `\r` character from the ENV variable so you'll be
-   alright_
-   [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml)
-   will then place the `UNITY_LICENSE` to the right place before running tests or creating the
-   builds.
+# Then inside the container, run:
+xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
+  unity-editor \
+  -logFile /dev/stdout \
+  -batchmode \
+  -nographics \
+  -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL"
+```
 
-## Unity Plus/Pro
+If it finishes without errors, a `.ulf` should be located in
+`/root/.local/share/unity3d/Unity/Unity_lic.ulf`. You can use or reference that file in your GitLab
+environment.
 
-1. Clone [this project](https://gitlab.com/game-ci/unity3d-gitlab-ci-example)
-2. Pull the docker image and run bash inside, passing Unity username and password to env
+## Next Steps
 
-   _hint: you should write this to a shell script and execute the shell script so you don't have
-   your credentials stored in your bash history_. Also make sure you use your Unity3d _email
-   address_ for `UNITY_USERNAME` env var.
+Once your license is activated in GitLab CI, you can:
 
-   ```bash
-   UNITY_VERSION=2022.3.12f1
-   IMAGE=unityci/editor # https://hub.docker.com/r/unityci/editor
-   IMAGE_VERSION=3 # https://github.com/game-ci/docker/releases
-   DOCKER_IMAGE=$IMAGE:$UNITY_VERSION-base-$IMAGE_VERSION
-
-   docker run -it --rm \
-   -e "UNITY_USERNAME=username@example.com" \
-   -e "UNITY_PASSWORD=example_password" \
-   -e "UNITY_SERIAL=AN-EXAM-PLE-SERIA-LKEY-1234" \
-   -e "TEST_PLATFORM=linux" \
-   -e "WORKDIR=/root/project" \
-   -v "$(pwd):/root/project" \
-   $DOCKER_IMAGE \
-   bash
-   ```
-
-3. In Unity docker container's bash, run once like this, it will try to activate
-
-   ```bash
-   xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-   unity-editor \
-   -logFile /dev/stdout \
-   -batchmode \
-   -nographics \
-   -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL"
-   ```
-
-4. Wait for the command to finish without errors
-5. Obtain the contents of the license file by running
-   `cat /root/.local/share/unity3d/Unity/Unity_lic.ulf`
-6. Copy the content to your CI's environment variable `UNITY_LICENSE`. _Note: if you are doing this
-   on windows, chances are the
-   [line endings will be wrong as explained here](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/issues/5#note_95831816).
-   Luckily for you,
-   [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml)
-   solves this by removing `\r` character from the env variable so you'll be alright_
-   [`.gitlab-ci.yml`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/.gitlab-ci.yml)
-   will then place the `UNITY_LICENSE` to the right place before running tests or creating the
-   builds.
+- Run **Unit tests** with the `test` job in your `.gitlab-ci.yml`.
+- Create **Builds** for multiple platforms (Windows, Linux, macOS, Android, iOS, WebGL).
+- Deploy or publish artifacts (e.g. WebGL to GitLab Pages).
+- Explore advanced usage (e.g., coverage reports, caching, license server expansions).
 
 [common-issues]: /docs/troubleshooting/common-issues
