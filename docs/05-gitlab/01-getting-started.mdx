@@ -64,6 +64,10 @@ stable versions.
 
 :::
 
+Note: This setup assumes that your unity project is at the root of the repository. If your project
+is in a subfolder, you will need to adjust the paths in the commands below. You will also need to
+adjust `UNITY_DIR` in `.gitlab-ci.yml` to point to the correct directory.
+
 ```bash
 # Clone the example repository
 git clone https://gitlab.com/game-ci/unity3d-gitlab-ci-example.git
@@ -89,7 +93,8 @@ cp ../unity3d-gitlab-ci-example/Assets/Scripts/Editor/BuildCommand.cs ./Assets/S
 
 <details><summary>Verify the copied files</summary>
 
-After running these commands, you should see the following files and folders in your Unity project:
+After running these commands, you should see the following files and folders in your Unity project
+(in addition to your existing project files):
 
 ```plaintext
 your-unity-project/
@@ -109,19 +114,7 @@ your-unity-project/
 
 </details>
 
-### 2. Customize the Configuration
-
-1. **Edit the `.gitlab-ci.yml` file**:
-
-   - Open the copied `.gitlab-ci.yml` file in your Unity project folder.
-   - Update the Unity version and other variables. Your Unity version can be found in
-     `ProjectSettings/ProjectVersion.txt`.
-
-2. **Update the `UNITY_DIR` variable**:
-   - If your Unity project isn’t located at the root of your repository, update the `UNITY_DIR`
-     variable in the `.gitlab-ci.yml` file to the relative path of your Unity project.
-
-### 3. Push Changes to GitLab
+### 2. Push Changes to GitLab
 
 Add the files to your repository:
 
