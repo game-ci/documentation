@@ -8,8 +8,8 @@ gitlab using gitlab-ci.
 ## Overall steps
 
 1. Understand how [gitlab-ci](https://docs.gitlab.com/ce/ci/) works.
-2. Configure a license for Unity.
-3. Add build scripts and integrations in your Unity project
+2. Add build scripts and integrations in your Unity project
+3. Configure a license for Unity.
 4. Set up a gitlab-ci pipeline for your project.
 5. Result: Accept merge requests with more confidence.
 
@@ -22,14 +22,14 @@ Any subsequent steps assume you have read the above.
 
 ## Supported versions
 
-The [unity3d-gitlab-ci-example project](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/) is
-based on [unity3d](https://github.com/game-ci/docker/) docker images from
-[game-ci](https://github.com/game-ci). Any version in the
-[docker hub `unityci/editor` tags list](https://hub.docker.com/r/unityci/editor/tags) can be used to
-test and build projects.
+The [unity3d-gitlab-ci-example project](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/) uses
+[unity3d docker images](https://github.com/game-ci/docker/) published by
+[game-ci](https://github.com/game-ci). You can find all the supported Unity versions in our
+[Docker > Versions page](/docs/docker/versions).
 
-It's generally considered good practice to use the same Unity version for your CI/CD setup as you do
-to develop your project.
+It is generally considered good practice to use the same Unity version for your CI/CD setup as you
+do to develop your project. Our Gitlab CI configuration will automatically detect and use the
+correct Unity version for your project.
 
 ## Video tutorial
 
@@ -52,13 +52,28 @@ Follow these steps to quickly set up GitLab CI for your Unity project.
 ### 1. Run the Commands
 
 Open a terminal in the **parent folder** where you want to set up your Unity project and run these
-commands one by one:
+commands one by one. In summary, these commands will:
+
+- Clone the example project
+- Copy the necessary files and folders to your Unity project.
+
+:::info
+
+See [example project's release](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/releases) for
+stable versions.
+
+:::
 
 ```bash
 # Clone the example repository
 git clone https://gitlab.com/game-ci/unity3d-gitlab-ci-example.git
 
-# Change to your Unity project folder
+# Note: you can checkout a specific version if you want
+#cd unity3d-gitlab-ci-example
+#git checkout v4.0.0
+#cd ..
+
+# Change directory to your Unity project folder
 cd your-unity-project
 
 # Create necessary directories
@@ -70,7 +85,32 @@ cp -r ../unity3d-gitlab-ci-example/ci ./
 cp ../unity3d-gitlab-ci-example/Assets/Scripts/Editor/BuildCommand.cs ./Assets/Scripts/Editor/
 ```
 
-Replace `your-unity-project` with the name of your Unity project folder.
+- Replace `your-unity-project` with the name of your Unity project folder.
+
+<details><summary>Verify the copied files</summary>
+
+After running these commands, you should see the following files and folders in your Unity project:
+
+```plaintext
+your-unity-project/
+├── .gitlab-ci.yml
+├── ci/
+│   ├── nunit-transforms/
+│   │   ├── LICENSE.txt
+│   │   └── nunit3-junit.xslt
+│   ├── before_script.sh
+│   ├── build.sh
+│   ├── docker_build.sh
+│   ├── docker_test.sh
+│   ├── return_license.sh
+│   └── test.sh
+└── Assets/
+└── Scripts/
+└── Editor/
+└── BuildCommand.cs
+```
+
+</details>
 
 ### 2. Customize the Configuration
 
@@ -84,7 +124,17 @@ Replace `your-unity-project` with the name of your Unity project folder.
    - If your Unity project isn’t located at the root of your repository, update the `UNITY_DIR`
      variable in the `.gitlab-ci.yml` file to the relative path of your Unity project.
 
----
+### 3. Push Changes to GitLab
 
-That’s It! Your Unity project is now set up for GitLab CI. **Proceed with activation instructions to
-complete the process.**
+Add the files to your repository:
+
+```bash
+git add .gitlab-ci.yml ci/ Assets/Scripts/Editor/BuildCommand.cs
+git commit -m "Add GameCI configuration"
+git push
+```
+
+### Proceed to activation
+
+That’s It! You're one step away from having automated builds and tests for your Unity project.
+Proceed to the [Activation](./02-activation.mdx) guide.
