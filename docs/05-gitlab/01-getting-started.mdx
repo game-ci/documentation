@@ -44,86 +44,63 @@ The video is slightly outdated, but the general concepts are still the same. �
 
 :::
 
-## Setting Up GitLab CI for Your Unity Project
+### Steps to Set Up Unity CI/CD with GitLab
 
-Follow these steps to quickly set up GitLab CI for your Unity project.
+#### 1. Clone the Example Repository
 
-### 1. Run the Commands
-
-Open a terminal in the **parent folder** where you want to set up your Unity project and run these
-commands one by one. In summary, these commands will:
-
-- Clone the example project
-- Copy the necessary files and folders to your Unity project.
-
-:::info
-
-See [example project's release](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/releases) for
-stable versions.
-
-:::
-
-Note: This setup assumes that your unity project is at the root of the repository. If your project
-is in a subfolder, you will need to adjust the paths in the commands below. You will also need to
-adjust `UNITY_DIR` in `.gitlab-ci.yml` to point to the correct directory.
+Start by cloning the GameCI example project provided by GameCI to use its configuration files.
 
 ```bash
-# Clone the example repository
 git clone https://gitlab.com/game-ci/unity3d-gitlab-ci-example.git
+```
 
-# Note: you can checkout a specific version if you want
-#cd unity3d-gitlab-ci-example
-#git checkout v4.0.0
-#cd ..
+#### 2. (Optional) Checkout a Specific Version
 
-# Change directory to your Unity project folder
+If you want to use a specific version of the example project, checkout the desired tag.
+
+```bash
+cd unity3d-gitlab-ci-example
+git checkout v4.0.0
+cd ..
+```
+
+:::info See
+[example project's release](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/releases) for
+stable versions. :::
+
+#### 3. Navigate to Your Unity Project
+
+Replace `your-unity-project` with the actual name of your Unity project folder.
+
+```bash
 cd your-unity-project
+```
 
-# Create necessary directories
+#### 4. Create Necessary Directories
+
+Create the required directories in your Unity project to hold CI-related files.
+
+```bash
 mkdir -p Assets/Scripts/Editor/
+```
 
-# Copy required files from the example project
+#### 5. Copy Required Files
+
+Copy the necessary CI configuration and scripts from the example project to your Unity project.
+
+```bash
 cp ../unity3d-gitlab-ci-example/.gitlab-ci.yml ./
 cp -r ../unity3d-gitlab-ci-example/ci ./
 cp ../unity3d-gitlab-ci-example/Assets/Scripts/Editor/BuildCommand.cs ./Assets/Scripts/Editor/
 ```
 
-- Replace `your-unity-project` with the name of your Unity project folder.
+#### Final Note:
 
-<details><summary>Verify the copied files</summary>
+If your Unity project is not at the root of your repository, update the paths accordingly in the
+commands above and in the `.gitlab-ci.yml` file. Adjust the `UNITY_DIR` variable in `.gitlab-ci.yml`
+to point to your project directory.
 
-After running these commands, you should see the following files and folders in your Unity project
-(in addition to your existing project files):
-
-```plaintext
-your-unity-project/
-├── .gitlab-ci.yml
-├── ci/
-│   ├── nunit-transforms/
-│   │   ├── LICENSE.txt
-│   │   └── nunit3-junit.xslt
-│   ├── before_script.sh
-│   ├── build.sh
-│   ├── docker_build.sh
-│   ├── docker_test.sh
-│   ├── return_license.sh
-│   └── test.sh
-└── Assets/Scripts/Editor/BuildCommand.cs
-```
-
-</details>
-
-### 2. Push Changes to GitLab
-
-Add the files to your repository:
-
-```bash
-git add .gitlab-ci.yml ci/ Assets/Scripts/Editor/BuildCommand.cs
-git commit -m "chore: Add GameCI configuration"
-git push
-```
-
-### Proceed to activation
+## Proceed to activation
 
 That’s It! You're one step away from having automated builds and tests for your Unity project.
 Proceed to the [Activation](./02-activation.mdx) guide.
