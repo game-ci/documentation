@@ -8,6 +8,14 @@ Check out the [Troubleshooting / Common Issues][common-issues] section.
 
 :::
 
+:::info
+
+Refer to
+[Unity's official licensing documentation](https://docs.unity3d.com/Manual/LicensesAndActivation.html)
+for more details about Unity activation.
+
+:::
+
 To run Unity in a CI/CD pipeline, you need to activate your license. For details about how the
 activation process works, refer to the following scripts:
 
@@ -103,6 +111,12 @@ If you have trouble locating the `.ulf` file, follow these steps:
    Get-Content Unity_lic.ulf | Select-String -Pattern 'DeveloperData' | ForEach-Object { $_ -replace '.*Value="([^"]+)".*', '$1' } | [System.Convert]::FromBase64String($_)
    ```
 
+:::info Expected Serial Format
+
+The serial should look like this: `XX-XXXX-XXXX-XXXX-XXXX-XXXX`.
+
+:::
+
 ### 3. Storing the Serial in GitLab CI/CD
 
 **Add the extracted serial** to your GitLab project’s CI/CD Variables:
@@ -111,10 +125,17 @@ If you have trouble locating the `.ulf` file, follow these steps:
 - `UNITY_EMAIL`: The email address associated with your Unity account
 - `UNITY_PASSWORD`: The password for your Unity account
 
-:::caution Variables are not set in your pipelines?
+:::info Variables are not set in your pipelines?
 
 Make sure you unchecked the "protected" checkbox for these variables if you want them to be
 available for all branches and merge requests.
+
+:::
+
+:::caution Security Warning
+
+Keep your extracted serial and credentials secure. Never commit them to version control or share
+them publicly.
 
 :::
 
@@ -133,10 +154,17 @@ If you have **Unity Plus** or **Unity Pro**, you have an **official serial key**
    - `UNITY_EMAIL`
    - `UNITY_PASSWORD`
 
-:::caution Using "protected" variables will make them available only to protected branches
+:::info Using "protected" variables will make them available only to protected branches
 
 Make sure you unchecked the "protected" checkbox for these variables if you want them to be
 available for all branches and merge requests.
+
+:::
+
+:::caution Security Warning
+
+Keep your extracted serial and credentials secure. Never commit them to version control or share
+them publicly.
 
 :::
 
@@ -156,7 +184,7 @@ variables:
   UNITY_LICENSING_SERVER: 'ssl://your-license-server.company.com:443'
 ```
 
-:::caution Using "protected" variables will make them available only to protected branches
+:::info Using "protected" variables will make them available only to protected branches
 
 Make sure you unchecked the "protected" checkbox for these variables if you want them to be
 available for all branches and merge requests.
@@ -200,6 +228,14 @@ xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
 If it finishes without errors, a `.ulf` should be located in
 `/root/.local/share/unity3d/Unity/Unity_lic.ulf`. You can use or reference that file in your GitLab
 environment.
+
+:::caution Security Warning
+
+Executing shell commands directly in your terminal can expose your credentials in your shell
+history. To avoid this, consider writing the commands to a shell script and executing the script
+instead.
+
+:::
 
 ## Next Steps
 
