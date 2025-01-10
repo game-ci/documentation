@@ -8,8 +8,8 @@ Check out the [Troubleshooting / Common Issues][common-issues] section.
 
 :::
 
-To run Unity in a CI/CD pipeline, you need to activate your license. For specific details about how
-the activation process works, refer to the following scripts:
+To run Unity in a CI/CD pipeline, you need to activate your license. For details about how the
+activation process works, refer to the following scripts:
 
 - [`ci/before_script.sh`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/ci/before_script.sh)
 - [`ci/after_script.sh`](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/-/blob/main/ci/after_script.sh)
@@ -107,9 +107,9 @@ If you have trouble locating the `.ulf` file, follow these steps:
 
 **Add the extracted serial** to your GitLab project’s CI/CD Variables:
 
-- `UNITY_SERIAL`: The serial extracted from the `.ulf` file.
-- `UNITY_EMAIL`: The email address associated with your Unity account.
-- `UNITY_PASSWORD`: The password for your Unity account.
+- `UNITY_SERIAL`: The serial extracted from the `.ulf` file
+- `UNITY_EMAIL`: The email address associated with your Unity account
+- `UNITY_PASSWORD`: The password for your Unity account
 
 :::caution Using "protected" variables will make them available only to protected branches
 
