@@ -23,8 +23,14 @@ Any subsequent steps assume you have read the above.
 
 The [unity3d-gitlab-ci-example project](https://gitlab.com/game-ci/unity3d-gitlab-ci-example/) uses
 [unity3d docker images](https://github.com/game-ci/docker/) published by
-[game-ci](https://github.com/game-ci). You can find all the supported Unity versions in our
+[game-ci](https://github.com/game-ci).
+
+:::tip
+
+Before proceeding, verify that your Unity version is supported by checking the
 [Docker > Versions page](/docs/docker/versions).
+
+:::
 
 It is generally considered good practice to use the same Unity version for your CI/CD setup as you
 do to develop your project. Our Gitlab CI configuration will automatically detect and use the
@@ -36,9 +42,10 @@ correct Unity version for your project.
 
 :::caution
 
-The video is slightly outdated, but the general concepts are still the same. 👍
+The video (recorded with Unity 2020.x) is slightly outdated, but the general concepts are still the
+same. 👍
 
-- Activation process has changed a bit since then.
+- The activation process has changed a bit since then.
 - Docker images have been updated
 - The `.gitlab-ci.yml` file uses different variables now.
 
