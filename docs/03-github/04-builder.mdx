@@ -644,10 +644,10 @@ using `sshPublicKeysDirectoryPath` and setting the `GIT_CONFIG_EXTENSIONS` envir
 ```yaml
 - uses: webfactory/ssh-agent@v0.8.0
   with:
-  ssh-private-key: |
-    ${{ secrets.FIRST_KEY }}
-    ${{ secrets.NEXT_KEY }}
-    ${{ secrets.ANOTHER_KEY }}
+    ssh-private-key: |
+      ${{ secrets.FIRST_KEY }}
+      ${{ secrets.NEXT_KEY }}
+      ${{ secrets.ANOTHER_KEY }}
 
 - name: Prepare SSH config for unity builder
   run: |
