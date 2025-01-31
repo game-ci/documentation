@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+#if UNITY_6000_0_OR_NEWER
+using UnityEditor.Build.Profile;
+#endif
 
 namespace UnityBuilderAction
 {
@@ -88,6 +91,31 @@ namespace UnityBuilderAction
             // Custom build
             Build(buildTarget, buildSubtarget, options["customBuildPath"]);
         }
+
+#if UNITY_6000_0_OR_NEWER
+        public static void BuildWithProfile()
+        {
+            // Gather values from args
+            Dictionary<string, string> options = GetValidatedOptions();
+
+            // Load build profile from Assets folder
+            BuildProfile buildProfile = AssetDatabase.LoadAssetAtPath<BuildProfile>(options["customBuildProfile"]);
+
+            // Set it as active
+            BuildProfile.SetActiveBuildProfile(buildProfile);
+
+            // Define BuildPlayerWithProfileOptions
+            var buildPlayerWithProfileOptions = new BuildPlayerWithProfileOptions {
+                buildProfile = buildProfile,
+                locationPathName = options["customBuildPath"],
+                options = buildOptions,
+            };
+
+            BuildSummary buildSummary = BuildPipeline.BuildPlayer(buildPlayerWithProfileOptions).summary;
+            ReportSummary(buildSummary);
+            ExitWithResult(buildSummary.result);
+        }
+#endif
 
         private static Dictionary<string, string> GetValidatedOptions()
         {
