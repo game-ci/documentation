@@ -108,7 +108,12 @@ If you have trouble locating the `.ulf` file, follow these steps:
    On Windows using Powershell:
 
    ```powershell
-   Get-Content Unity_lic.ulf | Select-String -Pattern 'DeveloperData' | ForEach-Object { $_ -replace '.*Value="([^"]+)".*', '$1' } | [System.Convert]::FromBase64String($_)
+   Get-Content Unity_lic.ulf | Select-String -Pattern 'DeveloperData' | ForEach-Object {
+    if ($_ -match 'Value="([^"]+)"') {
+        $base64String = $matches[1]
+        [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($base64String))
+    }
+   }
    ```
 
 :::info Expected Serial Format
