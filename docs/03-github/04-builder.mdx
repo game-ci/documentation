@@ -162,9 +162,24 @@ _**required:** `false`_ _**default:** `""`_
 #### projectPath
 
 Specify the path to your Unity project to be built. The path should be relative to the root of your
-project.
+repository.
 
-_**required:** `false`_ _**default:** `<your project root>`_
+_**required:** `false`_ _**default:** `<your repository root>`_
+
+#### buildProfile
+
+Provide a path to a build profile. The path should be relative to the root of your Unity project
+(i.e. relative to `projectPath`). See the
+[Unity documentation](https://docs.unity3d.com/Manual/build-profiles.html) for more information on
+using build profiles.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    buildProfile: 'Assets/Settings/Build Profiles/WindowsDemo.asset'
+```
+
+_**required:** `false`_ _**default:** Unity will do a platform build for the `targetPlatform`._
 
 #### buildName
 
