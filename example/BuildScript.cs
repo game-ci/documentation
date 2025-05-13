@@ -103,7 +103,14 @@ namespace UnityBuilderAction
 
             // Set it as active
             BuildProfile.SetActiveBuildProfile(buildProfile);
-
+// Get all buildOptions from options
+      BuildOptions buildOptions = BuildOptions.None;
+      foreach (string buildOptionString in Enum.GetNames(typeof(BuildOptions))) {
+        if (options.ContainsKey(buildOptionString)) {
+          BuildOptions buildOptionEnum = (BuildOptions) Enum.Parse(typeof(BuildOptions), buildOptionString);
+          buildOptions |= buildOptionEnum;
+        }
+      }
             // Define BuildPlayerWithProfileOptions
             var buildPlayerWithProfileOptions = new BuildPlayerWithProfileOptions {
                 buildProfile = buildProfile,
