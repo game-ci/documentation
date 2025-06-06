@@ -18,7 +18,7 @@ When fixing a bug it is fine to submit a pull request right away.
 
 You need the following tools to be installed.
 
-- [NodeJS](https://nodejs.org/) installed at v18.X.
+- [NodeJS](https://nodejs.org/) installed at v20.X.
 - [Yarn](https://yarnpkg.com/) at v1.22.4+.
 
 > **Tip:** _Use [nvm](https://github.com/nvm-sh/nvm) or [n](https://github.com/tj/n) or
