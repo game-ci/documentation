@@ -30,7 +30,7 @@ type LinkButtonProps = {
 const LinkButton = ({ url, logo: Logo }: LinkButtonProps) => (
   <Link
     to={url}
-    className="group flex items-center justify-center border-gray-600 border-solid rounded-sm border-2 px-6 py-3 w-[180px] h-[70px] transition-all duration-200 hover:scale-110 hover:bg-gray-600"
+    className="group grid place-items-center border-gray-600 border-solid rounded-sm border-2 px-6 py-3 w-[180px] h-[70px] transition-all duration-200 hover:scale-110 hover:bg-gray-600"
   >
     <Logo className="fill-brand-text-light dark:fill-brand-text-dark group-hover:fill-white" />
   </Link>
