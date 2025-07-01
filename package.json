@@ -54,7 +54,7 @@
     "react-instantsearch-dom": "^6.24.0",
     "react-player": "^2.10.0",
     "react-redux": "^8.0.1",
-    "react-spinners": "^0.11.0",
+    "react-spinners": "^0.14.1",
     "react-spring": "^9.4.5",
     "react-table": "^7.7.0",
     "react-visibility-sensor": "^5.1.1",
