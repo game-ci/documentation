@@ -101,14 +101,17 @@ possible to go through the MFA process only once by following these steps:
    code. If so, type in the MFA code that was emailed to your builder account's email address.
 1. Validate that the MFA process is complete by running `steamcmd +login <username> +quit` again. It
    should not ask for the MFA code again.
-1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file.
-   Use `cat config/config.vdf | base64 > config_base64.txt` on _Linux_ to encode the file, if you
-   are a on _Windows_ device, use
+1. The folder from which you run `steamcmd` (or `~/Library/Application Support/Steam` on macOS) will
+   now contain an updated `config/config.vdf` file. Use
+   `cat config/config.vdf | base64 > config_base64.txt` on _Linux_ to encode the file, if you are on
+   a _Windows_ device, use
    `certutil -encode -f .\config\config.vdf tmp.b64 && findstr /v /c:- tmp.b64 > config_base64.txt`.
    Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
-1. `If:` when running the action you recieve another MFA code via email, run
+1. If when running the action you receive another MFA code via email, run
    `steamcmd +set_steam_guard_code <code>` on your local machine and repeat the `config.vdf`
    encoding and replace secret `STEAM_CONFIG_VDF` with its contents.
+1. You will also need to repeat the process if the action fails with `ERROR (License expired)` when
+   logging into Steam.
 
 If your builder account uses MFA through the Steam Guard App, the `steam-deploy` app can use a TOTP
 instead of the above configuration. Generating a TOTP is outside the scope of this guide, as it is
