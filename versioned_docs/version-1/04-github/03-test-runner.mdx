@@ -68,7 +68,7 @@ action.
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v4
   with:
     name: Test results
     path: artifacts
@@ -87,7 +87,7 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 ```
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v4
   with:
     name: Test results
     path: ${{ steps.myTestStep.outputs.artifactsPath }}
@@ -233,7 +233,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
