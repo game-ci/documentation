@@ -72,7 +72,7 @@ By default, Builder outputs it's builds to a folder named `build`.
 Example:
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v4
   with:
     name: Build
     path: build
@@ -383,7 +383,7 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Build
           path: build

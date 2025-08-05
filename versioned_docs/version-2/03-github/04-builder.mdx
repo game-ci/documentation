@@ -99,7 +99,7 @@ By default, Builder outputs it's builds to a folder named `build`.
 Example:
 
 ```yaml
-- uses: actions/upload-artifact@v2
+- uses: actions/upload-artifact@v4
   with:
     name: Build
     path: build
@@ -512,7 +512,7 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
