@@ -459,6 +459,11 @@ jobs:
           name: build-iOS
           path: build/iOS
 
+      - name: Select Xcode
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_16.4.app
+          xcodebuild -downloadPlatform iOS
+
       - name: Fix File Permissions and Run fastlane
         env:
           APPLE_CONNECT_EMAIL: ${{ secrets.APPLE_CONNECT_EMAIL }}
