@@ -61,7 +61,7 @@
     "reactfire": "^3.0.0-rc.0",
     "redux": "^4.2.0",
     "sass": "^1.51.0",
-    "tailwindcss": "^3.2.1",
+    "tailwindcss": "^3.4.15",
     "typescript": "^4.6.4"
   },
   "devDependencies": {
