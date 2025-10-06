@@ -460,9 +460,9 @@ jobs:
           path: build/iOS
 
       - name: Select Xcode
-        run: |
-          sudo xcode-select --switch /Applications/Xcode_16.4.app
-          xcodebuild -downloadPlatform iOS
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.4'
 
       - name: Fix File Permissions and Run fastlane
         env:
@@ -482,6 +482,7 @@ jobs:
           IOS_BUNDLE_ID: com.company.application # Change it to match your Unity bundle id
           PROJECT_NAME: Your Project Name # Change it to match your project's name
         run: |
+          xcodebuild -downloadPlatform iOS
           eval "$(ssh-agent -s)"
           ssh-add - <<< "${MATCH_DEPLOY_KEY}"
           find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
