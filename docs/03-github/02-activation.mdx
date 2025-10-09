@@ -110,6 +110,20 @@ Example of use:
     unityLicensingServer: [url to your license server]
 ```
 
+Additionally, if your licensing server has multiple product licenses configured, you can specify the
+product identifier(s) that will be requested. More information about multiple products can be found
+[here](https://docs.unity.com/licensing/en-us/manual/ServerSetup-test#Support_for_multiple_product_licenses).
+
+Example of use:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: WebGL
+    unityLicensingServer: [url to your license server]
+    unityLicensingProductIds: [comma separated product ids]
+```
+
 ## Optional steps
 
 - Verify your license using [Activate](https://github.com/marketplace/actions/unity-activate).
