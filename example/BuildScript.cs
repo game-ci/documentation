@@ -99,7 +99,7 @@ namespace UnityBuilderAction
             Dictionary<string, string> options = GetValidatedOptions();
 
             // Load build profile from Assets folder
-            BuildProfile buildProfile = AssetDatabase.LoadAssetAtPath<BuildProfile>(options["customBuildProfile"]);
+            BuildProfile buildProfile = AssetDatabase.LoadAssetAtPath<BuildProfile>(options["activeBuildProfile"]);
 
             // Set it as active
             BuildProfile.SetActiveBuildProfile(buildProfile);
@@ -134,16 +134,18 @@ namespace UnityBuilderAction
                 EditorApplication.Exit(110);
             }
 
-            if (!validatedOptions.TryGetValue("buildTarget", out string buildTarget))
+            if (validatedOptions.TryGetValue("buildTarget", out var buildTarget))
             {
-                Console.WriteLine("Missing argument -buildTarget");
-                EditorApplication.Exit(120);
+                if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
+                {
+                    Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
+                    EditorApplication.Exit(121);
+                }
             }
-
-            if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
+            else if (!validatedOptions.TryGetValue("activeBuildProfile", out string _))
             {
-                Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
-                EditorApplication.Exit(121);
+                Console.WriteLine("Missing argument -buildTarget or -activeBuildProfile");
+                EditorApplication.Exit(120);
             }
 
             if (!validatedOptions.TryGetValue("customBuildPath", out string _))
