@@ -547,6 +547,13 @@ build. MacOS only.
 
 _**required:** `false`_ _**default:** `false`_
 
+#### linux64RemoveExecutableExtension
+
+Omits the `.x86_64` file extension when building for StandaloneLinux64. This matches behavior with
+older versions of the action. The default will be flipped to `false` in a future version.
+
+_**required:** `false`_ _**default:** `true`_
+
 ## Outputs
 
 Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where
