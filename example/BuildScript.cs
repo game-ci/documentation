@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+#if UNITY_6000_0_OR_NEWER
+using UnityEditor.Build.Profile;
+#endif
 
 namespace UnityBuilderAction
 {
@@ -20,9 +23,15 @@ namespace UnityBuilderAction
             Dictionary<string, string> options = GetValidatedOptions();
 
             // Set version for this build
-            PlayerSettings.bundleVersion = options["buildVersion"];
-            PlayerSettings.macOS.buildNumber = options["buildVersion"];
-            PlayerSettings.Android.bundleVersionCode = int.Parse(options["androidVersionCode"]);
+            if(options.TryGetValue("buildVersion", out string buildVersion) && buildVersion != "none")
+            {
+                PlayerSettings.bundleVersion = buildVersion;
+                PlayerSettings.macOS.buildNumber = buildVersion;
+            }
+            if(options.TryGetValue("androidVersionCode", out string versionCode) && versionCode != "0")
+            {
+                PlayerSettings.Android.bundleVersionCode = int.Parse(options["androidVersionCode"]);
+            }
 
             // Apply build target
             var buildTarget = (BuildTarget) Enum.Parse(typeof(BuildTarget), options["buildTarget"]);
@@ -83,6 +92,38 @@ namespace UnityBuilderAction
             Build(buildTarget, buildSubtarget, options["customBuildPath"]);
         }
 
+#if UNITY_6000_0_OR_NEWER
+        public static void BuildWithProfile()
+        {
+            // Gather values from args
+            Dictionary<string, string> options = GetValidatedOptions();
+
+            // Load build profile from Assets folder
+            BuildProfile buildProfile = AssetDatabase.LoadAssetAtPath<BuildProfile>(options["activeBuildProfile"]);
+
+            // Set it as active
+            BuildProfile.SetActiveBuildProfile(buildProfile);
+// Get all buildOptions from options
+      BuildOptions buildOptions = BuildOptions.None;
+      foreach (string buildOptionString in Enum.GetNames(typeof(BuildOptions))) {
+        if (options.ContainsKey(buildOptionString)) {
+          BuildOptions buildOptionEnum = (BuildOptions) Enum.Parse(typeof(BuildOptions), buildOptionString);
+          buildOptions |= buildOptionEnum;
+        }
+      }
+            // Define BuildPlayerWithProfileOptions
+            var buildPlayerWithProfileOptions = new BuildPlayerWithProfileOptions {
+                buildProfile = buildProfile,
+                locationPathName = options["customBuildPath"],
+                options = buildOptions,
+            };
+
+            BuildSummary buildSummary = BuildPipeline.BuildPlayer(buildPlayerWithProfileOptions).summary;
+            ReportSummary(buildSummary);
+            ExitWithResult(buildSummary.result);
+        }
+#endif
+
         private static Dictionary<string, string> GetValidatedOptions()
         {
             ParseCommandLineArguments(out Dictionary<string, string> validatedOptions);
@@ -93,16 +134,18 @@ namespace UnityBuilderAction
                 EditorApplication.Exit(110);
             }
 
-            if (!validatedOptions.TryGetValue("buildTarget", out string buildTarget))
+            if (validatedOptions.TryGetValue("buildTarget", out var buildTarget))
             {
-                Console.WriteLine("Missing argument -buildTarget");
-                EditorApplication.Exit(120);
+                if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
+                {
+                    Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
+                    EditorApplication.Exit(121);
+                }
             }
-
-            if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
+            else if (!validatedOptions.TryGetValue("activeBuildProfile", out string _))
             {
-                Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
-                EditorApplication.Exit(121);
+                Console.WriteLine("Missing argument -buildTarget or -activeBuildProfile");
+                EditorApplication.Exit(120);
             }
 
             if (!validatedOptions.TryGetValue("customBuildPath", out string _))

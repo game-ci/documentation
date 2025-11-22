@@ -76,6 +76,22 @@ Example of use:
 
 That is all you need to test your project.
 
+## Testing Projects with a private scoped registry
+
+If your project has dependencies that are hosted in a private UPM registry, then you will need to
+supply a valid authentication token and URL for your registry as an environment variable.
+
+```yaml
+- uses: game-ci/unity-test-runner@v4
+  env:
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    UPM_REGISTRY_TOKEN: ${{ secrets.UPM_REGISTRY_TOKEN }}
+  with:
+    scopedRegistryUrl: https://example.com/registry
+```
+
 ## Testing Unity packages
 
 The test runner offers basic support for testing Unity packages, with [a few caveats](#caveats).
@@ -111,10 +127,10 @@ depedencies can be resolved.
 
 #### Authentication with a private scoped registry
 
-If your package has dependencies that are hosted in a private UPM registry, then you will need to
-supply a valid authentication token for your registry as an environment variable. Setup the
-[`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) as usual, but also
-include a `UPM_REGISTRY_TOKEN` when defining your Unity License.
+If your package has dependencies that are hosted in a private UPM registry, then testing it is
+similar to tesing a project. Setup the [`scopedRegistryUrl`](#scopedRegistryUrl) and
+[`registryScopes`](#registryScopes) as usual, but also include a `UPM_REGISTRY_TOKEN` when defining
+your Unity License.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v4
@@ -214,7 +230,7 @@ To do this, it is recommended to use the official Github Actions
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
-- uses: actions/upload-artifact@v3
+- uses: actions/upload-artifact@v4
   if: always()
   with:
     name: Test results
@@ -234,7 +250,7 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 ```
 
 ```yaml
-- uses: actions/upload-artifact@v3
+- uses: actions/upload-artifact@v4
   if: always()
   with:
     name: Test results
@@ -248,7 +264,7 @@ read by the step's `outputs.coveragePath`. These coverage options can be configu
 test and by default will create an XML and HTML web page reports.
 
 ```yaml
-- uses: actions/upload-artifact@v3
+- uses: actions/upload-artifact@v4
   if: always()
   with:
     name: Coverage results
@@ -588,12 +604,12 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
@@ -642,12 +658,12 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}

@@ -6,8 +6,8 @@ Unity license in your CI's environment variable : `UNITY_LICENSE_CONTENT_ANDROID
 required anymore now that images share a base image
 [See related change](https://gitlab.com/game-ci/unity3d/merge_requests/63)_
 
-By default the apk is not signed and the build will use the Unity's default debug key. For _security
-reasons_, **you should not add your keystore to git**.
+By default, the apk is not signed and the build will use the Unity's default debug key. For
+_security reasons_, **you should not add your keystore to git**.
 
 ## Encode your keystore
 
@@ -43,12 +43,12 @@ The bundle version code must be increment for each deployed build.
 To simplify the process, the `BUNDLE_VERSION_CODE` env var is used and set as bundle version code.
 
 Currently, for gitlab, `BUNDLE_VERSION_CODE = $CI_PIPELINE_IID`.
-[Documentation](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html)  
-If you use another CI solution, set a CI env var incrementing for each pipeline.
+[Documentation](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html) If you use
+another CI solution, set a CI env var incrementing for each pipeline.
 
-### Fastlane supply (deployement)
+### Fastlane supply (deployment)
 
-Follow [setup instructions](https://docs.fastlane.tools/actions/supply/) to get a google play
+Follow [setup instructions](https://docs.fastlane.tools/actions/supply/) to get a Google Play
 console token, then, add the content to env var `GPC_TOKEN`.
 
 Uncomment the `#deploy-android` job in gitlab-ci.yml and replace `com.youcompany.yourgame` by your
@@ -72,7 +72,7 @@ gem "fastlane"
 and then copy the file to the current directory prior to installing the gem. eg
 `cp $CI_PROJECT_DIR/Gemfile .`.
 
-That is the simplest way with command line but you can also make `fastlane/Fastfile` and
+That is the simplest way with command line, but you can also make `fastlane/Fastfile` and
 `fastlane/Appfile`, with the following command after building a temporary gradle project (export
 gradle project option in Unity build settings):
 

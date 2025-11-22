@@ -440,7 +440,7 @@ jobs:
         with:
           targetPlatform: iOS
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: build-iOS
           path: build/iOS
@@ -480,6 +480,7 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add - <<< "${MATCH_DEPLOY_KEY}"
           find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
+          find $IOS_BUILD_PATH -type f -iname "usymtool" -exec chmod +x {} \;
           bundle install
           bundle exec fastlane ios release
 

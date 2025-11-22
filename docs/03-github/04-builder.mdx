@@ -91,15 +91,15 @@ By default, the enabled scenes from the project's settings will be built.
 
 To be able to access your built files, they need to be uploaded as artifacts. To do this it is
 recommended to use Github Actions official
-[upload artifact action](https://github.com/marketplace/actions/upload-artifact) after any build
-action.
+[upload artifact action](https://github.com/marketplace/actions/upload-a-build-artifact) after any
+build action.
 
 By default, Builder outputs it's builds to a folder named `build`.
 
 Example:
 
 ```yaml
-- uses: actions/upload-artifact@v3
+- uses: actions/upload-artifact@v4
   with:
     name: Build
     path: build
@@ -162,9 +162,24 @@ _**required:** `false`_ _**default:** `""`_
 #### projectPath
 
 Specify the path to your Unity project to be built. The path should be relative to the root of your
-project.
+repository.
 
-_**required:** `false`_ _**default:** `<your project root>`_
+_**required:** `false`_ _**default:** `<your repository root>`_
+
+#### buildProfile
+
+Provide a path to a build profile. The path should be relative to the root of your Unity project
+(i.e. relative to `projectPath`). See the
+[Unity documentation](https://docs.unity3d.com/Manual/build-profiles.html) for more information on
+using build profiles.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    buildProfile: 'Assets/Settings/Build Profiles/WindowsDemo.asset'
+```
+
+_**required:** `false`_ _**default:** Unity will do a platform build for the `targetPlatform`._
 
 #### buildName
 
@@ -623,10 +638,10 @@ using `sshPublicKeysDirectoryPath` and setting the `GIT_CONFIG_EXTENSIONS` envir
 ```yaml
 - uses: webfactory/ssh-agent@v0.8.0
   with:
-  ssh-private-key: |
-    ${{ secrets.FIRST_KEY }}
-    ${{ secrets.NEXT_KEY }}
-    ${{ secrets.ANOTHER_KEY }}
+    ssh-private-key: |
+      ${{ secrets.FIRST_KEY }}
+      ${{ secrets.NEXT_KEY }}
+      ${{ secrets.ANOTHER_KEY }}
 
 - name: Prepare SSH config for unity builder
   run: |
@@ -665,6 +680,30 @@ that directory. This action must be done before running the game-ci/unity-builde
     echo "[npmAuth.\"https://upm.example.com\"]" >> .upmconfig.toml
     echo "alwaysAuth = true" >> .upmconfig.toml
     echo "token = \"${{ secrets.NPM_TOKEN }}\"" >> .upmconfig.toml
+```
+
+## Using preprocessor macros
+
+If needed, Unity preprocessor directives can be set by adding a step to the build.
+
+```yaml
+steps:
+  - name: Apply csc.rsp (pre-processor symbols)
+    run: echo -define:MY_SYMBOL >> Assets/csc.rsp
+```
+
+To avoid warnings about "unapplied changes", add `Assets/csc.rsp` in your `.gitignore`
+
+Once set, you can then reference these preprocessor directives in code:
+
+```c
+void Start() {
+#if MY_SYMBOL
+  GetComponent<TMP_Text>().text = "I have a symbol!";
+#else
+  GetComponent<TMP_Text>().text = "I do not have a symbol...";
+#endif
+}
 ```
 
 ## Complete example
@@ -710,7 +749,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
