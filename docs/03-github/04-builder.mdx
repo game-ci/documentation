@@ -110,6 +110,7 @@ Builds can now be downloaded as Artifacts in the Actions tab.
 ## Caching
 
 ### Library cache
+
 In order to make builds run faster, you can cache Library files from previous builds. To do so
 simply add Github Actions official [cache action](https://github.com/marketplace/actions/cache)
 before any unity steps.
@@ -129,7 +130,8 @@ Example:
 This simple addition could speed up your build by more than 50%.
 
 ### Incremental build cache
-To further speedup consequent builds, you may want to cache the incremental build cache directory.
+
+To further speed up consequent builds, you may want to cache the incremental build cache directory.
 
 Example:
 
@@ -143,7 +145,8 @@ Example:
       IncrementalBuildCache-
 ```
 
-On a windows runner (e.g. if building for il2cpp) this path is different, but the incremental build cache is automatically saved with the Library folder.
+On a Windows runner (e.g. if building for il2cpp) this path is different, but the incremental build
+cache is automatically saved with the Library folder.
 
 ## Configuration options
 
