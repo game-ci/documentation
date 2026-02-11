@@ -5,6 +5,7 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "target": "es2015"
+    "target": "es2015",
+    "types": ["jest"]
   }
 }

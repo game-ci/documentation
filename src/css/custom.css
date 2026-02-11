@@ -66,3 +66,24 @@
 .footer {
   --ifm-footer-background-color: #373445;
 }
+
+/* Override Infima link colours on CTA buttons (unlayered to beat Infima cascade) */
+.cta-filled,
+.cta-filled:hover {
+  color: white;
+  text-decoration: none;
+}
+
+[data-theme='dark'] .cta-filled,
+[data-theme='dark'] .cta-filled:hover {
+  color: black;
+}
+
+.cta-outline:hover {
+  color: white;
+  text-decoration: none;
+}
+
+[data-theme='dark'] .cta-outline:hover {
+  color: black;
+}
