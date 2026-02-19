@@ -1,4 +1,4 @@
-name: 👩‍💻
+name: "\U0001F469‍\U0001F4BB"
 
 on:
   push: { branches: [main] }
@@ -10,45 +10,86 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: package.json
           cache: 'yarn'
-      - run: yarn
+      - run: yarn install --immutable
       - run: yarn verify:formatting
   codeStyles:
     name: Code styles
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: package.json
           cache: 'yarn'
-      - run: yarn
+      - run: yarn install --immutable
       - run: yarn verify:code-styles
   types:
     name: Types check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: package.json
           cache: 'yarn'
-      - run: yarn
+      - run: yarn install --immutable
       - run: yarn typecheck
   tests:
     name: Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: package.json
           cache: 'yarn'
-      - run: yarn
+      - run: yarn install --immutable
       - run: yarn test --coverage
       - run: bash <(curl -s https://codecov.io/bash)
         env:
           CODECOV_TOKEN: '2f2eb890-30e2-4724-83eb-7633832cf0de'
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: 'yarn'
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: npx playwright install --with-deps chromium
+      - run: yarn test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14

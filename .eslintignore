@@ -3,3 +3,5 @@
 .docusaurus/**
 coverage/**
 build/**
+e2e/**
+playwright.config.ts
