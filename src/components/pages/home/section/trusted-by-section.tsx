@@ -10,9 +10,10 @@ const studios = [
     logo: '/assets/images/devs/madronagames-logo.webp',
   },
   {
-    name: 'Totema Studios',
-    url: 'https://totemastudio.com/',
-    logo: '/assets/images/devs/totemastudio-logo.svg',
+    name: 'Tobafeu Studio',
+    url: 'https://tobafeustudio.com/',
+    logoLight: '/assets/images/devs/tobafeu-studio-logo-light.svg',
+    logoDark: '/assets/images/devs/tobafeu-studio-logo-dark.svg',
   },
 ];
 
@@ -28,12 +29,29 @@ const TrustedBySection = () => (
             rel="noopener noreferrer"
             className="flex items-center justify-center w-40 h-24 md:w-48 md:h-28 rounded-lg border border-secondary-light dark:border-secondary-dark bg-background-normal-light dark:bg-background-normal-dark p-4 hover:shadow-md transition-all duration-300"
           >
-            <img
-              src={studio.logo}
-              alt={studio.name}
-              className="max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
-              loading="lazy"
-            />
+            {studio.logoDark ? (
+              <>
+                <img
+                  src={studio.logoLight || studio.logo}
+                  alt={studio.name}
+                  className="block dark:hidden max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                  loading="lazy"
+                />
+                <img
+                  src={studio.logoDark}
+                  alt={studio.name}
+                  className="hidden dark:block max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                  loading="lazy"
+                />
+              </>
+            ) : (
+              <img
+                src={studio.logo}
+                alt={studio.name}
+                className="max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                loading="lazy"
+              />
+            )}
           </a>
         ))}
 
