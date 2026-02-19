@@ -13,7 +13,7 @@ const Section = React.forwardRef(
     <section
       ref={ref}
       {...rest}
-      className={`w-full max-w-full overflow-x-hidden p-6 md:p-16 min-h-[70vh] flex flex-col items-center justify-center bg-background-normal-light dark:bg-background-normal-dark even:bg-background-darker-light dark:even:bg-background-darker-dark text-brand-text-light dark:text-brand-text-dark${
+      className={`w-full max-w-full overflow-x-hidden p-6 md:p-16 min-h-screen md:min-h-[30vh] flex flex-col items-center justify-center bg-background-normal-light dark:bg-background-normal-dark even-section text-brand-text-light dark:text-brand-text-dark${
         className ? ` ${className}` : ''
       }`}
     >

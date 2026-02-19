@@ -1,7 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import HeroSection from '@site/src/components/pages/home/section/hero-section';
-import StatsSection from '@site/src/components/pages/home/section/stats-section';
 import TrustedBySection from '@site/src/components/pages/home/section/trusted-by-section';
 import FeaturesGridSection from '@site/src/components/pages/home/section/features-grid-section';
 import HowItWorksSection from '@site/src/components/pages/home/section/how-it-works-section';
@@ -14,7 +13,6 @@ export default function Home(): React.JSX.Element {
   return (
     <Layout description="The fastest and easiest way to automatically test and build your game projects">
       <HeroSection />
-      <StatsSection />
       <TrustedBySection />
       <FeaturesGridSection />
       <HowItWorksSection />

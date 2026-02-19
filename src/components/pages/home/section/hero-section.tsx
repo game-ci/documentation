@@ -5,7 +5,15 @@ import FadeIntoView from '@site/src/components/molecules/animations/fade-into-vi
 import GameCiLogo from '@site/static/assets/images/game-ci-brand-logo-wordmark.svg';
 import GameCiLogoLight from '@site/static/assets/images/game-ci-brand-logo-wordmark-light.svg';
 
+const stats = [
+  { value: '20,000+', label: 'Projects' },
+  { value: '3,000+', label: 'GitHub stars' },
+  { value: '3,000+', label: 'Discord members' },
+  { value: '100+', label: 'Contributors' },
+];
+
 const HeroSection = () => (
+  <>
   <Section className="min-h-[calc(100vh-60px)] justify-center">
     <div className="flex flex-col items-center text-center max-w-4xl mx-auto gap-8">
       <FadeIntoView>
@@ -44,8 +52,40 @@ const HeroSection = () => (
           </a>
         </div>
       </FadeIntoView>
+
+      <FadeIntoView delay={400}>
+        <div className="hidden md:grid grid-cols-4 gap-12 mt-8 w-full">
+          {stats.map((stat) => (
+            <div key={stat.label} className="flex flex-col items-center">
+              <span className="text-4xl font-bold text-primary-light dark:text-primary-dark">
+                {stat.value}
+              </span>
+              <span className="text-base text-brand-text-light dark:text-brand-text-dark mt-1">
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </FadeIntoView>
     </div>
   </Section>
+  <div className="md:hidden w-full min-h-[70vh] flex flex-col items-center justify-center p-6 bg-[#e8e8e8] dark:bg-[#2a2836]">
+    <div className="grid grid-cols-2 gap-6 w-full max-w-4xl">
+      {stats.map((stat, index) => (
+        <FadeIntoView key={stat.label} delay={50 + index * 40}>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-primary-light dark:text-primary-dark">
+              {stat.value}
+            </span>
+            <span className="text-sm text-brand-text-light dark:text-brand-text-dark mt-1">
+              {stat.label}
+            </span>
+          </div>
+        </FadeIntoView>
+      ))}
+    </div>
+  </div>
+  </>
 );
 
 export default HeroSection;
