@@ -34,8 +34,15 @@ test.describe('landing page', () => {
   });
 
   test('hero stats are visible', async ({ page }) => {
+    // Stats are rendered in both a desktop-only and mobile-only container.
+    // Scope to whichever container is visible on the current viewport.
+    const desktopStats = page.getByTestId('stats-desktop');
+    const mobileStats = page.getByTestId('stats-mobile');
+    const target = (await desktopStats.isVisible()) ? desktopStats : mobileStats;
+    await target.scrollIntoViewIfNeeded();
+
     for (const label of ['Projects', 'GitHub stars', 'Discord members', 'Contributors']) {
-      await expect(page.locator('text=' + label).first()).toBeVisible();
+      await expect(target.getByText(label)).toBeVisible();
     }
   });
 
