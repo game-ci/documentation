@@ -8,6 +8,7 @@ const studios = [
     name: 'Madrona Games',
     url: 'https://www.madronagames.com/',
     logo: '/assets/images/devs/madronagames-logo.webp',
+    invertOnLight: true,
   },
   {
     name: 'Tobafeu Studio',
@@ -39,6 +40,21 @@ const TrustedBySection = () => (
                 />
                 <img
                   src={studio.logoDark}
+                  alt={studio.name}
+                  className="hidden dark:block max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                  loading="lazy"
+                />
+              </>
+            ) : studio.invertOnLight ? (
+              <>
+                <img
+                  src={studio.logo}
+                  alt={studio.name}
+                  className="block dark:hidden max-h-full max-w-full object-contain grayscale hover:grayscale-0 invert transition-all duration-300"
+                  loading="lazy"
+                />
+                <img
+                  src={studio.logo}
                   alt={studio.name}
                   className="hidden dark:block max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
                   loading="lazy"
