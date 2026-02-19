@@ -66,3 +66,41 @@
 .footer {
   --ifm-footer-background-color: #373445;
 }
+
+/* Override Infima link colours on CTA buttons (unlayered to beat Infima cascade) */
+.cta-filled,
+.cta-filled:hover {
+  color: white;
+  text-decoration: none;
+}
+
+[data-theme='dark'] .cta-filled,
+[data-theme='dark'] .cta-filled:hover {
+  color: black;
+}
+
+.cta-outline:hover {
+  color: white;
+  text-decoration: none;
+}
+
+[data-theme='dark'] .cta-outline:hover {
+  color: black;
+}
+
+/* Alternate section backgrounds using nth-of-type to skip non-section siblings */
+section.even-section:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+[data-theme='dark'] section.even-section:nth-of-type(even) {
+  background-color: #32303f;
+}
+
+/* Responsive code block font size for mobile */
+@media (max-width: 767px) {
+  .prism-code {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+}

@@ -10,6 +10,11 @@ build/**
 
 # Tests
 coverage/**
+test-results/**
+playwright-report/**
+
+# Claude Code
+.claude/**
 
 # Use stylelint instead
 *.less
