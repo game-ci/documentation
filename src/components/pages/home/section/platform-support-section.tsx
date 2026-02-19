@@ -16,12 +16,13 @@ import Section from '@site/src/components/pages/home/section/section';
 interface PlatformItem {
   label: string;
   icon: IconType;
+  href?: string;
 }
 
 const ciPlatforms: PlatformItem[] = [
-  { label: 'GitHub Actions', icon: SiGithub },
-  { label: 'GitLab CI', icon: SiGitlab },
-  { label: 'CircleCI', icon: SiCircleci },
+  { label: 'GitHub Actions', icon: SiGithub, href: '/docs/github/getting-started' },
+  { label: 'GitLab CI', icon: SiGitlab, href: '/docs/gitlab/getting-started' },
+  { label: 'CircleCI', icon: SiCircleci, href: '/docs/circleci/getting-started' },
 ];
 
 const buildTargets: PlatformItem[] = [
@@ -47,16 +48,28 @@ const PlatformGrid = ({ subtitle, items, delayOffset }: PlatformGridProps) => (
       </h3>
     </FadeIntoView>
     <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-      {items.map((item, index) => (
-        <FadeIntoView key={item.label} delay={delayOffset + 50 + index * 40}>
+      {items.map((item, index) => {
+        const card = (
           <div className="flex flex-col items-center justify-center w-28 h-28 md:w-32 md:h-32 rounded-lg border border-gray-200 dark:border-gray-700 bg-background-highlight-light dark:bg-background-highlight-dark p-4 hover:shadow-lg transition-shadow duration-300">
             <item.icon className="text-3xl md:text-4xl text-primary-light dark:text-primary-dark mb-2" />
             <span className="text-sm font-medium text-brand-text-light/80 dark:text-brand-text-dark/80 text-center">
               {item.label}
             </span>
           </div>
-        </FadeIntoView>
-      ))}
+        );
+
+        return (
+          <FadeIntoView key={item.label} delay={delayOffset + 50 + index * 40}>
+            {item.href ? (
+              <a href={item.href} className="no-underline">
+                {card}
+              </a>
+            ) : (
+              card
+            )}
+          </FadeIntoView>
+        );
+      })}
     </div>
   </div>
 );
