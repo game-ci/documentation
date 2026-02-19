@@ -1,5 +1,6 @@
 module.exports = {
   testEnvironment: 'jest-environment-jsdom',
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
   transformIgnorePatterns: ['node_modules/(?!@babel/runtime)'],
   transform: {
     '^.+\\.[jt]sx?$': [

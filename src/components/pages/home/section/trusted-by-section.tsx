@@ -18,6 +18,51 @@ const studios = [
   },
 ];
 
+function StudioLogo({ studio }: { studio: (typeof studios)[number] }) {
+  const baseClass =
+    'max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300';
+
+  if (studio.logoDark) {
+    return (
+      <>
+        <img
+          src={studio.logoLight || studio.logo}
+          alt={studio.name}
+          className={`block dark:hidden ${baseClass}`}
+          loading="lazy"
+        />
+        <img
+          src={studio.logoDark}
+          alt={studio.name}
+          className={`hidden dark:block ${baseClass}`}
+          loading="lazy"
+        />
+      </>
+    );
+  }
+
+  if (studio.invertOnLight) {
+    return (
+      <>
+        <img
+          src={studio.logo}
+          alt={studio.name}
+          className={`block dark:hidden ${baseClass} invert`}
+          loading="lazy"
+        />
+        <img
+          src={studio.logo}
+          alt={studio.name}
+          className={`hidden dark:block ${baseClass}`}
+          loading="lazy"
+        />
+      </>
+    );
+  }
+
+  return <img src={studio.logo} alt={studio.name} className={baseClass} loading="lazy" />;
+}
+
 const TrustedBySection = () => (
   <Section title="Trusted by studios and teams worldwide">
     <FadeIntoView>
@@ -30,44 +75,7 @@ const TrustedBySection = () => (
             rel="noopener noreferrer"
             className="flex items-center justify-center w-40 h-24 md:w-48 md:h-28 rounded-lg border border-secondary-light dark:border-secondary-dark bg-background-normal-light dark:bg-background-normal-dark p-4 hover:shadow-md transition-all duration-300"
           >
-            {studio.logoDark ? (
-              <>
-                <img
-                  src={studio.logoLight || studio.logo}
-                  alt={studio.name}
-                  className="block dark:hidden max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
-                  loading="lazy"
-                />
-                <img
-                  src={studio.logoDark}
-                  alt={studio.name}
-                  className="hidden dark:block max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
-                  loading="lazy"
-                />
-              </>
-            ) : studio.invertOnLight ? (
-              <>
-                <img
-                  src={studio.logo}
-                  alt={studio.name}
-                  className="block dark:hidden max-h-full max-w-full object-contain grayscale hover:grayscale-0 invert transition-all duration-300"
-                  loading="lazy"
-                />
-                <img
-                  src={studio.logo}
-                  alt={studio.name}
-                  className="hidden dark:block max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
-                  loading="lazy"
-                />
-              </>
-            ) : (
-              <img
-                src={studio.logo}
-                alt={studio.name}
-                className="max-h-full max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
-                loading="lazy"
-              />
-            )}
+            <StudioLogo studio={studio} />
           </a>
         ))}
 
