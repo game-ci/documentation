@@ -87,3 +87,11 @@
 [data-theme='dark'] .cta-outline:hover {
   color: black;
 }
+
+/* Responsive code block font size for mobile */
+@media (max-width: 767px) {
+  .prism-code {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+}

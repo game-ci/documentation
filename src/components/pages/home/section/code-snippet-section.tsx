@@ -35,7 +35,7 @@ jobs:
 const CodeSnippetSection = () => (
   <Section title="Get started in minutes">
     <FadeIntoView>
-      <div className="max-w-2xl w-full">
+      <div className="max-w-2xl w-full overflow-hidden">
         <CodeBlock language="yaml" title=".github/workflows/build.yml">
           {workflowYaml}
         </CodeBlock>
