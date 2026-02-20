@@ -254,8 +254,11 @@ docker: failed to register layer: write /opt/unity/Editor/Data/Resources/Package
 
 #### Explanation
 
-When executing multiple jobs sequentially in the same workflow, there can be potential disk space
-issues. For instance, if your workflow first executes tests on one docker image, such as
+The default GitHub-hosted runners do not have much disk space, and Unity images and projects are
+often too large to fit on the default GitHub-hosted runners.
+
+Furthermore, when executing multiple jobs sequentially in the same workflow, there can be potential
+disk space issues. For instance, if your workflow first executes tests on one docker image, such as
 `unityci/editor:ubuntu-2022.3.4f1-linux-il2cpp-2`, and subsequently runs a build on another target
 platform, e.g., `unityci/editor:ubuntu-2022.3.4f1-windows-mono-2`, it might run out of space during
 the build phase.
@@ -276,7 +279,12 @@ collectively consume a significant amount of disk space.
    at the start of your workflow to clear some space on the GitHub-hosted runner. This action can be
    especially useful if only a small amount of additional space is needed.
 
-3. **Use Self-Hosted or Cloud Runners**: If your project inherently requires more disk space than
+3. **GitHub-Hosted Larger Runners**: If you have a paid GitHub Enterprise Cloud or GitHub Team plan,
+   you can have your enterprise or organization configure
+   [GitHub-Hosted Larger Runners](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners)
+   as appropriate for your project.
+
+4. **Use Self-Hosted or Cloud Runners**: If your project inherently requires more disk space than
    what GitHub-hosted runners provide, consider switching to
    [Self-hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
    or
