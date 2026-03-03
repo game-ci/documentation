@@ -3,15 +3,35 @@
 Orchestrator creates, manages and destroys cloud workloads you request. Resources have to be
 created.
 
-It is possible a resource doesn't get deleted by orchestrator.
+It is possible a resource doesn't get deleted by orchestrator after a failed or interrupted build.
 
 You can use garbage collection to verify everything has been cleaned up.
 
 Use the **Mode**: `garbage-collect`.
 
-You can use the following API parameters:
+## Parameters
 
-- Max Age
-- Max Size
-- Preview Only
-- Filter
+```bash
+garbageMaxAge
+```
+
+Maximum age in hours before resources are considered stale and eligible for cleanup. Defaults to
+`24`.
+
+## Usage
+
+### GitHub Actions
+
+```yaml
+- uses: game-ci/unity-builder@main
+  with:
+    providerStrategy: aws
+    mode: garbage-collect
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Command Line
+
+```bash
+yarn run cli -m garbage-collect --providerStrategy aws
+```

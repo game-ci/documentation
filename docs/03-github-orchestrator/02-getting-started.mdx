@@ -1,3 +1,34 @@
 # Getting Started
 
-To get quickly started checkout one of our examples:
+Orchestrator lets you run Unity builds on remote cloud infrastructure instead of GitHub-hosted
+runners. This is useful for large projects that exceed GitHub's disk or resource limits.
+
+## Prerequisites
+
+- A Unity project in a GitHub repository
+- A cloud provider account (AWS or a Kubernetes cluster)
+- Provider credentials configured as GitHub secrets
+
+## Quick Start
+
+1. **Choose a provider**: `aws` (AWS Fargate) or `k8s` (Kubernetes)
+2. **Configure credentials** for your chosen provider
+3. **Add the orchestrator step** to your workflow
+
+See the provider-specific examples for complete setup:
+
+- [AWS Example](examples/github-examples/aws)
+- [Kubernetes Example](examples/github-examples/kubernetes)
+- [Command Line](examples/command-line)
+
+## Minimal Example
+
+```yaml
+- uses: game-ci/unity-builder@main
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+For full parameter documentation, see the [API Reference](api-reference).
