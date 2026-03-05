@@ -27,7 +27,7 @@ You may also view the markdown files directly at the following links:
 - [GitLab Pipelines](docs/05-gitlab)
 - [CircleCi](docs/11-circleci)
 - [Docker](docs/08-docker)
-- [GitHub Cloud Runner](docs/03-github-cloud-runner)
+- [GitHub Orchestrator](docs/03-github-orchestrator)
 - [Troubleshooting](docs/09-troubleshooting)
 - [FAQ](docs/10-faq)
 
