@@ -19,15 +19,15 @@ provider details.
 ```
   maxRetainedWorkspaces: 3
 
-  Workspace 1          Workspace 2          Workspace 3
- ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
- │ 🔒 Build A   │    │ 🔒 Build B   │    │    (idle)    │
- │ Full project │    │ Full project │    │ Full project │
- │ copy         │    │ copy         │    │ copy         │
- └──────────────┘    └──────────────┘    └──────────────┘
+  Workspace 1         Workspace 2         Workspace 3
+ ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+ │ [locked]      │   │ [locked]      │   │ (idle)        │
+ │ Build A       │   │ Build B       │   │               │
+ │ Full project  │   │ Full project  │   │ Full project  │
+ └───────────────┘   └───────────────┘   └───────────────┘
 
-  Build C arrives → claims Workspace 3
-  Build D arrives → all locked → falls back to standard caching
+  Build C arrives --> claims Workspace 3
+  Build D arrives --> all locked --> falls back to standard caching
 ```
 
 ## Example
