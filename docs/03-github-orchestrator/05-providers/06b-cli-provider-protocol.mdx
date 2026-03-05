@@ -1,0 +1,193 @@
+# CLI Provider Protocol
+
+Write orchestrator providers in **any language** — Go, Python, Rust, shell, or anything that can read
+stdin and write stdout. The CLI provider protocol uses JSON messages over stdin/stdout with the
+subcommand as the first argument.
+
+```
+  providerExecutable                      Your executable
+ ┌──────────────────────┐                ┌──────────────────────┐
+ │ ./my-provider        │   argv[1]      │                      │
+ │                      │───────────────►│  setup-workflow      │
+ │ Orchestrator spawns  │   JSON stdin   │  run-task            │
+ │ your executable per  │───────────────►│  cleanup-workflow    │
+ │ subcommand           │   JSON stdout  │  garbage-collect     │
+ │                      │◄───────────────│  list-resources      │
+ └──────────────────────┘   stderr→logs  │  list-workflow       │
+                                         │  watch-workflow      │
+                                         └──────────────────────┘
+```
+
+## Quick Start
+
+Set `providerExecutable` to the path of your executable:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerExecutable: ./my-provider
+    targetPlatform: StandaloneLinux64
+```
+
+The CLI provider takes precedence over `providerStrategy` when set.
+
+## Protocol
+
+### Invocation
+
+```
+<executable> <subcommand>
+```
+
+Orchestrator spawns your executable once per operation, passing the subcommand as `argv[1]`.
+
+### Input
+
+A single JSON object written to **stdin**, then stdin is closed:
+
+```json
+{
+  "command": "run-task",
+  "params": {
+    "buildGuid": "abc-123",
+    "image": "unityci/editor:2022.3.0f1-linux-il2cpp-3",
+    "commands": "/bin/sh -c 'unity-editor -batchmode ...'",
+    "mountdir": "/workspace",
+    "workingdir": "/workspace",
+    "environment": [{ "name": "UNITY_LICENSE", "value": "..." }],
+    "secrets": []
+  }
+}
+```
+
+### Output
+
+Write a single JSON object to **stdout** when the operation completes:
+
+```json
+{
+  "success": true,
+  "result": "Build completed successfully"
+}
+```
+
+On failure:
+
+```json
+{
+  "success": false,
+  "error": "Container exited with code 1"
+}
+```
+
+### Streaming Output
+
+During `run-task` and `watch-workflow`, **non-JSON lines on stdout are treated as real-time build
+output** and forwarded to the orchestrator logs. Only the final JSON line is parsed as the response.
+
+This means your provider can freely print build logs:
+
+```
+Pulling image...
+Starting build...
+[Build] Compiling scripts...
+[Build] Build succeeded
+{"success": true, "result": "Build completed"}
+```
+
+### stderr
+
+Everything written to **stderr** is forwarded to the orchestrator logger. Use stderr for diagnostic
+messages, warnings, and debug output.
+
+## Subcommands
+
+| Subcommand           | Purpose                                | Timeout   |
+| -------------------- | -------------------------------------- | --------- |
+| `setup-workflow`     | Initialize infrastructure              | 300s      |
+| `run-task`           | Execute the build                      | No limit  |
+| `cleanup-workflow`   | Tear down infrastructure               | 300s      |
+| `garbage-collect`    | Remove old resources                   | 300s      |
+| `list-resources`     | List active resources                  | 300s      |
+| `list-workflow`      | List active workflows                  | 300s      |
+| `watch-workflow`     | Watch a workflow until completion      | No limit  |
+
+`run-task` and `watch-workflow` have no timeout because builds can run for hours.
+
+## Example: Shell Provider
+
+A minimal provider that runs builds via Docker:
+
+```bash
+#!/bin/bash
+case "$1" in
+  setup-workflow)
+    read request
+    echo '{"success": true, "result": "ready"}'
+    ;;
+  run-task)
+    read request
+    image=$(echo "$request" | jq -r '.params.image')
+    commands=$(echo "$request" | jq -r '.params.commands')
+    # Stream build output, then send JSON result
+    docker run --rm "$image" /bin/sh -c "$commands" 2>&1
+    echo '{"success": true, "result": "done"}'
+    ;;
+  cleanup-workflow)
+    read request
+    echo '{"success": true, "result": "cleaned"}'
+    ;;
+  garbage-collect)
+    read request
+    docker system prune -f >&2
+    echo '{"success": true, "result": "pruned"}'
+    ;;
+  list-resources)
+    read request
+    echo '{"success": true, "result": []}'
+    ;;
+  list-workflow)
+    read request
+    echo '{"success": true, "result": []}'
+    ;;
+  watch-workflow)
+    read request
+    echo '{"success": true, "result": ""}'
+    ;;
+  *)
+    echo '{"success": false, "error": "Unknown command: '"$1"'"}' >&2
+    exit 1
+    ;;
+esac
+```
+
+Make it executable and point `providerExecutable` at it:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerExecutable: ./my-provider.sh
+    targetPlatform: StandaloneLinux64
+```
+
+## CLI Provider vs TypeScript Provider
+
+| Feature                | CLI Provider           | TypeScript Provider       |
+| ---------------------- | ---------------------- | ------------------------- |
+| Language               | Any                    | TypeScript/JavaScript     |
+| Setup                  | `providerExecutable`   | `providerStrategy`        |
+| Communication          | JSON stdin/stdout      | Direct function calls     |
+| Streaming              | stdout lines           | Native logging            |
+| Distribution           | Any executable         | GitHub, NPM, local path   |
+| Dependencies           | None (self-contained)  | Node.js runtime           |
+
+Use CLI providers when you want to write in a non-TypeScript language, need to wrap an existing tool,
+or want a self-contained executable with no Node.js dependency.
+
+Use [TypeScript custom providers](custom-providers) when you want direct access to the BuildParameters
+object and orchestrator internals.
+
+## Related
+
+- [Custom Providers](custom-providers) — TypeScript provider plugin system
+- [Build Services](/docs/github-orchestrator/advanced-topics/build-services) — Submodule profiles, caching, LFS agents, hooks
