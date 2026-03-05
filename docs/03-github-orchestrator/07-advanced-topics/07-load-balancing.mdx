@@ -5,23 +5,23 @@ builds across them. This lets you distribute builds based on platform, project s
 availability, or any custom logic.
 
 ```
-                          ┌──────────────────────┐
-                          │  Incoming Build       │
-                          │  Request              │
-                          └──────────┬─────────────┘
-                                     │
-                          ┌──────────▼─────────────┐
-                          │  Router Logic           │
-                          │  (GitHub Actions /      │
-                          │   script / matrix)      │
-                          └──┬───────┬──────────┬───┘
-                             │       │          │
-              ┌──────────────▼┐  ┌───▼────────┐  ┌▼──────────────┐
-              │ aws           │  │ k8s        │  │ local-docker  │
-              │               │  │            │  │               │
-              │ Fargate       │  │ Cluster    │  │ Self-hosted   │
-              │ (scalable)    │  │ (flexible) │  │ (no cost)     │
-              └───────────────┘  └────────────┘  └───────────────┘
+                       ┌─────────────────────┐
+                       │  Incoming Build     │
+                       │  Request            │
+                       └─────────┬───────────┘
+                                 │
+                       ┌─────────▼───────────┐
+                       │  Router Logic       │
+                       │  (GitHub Actions /  │
+                       │   script / matrix)  │
+                       └──┬──────┬────────┬──┘
+                          │      │        │
+              ┌───────────▼──┐ ┌─▼──────────┐ ┌▼─────────────┐
+              │ aws          │ │ k8s        │ │ local-docker │
+              │              │ │            │ │              │
+              │ Fargate      │ │ Cluster    │ │ Self-hosted  │
+              │ (scalable)   │ │ (flexible) │ │ (no cost)    │
+              └──────────────┘ └────────────┘ └──────────────┘
 ```
 
 ## Why Load Balance?
