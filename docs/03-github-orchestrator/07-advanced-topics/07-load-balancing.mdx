@@ -1,0 +1,257 @@
+# Load Balancing
+
+Orchestrator supports multiple providers, and you can use standard GitHub Actions scripting to route
+builds across them. This lets you distribute builds based on platform, project size, runner
+availability, or any custom logic.
+
+```
+                          ┌──────────────────────┐
+                          │  Incoming Build       │
+                          │  Request              │
+                          └──────────┬─────────────┘
+                                     │
+                          ┌──────────▼─────────────┐
+                          │  Router Logic           │
+                          │  (GitHub Actions /      │
+                          │   script / matrix)      │
+                          └──┬───────┬──────────┬───┘
+                             │       │          │
+              ┌──────────────▼┐  ┌───▼────────┐  ┌▼──────────────┐
+              │ aws           │  │ k8s        │  │ local-docker  │
+              │               │  │            │  │               │
+              │ Fargate       │  │ Cluster    │  │ Self-hosted   │
+              │ (scalable)    │  │ (flexible) │  │ (no cost)     │
+              └───────────────┘  └────────────┘  └───────────────┘
+```
+
+## Why Load Balance?
+
+- **Cost control** — Route small or test builds to free self-hosted runners and reserve cloud
+  providers for production builds.
+- **Availability** — Fall back to a cloud provider when your self-hosted runner is busy or offline.
+- **Platform routing** — Send Linux builds to AWS and Windows builds to a local runner.
+- **Parallel scaling** — Split a multi-platform matrix across providers to finish faster.
+
+## Basic Provider Routing
+
+Use a GitHub Actions matrix or conditional logic to route builds to different providers.
+
+### Route by Platform
+
+```yaml
+name: Platform-Based Routing
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux builds go to AWS (fast, scalable)
+          - targetPlatform: StandaloneLinux64
+            provider: aws
+          # Windows builds go to self-hosted runner
+          - targetPlatform: StandaloneWindows64
+            provider: local-docker
+          # WebGL builds go to Kubernetes
+          - targetPlatform: WebGL
+            provider: k8s
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ matrix.provider }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Route by Branch
+
+Send production builds to a high-resource cloud provider and development builds to a cheaper option.
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Select provider
+        id: provider
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "strategy=aws" >> "$GITHUB_OUTPUT"
+            echo "cpu=4096" >> "$GITHUB_OUTPUT"
+            echo "memory=16384" >> "$GITHUB_OUTPUT"
+          else
+            echo "strategy=local-docker" >> "$GITHUB_OUTPUT"
+            echo "cpu=1024" >> "$GITHUB_OUTPUT"
+            echo "memory=3072" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ steps.provider.outputs.strategy }}
+          targetPlatform: StandaloneLinux64
+          containerCpu: ${{ steps.provider.outputs.cpu }}
+          containerMemory: ${{ steps.provider.outputs.memory }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Fallback on Runner Availability
+
+If your self-hosted runner is offline or busy, fall back to a cloud provider. Use a short initial
+job to check runner health, then pick the provider accordingly.
+
+```yaml
+name: Fallback Routing
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  check-runner:
+    name: Check self-hosted availability
+    runs-on: ubuntu-latest
+    outputs:
+      provider: ${{ steps.pick.outputs.provider }}
+    steps:
+      - name: Check if self-hosted runner is available
+        id: pick
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Query runner status via the GitHub API
+          RUNNERS=$(gh api repos/${{ github.repository }}/actions/runners --jq '[.runners[] | select(.status == "online")] | length')
+          if [[ "$RUNNERS" -gt 0 ]]; then
+            echo "provider=local-docker" >> "$GITHUB_OUTPUT"
+            echo "Self-hosted runner available — using local-docker"
+          else
+            echo "provider=aws" >> "$GITHUB_OUTPUT"
+            echo "No runners online — falling back to AWS"
+          fi
+
+  build:
+    name: Build
+    needs: check-runner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ needs.check-runner.outputs.provider }}
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Async Mode for Load Balancing
+
+The [`asyncOrchestrator`](../api-reference#github-integration) parameter works well with load
+balancing. When enabled, the GitHub Action dispatches the build and returns immediately without
+waiting for it to finish. This means your routing job completes in seconds regardless of which
+provider handles the actual build.
+
+```
+  Router Job (seconds)         Provider A              Provider B
+ ┌───────────────────┐       ┌──────────────┐        ┌──────────────┐
+ │ 1. Check runners  │       │              │        │              │
+ │ 2. Pick provider  │       │              │        │              │
+ │ 3. Dispatch build ├──────►│ 3a. Building │   OR  ─►│ 3b. Building │
+ │ 4. Return (done)  │       │     ...      │        │     ...      │
+ └───────────────────┘       │     ...      │        │     ...      │
+   Completes instantly       │ 5. Complete  │        │ 5. Complete  │
+                             └──────┬───────┘        └──────┬───────┘
+                                    │                       │
+                             ┌──────▼───────────────────────▼──────┐
+                             │         GitHub Check updated        │
+                             │         (monitor from PR page)      │
+                             └─────────────────────────────────────┘
+```
+
+Benefits of combining async mode with load balancing:
+
+- **No wasted runner minutes** — The router job finishes in seconds. You don't pay for a
+  GitHub-hosted runner to sit idle while the build runs in the cloud.
+- **Parallel dispatch** — Launch multiple builds to different providers simultaneously. Each
+  dispatches and returns immediately.
+- **Monitor everything from one place** — Enable `githubCheck: true` and all builds report status
+  back to the pull request Checks tab, regardless of which provider ran them.
+
+```yaml
+jobs:
+  build:
+    name: Build ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - targetPlatform: StandaloneLinux64
+            provider: aws
+          - targetPlatform: StandaloneWindows64
+            provider: k8s
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ matrix.provider }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          asyncOrchestrator: true
+          githubCheck: true
+```
+
+Each matrix job dispatches its build and exits immediately. The builds continue running on their
+respective providers and report progress via GitHub Checks.
+
+## Weighted Distribution
+
+For teams with both cloud and self-hosted capacity, distribute builds based on a ratio. This example
+sends 70% of builds to AWS and 30% to a local runner using a simple hash.
+
+```yaml
+- name: Weighted provider selection
+  id: provider
+  run: |
+    # Hash the run ID to get a stable pseudo-random number
+    HASH=$(echo "${{ github.run_id }}" | md5sum | cut -c1-8)
+    DECIMAL=$((16#$HASH % 100))
+    if [[ $DECIMAL -lt 70 ]]; then
+      echo "strategy=aws" >> "$GITHUB_OUTPUT"
+    else
+      echo "strategy=local-docker" >> "$GITHUB_OUTPUT"
+    fi
+```
+
+## Tips
+
+- **Start simple** — A platform-based matrix with different providers per entry is the easiest
+  starting point. Add dynamic routing only when you need it.
+- **Use async for long builds** — Combining `asyncOrchestrator: true` with `githubCheck: true` keeps
+  your routing job fast and gives you build status on the PR page.
+- **Cache keys are provider-independent** — The [`cacheKey`](../api-reference#caching) parameter
+  works the same across all providers, so builds routed to different providers can still share
+  caches if they use the same storage backend.
+- **Test fallback logic** — Temporarily disable your self-hosted runner to verify that your fallback
+  routing works before you need it in production.
+- **Custom providers** — The same routing patterns work with
+  [custom providers](../providers/custom-providers). Set `providerStrategy` to a GitHub repo or NPM
+  package and Orchestrator loads it dynamically.
