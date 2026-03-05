@@ -21,17 +21,17 @@ the CI runner itself. This is useful when:
 - You want to **scale to many concurrent builds** without managing servers
 
 ```
-  Standard Game-CI              Orchestrator Mode
+  Standard Game-CI               Orchestrator Mode
 
- ┌──────────────┐             ┌──────────────┐      ┌────────────┐
- │ GitHub       │             │ GitHub Action │      │            │
- │ Runner       │             │ CLI / Any CI  │ ───► │ Cloud      │
- │ (builds      │             │               │      │ Container  │
- │  locally)    │             │ (dispatches   │ ◄─── │ (builds    │
- │              │             │  only)        │      │  remotely) │
- └──────────────┘             └──────────────┘      └────────────┘
-   ~14 GB disk                  Configurable CPU, memory, disk
-   Fixed resources              Scales to zero when idle
+ ┌────────────────┐            ┌─────────────────┐    ┌──────────────┐
+ │ GitHub         │            │ GitHub Action    │    │              │
+ │ Runner         │            │ CLI / Any CI     │───►│ Cloud        │
+ │                │            │                  │    │ Container    │
+ │ (builds        │            │ (dispatches      │◄───│ (builds      │
+ │  locally)      │            │  only)           │    │  remotely)   │
+ └────────────────┘            └─────────────────┘    └──────────────┘
+   ~14 GB disk                   Configurable CPU, memory, disk
+   Fixed resources               Scales to zero when idle
 ```
 
 ## Self-Hosted Runners vs Orchestrator
