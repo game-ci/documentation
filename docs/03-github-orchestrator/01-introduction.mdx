@@ -9,10 +9,10 @@ be built, and streams results back.
 ```
   Your Machine / CI                  Cloud Provider
  ┌──────────────┐     git push      ┌─────────────────┐
- │              │ ─────────────────►│  AWS Fargate     │
- │  GitHub      │                   │  Kubernetes      │
- │  Actions     │ ◄─────────────────│  Local Docker    │
- │              │   build artifacts │                  │
+ │ GitHub       │ ─────────────────►│  AWS Fargate     │
+ │ Actions,     │                   │  Kubernetes      │
+ │ GitLab CI,   │ ◄─────────────────│  Local Docker    │
+ │ CLI, etc.    │   build artifacts │                  │
  └──────────────┘                   └─────────────────┘
         │                                   │
         │       Orchestrator handles:       │
