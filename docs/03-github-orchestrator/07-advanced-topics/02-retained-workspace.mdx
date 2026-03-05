@@ -16,6 +16,20 @@ Each retained workspace is locked during use — only one build can use a worksp
 Orchestrator handles locking automatically via S3 or rclone. See [Caching](caching) for storage
 provider details.
 
+```
+  maxRetainedWorkspaces: 3
+
+  Workspace 1          Workspace 2          Workspace 3
+ ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+ │ 🔒 Build A   │    │ 🔒 Build B   │    │    (idle)    │
+ │ Full project │    │ Full project │    │ Full project │
+ │ copy         │    │ copy         │    │ copy         │
+ └──────────────┘    └──────────────┘    └──────────────┘
+
+  Build C arrives → claims Workspace 3
+  Build D arrives → all locked → falls back to standard caching
+```
+
 ## Example
 
 ```yaml

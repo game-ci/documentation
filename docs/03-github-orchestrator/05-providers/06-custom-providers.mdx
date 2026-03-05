@@ -7,6 +7,19 @@ pluggable backend that controls where and how your builds run. Built-in provider
 With custom providers, you can point `providerStrategy` at a GitHub repository, NPM package, or
 local path and Orchestrator will dynamically load it at runtime.
 
+```
+  providerStrategy                                      Build
+ ┌─────────────────┐    fetch     ┌───────────────┐    ┌──────────────┐
+ │ "user/repo"     │────────────►│ Clone repo /   │    │              │
+ │ "npm-package"   │             │ Install pkg /  │───►│ Provider     │
+ │ "./local/path"  │             │ Resolve path   │    │ Interface    │
+ └─────────────────┘             └───────────────┘    │              │
+                                   cached in           │ setupWorkflow│
+                                   .provider-cache/    │ runTask      │
+                                                       │ cleanup      │
+                                                       └──────────────┘
+```
+
 ## Using a Custom Provider
 
 Set `providerStrategy` to a provider source instead of a built-in name:
