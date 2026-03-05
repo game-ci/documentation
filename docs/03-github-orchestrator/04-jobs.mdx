@@ -1,0 +1,189 @@
+# Orchestrator Jobs
+
+Orchestrator executes work as **jobs** — containerized or local tasks that run on your chosen
+provider. Understanding job types and their flow is key to customizing your build pipeline.
+
+## Job Flow
+
+Every Orchestrator run follows the same lifecycle, regardless of provider:
+
+```
+  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+  │  Setup       │────►│  Pre-Build  │────►│  Build      │────►│  Post-Build │
+  │  Provider    │     │  Jobs       │     │  Job        │     │  Jobs       │
+  └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+        │                                                            │
+        │                    ┌─────────────┐                         │
+        └───────────────────►│  Cleanup    │◄────────────────────────┘
+                             └─────────────┘
+```
+
+1. **Setup** — Provision cloud resources (stacks, volumes, secrets). Skipped for local providers.
+2. **Pre-build jobs** — Clone the repository, pull LFS, restore caches, run pre-build hooks.
+3. **Build job** — Execute the Unity build (or custom editor method).
+4. **Post-build jobs** — Push caches, upload artifacts, run post-build hooks.
+5. **Cleanup** — Release locks, tear down cloud resources, update GitHub Checks.
+
+## Job Types
+
+### Build Job
+
+The standard job — runs the Unity Editor to produce a build artifact. This is what most users
+care about.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    providerStrategy: aws
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The build job:
+- Installs the toolchain (Node.js, git-lfs) inside the container
+- Clones `game-ci/unity-builder` into the container
+- Runs `remote-cli-pre-build` to set up the workspace
+- Executes the Unity build via the Game CI entrypoint
+- Runs `remote-cli-post-build` to push caches and artifacts
+
+### Test Jobs
+
+Run Unity tests without producing a build. Use a custom `buildMethod` that runs tests and exits:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    buildMethod: MyNamespace.TestRunner.RunEditModeTests
+    manualExit: true
+    providerStrategy: aws
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+With `manualExit: true`, Unity doesn't quit automatically — your build method should call
+`EditorApplication.Exit(0)` after tests complete. This gives you full control over the test
+lifecycle.
+
+### Custom Editor Method Jobs
+
+Run any static C# method in the Unity Editor. Useful for:
+- Asset processing or validation
+- Addressables builds
+- Custom pipeline steps
+- Code generation
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    buildMethod: MyNamespace.Pipeline.ProcessAssets
+    manualExit: true
+    providerStrategy: aws
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The `buildMethod` must be a fully qualified static method: `Namespace.Class.Method`.
+
+### Custom Jobs
+
+Replace the entire build workflow with your own container steps. Useful for non-Unity workloads
+or fully custom pipelines that still benefit from Orchestrator's cloud infrastructure.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    customJob: |
+      - name: my-custom-step
+        image: ubuntu:22.04
+        commands: |
+          echo "Running custom workload"
+          ./my-script.sh
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+See [Custom Job](advanced-topics/custom-job) for the full reference.
+
+### Async Jobs
+
+For long-running builds, Orchestrator can dispatch the job and return immediately. The build
+continues in the cloud. Progress is reported via GitHub Checks.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    providerStrategy: aws
+    asyncOrchestrator: true
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+This is useful when builds exceed GitHub Actions' job time limits, or when you want to
+free up your CI runner immediately.
+
+## Pre-Build and Post-Build
+
+Orchestrator runs additional steps before and after the main build job.
+
+### Pre-Build Steps
+
+The `remote-cli-pre-build` phase handles:
+- Git clone of the target repository
+- Git LFS pull
+- Cache restoration (Library folder, LFS objects)
+- Retained workspace setup
+- Submodule initialization (if using [submodule profiles](advanced-topics/submodule-profiles))
+- Custom LFS agent configuration (e.g., [elastic-git-storage](advanced-topics/lfs-agents))
+
+You can inject additional pre-build steps:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    preBuildSteps: |
+      - name: install-dependencies
+        image: node:18
+        commands: npm install
+```
+
+### Post-Build Steps
+
+The `remote-cli-post-build` phase handles:
+- Library folder cache push
+- Build artifact upload
+- LFS cache push
+
+You can inject additional post-build steps:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    postBuildSteps: |
+      - name: upload-to-steam
+        image: steamcmd
+        commands: ./upload.sh
+```
+
+### Hooks
+
+For more granular control, use [container hooks](advanced-topics/hooks/container-hooks) or
+[command hooks](advanced-topics/hooks/command-hooks) to inject steps at specific points in the
+build lifecycle.
+
+## Job Execution by Provider
+
+Each provider runs jobs differently:
+
+| Provider | How jobs execute |
+|----------|----------------|
+| **AWS Fargate** | ECS Fargate task with CloudFormation stack. Logs streamed via Kinesis. |
+| **Kubernetes** | Kubernetes Job with PVC for workspace. Logs streamed from pod. |
+| **Local Docker** | Docker container with volume mounts. Logs piped to stdout. |
+| **Local** | Direct shell execution on the host. No container isolation. |
+| **CLI Provider** | Delegated to external executable via JSON protocol. |
+
+## Next Steps
+
+- [Custom Job](advanced-topics/custom-job) — Full reference for custom job definitions
+- [Hooks](advanced-topics/hooks/container-hooks) — Inject steps at specific lifecycle points
+- [Architecture](advanced-topics/architecture) — Deep dive into internal components
