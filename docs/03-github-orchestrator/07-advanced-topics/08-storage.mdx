@@ -1,0 +1,215 @@
+# Storage
+
+Orchestrator manages three categories of files during a build: **project files** (your Unity project
+and Git LFS assets), **build output** (the compiled game), and **caches** (Unity Library folder and
+LFS files). This page explains how each category flows through the system and how to configure the
+storage backend.
+
+```
+  CI / Local Machine                   Build Container
+ ┌──────────────────┐                 ┌──────────────────────────────────┐
+ │  Git repository  │──── clone ────►│  /data/{buildGuid}/repo/         │
+ │  + LFS assets    │                │    ├── Assets/                   │
+ │                  │                │    ├── Library/       (cached)   │
+ └──────────────────┘                │    └── .git/lfs/     (cached)   │
+                                     │                                  │
+                                     │  /data/cache/{cacheKey}/         │
+                                     │    ├── Library/       (tar.lz4) │
+                                     │    └── build/         (tar.lz4) │
+                                     └────────────┬─────────────────────┘
+                                                  │
+                                     ┌────────────▼─────────────────────┐
+                                     │  Cloud Storage (S3 / rclone)     │
+                                     │    ├── Library cache archives    │
+                                     │    ├── Build artifacts           │
+                                     │    └── Workspace locks           │
+                                     └──────────────────────────────────┘
+```
+
+## File Categories
+
+### Project Files
+
+Your Unity project is cloned into the build container at `/data/{buildGuid}/repo/`. Orchestrator
+handles Git and LFS automatically:
+
+1. **Shallow clone** — The repository is cloned with `--depth` controlled by the
+   [`cloneDepth`](../api-reference#git-synchronization) parameter (default: 50).
+2. **LFS pull** — Git LFS is installed and configured inside the container. LFS files are pulled
+   after the clone completes.
+3. **LFS hashing** — Orchestrator generates `.lfs-assets-guid` and `.lfs-assets-guid-sum` files to
+   track LFS content for cache invalidation.
+
+For retained workspaces, the project folder persists between builds at
+`/data/{lockedWorkspace}/repo/` instead of being cloned fresh each time. See
+[Retained Workspaces](retained-workspace) for details.
+
+### Build Output
+
+After Unity finishes building, the compiled output lives at `/data/{buildGuid}/repo/{buildPath}/`.
+Orchestrator archives this folder as `build-{buildGuid}.tar` (or `.tar.lz4` with compression
+enabled).
+
+To export build artifacts out of the container, use [container hooks](hooks/container-hooks). The
+most common approach is the built-in S3 or rclone upload hooks:
+
+```yaml
+# Upload build artifacts to S3
+containerHookFiles: aws-s3-upload-build
+
+# Or upload via rclone to any backend
+containerHookFiles: rclone-upload-build
+```
+
+See [Built-In Hooks](hooks/built-in-hooks) for all available hooks.
+
+### Caches
+
+Orchestrator caches two things between builds to speed up subsequent runs:
+
+| Cache         | Contents                                    | Path in container                 |
+| ------------- | ------------------------------------------- | --------------------------------- |
+| Library cache | Unity's `Library/` folder (imported assets) | `/data/cache/{cacheKey}/Library/` |
+| Build cache   | Previous build output                       | `/data/cache/{cacheKey}/build/`   |
+
+Caches are scoped by the [`cacheKey`](../api-reference#caching) parameter, which defaults to the
+branch name. Builds on the same branch share a cache.
+
+After a build completes, Orchestrator runs `remote-cli-post-build` which:
+
+1. Archives the Library folder as `lib-{buildGuid}.tar` (or `.tar.lz4`).
+2. Archives the build output as `build-{buildGuid}.tar` (or `.tar.lz4`).
+3. Pushes both archives to cloud storage via the configured storage provider.
+
+Before the next build, `remote-cli-pre-build` pulls these archives and extracts them, so Unity can
+skip re-importing unchanged assets.
+
+## Storage Providers
+
+Orchestrator supports two storage backends for caches, artifacts, and workspace locks.
+
+```
+  storageProvider: "s3"              storageProvider: "rclone"
+ ┌────────────────────┐             ┌────────────────────┐
+ │  AWS S3             │             │  Rclone             │
+ │                     │             │                     │
+ │  - Default backend  │             │  - 70+ backends     │
+ │  - Works with       │             │  - Google Cloud     │
+ │    LocalStack       │             │  - Azure Blob       │
+ │  - Built-in lock    │             │  - Backblaze B2     │
+ │    support          │             │  - SFTP, FTP        │
+ │                     │             │  - Any rclone       │
+ │                     │             │    remote            │
+ └────────────────────┘             └────────────────────┘
+```
+
+### S3 (Default)
+
+S3 is the default storage backend. It works with AWS S3 and LocalStack (for local testing).
+
+No extra configuration is needed when using the `aws` provider — the S3 bucket is created
+automatically as part of the CloudFormation base stack. For other providers, ensure AWS credentials
+and region are set in the environment.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    # storageProvider defaults to "s3"
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Rclone
+
+[Rclone](https://rclone.org) is a command-line tool that supports 70+ cloud storage backends. Use it
+when you want to store caches and artifacts somewhere other than S3.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: k8s
+    storageProvider: rclone
+    rcloneRemote: 'myremote:bucket/path'
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Rclone hooks run in the `rclone/rclone` Docker image. Configure your rclone remote beforehand (see
+[rclone docs](https://rclone.org/docs/)).
+
+**Supported backends include:** Google Cloud Storage, Azure Blob, Backblaze B2, DigitalOcean Spaces,
+Wasabi, MinIO, SFTP, FTP, and [many more](https://rclone.org/overview/).
+
+## Compression
+
+Orchestrator uses **LZ4 compression** by default for all cache and build archives. LZ4 is optimized
+for speed over compression ratio, which is ideal for large Unity Library folders where fast
+decompression matters more than file size.
+
+| `useCompressionStrategy` | Archive format | Description                                      |
+| ------------------------ | -------------- | ------------------------------------------------ |
+| `true` (default)         | `.tar.lz4`     | LZ4 compressed. Faster extract, ~30-50% smaller. |
+| `false`                  | `.tar`         | Uncompressed. Slightly faster to create.         |
+
+```yaml
+# Disable compression (not recommended for most projects)
+useCompressionStrategy: false
+```
+
+## Workspace Locking
+
+When using [retained workspaces](retained-workspace), Orchestrator uses distributed locking to
+ensure only one build occupies a workspace at a time. Locks are stored in the configured storage
+provider:
+
+- **S3**: Lock files at `s3://{awsStackName}/locks/{workspaceName}/{buildGuid}`
+- **Rclone**: Lock files at `{rcloneRemote}/locks/{workspaceName}/{buildGuid}`
+
+Locking is fully automatic. When a build starts, it acquires a lock. When it finishes (or fails),
+the lock is released. If all workspaces are locked, the build falls back to standard caching.
+
+## Large Packages
+
+The [`useLargePackages`](../api-reference#build-options) parameter optimizes storage for Unity
+packages containing "LargePackage" in `manifest.json`. When enabled, these packages are redirected
+to a shared folder so multiple builds with the same cache key share one copy instead of duplicating
+data.
+
+```yaml
+useLargePackages: true
+```
+
+## Container File System Layout
+
+Inside the build container, Orchestrator uses the `/data/` volume mount as the root for all project
+and cache data.
+
+```
+/data/
+├── {buildGuid}/                    # Unique job folder (or {lockedWorkspace}/)
+│   ├── repo/                       # Cloned repository
+│   │   ├── Assets/
+│   │   ├── Library/                # Unity Library (restored from cache)
+│   │   ├── .git/
+│   │   │   └── lfs/                # Git LFS objects
+│   │   └── {buildPath}/           # Build output
+│   └── builder/                    # Cloned game-ci/unity-builder
+│       └── dist/
+│           └── index.js
+└── cache/
+    └── {cacheKey}/                 # Scoped by branch name
+        ├── Library/
+        │   └── lib-{guid}.tar.lz4  # Library cache archive
+        └── build/
+            └── build-{guid}.tar.lz4 # Build output archive
+```
+
+## Storage Parameters
+
+For the full list of storage-related parameters, see the API Reference:
+
+- [Storage](../api-reference#storage) — `storageProvider`, `rcloneRemote`
+- [Caching](../api-reference#caching) — `cacheKey`, `maxRetainedWorkspaces`
+- [Build Options](../api-reference#build-options) — `useCompressionStrategy`, `useLargePackages`
+- [AWS](../api-reference#aws) — `awsStackName`, `awsS3Endpoint`

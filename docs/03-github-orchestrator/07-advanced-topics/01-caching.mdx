@@ -25,6 +25,28 @@ requires re-importing unchanged assets.
 - ✅ Best for smaller projects
 - ⚠️ Slower rebuilds for large asset libraries
 
+## Build Caching
+
+Orchestrator automatically caches build output alongside the Library cache. After each build, the
+compiled output folder is archived and stored using the same cache key (branch name by default). On
+the next build with the same cache key, the previous build output is available at
+`/data/cache/{cacheKey}/build/`.
+
+This happens automatically — no configuration required. The cache key controls which builds share
+output:
+
+```yaml
+# Builds on the same branch share cached output (default behavior)
+cacheKey: ${{ github.ref_name }}
+
+# Or share across branches by using a fixed key
+cacheKey: shared-cache
+```
+
+Build caching uses the same compression and storage provider as Library caching. Archives are stored
+as `build-{buildGuid}.tar.lz4` (or `.tar` if compression is disabled). See [Storage](storage) for
+details on compression and storage backends.
+
 ## Retained Workspace
 
 Caches the **entire project folder** between builds. Provides the fastest rebuilds but consumes more
