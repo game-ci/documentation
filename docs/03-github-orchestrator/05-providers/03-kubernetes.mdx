@@ -46,8 +46,7 @@ vCPU or GB suffix.
     containerHookFiles: aws-s3-upload-build
 ```
 
-See [Container Hooks](../../advanced-topics/custom-hooks/container-hooks) for more on
-`containerHookFiles`.
+See [Container Hooks](../advanced-topics/hooks/container-hooks) for more on `containerHookFiles`.
 
 A full workflow example is available in the builder source:
 [orchestrator-k8s-pipeline.yml](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/orchestrator-k8s-pipeline.yml).
@@ -56,10 +55,10 @@ A full workflow example is available in the builder source:
 
 - **Keep the cluster running.** Cold-starting a Kubernetes cluster is slow. If you need auto-scaling
   to zero, consider Google Cloud Kubernetes Autopilot.
-- **Cloud storage required.** Kubernetes support currently requires cloud storage for caching. S3 is
-  built-in, or use rclone for other backends.
+- **Cloud storage required.** Kubernetes requires cloud storage for
+  [caching](../advanced-topics/caching). S3 is built-in, or use rclone for other backends.
 
 ## K8s Parameters
 
 For the full list of Kubernetes parameters (`kubeConfig`, `kubeVolume`, `kubeStorageClass`, etc.),
-see the [API Reference — Kubernetes section](../../api-reference#kubernetes).
+see the [API Reference — Kubernetes section](../api-reference#kubernetes).

@@ -18,8 +18,8 @@ be built, and streams results back.
         │         Orchestrator handles:       │
         │         • Provisioning              │
         │         • Git sync + LFS            │
-        │         • Caching                   │
-        │         • Cleanup                   │
+        │         • Caching (S3 / rclone)     │
+        │         • Automatic cleanup         │
         └─────────────────────────────────────┘
 ```
 
@@ -30,42 +30,35 @@ AWS Fargate and Kubernetes.
 
 1. **Flexible and elastic** — balance speed and cost, configure CPU, memory, and disk per build
 2. **Scale from zero** — no idle servers, pay only while builds run
-3. **Easy setup** — minimal configuration to get started
-4. **Extensible** — run custom jobs, add hooks, or bring your own provider via the plugin system
+3. **Easy setup** — minimal configuration to [get started](getting-started)
+4. **Extensible** — run [custom hooks](advanced-topics/hooks), or bring your own
+   [provider plugin](providers/custom-providers)
 
 ## ❌ When You Don't Need It
 
 - Your project is under 5 GB — standard GitHub runners should work fine
 - You have dedicated build servers already running
 
-## 📦 Release Status
+## 📦 Supported Providers
 
-Orchestrator is in **active development** ⚠️
+| Cloud Provider                         | Description                                              |
+| -------------------------------------- | -------------------------------------------------------- |
+| [AWS Fargate](providers/aws)           | Fully managed containers on AWS. No servers to maintain. |
+| [Kubernetes](providers/kubernetes)     | Run on any Kubernetes cluster.                           |
+| [Local Docker](providers/local-docker) | Docker containers on the local machine.                  |
+| [Local](providers/local)               | Direct execution on the host machine.                    |
 
-Overall status: `preview` — core features are stable, some APIs may change.
+See [Providers](providers/overview) for the full list including [custom](providers/custom-providers)
+and [community](providers/community-providers) providers.
 
-Release stages: `experimental` → `preview` → `full release`
+## 🖥️ Supported Platforms
 
-### Provider Support
-
-| Cloud Provider | Release Status     |
-| -------------- | ------------------ |
-| AWS Fargate    | ✔️ Full release    |
-| Kubernetes     | ✔️ Preview release |
-| GCP            | ⚠️ Considered      |
-| Azure          | ⚠️ Considered      |
-
-See [Providers](advanced-topics/providers/overview) for details on each provider.
-
-### Platform Support
-
-| Platform           | Release Status     |
-| ------------------ | ------------------ |
-| GitHub Actions     | ✔️ Full release    |
-| GitLab CI          | ✔️ Preview release |
-| Command Line       | ✔️ Preview release |
-| Any Git repository | ✔️ Preview release |
-| Any CI system      | ✔️ Preview release |
+| Platform                                       | Description                           |
+| ---------------------------------------------- | ------------------------------------- |
+| [GitHub Actions](providers/github-integration) | First-class support with Checks.      |
+| [GitLab CI](providers/gitlab-integration)      | Via the Command Line mode.            |
+| [Command Line](examples/command-line)          | Run from any terminal or script.      |
+| Any CI system                                  | Anything that can run shell commands. |
 
 ## 🔗 External Links
 

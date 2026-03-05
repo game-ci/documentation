@@ -1,3 +1,7 @@
+---
+sidebar_label: Game-CI vs Orchestrator
+---
+
 # Standard Game-CI vs Orchestrator Mode
 
 ## 🎮 Standard Game-CI
@@ -20,10 +24,11 @@ the CI runner itself. This is useful when:
   Standard Game-CI              Orchestrator Mode
 
  ┌──────────────┐             ┌──────────────┐      ┌────────────┐
- │ GitHub       │             │ GitHub       │ ───► │ Cloud      │
- │ Runner       │             │ Runner       │      │ Container  │
- │ (builds      │             │ (dispatches  │ ◄─── │ (builds    │
- │  locally)    │             │  only)       │      │  remotely) │
+ │ GitHub       │             │ GitHub Action │      │            │
+ │ Runner       │             │ CLI / Any CI  │ ───► │ Cloud      │
+ │ (builds      │             │               │      │ Container  │
+ │  locally)    │             │ (dispatches   │ ◄─── │ (builds    │
+ │              │             │  only)        │      │  remotely) │
  └──────────────┘             └──────────────┘      └────────────┘
    ~14 GB disk                  Configurable CPU, memory, disk
    Fixed resources              Scales to zero when idle

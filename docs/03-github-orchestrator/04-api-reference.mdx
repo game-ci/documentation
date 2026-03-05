@@ -31,13 +31,13 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 ### Provider
 
-| Parameter              | Default                 | Description                                                                                                                                                                                       |
-| ---------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `providerStrategy`     | `local`                 | Cloud provider to use. Built-in: `aws`, `k8s`, `local-docker`, `local`. Also accepts a GitHub URL, NPM package, or local path for [custom providers](advanced-topics/providers/custom-providers). |
-| `containerCpu`         | `1024`                  | CPU units for cloud containers (`1024` = 1 vCPU). See provider setup guides for allowed values.                                                                                                   |
-| `containerMemory`      | `3072`                  | Memory in MB for cloud containers (`4096` = 4 GB). See provider setup guides for allowed values.                                                                                                  |
-| `orchestratorBranch`   | `main`                  | Release branch of Orchestrator for remote containers. Use `orchestrator-develop` for latest development builds.                                                                                   |
-| `orchestratorRepoName` | `game-ci/unity-builder` | Repository for Orchestrator source. Override to use a fork for testing or custom builds.                                                                                                          |
+| Parameter              | Default                 | Description                                                                                                                                                                       |
+| ---------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `providerStrategy`     | `local`                 | Cloud provider to use. Built-in: `aws`, `k8s`, `local-docker`, `local`. Also accepts a GitHub URL, NPM package, or local path for [custom providers](providers/custom-providers). |
+| `containerCpu`         | `1024`                  | CPU units for cloud containers (`1024` = 1 vCPU). See provider setup guides for allowed values.                                                                                   |
+| `containerMemory`      | `3072`                  | Memory in MB for cloud containers (`4096` = 4 GB). See provider setup guides for allowed values.                                                                                  |
+| `orchestratorBranch`   | `main`                  | Release branch of Orchestrator for remote containers. Use `orchestrator-develop` for latest development builds.                                                                   |
+| `orchestratorRepoName` | `game-ci/unity-builder` | Repository for Orchestrator source. Override to use a fork for testing or custom builds.                                                                                          |
 
 ### Git Synchronization
 
@@ -52,16 +52,16 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 ### Custom Hooks
 
-| Parameter                 | Default | Description                                                                                                        |
-| ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
-| `containerHookFiles`      | —       | Names of [container hook](advanced-topics/custom-hooks/container-hooks) files from `.game-ci/container-hooks/`.    |
-| `customHookFiles`         | —       | Names of custom hook files from `.game-ci/hooks/`.                                                                 |
-| `customCommandHooks`      | —       | Inline [command hooks](advanced-topics/custom-hooks/command-hooks) as YAML.                                        |
-| `postBuildSteps`          | —       | Post-build job in YAML format with keys: `image`, `secrets`, `command`.                                            |
-| `preBuildSteps`           | —       | Pre-build job (after repo setup, before build) in YAML format.                                                     |
-| `postBuildContainerHooks` | —       | Container hook files to run after the build step.                                                                  |
-| `preBuildContainerHooks`  | —       | Container hook files to run before the build step.                                                                 |
-| `customJob`               | —       | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/custom-hooks/custom-job). |
+| Parameter                 | Default | Description                                                                                                 |
+| ------------------------- | ------- | ----------------------------------------------------------------------------------------------------------- |
+| `containerHookFiles`      | —       | Names of [container hook](advanced-topics/hooks/container-hooks) files from `.game-ci/container-hooks/`.    |
+| `customHookFiles`         | —       | Names of custom hook files from `.game-ci/hooks/`.                                                          |
+| `customCommandHooks`      | —       | Inline [command hooks](advanced-topics/hooks/command-hooks) as YAML.                                        |
+| `postBuildSteps`          | —       | Post-build job in YAML format with keys: `image`, `secrets`, `command`.                                     |
+| `preBuildSteps`           | —       | Pre-build job (after repo setup, before build) in YAML format.                                              |
+| `postBuildContainerHooks` | —       | Container hook files to run after the build step.                                                           |
+| `preBuildContainerHooks`  | —       | Container hook files to run before the build step.                                                          |
+| `customJob`               | —       | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/hooks/custom-job). |
 
 ### Configuration Override
 
@@ -72,10 +72,10 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 ### Storage
 
-| Parameter         | Default | Description                                                                 |
-| ----------------- | ------- | --------------------------------------------------------------------------- |
-| `storageProvider` | `s3`    | Storage backend for caching and artifacts. Accepted values: `s3`, `rclone`. |
-| `rcloneRemote`    | —       | Rclone remote endpoint. Required when `storageProvider` is `rclone`.        |
+| Parameter         | Default | Description                                                                                            |
+| ----------------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `storageProvider` | `s3`    | Storage backend for [caching](advanced-topics/caching) and artifacts. Accepted values: `s3`, `rclone`. |
+| `rcloneRemote`    | —       | Rclone remote endpoint. Required when `storageProvider` is `rclone`.                                   |
 
 ### AWS
 
@@ -107,11 +107,11 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 ### GitHub Integration
 
-| Parameter           | Default | Description                                                                                                               |
-| ------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `githubCheck`       | `false` | Create a GitHub Check for each orchestrator step. See [GitHub Integration](advanced-topics/providers/github-integration). |
-| `asyncOrchestrator` | `false` | Run in async mode — returns immediately without waiting for the build to complete.                                        |
-| `watchToEnd`        | `true`  | Whether to follow the build logs until completion.                                                                        |
+| Parameter           | Default | Description                                                                                               |
+| ------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| `githubCheck`       | `false` | Create a GitHub Check for each orchestrator step. See [GitHub Integration](providers/github-integration). |
+| `asyncOrchestrator` | `false` | Run in async mode — returns immediately without waiting for the build to complete.                        |
+| `watchToEnd`        | `true`  | Whether to follow the build logs until completion.                                                        |
 
 ### Build Options
 

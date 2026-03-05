@@ -6,8 +6,8 @@ environment.
 
 ## GitHub Checks
 
-By enabling the `githubCheck` parameter, the orchestrator job will create a GitHub check for each
-step.
+By enabling the [`githubCheck`](../api-reference#github-integration) parameter, the orchestrator job
+will create a GitHub check for each step.
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -24,8 +24,9 @@ UI.
 
 ## Async Mode
 
-Set `asyncOrchestrator: true` to start a build without waiting for it to complete. The GitHub Action
-will return immediately and you can check progress via GitHub Checks or by running the `watch` mode.
+Set [`asyncOrchestrator: true`](../api-reference#github-integration) to start a build without
+waiting for it to complete. The GitHub Action will return immediately and you can check progress via
+GitHub Checks or by running the [`watch` mode](../api-reference#modes).
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -37,5 +38,4 @@ will return immediately and you can check progress via GitHub Checks or by runni
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-See the [AWS](../../examples/github-examples/aws) and
-[Kubernetes](../../examples/github-examples/kubernetes) example pages for full workflow files.
+See the [AWS](aws) and [Kubernetes](kubernetes) provider pages for full workflow files.

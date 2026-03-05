@@ -7,7 +7,7 @@ runners. This is useful for large projects that exceed GitHub's disk or resource
 
 - A Unity project in a GitHub repository
 - A cloud provider account (AWS or a Kubernetes cluster)
-- Provider credentials configured as GitHub secrets
+- Provider credentials configured as GitHub [secrets](secrets)
 
 ## Quick Start
 
@@ -15,10 +15,11 @@ runners. This is useful for large projects that exceed GitHub's disk or resource
 2. **Configure credentials** for your chosen provider
 3. **Add the orchestrator step** to your workflow
 
-See the provider-specific examples for complete setup:
+See the provider-specific setup guides:
 
-- [AWS Example](examples/github-examples/aws)
-- [Kubernetes Example](examples/github-examples/kubernetes)
+- [AWS Fargate](providers/aws)
+- [Kubernetes](providers/kubernetes)
+- [Local Docker](providers/local-docker)
 - [Command Line](examples/command-line)
 
 ## Minimal Example
