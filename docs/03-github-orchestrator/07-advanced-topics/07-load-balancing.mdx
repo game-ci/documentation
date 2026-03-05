@@ -284,6 +284,181 @@ runner using a stable hash.
     fi
 ```
 
+### Route to alternate workflow when runners are busy
+
+Instead of switching providers within the same job, you can dispatch an entirely different workflow.
+This is useful when the alternate provider needs different runner labels, secrets, or setup steps
+that don't fit in the same job.
+
+The pattern uses two workflows: a primary workflow that checks runner availability and either builds
+locally or dispatches a cloud workflow, and a cloud workflow that handles the remote build
+independently.
+
+**Primary workflow** — checks runners and either builds or dispatches:
+
+```yaml
+name: Build (Primary)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  route-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check self-hosted runner availability
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IDLE=$(gh api repos/${{ github.repository }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online" and .busy == false)] | length')
+          echo "idle=$IDLE" >> "$GITHUB_OUTPUT"
+
+      # If no runners are idle, dispatch the cloud build workflow
+      - name: Dispatch cloud build
+        if: steps.check.outputs.idle == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run cloud-build.yml \
+            -f targetPlatform=StandaloneLinux64 \
+            -f ref=${{ github.sha }}
+          echo "Self-hosted runners busy — dispatched to cloud-build workflow"
+
+      # If runners are available, build locally
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.idle != '0'
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        if: steps.check.outputs.idle != '0'
+        with:
+          providerStrategy: local-docker
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+**Cloud build workflow** — runs on `workflow_dispatch`, handles the remote build:
+
+```yaml
+name: Build (Cloud)
+
+on:
+  workflow_dispatch:
+    inputs:
+      targetPlatform:
+        description: Platform to build
+        required: true
+      ref:
+        description: Git ref to build
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: aws
+          targetPlatform: ${{ inputs.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+This pattern lets each workflow have completely different configurations — different runners,
+secrets, environment variables, and setup steps. The trade-off is that the dispatched workflow runs
+independently, so you need to check its status separately (via GitHub Actions UI or
+[`gh run list`](https://cli.github.com/manual/gh_run_list)).
+
+For a simpler approach that keeps everything in one workflow, use the
+[built-in load balancing](#built-in-load-balancing) or [reusable workflow](#reusable-workflow)
+patterns instead.
+
+### Reusable Workflow
+
+Extract the build step into a reusable workflow and call it with different provider settings based
+on runner availability. This keeps the routing decision and build execution in separate jobs while
+maintaining a single workflow run for visibility.
+
+```yaml
+# .github/workflows/unity-build-reusable.yml
+name: Unity Build (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      providerStrategy:
+        required: true
+        type: string
+      targetPlatform:
+        required: true
+        type: string
+    secrets:
+      GH_TOKEN:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ inputs.providerStrategy }}
+          targetPlatform: ${{ inputs.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GH_TOKEN }}
+```
+
+```yaml
+# .github/workflows/build-on-push.yml
+name: Build on Push
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    outputs:
+      provider: ${{ steps.check.outputs.provider }}
+    steps:
+      - name: Check runners and select provider
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IDLE=$(gh api repos/${{ github.repository }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online" and .busy == false)] | length')
+          if [[ "$IDLE" -gt 0 ]]; then
+            echo "provider=local-docker" >> "$GITHUB_OUTPUT"
+          else
+            echo "provider=aws" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: route
+    uses: ./.github/workflows/unity-build-reusable.yml
+    with:
+      providerStrategy: ${{ needs.route.outputs.provider }}
+      targetPlatform: StandaloneLinux64
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Unlike the workflow dispatch pattern, this keeps everything in a single workflow run — you can see
+the routing decision and build result together in the GitHub Actions UI.
+
 ## Async Mode and Load Balancing
 
 The [`asyncOrchestrator`](../api-reference#github-integration) parameter is essential for
@@ -350,6 +525,8 @@ jobs:
 | Route by platform or branch                    | Matrix or script                                |
 | Custom capacity logic (org runners, external)  | Script-based runner check                       |
 | Weighted distribution (70/30 split)            | Script with hash                                |
+| Dispatch entirely different workflow            | `workflow_dispatch` routing                     |
+| Shared build config, dynamic routing           | Reusable workflow (`workflow_call`)              |
 | Chained routing (A → B → C)                    | Script                                          |
 
 ## Tips
