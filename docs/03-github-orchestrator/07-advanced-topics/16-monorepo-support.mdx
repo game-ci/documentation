@@ -1,0 +1,258 @@
+---
+sidebar_position: 16
+---
+
+# Monorepo Support
+
+Orchestrator provides first-class support for Unity monorepos — single repositories that
+contain multiple products sharing engine code, submodules, and build configuration.
+
+## Overview
+
+A Unity monorepo typically contains:
+
+- A shared engine layer (`Assets/_Engine/`) used by all products
+- Game-specific code separated into submodules (`Assets/_Game/Submodules/`)
+- Per-product build configuration (build methods, target platforms, Steam IDs)
+- Shared tooling, CI workflows, and automation scripts
+
+The challenge is that different products need different subsets of the repository. A build of
+Product A should not initialize submodules that only Product B needs. A server build should
+not pull in client-only assets. A CI run for a hotfix should not reimport assets belonging to
+an unrelated product.
+
+Orchestrator addresses this through a profile system that controls submodule initialization
+per product and build type, combined with per-product framework configuration.
+
+## Submodule Profile System
+
+Profiles are YAML files that declare which submodules to initialize for a given product and
+context. Each submodule entry specifies either `branch: main` (initialize) or `branch: empty`
+(skip).
+
+### Profile Format
+
+```yaml
+primary_submodule: MyGameFramework
+submodules:
+  - name: CoreFramework
+    branch: main
+  - name: OptionalModule
+    branch: empty
+  - name: Plugins*
+    branch: main
+```
+
+`primary_submodule` identifies the main game submodule — the orchestrator uses this as the
+root of the build context.
+
+Each entry under `submodules` names a submodule (or a glob pattern matching multiple
+submodules) and declares whether it should be initialized. Submodules marked `branch: empty`
+are never touched during initialization, regardless of what other profiles or defaults specify.
+
+### Glob Pattern Support
+
+Glob patterns match multiple submodules with a single entry. This is useful for plugin groups
+that always travel together:
+
+```yaml
+submodules:
+  - name: Plugins*
+    branch: main      # initializes PluginsCore, PluginsAudio, PluginsLocalization, etc.
+  - name: ThirdParty*
+    branch: empty     # skips all ThirdParty submodules
+```
+
+Patterns are matched in order. The first matching entry wins, so more specific entries should
+appear before broader patterns.
+
+### Variant Overlays
+
+Variants override specific submodule entries from a base profile. A common use case is a
+`server.yml` variant that skips client-only assets and adds server-specific submodules:
+
+Base profile (`config/submodule-profiles/my-game/ci/profile.yml`):
+
+```yaml
+primary_submodule: MyGameFramework
+submodules:
+  - name: CoreFramework
+    branch: main
+  - name: ClientUI
+    branch: main
+  - name: ServerRuntime
+    branch: empty
+```
+
+Server variant (`config/submodule-profiles/my-game/ci/server.yml`):
+
+```yaml
+overrides:
+  - name: ClientUI
+    branch: empty     # not needed for server builds
+  - name: ServerRuntime
+    branch: main      # required for server builds
+```
+
+The variant is merged on top of the base profile at initialization time. Only the listed
+entries are overridden; all others inherit from the base.
+
+## Configuration
+
+Specify profiles and variants as action inputs:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    submoduleProfilePath: config/submodule-profiles/my-game/ci/profile.yml
+    submoduleVariantPath: config/submodule-profiles/my-game/ci/server.yml
+```
+
+When `submoduleProfilePath` is set, orchestrator reads the profile before any git operations
+and initializes only the listed submodules. Skipped submodules are never cloned, fetched, or
+touched.
+
+When `submoduleVariantPath` is also set, it is merged on top of the base profile before
+initialization begins.
+
+If neither input is set, orchestrator falls back to standard git submodule initialization
+(all submodules, no filtering).
+
+## Multi-Product CI Matrix
+
+A monorepo with multiple products can build all products in parallel using a GitHub Actions
+matrix. Each matrix entry specifies a different profile, producing independent builds from
+the same repository checkout.
+
+```yaml
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - product: my-game
+            profile: config/submodule-profiles/my-game/ci/profile.yml
+            buildMethod: MyGame.BuildScripts.BuildGame
+            targetPlatform: StandaloneLinux64
+          - product: my-game-server
+            profile: config/submodule-profiles/my-game/ci/profile.yml
+            variant: config/submodule-profiles/my-game/ci/server.yml
+            buildMethod: MyGame.BuildScripts.BuildServer
+            targetPlatform: StandaloneLinux64
+          - product: my-other-game
+            profile: config/submodule-profiles/my-other-game/ci/profile.yml
+            buildMethod: MyOtherGame.BuildScripts.BuildGame
+            targetPlatform: StandaloneWindows64
+    steps:
+      - uses: game-ci/unity-builder@v4
+        with:
+          submoduleProfilePath: ${{ matrix.profile }}
+          submoduleVariantPath: ${{ matrix.variant }}
+          buildMethod: ${{ matrix.buildMethod }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+```
+
+Each matrix job initializes only the submodules its profile declares. Products do not
+interfere with each other's initialization or build output.
+
+## Shared Code and Assembly Definitions
+
+Unity Assembly Definitions (`.asmdef` files) enforce code boundaries within the monorepo.
+The recommended layout separates shared engine code from game-specific code:
+
+```
+Assets/_Engine/               ← shared engine systems
+  Physics/
+    Engine.Physics.asmdef
+  Rendering/
+    Engine.Rendering.asmdef
+
+Assets/_Game/
+  Shared/Code/                ← shared game framework
+    Services/
+      Game.Services.asmdef
+    UI/
+      Game.UI.asmdef
+  Submodules/
+    MyGameFramework/          ← product-specific, in its own submodule
+      Code/
+        MyGame.asmdef
+```
+
+Assembly definitions in `Assets/_Engine/` reference only engine-level namespaces. Assembly
+definitions in `Assets/_Game/Shared/Code/` may reference engine assemblies. Product-specific
+assemblies reference both, but never each other across product boundaries.
+
+This structure means Unity can compile and test each product's assembly graph independently,
+and compile errors in one product do not block builds of another.
+
+## Framework Configuration
+
+Per-product build configuration belongs in a central frameworks file. This is the single
+source of truth for Steam App IDs, build methods, and supported platforms per product:
+
+```yaml
+# config/frameworks.yml
+frameworks:
+  my-game:
+    steamAppId: 123456
+    buildMethod: MyGame.BuildScripts.BuildGame
+    platforms:
+      - StandaloneLinux64
+      - StandaloneWindows64
+      - StandaloneOSX
+  my-game-server:
+    steamAppId: 123457
+    buildMethod: MyGame.BuildScripts.BuildServer
+    platforms:
+      - StandaloneLinux64
+  my-other-game:
+    steamAppId: 789012
+    buildMethod: MyOtherGame.BuildScripts.BuildGame
+    platforms:
+      - StandaloneWindows64
+      - WebGL
+```
+
+CI workflows read from this file to populate matrix entries and avoid duplicating
+product-specific values across workflow files. A single change to `frameworks.yml` propagates
+to all workflows that reference it.
+
+## Best Practices
+
+**Keep profiles small.** A profile should list only what a build actually requires. Err toward
+`branch: empty` for anything that is not clearly needed. Unnecessary submodule initialization
+adds clone time and increases the chance of conflicts.
+
+**Use glob patterns for plugin groups.** Plugins that always travel together (a vendor SDK
+split across three submodules, for example) should share a naming prefix so a single glob
+entry controls them all. This reduces profile maintenance as new plugins are added.
+
+**Use variant overlays for build-type differences.** Do not create separate base profiles for
+client and server builds. Start with a shared base profile and apply a server variant on top.
+This keeps the diff between build types explicit and minimizes duplication.
+
+**Validate profiles in CI.** Add a profile validation step that checks every submodule named
+in a profile actually exists in `.gitmodules`. This catches typos and stale entries before
+they cause initialization failures on build agents.
+
+```yaml
+- name: Validate submodule profiles
+  run: |
+    .\automation\ValidateSubmoduleProfiles.ps1 \
+      -ProfileDir config/submodule-profiles \
+      -GitmodulesPath .gitmodules
+  shell: powershell
+```
+
+**Document the profile per product.** Each product's profile directory should contain a brief
+README explaining which submodules are in scope, which are intentionally excluded, and which
+variant files exist. New contributors should not need to reverse-engineer profile intent from
+the YAML alone.
+
+## Inputs Reference
+
+| Input | Description |
+|-------|-------------|
+| `submoduleProfilePath` | Path to the profile YAML file controlling submodule initialization |
+| `submoduleVariantPath` | Path to a variant YAML file overlaid on top of the base profile |

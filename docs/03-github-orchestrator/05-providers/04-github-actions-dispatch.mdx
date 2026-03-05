@@ -1,0 +1,172 @@
+---
+sidebar_position: 4
+---
+
+# GitHub Actions Dispatch Provider
+
+The **GitHub Actions Dispatch** provider triggers Unity builds as `workflow_dispatch` events on a
+target GitHub Actions workflow. Instead of running the build on the orchestrating runner, the
+orchestrator dispatches the work to another repository's workflow and monitors it to completion.
+
+## Use Cases
+
+- **Separate build infrastructure** from your game repository — keep build runners and Unity
+  licenses in a dedicated repo while orchestrating from your main project.
+- **Distribute builds across organizations** — trigger workflows in repos owned by different GitHub
+  organizations or teams.
+- **Specialized runner pools** — route builds to self-hosted runners registered against a different
+  repository with specific hardware (GPU, high memory, fast SSD).
+- **License isolation** — keep Unity license activation in a controlled environment while allowing
+  multiple game repos to dispatch builds to it.
+
+## Prerequisites
+
+1. **GitHub CLI (`gh`)** must be available on the runner executing the orchestrator step.
+2. A **Personal Access Token (PAT)** with `actions:write` scope on the target repository.
+3. A **target workflow** in the destination repository with a `workflow_dispatch` trigger that
+   accepts the orchestrator's build inputs.
+
+### Target Workflow Template
+
+The target repository needs a workflow that accepts the orchestrator's dispatched inputs. A minimal
+example:
+
+```yaml
+# .github/workflows/unity-build.yml (in the target repo)
+name: Unity Build
+on:
+  workflow_dispatch:
+    inputs:
+      buildGuid:
+        description: 'Build GUID from orchestrator'
+        required: true
+      image:
+        description: 'Unity Docker image'
+        required: true
+      commands:
+        description: 'Base64-encoded build commands'
+        required: true
+      mountdir:
+        description: 'Mount directory'
+        required: false
+      workingdir:
+        description: 'Working directory'
+        required: false
+      environment:
+        description: 'JSON environment variables'
+        required: false
+
+jobs:
+  build:
+    runs-on: [self-hosted, unity]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run build
+        run: |
+          echo "${{ inputs.commands }}" | base64 -d | bash
+```
+
+## Configuration
+
+Set `providerStrategy: github-actions` and supply the required inputs:
+
+```yaml
+- uses: game-ci/unity-builder@main
+  with:
+    providerStrategy: github-actions
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    githubActionsRepo: my-org/unity-build-farm
+    githubActionsWorkflow: unity-build.yml
+    githubActionsToken: ${{ secrets.BUILD_FARM_PAT }}
+    githubActionsRef: main
+```
+
+## How It Works
+
+```
+  Orchestrator (your repo)                    Target repo
+ ┌──────────────────────┐                   ┌──────────────────────┐
+ │                      │   workflow_dispatch│                      │
+ │  1. Validate target  │──────────────────►│  4. Run build job    │
+ │     workflow exists   │                   │     on target runner │
+ │                      │                   │                      │
+ │  2. Dispatch event   │                   │  5. Execute commands │
+ │     with build inputs│                   │                      │
+ │                      │   poll status      │                      │
+ │  3. Wait for run to  │◄─────────────────►│  6. Complete         │
+ │     appear           │                   │                      │
+ │                      │   fetch logs       │                      │
+ │  7. Stream logs and  │◄──────────────────│                      │
+ │     report result    │                   │                      │
+ └──────────────────────┘                   └──────────────────────┘
+```
+
+1. **Setup** — The orchestrator verifies the target workflow exists by querying the GitHub API.
+2. **Dispatch** — A `workflow_dispatch` event is sent with build parameters (build GUID, image,
+   base64-encoded commands, environment variables) as workflow inputs.
+3. **Poll for run** — The orchestrator polls the target repository's workflow runs (filtering by
+   creation time) until the dispatched run appears. This typically takes 10-30 seconds.
+4. **Monitor** — Once the run is identified, the orchestrator polls its status every 15 seconds
+   until it reaches a terminal state (`completed`).
+5. **Result** — On success, logs are fetched via `gh run view --log`. On failure, an error is raised
+   with the run's conclusion.
+6. **Cleanup** — No cloud resources are created, so cleanup is a no-op.
+
+## Full Workflow Example
+
+```yaml
+name: Build Game (Dispatched)
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targetPlatform:
+          - StandaloneLinux64
+          - StandaloneWindows64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@main
+        with:
+          providerStrategy: github-actions
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          githubActionsRepo: my-org/unity-build-farm
+          githubActionsWorkflow: unity-build.yml
+          githubActionsToken: ${{ secrets.BUILD_FARM_PAT }}
+          githubActionsRef: main
+```
+
+## Limitations and Considerations
+
+- **Run identification delay** — After dispatching, the orchestrator must wait for the run to appear
+  in the GitHub API. This adds 10-30 seconds of overhead per build.
+- **API rate limits** — Each status poll is an API call. Long builds will accumulate many calls. The
+  15-second poll interval keeps usage well within GitHub's rate limits for authenticated requests
+  (5,000/hour).
+- **No artifact transfer** — Build artifacts remain in the target repository's workflow run. You must
+  configure artifact upload/download separately (e.g., via `actions/upload-artifact` in the target
+  workflow).
+- **PAT scope** — The token needs `actions:write` on the target repo. Use a fine-grained PAT scoped
+  to only the build farm repository for least-privilege access.
+- **Concurrent dispatch** — If multiple dispatches happen simultaneously, the orchestrator identifies
+  its run by filtering on creation time. Rapid concurrent dispatches to the same workflow could
+  theoretically cause misidentification.
+
+## Inputs Reference
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `providerStrategy` | Yes | — | Must be `github-actions` |
+| `githubActionsRepo` | Yes | — | Target repository in `owner/repo` format |
+| `githubActionsWorkflow` | Yes | — | Workflow filename (e.g., `unity-build.yml`) or workflow ID |
+| `githubActionsToken` | Yes | — | Personal Access Token with `actions:write` scope on the target repo |
+| `githubActionsRef` | No | `main` | Branch or ref to run the dispatched workflow on |

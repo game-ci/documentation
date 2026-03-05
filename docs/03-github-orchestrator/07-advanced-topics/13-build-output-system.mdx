@@ -1,0 +1,219 @@
+---
+sidebar_position: 13
+---
+
+# Structured Build Output System
+
+Orchestrator supports multiple build output types with structured manifests, per-type
+post-processing pipelines, and first-class GitHub integration.
+
+## Overview
+
+Production Unity workflows produce many output types beyond a single build artifact — test results,
+screenshots, server builds, exported data, metrics, and logs. Each type needs different handling:
+storage, processing, reporting, and retention. The output system provides a structured way to
+declare, collect, process, and report on all of these.
+
+## Declaring Output Types
+
+Specify which output types a build produces:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    outputTypes: build,test-results,metrics,images
+```
+
+## Built-in Output Types
+
+| Type | Default Path | Description |
+|------|-------------|-------------|
+| `build` | `./Builds/{platform}/` | Standard game build artifact |
+| `test-results` | `./TestResults/` | NUnit/JUnit XML test results |
+| `server-build` | `./Builds/{platform}-server/` | Dedicated server build |
+| `data-export` | `./Exports/` | Exported data files (CSV, JSON, binary) |
+| `images` | `./Captures/` | Screenshots, render captures, atlas previews |
+| `logs` | `./Logs/` | Structured build and test logs |
+| `metrics` | `./Metrics/` | Build performance metrics, asset statistics |
+| `coverage` | `./Coverage/` | Code coverage reports |
+
+## Output Manifest
+
+Every build produces a JSON manifest describing all outputs:
+
+```json
+{
+  "buildGuid": "abc-123",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "outputs": [
+    {
+      "type": "build",
+      "path": "./Builds/StandaloneLinux64/",
+      "size": 524288000,
+      "hash": "sha256:abc...",
+      "metadata": {
+        "platform": "StandaloneLinux64",
+        "scripting": "IL2CPP"
+      }
+    },
+    {
+      "type": "test-results",
+      "path": "./TestResults/editmode-results.xml",
+      "format": "nunit3",
+      "summary": {
+        "total": 342,
+        "passed": 340,
+        "failed": 1,
+        "skipped": 1
+      }
+    },
+    {
+      "type": "images",
+      "path": "./Captures/",
+      "files": ["main-menu.png", "gameplay-01.png"]
+    },
+    {
+      "type": "metrics",
+      "path": "./Metrics/build-metrics.json",
+      "metadata": {
+        "compileTime": 45.2,
+        "assetCount": 12500,
+        "buildSize": 524288000
+      }
+    }
+  ]
+}
+```
+
+Control manifest output with:
+
+```yaml
+outputManifestPath: ./build-manifest.json
+```
+
+## Post-Processing Pipelines
+
+Each output type has a configurable processing pipeline that runs after the build:
+
+### Test Results
+
+Parse test result XML files and report to GitHub:
+
+```yaml
+outputPipelines:
+  test-results:
+    - parse: nunit3
+    - report: github-checks
+    - archive: s3
+```
+
+Test results appear as inline annotations on pull request files, showing exactly where
+failures occurred.
+
+### Image Captures
+
+Thumbnail, diff against baselines, and attach to PRs:
+
+```yaml
+outputPipelines:
+  images:
+    - thumbnail: { maxWidth: 256 }
+    - diff: { baseline: ./Baselines/ }
+    - report: github-pr-comment
+```
+
+Provide a baseline directory for visual regression testing:
+
+```yaml
+imageBaselinePath: ./Tests/Baselines/
+```
+
+### Build Metrics
+
+Aggregate metrics and track trends across builds:
+
+```yaml
+outputPipelines:
+  metrics:
+    - aggregate: { groupBy: platform }
+    - trend: { history: 30 }
+    - report: github-check-summary
+```
+
+Set the number of historical builds to retain for trend analysis:
+
+```yaml
+metricsHistory: 30
+```
+
+## Custom Output Types
+
+Register project-specific output types:
+
+```yaml
+customOutputTypes:
+  - name: addressables-catalog
+    path: ./ServerData/
+    postProcess:
+      - validate: json-schema
+      - upload: cdn
+  - name: localization-export
+    path: ./Exports/Localization/
+    postProcess:
+      - validate: csv
+      - archive: s3
+```
+
+Custom types can also be defined in a file at `.game-ci/output-types.yml`.
+
+## GitHub Integration
+
+Output types automatically integrate with GitHub CI surfaces:
+
+| Output Type | GitHub Surface |
+|-------------|---------------|
+| Test results | Check annotations — inline failure markers on PR diffs |
+| Images | PR comment — image grid with baseline diffs |
+| Metrics | Check summary — trend charts and delta tables |
+| Coverage | PR comment — coverage percentage and delta |
+| Build artifacts | Check run — download links |
+
+## Combining with Test Suites
+
+The output system works with the [Test Workflow Engine](test-workflow-engine) to provide
+structured test results per suite run:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    testSuitePath: .game-ci/test-suites/pr-suite.yml
+    testResultFormat: both       # junit + json
+    testResultPath: ./TestResults/
+    outputTypes: test-results,metrics,coverage
+```
+
+Each test suite run produces its own output entries in the manifest.
+
+## Combining with Hot Runners
+
+[Hot runners](hot-runner-protocol) can produce multiple output types per job. The output
+manifest is returned as part of the job result:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    editorMode: persistent
+    outputTypes: build,test-results,images,metrics
+```
+
+## Inputs Reference
+
+| Input | Description |
+|-------|-------------|
+| `outputTypes` | Comma-separated output types to collect |
+| `outputManifestPath` | Path for the output manifest JSON file |
+| `outputPipelines` | YAML defining per-type post-processing pipelines |
+| `customOutputTypes` | YAML defining project-specific output types |
+| `imageBaselinePath` | Path to baseline images for visual regression diffing |
+| `metricsHistory` | Number of historical builds for trend tracking |

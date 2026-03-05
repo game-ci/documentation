@@ -1,0 +1,164 @@
+---
+sidebar_position: 5
+---
+
+# GitLab CI Dispatch Provider
+
+The **GitLab CI Dispatch** provider triggers Unity builds as GitLab CI pipelines via the GitLab
+REST API. This enables teams using GitLab for CI infrastructure to benefit from Game CI's
+orchestration while keeping their existing pipeline runners and configuration.
+
+## Use Cases
+
+- **Hybrid GitHub/GitLab setups** — Game source lives on GitHub, but CI runners and Unity licenses
+  are managed through GitLab.
+- **GitLab Runner infrastructure** — Leverage existing GitLab Runners (including GPU-equipped or
+  macOS runners) for Unity builds.
+- **Self-hosted GitLab** — Organizations running their own GitLab instance can route builds to their
+  internal infrastructure.
+- **GitLab CI/CD catalog** — Integrate orchestrator-triggered builds with existing GitLab CI/CD
+  components and templates.
+
+## Prerequisites
+
+1. A **GitLab project** with CI/CD pipelines enabled.
+2. A **pipeline trigger token** — created in the GitLab project under
+   **Settings > CI/CD > Pipeline trigger tokens**.
+3. A **`.gitlab-ci.yml`** in the target project that accepts orchestrator variables.
+
+### Target Pipeline Template
+
+The GitLab project needs a CI configuration that consumes the orchestrator's pipeline variables:
+
+```yaml
+# .gitlab-ci.yml (in the GitLab project)
+stages:
+  - build
+
+unity-build:
+  stage: build
+  tags:
+    - unity
+  script:
+    - echo "$BUILD_COMMANDS" | base64 -d | bash
+  variables:
+    BUILD_GUID: ''
+    BUILD_IMAGE: ''
+    BUILD_COMMANDS: ''
+    MOUNT_DIR: ''
+    WORKING_DIR: ''
+```
+
+## Configuration
+
+Set `providerStrategy: gitlab-ci` and supply the required inputs:
+
+```yaml
+- uses: game-ci/unity-builder@main
+  with:
+    providerStrategy: gitlab-ci
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    gitlabProjectId: my-group/unity-builds
+    gitlabTriggerToken: ${{ secrets.GITLAB_TRIGGER_TOKEN }}
+    gitlabApiUrl: https://gitlab.com
+    gitlabRef: main
+```
+
+### Self-Hosted GitLab
+
+For self-hosted GitLab instances, set `gitlabApiUrl` to your instance URL:
+
+```yaml
+gitlabApiUrl: https://gitlab.internal.company.com
+```
+
+## How It Works
+
+```
+  Orchestrator (GitHub)                     GitLab CI
+ ┌──────────────────────┐                 ┌──────────────────────┐
+ │                      │  POST /trigger   │                      │
+ │  1. Verify project   │────────────────►│  3. Run pipeline     │
+ │     access           │                 │     jobs on GitLab   │
+ │                      │                 │     Runners          │
+ │  2. Trigger pipeline │                 │                      │
+ │     with variables   │  poll status     │  4. Execute build    │
+ │                      │◄───────────────►│     commands         │
+ │  5. Monitor pipeline │                 │                      │
+ │     status           │  fetch job logs  │  5. Complete         │
+ │                      │◄────────────────│                      │
+ │  6. Collect per-job  │                 │                      │
+ │     logs and report  │                 │                      │
+ └──────────────────────┘                 └──────────────────────┘
+```
+
+1. **Setup** — The orchestrator verifies access to the GitLab project using the provided token.
+2. **Trigger** — A pipeline is triggered via the GitLab
+   [Pipeline Triggers API](https://docs.gitlab.com/ee/ci/triggers/) with build parameters passed
+   as pipeline variables (`BUILD_GUID`, `BUILD_IMAGE`, `BUILD_COMMANDS`, etc.).
+3. **Monitor** — The orchestrator polls the pipeline status every 15 seconds until it reaches a
+   terminal state (`success`, `failed`, `canceled`, or `skipped`).
+4. **Logs** — On completion, the orchestrator fetches logs for each job in the pipeline individually
+   via the GitLab Jobs API, producing a combined log output.
+5. **Result** — If the pipeline status is not `success`, an error is raised with the terminal
+   status.
+6. **Cleanup** — No resources are created, so cleanup is a no-op.
+
+## Full Workflow Example
+
+```yaml
+name: Build Game (GitLab CI)
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targetPlatform:
+          - StandaloneLinux64
+          - StandaloneWindows64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@main
+        with:
+          providerStrategy: gitlab-ci
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          gitlabProjectId: my-group/unity-builds
+          gitlabTriggerToken: ${{ secrets.GITLAB_TRIGGER_TOKEN }}
+          gitlabApiUrl: https://gitlab.com
+          gitlabRef: main
+```
+
+## Limitations and Considerations
+
+- **API rate limits** — GitLab.com enforces API rate limits (authenticated: 2,000 requests/minute
+  for most plans). The 15-second poll interval keeps usage low, but very long builds with many
+  parallel pipelines should account for this.
+- **Token permissions** — The trigger token is scoped to the project. For fetching logs and pipeline
+  status, the token must also have `read_api` access. A project access token with `api` scope
+  covers both triggering and log retrieval.
+- **No direct artifact transfer** — Artifacts stay in GitLab. Configure GitLab CI artifacts or
+  external storage (S3, GCS) in your `.gitlab-ci.yml` to export build outputs.
+- **Variable size limits** — GitLab pipeline variables have a combined size limit. For large build
+  command payloads, the base64-encoded commands variable may approach this limit. Consider storing
+  build scripts in the GitLab repository instead of passing them inline.
+- **Self-hosted TLS** — When using `gitlabApiUrl` with a self-hosted instance using self-signed
+  certificates, ensure the runner's certificate store trusts the GitLab instance's CA.
+
+## Inputs Reference
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `providerStrategy` | Yes | — | Must be `gitlab-ci` |
+| `gitlabProjectId` | Yes | — | GitLab project ID (numeric) or URL-encoded path (e.g., `my-group%2Funity-builds`) |
+| `gitlabTriggerToken` | Yes | — | Pipeline trigger token (created in GitLab project settings) |
+| `gitlabApiUrl` | No | `https://gitlab.com` | GitLab API base URL (for self-hosted instances) |
+| `gitlabRef` | No | `main` | Branch or ref to trigger the pipeline on |
