@@ -9,7 +9,7 @@ from the command line, the "Workbench" GUI in the Unity Editor or from GitHub Ac
 It will then send the project to be built and/or tested depending on your workflow configuration.**
 
 **Orchestrator is especially useful for game development because it supports large projects.
-Orchestrator provides first class support for the Unity game engine.**
+Orchestrator provides first-class support for the Unity game engine.**
 
 Orchestrator uses git to track and syncronize your projects and uses native cloud services such as
 AWS Fargate and Kubernetes to run your jobs. Other version control systems are not actively
@@ -18,11 +18,11 @@ supported.
 ## Why Orchestrator?
 
 1. **Orchestrator is flexible and elastic**
-   1. _You can balance your use of high-performance and cost saving modes._ Configurable cost/speed
+   1. _You can balance your use of high-performance and cost-saving modes._ Configurable cost/speed
       effeciency
    2. _Works great for projects of almost any size, from AAA projects and assets to micro projects_
    3. _Extended configuration options._ More control over disk size, memory and CPU
-   4. _Easily scale all job resources as your project grows_ e.g storage, CPU and memory
+   4. _Easily scale all job resources as your project grows_ e.g. storage, CPU and memory
 2. **Scale fully on demand from zero (not in use) to many concurrent jobs.** Benefits from
    "pay-for-what-you-use" cloud billing models. We have made an effort to make sure that it costs
    you nothing (aside from artifact and cache storage) while there are no builds running (no
@@ -57,21 +57,18 @@ indicates the stability and support for orchestrator features and workflows.
 
 ### Supported Orchestrator Platforms
 
-```md
 | Cloud Provider Platform | Release Status     |
 | ----------------------- | ------------------ |
 | Kubernetes              | ✔️ preview release |
 | AWS                     | ✔️ full release    |
 | GCP                     | ⚠ Considered       |
 | Azure                   | ⚠ Considered       |
-```
 
 _Note for Kubernetes support:_ _Usually the cluster needs to be up and running at all times, as
 starting up a cluster is slow._ _Use Google Cloud's Kubernetes Autopilot you can scale down to the
 free tier automatically while not in use._ _Kubernetes support currently requires cloud storage,
 only S3 support is built-in._
 
-```md
 | Git Platform          | Release Status     |
 | --------------------- | ------------------ |
 | GitHub                | ✔️ full release    |
@@ -79,7 +76,6 @@ only S3 support is built-in._
 | Command Line          | ✔️ preview release |
 | Any Git repository    | ✔️ preview release |
 | Any Git automation/Ci | ✔️ preview release |
-```
 
 ## External Links
 
