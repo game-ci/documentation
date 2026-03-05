@@ -1,5 +1,28 @@
 # AWS
 
+## Architecture
+
+Orchestrator creates and manages these AWS resources automatically:
+
+```
+  CloudFormation (base stack)
+ ┌─────────────────────────────────────────────────┐
+ │                                                 │
+ │  ┌────────────┐    ┌────────────┐               │
+ │  │ ECS        │    │ S3         │               │
+ │  │ Fargate    │    │ Bucket     │               │
+ │  │ (build     │    │ (cache +   │               │
+ │  │  tasks)    │    │  artifacts)│               │
+ │  └────────────┘    └────────────┘               │
+ │                                                 │
+ │  ┌────────────┐    ┌────────────┐               │
+ │  │ CloudWatch │───►│ Kinesis    │──► Log stream │
+ │  │ Logs       │    │ Stream     │    to CI      │
+ │  └────────────┘    └────────────┘               │
+ │                                                 │
+ └─────────────────────────────────────────────────┘
+```
+
 ## Requirements
 
 - An AWS account with permission to create resources (ECS, CloudFormation, S3, Kinesis, CloudWatch).

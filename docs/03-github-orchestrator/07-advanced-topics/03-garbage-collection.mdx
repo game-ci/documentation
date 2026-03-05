@@ -3,6 +3,23 @@
 Orchestrator creates cloud resources (containers, stacks, volumes) for each build and cleans them up
 automatically. If a build fails or is interrupted, resources may be left behind.
 
+```
+  Normal Build                          Failed / Interrupted Build
+
+ ┌──────────┐  ┌──────────┐  ┌─────┐  ┌──────────┐  ┌──────────┐
+ │ Create   │─►│ Build    │─►│ ✓   │  │ Create   │─►│ Build    │──► ✗ crash
+ │ resources│  │          │  │Clean│  │ resources│  │          │
+ └──────────┘  └──────────┘  └─────┘  └──────────┘  └──────────┘
+                              auto                    ▼
+                              cleanup                 Resources left behind
+                                                      ▼
+                                                     ┌─────────────────┐
+                                                     │ garbage-collect  │
+                                                     │ removes after    │
+                                                     │ garbageMaxAge    │
+                                                     └─────────────────┘
+```
+
 Use garbage collection to clean up stale resources. See the
 [API Reference](../api-reference#garbage-collection) for all parameters.
 
