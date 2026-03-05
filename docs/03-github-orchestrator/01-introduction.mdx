@@ -7,20 +7,20 @@ command line, or any CI system. Orchestrator provisions a cloud environment, sen
 be built, and streams results back.
 
 ```
-  Your Machine / CI                    Cloud Provider
- ┌──────────────┐       git push      ┌──────────────────┐
- │              │  ──────────────────► │  ☁️ AWS Fargate   │
- │  GitHub      │                     │  ☁️ Kubernetes    │
- │  Actions     │  ◄────────────────  │  🐳 Local Docker  │
- │              │    build artifacts   │                  │
- └──────────────┘                     └──────────────────┘
-        │                                     │
-        │         Orchestrator handles:       │
-        │         • Provisioning              │
-        │         • Git sync + LFS            │
-        │         • Caching (S3 / rclone)     │
-        │         • Automatic cleanup         │
-        └─────────────────────────────────────┘
+  Your Machine / CI                  Cloud Provider
+ ┌──────────────┐     git push      ┌─────────────────┐
+ │              │ ─────────────────►│  AWS Fargate     │
+ │  GitHub      │                   │  Kubernetes      │
+ │  Actions     │ ◄─────────────────│  Local Docker    │
+ │              │   build artifacts │                  │
+ └──────────────┘                   └─────────────────┘
+        │                                   │
+        │       Orchestrator handles:       │
+        │       * Provisioning              │
+        │       * Git sync + LFS            │
+        │       * Caching (S3 / rclone)     │
+        │       * Automatic cleanup         │
+        └───────────────────────────────────┘
 ```
 
 Orchestrator supports large projects with first-class Unity support and native cloud services like

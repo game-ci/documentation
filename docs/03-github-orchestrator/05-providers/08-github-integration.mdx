@@ -29,15 +29,15 @@ waiting for it to complete. The GitHub Action will return immediately and you ca
 GitHub Checks or by running the [`watch` mode](../api-reference#modes).
 
 ```
-  GitHub Action                Cloud                     GitHub PR
- ┌──────────────┐            ┌──────────────┐          ┌──────────────┐
- │ 1. Dispatch  │───────────►│ 2. Building  │          │              │
- │ 3. Return ✓  │            │    ...       │─────────►│ 4. Check     │
- │    (done)    │            │    ...       │  update   │    updated   │
- └──────────────┘            │ 5. Complete  │─────────►│ 6. Check ✓   │
-   Action finishes            └──────────────┘          └──────────────┘
-   in seconds                  Build runs for             Monitor from
-                               minutes/hours              the PR page
+  GitHub Action               Cloud                    GitHub PR
+ ┌──────────────┐           ┌──────────────┐         ┌──────────────┐
+ │ 1. Dispatch  │──────────►│ 2. Building  │         │              │
+ │ 3. Return    │           │    ...       │────────►│ 4. Check     │
+ │    (done)    │           │    ...       │ update  │    updated   │
+ └──────────────┘           │ 5. Complete  │────────►│ 6. Check     │
+   Action finishes           └──────────────┘         └──────────────┘
+   in seconds                 Build runs for            Monitor from
+                              minutes/hours             the PR page
 ```
 
 ```yaml

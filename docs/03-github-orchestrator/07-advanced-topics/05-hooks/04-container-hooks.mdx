@@ -7,13 +7,13 @@ deploying builds, or running additional tools. For inline shell commands instead
 ```
   Build Pipeline
 
-  preBuildContainerHooks       Unity Build        postBuildContainerHooks
- ┌─────────────────────┐    ┌──────────────┐    ┌──────────────────────┐
- │ 🐳 Pull cache      │    │              │    │ 🐳 Upload build     │
- │ 🐳 Setup deps      │───►│ 🔨 Build     │───►│ 🐳 Deploy to Steam  │
- │ 🐳 ...             │    │              │    │ 🐳 ...              │
- └─────────────────────┘    └──────────────┘    └──────────────────────┘
-  Runs before build           Core build step    Runs after build
+  preBuildContainerHooks      Unity Build       postBuildContainerHooks
+ ┌──────────────────────┐   ┌──────────────┐   ┌──────────────────────┐
+ │  Pull cache          │   │              │   │  Upload build        │
+ │  Setup deps          │──►│  Build       │──►│  Deploy to Steam     │
+ │  ...                 │   │              │   │  ...                 │
+ └──────────────────────┘   └──────────────┘   └──────────────────────┘
+  Runs before build          Core build step    Runs after build
 ```
 
 ## Format

@@ -4,20 +4,22 @@ Orchestrator creates cloud resources (containers, stacks, volumes) for each buil
 automatically. If a build fails or is interrupted, resources may be left behind.
 
 ```
-  Normal Build                          Failed / Interrupted Build
+  Normal Build                       Failed / Interrupted Build
 
- ┌──────────┐  ┌──────────┐  ┌─────┐  ┌──────────┐  ┌──────────┐
- │ Create   │─►│ Build    │─►│ ✓   │  │ Create   │─►│ Build    │──► ✗ crash
- │ resources│  │          │  │Clean│  │ resources│  │          │
- └──────────┘  └──────────┘  └─────┘  └──────────┘  └──────────┘
-                              auto                    ▼
-                              cleanup                 Resources left behind
-                                                      ▼
-                                                     ┌─────────────────┐
-                                                     │ garbage-collect  │
-                                                     │ removes after    │
-                                                     │ garbageMaxAge    │
-                                                     └─────────────────┘
+ ┌──────────┐  ┌──────────┐  Auto   ┌──────────┐  ┌──────────┐
+ │ Create   │─►│ Build    │─►Clean  │ Create   │─►│ Build    │──► crash
+ │ resources│  │          │  up     │ resources│  │          │
+ └──────────┘  └──────────┘         └──────────┘  └──────────┘
+                                                       |
+                                                       v
+                                                  Resources left behind
+                                                       |
+                                                       v
+                                                  ┌─────────────────┐
+                                                  │ garbage-collect  │
+                                                  │ removes after    │
+                                                  │ garbageMaxAge    │
+                                                  └─────────────────┘
 ```
 
 Use garbage collection to clean up stale resources. See the

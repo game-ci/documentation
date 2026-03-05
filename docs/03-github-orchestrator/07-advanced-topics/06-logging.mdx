@@ -3,11 +3,11 @@
 Orchestrator streams logs from the remote build back to your CI runner in real time.
 
 ```
-  Cloud Container          Orchestrator            Your CI
- ┌───────────────┐        ┌──────────┐        ┌──────────────┐
- │ Build output  │ ─────► │ Log      │ ─────► │ Console      │
- │               │        │ stream   │        │ output       │
- └───────────────┘        └──────────┘        └──────────────┘
+  Cloud Container         Orchestrator          Your CI
+ ┌───────────────┐       ┌──────────────┐      ┌──────────────┐
+ │ Build output  │──────►│ Log stream   │─────►│ Console      │
+ │               │       │              │      │ output       │
+ └───────────────┘       └──────────────┘      └──────────────┘
 ```
 
 ## Provider-Specific Log Transport

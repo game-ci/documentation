@@ -5,15 +5,15 @@ Orchestrator supports two caching strategies. You can mix both by setting
 fall back to standard caching.
 
 ```
-  Standard Caching                   Retained Workspace
- ┌─────────────────┐                ┌─────────────────┐
- │ 📁 LFS files    │                │ 📁 Entire       │
- │ 📁 Library/     │                │    project      │
- │                 │                │    folder       │
- │ Smaller storage │                │ Faster builds   │
- │ Good for small  │                │ Good for large  │
- │ projects        │                │ projects        │
- └─────────────────┘                └─────────────────┘
+  Standard Caching                Retained Workspace
+ ┌─────────────────┐             ┌─────────────────┐
+ │ LFS files       │             │ Entire project   │
+ │ Library/        │             │ folder           │
+ │                 │             │                  │
+ │ Smaller storage │             │ Faster builds    │
+ │ Good for small  │             │ Good for large   │
+ │ projects        │             │ projects         │
+ └─────────────────┘             └─────────────────┘
 ```
 
 ## Standard Caching

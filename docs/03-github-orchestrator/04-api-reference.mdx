@@ -52,16 +52,16 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 ### Custom Hooks
 
-| Parameter                 | Default | Description                                                                                                 |
-| ------------------------- | ------- | ----------------------------------------------------------------------------------------------------------- |
-| `containerHookFiles`      | —       | Names of [container hook](advanced-topics/hooks/container-hooks) files from `.game-ci/container-hooks/`.    |
-| `customHookFiles`         | —       | Names of custom hook files from `.game-ci/hooks/`.                                                          |
-| `customCommandHooks`      | —       | Inline [command hooks](advanced-topics/hooks/command-hooks) as YAML.                                        |
-| `postBuildSteps`          | —       | Post-build job in YAML format with keys: `image`, `secrets`, `command`.                                     |
-| `preBuildSteps`           | —       | Pre-build job (after repo setup, before build) in YAML format.                                              |
-| `postBuildContainerHooks` | —       | Container hook files to run after the build step.                                                           |
-| `preBuildContainerHooks`  | —       | Container hook files to run before the build step.                                                          |
-| `customJob`               | —       | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/custom-job). |
+| Parameter                 | Default | Description                                                                                              |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `containerHookFiles`      | —       | Names of [container hook](advanced-topics/hooks/container-hooks) files from `.game-ci/container-hooks/`. |
+| `customHookFiles`         | —       | Names of custom hook files from `.game-ci/hooks/`.                                                       |
+| `customCommandHooks`      | —       | Inline [command hooks](advanced-topics/hooks/command-hooks) as YAML.                                     |
+| `postBuildSteps`          | —       | Post-build job in YAML format with keys: `image`, `secrets`, `command`.                                  |
+| `preBuildSteps`           | —       | Pre-build job (after repo setup, before build) in YAML format.                                           |
+| `postBuildContainerHooks` | —       | Container hook files to run after the build step.                                                        |
+| `preBuildContainerHooks`  | —       | Container hook files to run before the build step.                                                       |
+| `customJob`               | —       | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/custom-job).    |
 
 ### Pull Secrets
 
