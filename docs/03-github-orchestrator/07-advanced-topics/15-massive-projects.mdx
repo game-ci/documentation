@@ -1,0 +1,237 @@
+# Massive Projects
+
+Orchestrator includes specific support for Unity projects at extreme scale — repositories
+exceeding 100 GB, asset counts above 500,000 files, and Library folders that dwarf the source
+tree itself.
+
+## Overview
+
+Standard CI assumptions break down at this scale:
+
+- **Clone times** — A 100 GB repository with Git LFS takes 15–45 minutes to clone cold,
+  consuming most of a build budget before Unity opens.
+- **Library folder sizes** — Import caches for large projects routinely reach 30–80 GB. Tarring,
+  uploading, downloading, and extracting this on every build is impractical.
+- **LFS bandwidth** — Pulling all LFS objects for every build exhausts quotas and slows
+  pipelines. Most builds need only a fraction of the asset set.
+- **Cache inflation** — GitHub Actions cache and similar systems impose size limits
+  (typically 10 GB per entry) that Library folders quickly exceed.
+- **CI timeouts** — Default job timeouts of 6 hours are insufficient for cold clones followed
+  by full imports on large projects.
+
+Orchestrator addresses each of these with a two-level workspace architecture, move-centric
+caching, selective LFS hydration, and submodule profile filtering.
+
+## Two-Level Workspace Architecture
+
+Orchestrator manages workspaces at two levels:
+
+**Root workspace** — A lean, long-lived clone of the repository. It contains the full git
+history and index, a minimal set of LFS objects (only those needed for compilation), and no
+Unity Library folder. The root workspace is cached across builds and updated incrementally.
+
+**Child workspaces** — Per-build-target workspaces derived from the root. Each child is
+LFS-hydrated for its specific asset paths, contains the Library folder for its platform target,
+and is retained between builds of the same target.
+
+```
+root-workspace/
+  .git/          ← full history, minimal LFS
+  Assets/        ← source files only
+  Packages/
+
+child-workspaces/
+  StandaloneLinux64/
+    Assets/      ← LFS-hydrated for this target
+    Library/     ← warm, 40 GB, retained
+  StandaloneWindows64/
+    Assets/
+    Library/     ← warm, separate cache, retained
+  WebGL/
+    Assets/
+    Library/
+```
+
+The orchestrator manages this layout automatically when `retainedWorkspaces: true` is set.
+Child workspaces are created on first build and reused on subsequent builds of the same target.
+Only changed files from git delta sync are applied to each child.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    retainedWorkspaces: true
+    workspaceRoot: /mnt/build-storage/my-game
+    targetPlatform: StandaloneLinux64
+```
+
+## Move-Centric Caching
+
+Traditional caching copies files: archive → upload → download → extract. For a 50 GB Library
+folder this is a substantial I/O operation even with a cache hit.
+
+Orchestrator uses atomic folder moves on local storage instead. On NTFS and ext4, moving a
+directory is an O(1) metadata operation regardless of how many files it contains. A 50 GB
+Library folder moves in milliseconds.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    localCacheRoot: /mnt/build-storage/cache
+    cacheStrategy: move
+```
+
+The cache lifecycle for a Library folder:
+
+1. Build starts — move Library from cache to workspace (instant)
+2. Unity runs — Library is warm, only changed assets reimport
+3. Build ends — move Library back to cache (instant)
+4. Next build — Library is already warm at cache location
+
+This eliminates the archive/upload/download/extract cycle entirely for builds running on
+retained storage. Remote cache fallback (S3, GCS, Azure Blob via rclone) is still available
+for cold runners that do not have local cache access.
+
+| Cache Strategy | Library Move Time | Suitable For |
+|---------------|-------------------|--------------|
+| `move` | Milliseconds | Retained storage, build farms |
+| `rclone` | Minutes (size-dependent) | Remote cache, ephemeral runners |
+| `github-cache` | Minutes (10 GB limit) | Small projects only |
+
+## Custom LFS Transfer Agents
+
+Standard Git LFS transfers every object through a single HTTP endpoint. For large projects
+this creates a bottleneck, especially when only a subset of assets is needed for a given build.
+
+Orchestrator supports alternative LFS transfer agents via the `lfsTransferAgent` input. A
+transfer agent is a binary that Git invokes in place of the standard LFS client. Agents can
+implement partial transfer, parallel streams, resumable downloads, and custom storage backends.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    lfsTransferAgent: elastic-git-storage
+    lfsTransferAgentArgs: '--verbose'
+    lfsStoragePaths: 'Assets/LargeAssets,Assets/Cinematics'
+```
+
+`lfsStoragePaths` limits LFS hydration to the specified asset directories. Files outside these
+paths are not downloaded, reducing transfer volume to only what the build target needs.
+
+**elastic-git-storage** is the recommended agent for large projects. It supports:
+- Parallel multi-stream transfers
+- Resumable downloads after network interruption
+- Content-addressed deduplication across workspaces
+- Direct object storage access (S3, GCS, Azure Blob) without a relay server
+
+**rclone-based agents** are an alternative when the LFS server cannot be replaced. They proxy
+transfers through any rclone-supported backend, enabling caching and bandwidth throttling.
+
+To use a custom agent, provide the agent binary path:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    lfsTransferAgent: /usr/local/bin/my-lfs-agent
+    lfsTransferAgentArgs: '--threads 8 --cache /mnt/lfs-cache'
+```
+
+## Submodule Profiles
+
+Monorepos with many submodules suffer initialization overhead proportional to the number of
+active submodules. A project with 30 submodules where any given build target needs 8 wastes
+time and bandwidth initializing the other 22.
+
+Submodule profiles define exactly which submodules to initialize for a given build context.
+See the [Monorepo Support](monorepo-support) page for full profile format and configuration.
+
+For massive projects, the key practice is keeping each build target's profile minimal:
+
+```yaml
+primary_submodule: CoreFramework
+submodules:
+  - name: CoreFramework
+    branch: main
+  - name: RenderPipeline
+    branch: main
+  - name: OptionalCinematicTools
+    branch: empty   # skipped for standard builds
+  - name: Plugins*
+    branch: main
+```
+
+Profile initialization is atomic — skipped submodules are never touched, so build time scales
+with the active submodule set rather than the total repository size.
+
+## Incremental Sync
+
+For projects where even a targeted LFS pull is expensive, incremental sync avoids full
+re-clones entirely. See the [Incremental Sync Protocol](incremental-sync-protocol) page for
+the full protocol.
+
+The two strategies most relevant to massive projects:
+
+**git-delta** — The runner tracks its last sync commit SHA. On job dispatch it receives the
+target SHA, diffs the two, and checks out only the changed files. Assets that have not changed
+are not touched, and their Library import state remains valid.
+
+**storage-pull** — For assets that live outside git (too large for LFS, or managed by a
+separate pipeline), the runner pulls only the changed files from a generic storage remote. This
+combines with git-delta so that code changes and asset changes are both handled incrementally.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    syncStrategy: git-delta
+    retainedWorkspaces: true
+```
+
+Together, retained workspaces and git-delta sync deliver the minimal possible import work on
+every build: Unity sees only the files that actually changed.
+
+## Build Performance Tips
+
+**Parallelise platform builds.** Use a GitHub Actions matrix across platform targets. Each
+target maintains its own child workspace and Library folder, so builds do not interfere.
+
+```yaml
+strategy:
+  matrix:
+    targetPlatform:
+      - StandaloneLinux64
+      - StandaloneWindows64
+      - WebGL
+```
+
+**Warm the cache before the sprint.** At the start of a sprint cycle, run a full import on
+each target platform during off-hours. Retained workspaces mean subsequent PR builds start
+with warm Library folders.
+
+**Use LFS partial clone patterns.** Structure the repository so assets are grouped by build
+target under predictable paths (`Assets/Platforms/Linux/`, `Assets/Platforms/WebGL/`). This
+makes `lfsStoragePaths` filtering straightforward and predictable.
+
+**Reserve timeouts generously.** Set `buildTimeout` to account for cold-start scenarios, even
+when warm builds are expected. The first build after a runner restart will be cold.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    buildTimeout: 360   # minutes
+```
+
+**Monitor Library folder health.** Occasional full reimports are necessary when Unity upgrades
+or large-scale asset reorganizations occur. Schedule these explicitly rather than discovering
+them mid-sprint when a runner's Library becomes stale.
+
+## Inputs Reference
+
+| Input | Description |
+|-------|-------------|
+| `retainedWorkspaces` | Keep child workspaces between builds (`true` / `false`) |
+| `workspaceRoot` | Base path for root and child workspace storage |
+| `localCacheRoot` | Local filesystem path for move-centric Library cache |
+| `cacheStrategy` | Cache approach: `move`, `rclone`, `github-cache` |
+| `lfsTransferAgent` | Name or path of a custom LFS transfer agent binary |
+| `lfsTransferAgentArgs` | Additional arguments passed to the LFS transfer agent |
+| `lfsStoragePaths` | Comma-separated asset paths to limit LFS hydration |
+| `buildTimeout` | Maximum build duration in minutes |
