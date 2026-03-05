@@ -1,0 +1,207 @@
+# Hot Runner Protocol
+
+Orchestrator supports an extensible runner registration protocol that allows any machine to
+become a labeled build/test runner, with first-class support for persistent Unity editors as
+high-performance providers.
+
+## Overview
+
+Traditional CI providers follow a cold-start model: provision a container, clone the repo,
+restore caches, run the build, tear down. The Hot Runner Protocol enables persistent Unity
+editors to serve as ultra-fast providers with incremental workspace sync.
+
+```
+  ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+  │ Orchestrator │────►│ Runner Coord │────►│ Hot Editor  │
+  │ (CI/CLI)     │     │ (routes jobs)│     │ (persistent)│
+  └─────────────┘     └──────────────┘     └─────────────┘
+                                                  │
+                                            ┌─────▼─────┐
+                                            │ Workspace  │
+                                            │ (synced)   │
+                                            └───────────┘
+```
+
+## Runner Transports
+
+Runners connect via pluggable transport protocols:
+
+| Transport | Description | Use Case |
+|-----------|-------------|----------|
+| `github` | Self-hosted GitHub Actions runner | Standard CI infrastructure |
+| `websocket` | WebSocket/SignalR real-time connection | Custom dashboards, game platforms |
+| `file` | Shared directory watch for job files | Simple setups, NAS-based farms |
+| `local-network` | mDNS/Bonjour discovery + HTTP API | LAN build farms, office setups |
+| `custom` | User-implemented runner interface | Any transport |
+
+### GitHub Runner Transport
+
+Register a hot runner as a self-hosted GitHub Actions runner:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: github
+    runnerLabels: unity-2022,linux,hot
+    editorMode: persistent
+```
+
+The runner appears in your repository's self-hosted runner list and receives jobs via the
+standard GitHub Actions dispatch mechanism.
+
+### WebSocket Transport
+
+Connect to a coordinator via WebSocket or SignalR:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: websocket
+    runnerEndpoint: wss://build.example.com/runners
+    runnerLabels: unity-2022,windows,gpu
+```
+
+### File-Based Transport
+
+Watch a shared directory for JSON job files:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: file
+    runnerEndpoint: /mnt/shared/build-jobs/
+    runnerLabels: unity-2022,linux
+```
+
+### Local Network Transport
+
+Discover runners on the local network via mDNS:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: local-network
+    runnerLabels: unity-2022,macos,m1
+```
+
+## Editor Modes
+
+### Ephemeral (Default)
+
+Editor launches for each job and exits when complete. This is the current behavior for all
+providers:
+
+```yaml
+editorMode: ephemeral
+```
+
+### Persistent
+
+Editor stays running between jobs. The workspace is incrementally synced before each job:
+
+```yaml
+editorMode: persistent
+syncStrategy: incremental
+```
+
+Benefits:
+- No editor startup time (saves 30-120 seconds per build)
+- Unity Library folder stays warm — only changed assets reimport
+- Domain reload only when scripts change
+
+### Hybrid
+
+Maintain a pool of persistent editors, scale up ephemeral instances for burst load:
+
+```yaml
+editorMode: hybrid
+```
+
+## Incremental Sync
+
+When using persistent editors, only changed files are synced to the runner:
+
+| Strategy | Description |
+|----------|-------------|
+| `full` | Full clone + cache restore (default, current behavior) |
+| `incremental` | Git pull + selective reimport |
+| `delta` | Stream only changed files (fastest, requires persistent workspace) |
+
+```yaml
+syncStrategy: delta
+```
+
+## Output Types
+
+Hot runners can produce multiple output types:
+
+| Type | Description |
+|------|-------------|
+| `build` | Standard build artifact |
+| `test-results` | Structured test results (JUnit, JSON) |
+| `data-export` | Exported data files |
+| `images` | Screenshots, renders, atlas previews |
+| `server-build` | Dedicated server build |
+| `logs` | Structured build/test logs |
+| `metrics` | Performance metrics, asset statistics |
+
+```yaml
+outputTypes: build,test-results,metrics
+```
+
+## Cache Profiles
+
+Named cache profiles control caching behavior per runner:
+
+```yaml
+cacheProfile: fast-iteration
+```
+
+| Profile | Description |
+|---------|-------------|
+| `full-rebuild` | Complete cache (Library + LFS + build) |
+| `fast-iteration` | Minimal cache, relies on persistent workspace |
+| `test-only` | Cache test results, inherit Library from build |
+| `custom` | Project-defined cache configuration |
+
+Cache keys incorporate: platform, Unity version, branch, profile name, and content hash.
+
+## Runner Registration Protocol
+
+Runners communicate using a simple JSON protocol, regardless of transport:
+
+**Register:**
+```json
+{
+  "type": "register",
+  "labels": ["unity-2022", "linux", "gpu"],
+  "capabilities": {
+    "unityVersion": "2022.3.20f1",
+    "platform": "StandaloneLinux64",
+    "gpu": true
+  }
+}
+```
+
+**Heartbeat:**
+```json
+{
+  "type": "heartbeat",
+  "runnerId": "runner-abc-123",
+  "status": "idle"
+}
+```
+
+**Job dispatch and results follow the same JSON protocol over the chosen transport.**
+
+## Inputs Reference
+
+| Input | Description |
+|-------|-------------|
+| `runnerTransport` | Transport protocol: `github`, `websocket`, `file`, `local-network`, `custom` |
+| `runnerEndpoint` | Connection endpoint for the transport |
+| `runnerLabels` | Comma-separated runner labels for job routing |
+| `editorMode` | Editor lifecycle: `ephemeral`, `persistent`, `hybrid` |
+| `syncStrategy` | Workspace sync: `full`, `incremental`, `delta` |
+| `outputTypes` | Comma-separated output types to collect |
+| `cacheProfile` | Named cache profile |
