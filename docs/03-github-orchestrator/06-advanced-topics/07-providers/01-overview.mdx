@@ -1,0 +1,57 @@
+# Providers
+
+A **provider** is the backend that Orchestrator uses to run your builds. You choose a provider by
+setting the `providerStrategy` parameter.
+
+## Built-in Providers
+
+These providers ship with Orchestrator and are maintained by the Game CI team.
+
+| Provider       | `providerStrategy` | Description                                                                   | Release Status |
+| -------------- | ------------------ | ----------------------------------------------------------------------------- | -------------- |
+| AWS Fargate    | `aws`              | Runs jobs on AWS Fargate (ECS). Fully managed, no servers to maintain.        | Full release   |
+| Kubernetes     | `k8s`              | Runs jobs on any Kubernetes cluster. Flexible but requires a running cluster. | Preview        |
+| Local Docker   | `local-docker`     | Runs jobs in Docker containers on the local machine.                          | Preview        |
+| Local (direct) | `local`            | Runs jobs directly on the local machine without containers.                   | Preview        |
+
+### AWS Fargate
+
+Best for most users. Orchestrator automatically provisions and tears down Fargate tasks — you only
+pay while a build is running. Requires an AWS account with IAM credentials.
+
+See [AWS setup guide](../../examples/github-examples/aws) for credentials and configuration.
+
+### Kubernetes
+
+Run builds on your own Kubernetes cluster. The cluster must support persistent volumes and should
+stay running (cold starts are slow). Google Cloud Kubernetes Autopilot can scale to near-zero when
+idle.
+
+See [Kubernetes setup guide](../../examples/github-examples/kubernetes) for credentials and
+configuration.
+
+### Local Docker
+
+Runs the build workflow inside a Docker container on the machine running the action. Useful for
+self-hosted runners with Docker installed.
+
+### Local
+
+Runs builds directly on the host machine with no container isolation. Useful for testing and
+development.
+
+## Custom Providers
+
+You can extend Orchestrator with your own provider by pointing `providerStrategy` at a GitHub
+repository, NPM package, or local file path. Orchestrator will dynamically load and validate it at
+runtime.
+
+See [Custom Providers](custom-providers) for the full guide on creating and using custom providers.
+
+## Community Providers
+
+Community providers are third-party providers shared by the Game CI community. They are not
+maintained by the Game CI team but have been reviewed and listed here for discoverability.
+
+See the [Community Providers](community-providers) page for the current list and instructions on how
+to submit your own.

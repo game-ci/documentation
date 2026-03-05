@@ -1,19 +1,42 @@
 # Configuration Override
 
-When running any unity workload you must provide valid unity credentials. In addition to any other
-credentials this is already quite a lot of input. For this reason, it is common to use the command
-line mode with input override (link here). This enables you to provide a command to pull input, with
-this approach you can create a file to store credentials or pull from a secret manager.
+Pull parameter values from external sources like secret managers or files at runtime. This avoids
+hardcoding credentials and keeps CLI commands short.
+
+```
+  Orchestrator                       External Source
+ ┌──────────────┐     command        ┌──────────────────┐
+ │ Reads input  │  ──────────────►   │ Secret Manager   │
+ │ override     │                    │ (GCP, AWS, file) │
+ │ list         │  ◄──────────────   │                  │
+ │              │     value          │                  │
+ └──────────────┘                    └──────────────────┘
+```
+
+## Parameters
+
+| Parameter                   | Description                                                        |
+| --------------------------- | ------------------------------------------------------------------ |
+| `populateOverride`          | Must be `true` to enable override (CLI only).                      |
+| `readInputFromOverrideList` | Comma-separated list of parameter names to pull.                   |
+| `readInputOverrideCommand`  | Command to run. Use `{0}` as a placeholder for the parameter name. |
+
+### Built-in Presets
+
+Instead of writing a full command, you can use these presets as the `readInputOverrideCommand`:
+
+| Preset               | Expands to                                            |
+| -------------------- | ----------------------------------------------------- |
+| `gcp-secret-manager` | `gcloud secrets versions access 1 --secret="{0}"`     |
+| `aws-secret-manager` | `aws secretsmanager get-secret-value --secret-id {0}` |
 
 ## Example
 
 ```bash
-game-ci -m cli --populateOverride true --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --readInputOverrideCommand="gcloud secrets versions access 1 --secret=\"{0}\""
+yarn run cli -m cli-build \
+  --populateOverride true \
+  --readInputFromOverrideList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD \
+  --readInputOverrideCommand='gcloud secrets versions access 1 --secret="{0}"'
 ```
 
-## Required Parameters
-
-- `populateOverride` - Must be true to run the commands.
-- `readInputFromOverrideList` - Comma separated list of parameters to read from override command.
-- `readInputOverrideCommand` - A command line command to run (The command is formatted to replace
-  "{0}" with the parameter parameter name).
+This runs the GCP command for each parameter name in the list and uses the output as the value.

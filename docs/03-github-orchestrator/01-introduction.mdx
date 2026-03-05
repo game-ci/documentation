@@ -1,104 +1,78 @@
 # Introduction
 
-## Concept - What Does Orchestrator Do
+## What Does Orchestrator Do?
 
-**Orchestrator enables you to run, build and test (Unity) projects in the cloud. You can start jobs
-from the command line, the "Workbench" GUI in the Unity Editor or from GitHub Actions.**
+**Orchestrator runs Unity builds on cloud infrastructure.** Start jobs from GitHub Actions, the
+command line, or any CI system. Orchestrator provisions a cloud environment, sends your project to
+be built, and streams results back.
 
-**Orchestrator will automatically provision an environment at a Cloud Provider such as GCP and AWS.
-It will then send the project to be built and/or tested depending on your workflow configuration.**
-
-**Orchestrator is especially useful for game development because it supports large projects.
-Orchestrator provides first class support for the Unity game engine.**
-
-Orchestrator uses git to track and syncronize your projects and uses native cloud services such as
-AWS Fargate and Kubernetes to run your jobs. Other version control systems are not actively
-supported.
-
-## Why Orchestrator?
-
-1. **Orchestrator is flexible and elastic**
-   1. _You can balance your use of high-performance and cost saving modes._ Configurable cost/speed
-      effeciency
-   2. _Works great for projects of almost any size, from AAA projects and assets to micro projects_
-   3. _Extended configuration options._ More control over disk size, memory and CPU
-   4. _Easily scale all job resources as your project grows_ e.g storage, CPU and memory
-2. **Scale fully on demand from zero (not in use) to many concurrent jobs.** Benefits from
-   "pay-for-what-you-use" cloud billing models. We have made an effort to make sure that it costs
-   you nothing (aside from artifact and cache storage) while there are no builds running (no
-   guarantees)
-3. **Easy setup and configuration**
-4. **Run custom jobs** and extend the system for any workload
-
-## Why not orchestrator?
-
-1. Your project is small in size. Below 5GB Orchestrator should not be needed.
-2. You already have dedicated servers running you can use.
-
-Although the speed of a CI pipelines is an important metric to consider, there are real challenges
-for game development pipelines.
-
-This solution prefers convenience, ease of use, scalability, throughput and flexibility.
-
-Faster solutions exist, but would all involve self-hosted hardware with an immediate local cache of
-the large project files and working directory and a dedicated server.
-
-# Orchestrator Release Status
-
-Orchestrator is in "active development" ⚠️🔨
-
-Orchestrator overall release status: `preview` This means some APIs may change, features are still
-being added but the minimum feature set works and is stable.
-
-Release Stages: `experimental` ➡️ `preview` ➡️ `full release`
-
-You must use a provider with Orchestrator, each provider's release status is described below. This
-indicates the stability and support for orchestrator features and workflows.
-
-### Supported Orchestrator Platforms
-
-```md
-| Cloud Provider Platform | Release Status     |
-| ----------------------- | ------------------ |
-| Kubernetes              | ✔️ preview release |
-| AWS                     | ✔️ full release    |
-| GCP                     | ⚠ Considered       |
-| Azure                   | ⚠ Considered       |
+```
+  Your Machine / CI                    Cloud Provider
+ ┌──────────────┐       git push      ┌──────────────────┐
+ │              │  ──────────────────► │  ☁️ AWS Fargate   │
+ │  GitHub      │                     │  ☁️ Kubernetes    │
+ │  Actions     │  ◄────────────────  │  🐳 Local Docker  │
+ │              │    build artifacts   │                  │
+ └──────────────┘                     └──────────────────┘
+        │                                     │
+        │         Orchestrator handles:       │
+        │         • Provisioning              │
+        │         • Git sync + LFS            │
+        │         • Caching                   │
+        │         • Cleanup                   │
+        └─────────────────────────────────────┘
 ```
 
-_Note for Kubernetes support:_ _Usually the cluster needs to be up and running at all times, as
-starting up a cluster is slow._ _Use Google Cloud's Kubernetes Autopilot you can scale down to the
-free tier automatically while not in use._ _Kubernetes support currently requires cloud storage,
-only S3 support is built-in._
+Orchestrator supports large projects with first-class Unity support and native cloud services like
+AWS Fargate and Kubernetes.
 
-```md
-| Git Platform          | Release Status     |
-| --------------------- | ------------------ |
-| GitHub                | ✔️ full release    |
-| GitLab                | ✔️ preview release |
-| Command Line          | ✔️ preview release |
-| Any Git repository    | ✔️ preview release |
-| Any Git automation/Ci | ✔️ preview release |
-```
+## ✅ Why Orchestrator?
 
-## External Links
+1. **Flexible and elastic** — balance speed and cost, configure CPU, memory, and disk per build
+2. **Scale from zero** — no idle servers, pay only while builds run
+3. **Easy setup** — minimal configuration to get started
+4. **Extensible** — run custom jobs, add hooks, or bring your own provider via the plugin system
 
-### Orchestrator Releases
+## ❌ When You Don't Need It
 
-[Game CI Releases - GitHub](https://github.com/game-ci/unity-builder/releases) _Packaged and
-released with game-ci's unity-builder module._
+- Your project is under 5 GB — standard GitHub runners should work fine
+- You have dedicated build servers already running
 
-### Open Incoming Pull Requests
+## 📦 Release Status
 
-[Orchestrator PRs - GitHub](https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+orchestrator)
+Orchestrator is in **active development** ⚠️
 
-### 💬Suggestions and 🐛Bugs (GitHub Issues):
+Overall status: `preview` — core features are stable, some APIs may change.
 
-[Game CI Issues - GitHub](https://github.com/game-ci/unity-builder/labels/orchestrator)
+Release stages: `experimental` → `preview` → `full release`
 
-### Community
+### Provider Support
 
-**Share your feedback with us!**
+| Cloud Provider | Release Status     |
+| -------------- | ------------------ |
+| AWS Fargate    | ✔️ Full release    |
+| Kubernetes     | ✔️ Preview release |
+| GCP            | ⚠️ Considered      |
+| Azure          | ⚠️ Considered      |
 
-- [**Discord Channel**](https://discord.com/channels/710946343828455455/789631903157583923)
-- [**Feedback Form**](https://forms.gle/3Wg1gGf9FnZ72RiJ9)
+See [Providers](advanced-topics/providers/overview) for details on each provider.
+
+### Platform Support
+
+| Platform           | Release Status     |
+| ------------------ | ------------------ |
+| GitHub Actions     | ✔️ Full release    |
+| GitLab CI          | ✔️ Preview release |
+| Command Line       | ✔️ Preview release |
+| Any Git repository | ✔️ Preview release |
+| Any CI system      | ✔️ Preview release |
+
+## 🔗 External Links
+
+- [Releases](https://github.com/game-ci/unity-builder/releases) — packaged with
+  game-ci/unity-builder
+- [Pull Requests](https://github.com/game-ci/unity-builder/pulls?q=is%3Apr+orchestrator) — open
+  orchestrator PRs
+- [Issues](https://github.com/game-ci/unity-builder/labels/orchestrator) — bugs and feature requests
+- [Discord](https://discord.com/channels/710946343828455455/789631903157583923) — community chat
+- [Feedback Form](https://forms.gle/3Wg1gGf9FnZ72RiJ9) — share your experience

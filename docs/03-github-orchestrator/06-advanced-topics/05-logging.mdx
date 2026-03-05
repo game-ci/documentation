@@ -1,13 +1,34 @@
 # Logging
 
-Logs are streamed from the workload to the GameCI origin unless you use the
+Orchestrator streams logs from the remote build back to your CI runner in real time.
 
-## Kubernetes
+```
+  Cloud Container          Orchestrator            Your CI
+ ┌───────────────┐        ┌──────────┐        ┌──────────────┐
+ │ Build output  │ ─────► │ Log      │ ─────► │ Console      │
+ │               │        │ stream   │        │ output       │
+ └───────────────┘        └──────────┘        └──────────────┘
+```
 
-- Native Kubernetes logging api
+## Provider-Specific Log Transport
 
-## AWS
+### Kubernetes
 
-- Fargate log to Cloud Watch
-- Subscription from Cloud Watch to Kinesis
-- GameCI streams from logs from Kinesis
+Uses the native Kubernetes logging API to stream pod logs directly.
+
+### AWS
+
+Logs flow through a CloudWatch → Kinesis pipeline:
+
+1. Fargate tasks write to **CloudWatch Logs**
+2. A **Kinesis** subscription forwards logs in real time
+3. Orchestrator consumes from the Kinesis stream
+
+## 🐛 Debug Logging
+
+Enable `orchestratorDebug: true` to get verbose output including:
+
+- Resource allocation summaries (CPU, memory, disk)
+- Directory structure via `tree`
+- Environment variable listing
+- Disk usage snapshots (`df -h`, `du -sh`)

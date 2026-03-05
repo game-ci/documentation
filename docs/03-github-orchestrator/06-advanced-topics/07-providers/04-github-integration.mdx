@@ -1,0 +1,41 @@
+# GitHub Integration
+
+Orchestrator has first-class support for GitHub Actions. When running from a GitHub Actions
+workflow, Orchestrator automatically detects the repository, branch, and commit from the
+environment.
+
+## GitHub Checks
+
+By enabling the `githubCheck` parameter, the orchestrator job will create a GitHub check for each
+step.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    githubCheck: true
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The step will show useful details about the job. This is especially useful in combination with async
+mode, as you can run very long jobs and monitor their progress directly from the GitHub pull request
+UI.
+
+## Async Mode
+
+Set `asyncOrchestrator: true` to start a build without waiting for it to complete. The GitHub Action
+will return immediately and you can check progress via GitHub Checks or by running the `watch` mode.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    asyncOrchestrator: true
+    githubCheck: true
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+See the [AWS](../../examples/github-examples/aws) and
+[Kubernetes](../../examples/github-examples/kubernetes) example pages for full workflow files.

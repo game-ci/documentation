@@ -1,9 +1,9 @@
 # Container Hooks
 
-Custom docker container steps can be run as part of the standard build workflow. Custom steps can
-also be run standalone.
+Run custom Docker containers as steps in the build workflow. Useful for uploading artifacts,
+deploying builds, or running additional tools.
 
-Custom steps can be specified via the CustomSteps parameter or via Custom Step files.
+## Format
 
 ```yaml
 - name: upload
@@ -11,3 +11,22 @@ Custom steps can be specified via the CustomSteps parameter or via Custom Step f
   commands: |
     echo "hello world!"
 ```
+
+## Usage
+
+Define container hooks inline via `preBuildContainerHooks` / `postBuildContainerHooks`, or reference
+files from `.game-ci/container-hooks/` via `containerHookFiles`.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    containerHookFiles: aws-s3-upload-build
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Pre-built Hooks
+
+Orchestrator ships with ready-to-use hooks for S3, rclone, and Steam. See
+[Premade Container Hooks](premade-container-jobs) for the full list.

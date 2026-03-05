@@ -1,38 +1,46 @@
-# Premade Container Jobs
+# Premade Container Hooks
 
-## Cache syncronization
+Orchestrator ships with pre-built container hooks for common tasks. Use them by name with the
+`containerHookFiles` parameter.
 
-### Upload Cache entry to AWS S3
+```yaml
+containerHookFiles: aws-s3-upload-build
+```
 
-Upload cache results from build to AWS S3.
+## 📦 AWS S3
 
-`aws-s3-upload-cache`
+| Hook Name             | Description                               |
+| --------------------- | ----------------------------------------- |
+| `aws-s3-upload-build` | Upload build artifacts to S3.             |
+| `aws-s3-pull-build`   | Pull cached build artifacts from S3.      |
+| `aws-s3-upload-cache` | Upload Unity Library and LFS cache to S3. |
+| `aws-s3-pull-cache`   | Pull Unity Library and LFS cache from S3. |
 
-### Download Latest Cache entry from AWS S3
+Requires AWS credentials configured. Respects `useCompressionStrategy` for LZ4 compression.
 
-Downloads library and git LFS cache from AWS S3.
+## 📂 Rclone
 
-`aws-s3-pull-cache`
+| Hook Name             | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `rclone-upload-build` | Upload build artifacts via rclone.             |
+| `rclone-pull-build`   | Pull cached build artifacts via rclone.        |
+| `rclone-upload-cache` | Upload Unity Library and LFS cache via rclone. |
+| `rclone-pull-cache`   | Pull Unity Library and LFS cache via rclone.   |
 
-## Artifacts
+Requires `storageProvider: rclone` and `rcloneRemote` to be configured. Uses the `rclone/rclone`
+Docker image. Respects `useCompressionStrategy` for LZ4 compression.
 
-## Upload Build Artifact To AWS S3
+## 🎮 Steam
 
-`aws-s3-upload-build`
+| Hook Name              | Description                                   |
+| ---------------------- | --------------------------------------------- |
+| `steam-deploy-client`  | Deploy a client build to Steam via SteamCMD.  |
+| `steam-deploy-project` | Deploy a project build to Steam via SteamCMD. |
 
-Upload build artifact to AWS S3. (Currently only supports lz4 enabled which is default.)
+Uses the `steamcmd/steamcmd` Docker image. Requires the following secrets to be configured:
 
-## Upload Project Artifact To AWS S3 (To Do)
-
-Upload project artifact to AWS S3. (Currently only supports lz4 enabled which is default.)
-
-## Artifact entire project folder (To Do)
-
-archive to tar format, compress with lz4 if enabled and store in persistent cache folder. (Can then
-upload.)
-
-## Deploy
-
-## Upload to Steam (To Do)
-
-upload build folder to given steam branch
+- `STEAM_USERNAME`, `STEAM_PASSWORD`
+- `STEAM_APPID`
+- `STEAM_SSFN_FILE_NAME`, `STEAM_SSFN_FILE_CONTENTS`
+- `STEAM_CONFIG_VDF_1` through `STEAM_CONFIG_VDF_4`
+- `BUILD_GUID_TARGET`, `RELEASE_BRANCH`

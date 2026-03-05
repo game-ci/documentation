@@ -1,8 +1,32 @@
 # Retained Workspaces
 
-Caches the entire project folder. This option provides the best responsiveness, but also can consume
-lots of storage.
+Retained workspaces cache the **entire project folder** between builds. This provides the fastest
+possible rebuilds at the cost of more cloud storage.
 
-Using API: `maxRetainedWorkspaces`. You can specify a maximum number of retained workspaces, only
-one job can use a retained workspace at one time. Each retained workspace consumes more cloud
-storage.
+## Configuration
+
+Set `maxRetainedWorkspaces` to control how many workspaces are kept:
+
+| Value | Behavior                                                                  |
+| ----- | ------------------------------------------------------------------------- |
+| `0`   | Unlimited retained workspaces (default).                                  |
+| `> 0` | Keep at most N workspaces. Additional jobs fall back to standard caching. |
+
+Each retained workspace is locked during use — only one build can use a workspace at a time.
+Orchestrator handles locking automatically via S3 or rclone.
+
+## Example
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    maxRetainedWorkspaces: 3
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## ⚠️ Storage Considerations
+
+Each retained workspace stores a full copy of your project. For a 20 GB project with 3 retained
+workspaces, expect ~60 GB of cloud storage usage.

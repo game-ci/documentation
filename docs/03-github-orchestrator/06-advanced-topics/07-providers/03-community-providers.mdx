@@ -1,0 +1,47 @@
+# Community Providers
+
+Community providers are third-party Orchestrator providers built and shared by the community. They
+are **not maintained by the Game CI team** but are listed here to help you discover and evaluate
+options.
+
+:::caution
+
+Community providers are provided as-is. Review the source code and documentation of any community
+provider before using it in your pipelines.
+
+:::
+
+## Provider List
+
+_No community providers have been submitted yet. Yours could be the first!_
+
+{/\* When adding a provider, use this format:
+
+### Provider Name
+
+|                      |                                                                            |
+| -------------------- | -------------------------------------------------------------------------- |
+| **Repository**       | [user/repo](https://github.com/user/repo)                                  |
+| **providerStrategy** | `user/repo`                                                                |
+| **Description**      | Brief description of what the provider does and which platform it targets. |
+| **Maintainer**       | [@username](https://github.com/username)                                   |
+
+\*/}
+
+## Submit Your Provider
+
+Built a custom provider? Share it with the community by adding it to this page.
+
+1. [Edit this file directly on GitHub](https://github.com/game-ci/documentation/edit/main/docs/03-github-orchestrator/06-advanced-topics/07-providers/03-community-providers.mdx)
+2. Add your provider to the **Provider List** section above using the commented template
+3. Submit a pull request for review
+
+Your provider should:
+
+- Have a public GitHub repository or published NPM package
+- Implement the full [ProviderInterface](custom-providers#required-methods)
+- Include a README with setup instructions
+- Be actively maintained
+
+The Game CI team will review submissions for completeness before merging. Inclusion in this list
+does not imply endorsement or a security guarantee.

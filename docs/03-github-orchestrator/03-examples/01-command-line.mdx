@@ -3,47 +3,67 @@
 _Preview Support Only_
 
 You can install Game CI locally and start orchestrator jobs from the command line or by integrating
-your own tools. All parameters in [API Reference](../api-reference) can be specified as command line
-input fields.
+your own tools. All parameters in the [API Reference](../api-reference) can be specified as CLI
+flags.
 
-# Install
-
-Currently (development)
+## Install
 
 ```bash
 git clone https://github.com/game-ci/unity-builder.git
+cd unity-builder
 yarn install
-yarn run cli -m {mode parameter} --projectPath {Your project path} {... other command line parameters}
 ```
 
-# Planned (does not work currently)
-
-We plan to offer support for Game CI via Deno. This will enable fast, typescript native runtime and
-you will be able to access this via the following:
+## Usage
 
 ```bash
-dpx game-ci build
+yarn run cli -m <mode> --projectPath <path> [options]
 ```
 
-# Help
+### Examples
 
-_You can run `yarn run cli -h` or `yarn run cli --help` to list all modes and paramters with
-descriptions_
-
-# Main Command Parameters
-
-- Default: `cli` (runs a standard build workflow)
-- See API Reference "Modes"
-
-# Keeping command line parameters short
-
-You can avoid specifying long command line input for credentials by using environment variables or
-[the input override feature](../advanced-topics/configuration-override#example) to shorten commands
-signficantly.
-
-This enables you to provide a command to pull input, e.g you can pull from a file or from a secret
-manager.
+Run a standard build:
 
 ```bash
-yarn run cli --populateOverride true --pullInputList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --inputPullCommand="gcloud secrets versions access 1 --secret=\"{0}\""
+yarn run cli -m cli-build \
+  --projectPath /path/to/your/unity/project \
+  --providerStrategy aws \
+  --targetPlatform StandaloneLinux64 \
+  --gitPrivateToken $GIT_TOKEN
+```
+
+List active resources:
+
+```bash
+yarn run cli -m list-resources --providerStrategy aws
+```
+
+Watch a running build:
+
+```bash
+yarn run cli -m watch --providerStrategy aws
+```
+
+Clean up old resources:
+
+```bash
+yarn run cli -m garbage-collect --providerStrategy aws
+```
+
+## Help
+
+Run `yarn run cli --help` to list all modes and parameters with descriptions.
+
+## Keeping Commands Short
+
+You can avoid long CLI flags for credentials by using environment variables or the
+[Configuration Override](../advanced-topics/configuration-override#example) feature.
+
+This lets you pull input from a file or secret manager:
+
+```bash
+yarn run cli \
+  --populateOverride true \
+  --pullInputList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD \
+  --inputPullCommand='gcloud secrets versions access 1 --secret="{0}"'
 ```

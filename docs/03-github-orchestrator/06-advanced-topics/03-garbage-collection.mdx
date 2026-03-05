@@ -1,29 +1,16 @@
 # Garbage Collection
 
-Orchestrator creates, manages and destroys cloud workloads you request. Resources have to be
-created.
+Orchestrator creates cloud resources (containers, stacks, volumes) for each build and cleans them up
+automatically. If a build fails or is interrupted, resources may be left behind.
 
-It is possible a resource doesn't get deleted by orchestrator after a failed or interrupted build.
-
-You can use garbage collection to verify everything has been cleaned up.
-
-Use the **Mode**: `garbage-collect`.
-
-## Parameters
-
-```bash
-garbageMaxAge
-```
-
-Maximum age in hours before resources are considered stale and eligible for cleanup. Defaults to
-`24`.
+Use garbage collection to clean up stale resources.
 
 ## Usage
 
 ### GitHub Actions
 
 ```yaml
-- uses: game-ci/unity-builder@main
+- uses: game-ci/unity-builder@v4
   with:
     providerStrategy: aws
     mode: garbage-collect
@@ -35,3 +22,15 @@ Maximum age in hours before resources are considered stale and eligible for clea
 ```bash
 yarn run cli -m garbage-collect --providerStrategy aws
 ```
+
+## Parameters
+
+| Parameter       | Default | Description                                           |
+| --------------- | ------- | ----------------------------------------------------- |
+| `garbageMaxAge` | `24`    | Maximum age in hours before resources are cleaned up. |
+
+## 🔄 Automatic Cleanup
+
+When using the AWS provider, Orchestrator can create a CloudFormation-based cleanup cron job that
+automatically removes old ECS task definitions and resources. This is controlled by the
+`useCleanupCron` parameter (enabled by default).

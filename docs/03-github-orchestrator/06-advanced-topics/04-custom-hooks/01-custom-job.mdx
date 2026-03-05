@@ -1,4 +1,19 @@
 # Custom Jobs
 
-You can run a custom job instead of the default build workflow simplfy by specifying the `customJob`
-parameter.
+Override the default build workflow entirely by specifying the `customJob` parameter with a YAML job
+definition.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    customJob: |
+      - name: my-custom-step
+        image: ubuntu
+        commands: |
+          echo "Running custom job"
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+This replaces the standard build steps with your own. Useful for running non-Unity workloads or
+fully custom pipelines through Orchestrator's cloud infrastructure.
