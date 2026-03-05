@@ -2,12 +2,12 @@
 
 ## ⚙️ Configuration Methods
 
-| Method                     | Description                                                                                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **GitHub Action `with`**   | Pass parameters directly in your workflow file. See [Getting Started](getting-started).                                          |
-| **Command Line**           | Pass parameters as CLI flags. See [Command Line](examples/command-line).                                                         |
-| **Environment Variables**  | Set parameters as environment variables in your shell or CI environment.                                                         |
-| **Configuration Override** | Pull parameters dynamically from secret managers or files. See [Configuration Override](advanced-topics/configuration-override). |
+| Method                    | Description                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Action `with`**  | Pass parameters directly in your workflow file. See [Getting Started](getting-started).                                   |
+| **Command Line**          | Pass parameters as CLI flags. See [Command Line](examples/command-line).                                                  |
+| **Environment Variables** | Set parameters as environment variables in your shell or CI environment.                                                  |
+| **Pull Secrets**          | Pull parameters dynamically from secret managers or files. See [Secrets](secrets#-pulling-secrets-from-external-sources). |
 
 ## 🔧 Modes
 
@@ -63,12 +63,12 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 | `preBuildContainerHooks`  | —       | Container hook files to run before the build step.                                                          |
 | `customJob`               | —       | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/hooks/custom-job). |
 
-### Configuration Override
+### Pull Secrets
 
-| Parameter                   | Default | Description                                                                                                                                                                                                                                 |
-| --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `readInputOverrideCommand`  | —       | Command to read a parameter value from an external source. Use `{0}` as the parameter name placeholder. Built-in presets: `gcp-secret-manager`, `aws-secret-manager`. See [Configuration Override](advanced-topics/configuration-override). |
-| `readInputFromOverrideList` | —       | Comma-separated list of parameter names to pull via `readInputOverrideCommand`.                                                                                                                                                             |
+| Parameter                   | Default | Description                                                                                                                                                                                   |
+| --------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `readInputOverrideCommand`  | —       | Command to read a parameter value from an external source. Use `{0}` as the parameter name placeholder. Built-in presets: `gcp-secret-manager`, `aws-secret-manager`. See [Secrets](secrets). |
+| `readInputFromOverrideList` | —       | Comma-separated list of parameter names to pull via `readInputOverrideCommand`.                                                                                                               |
 
 ### Storage
 
@@ -134,13 +134,13 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 These parameters are only available when using Orchestrator from the command line.
 
-| Parameter          | Description                                          |
-| ------------------ | ---------------------------------------------------- |
-| `populateOverride` | Enable reading parameters from the override command. |
-| `cachePushFrom`    | Local directory to push cache from.                  |
-| `cachePushTo`      | Remote path to push cache to.                        |
-| `artifactName`     | Name for the build artifact.                         |
-| `select`           | Select a specific workflow or resource by name.      |
+| Parameter          | Description                                                                                        |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| `populateOverride` | Enable [pulling secrets](secrets#-pulling-secrets-from-external-sources) from an external command. |
+| `cachePushFrom`    | Local directory to push cache from.                                                                |
+| `cachePushTo`      | Remote path to push cache to.                                                                      |
+| `artifactName`     | Name for the build artifact.                                                                       |
+| `select`           | Select a specific workflow or resource by name.                                                    |
 
 ## 🌍 Environment Variables
 

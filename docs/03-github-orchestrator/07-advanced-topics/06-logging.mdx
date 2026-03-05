@@ -20,7 +20,7 @@ Uses the native Kubernetes logging API to stream pod logs directly.
 
 Logs flow through a CloudWatch → Kinesis pipeline:
 
-1. Fargate tasks write to **CloudWatch Logs**
+1. Orchestrator job (Fargate task) writes logs to **CloudWatch Logs**
 2. A **Kinesis** subscription forwards logs in real time
 3. Orchestrator consumes from the Kinesis stream
 
