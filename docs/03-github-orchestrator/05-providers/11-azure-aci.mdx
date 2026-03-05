@@ -1,0 +1,117 @@
+# Azure ACI (Experimental)
+
+Run Unity builds as [Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/) —
+serverless containers with configurable storage backends.
+
+:::caution Experimental
+This provider is experimental. APIs and behavior may change between releases.
+:::
+
+```
+  GitHub Actions Runner
+ ┌──────────────────────────┐
+ │  unity-builder            │
+ │  providerStrategy:        │     Azure CLI
+ │    azure-aci              │────────────────►  Container Instances API
+ │                           │                   ┌─────────────────┐
+ │  azureStorageType:        │                   │ Container:      │
+ │    azure-files /          │                   │   unity-build   │
+ │    blob-copy /            │                   │                 │
+ │    azure-files-nfs /      │                   │ Image: unityci  │
+ │    in-memory              │                   │ Storage: ...    │
+ └──────────────────────────┘                   └─────────────────┘
+```
+
+## Prerequisites
+
+- Azure CLI installed and authenticated (`az login` or service principal)
+- A resource group (auto-created if it doesn't exist)
+- **Contributor** role on the resource group
+
+## Storage Types
+
+Set `azureStorageType` to control how the build accesses large files.
+
+| Type              | How it works                                        | Best for                          | Size limit        |
+| ----------------- | --------------------------------------------------- | --------------------------------- | ----------------- |
+| `azure-files`     | Mounts an Azure File Share via SMB                  | General artifact storage          | 100 TiB           |
+| `blob-copy`       | Copies artifacts in/out via `az storage blob`       | Simple upload/download            | Unlimited         |
+| `azure-files-nfs` | Mounts an Azure File Share via NFS 4.1              | Unity Library (small random reads)| 100 TiB           |
+| `in-memory`       | emptyDir volume (tmpfs)                             | Scratch/temp during builds        | Container memory  |
+
+### When to use each type
+
+- **azure-files** (default) — Simplest persistent option. Works out of the box — auto-creates the
+  storage account and file share if they don't exist. SMB has some overhead from opportunistic
+  locking but is reliable for most use cases.
+
+- **blob-copy** — Avoids mount overhead entirely. Copies everything before the build starts and
+  uploads after it finishes. Good when you only need artifact upload/download.
+
+- **azure-files-nfs** — Eliminates SMB lock overhead for better random I/O performance with Unity
+  Library files (thousands of small files). Requires **Premium FileStorage** (auto-created) and
+  **VNet integration** via `azureSubnetId`.
+
+- **in-memory** — Fastest option (RAM-backed). Data is lost when the container stops. Size is limited
+  by the container's memory allocation. Use for temporary build artifacts.
+
+## Inputs
+
+| Input                 | Default                 | Description                                       |
+| --------------------- | ----------------------- | ------------------------------------------------- |
+| `azureResourceGroup`  | `$AZURE_RESOURCE_GROUP` | Resource group name                               |
+| `azureLocation`       | `eastus`                | Azure region                                      |
+| `azureStorageType`    | `azure-files`           | Storage backend (see above)                       |
+| `azureStorageAccount` | `$AZURE_STORAGE_ACCOUNT`| Storage account name                              |
+| `azureBlobContainer`  | `unity-builds`          | Blob container (for `blob-copy`)                  |
+| `azureFileShareName`  | `unity-builds`          | File share name (for `azure-files`, `azure-files-nfs`) |
+| `azureSubscriptionId` | `$AZURE_SUBSCRIPTION_ID`| Subscription ID                                   |
+| `azureCpu`            | `4`                     | CPU cores (1–16)                                  |
+| `azureMemoryGb`       | `16`                    | Memory in GB (1–16)                               |
+| `azureDiskSizeGb`     | `100`                   | File share quota in GB                            |
+| `azureSubnetId`       | —                       | Subnet ID for VNet (required for `azure-files-nfs`) |
+
+## Examples
+
+### Azure Files — SMB mount (default)
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: azure-aci
+    azureResourceGroup: my-rg
+    azureStorageAccount: myunitybuilds
+    targetPlatform: StandaloneLinux64
+```
+
+### NFS — better POSIX performance
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: azure-aci
+    azureResourceGroup: my-rg
+    azureStorageType: azure-files-nfs
+    azureStorageAccount: myunitybuilds
+    azureSubnetId: /subscriptions/.../subnets/default
+    targetPlatform: StandaloneLinux64
+```
+
+### Blob copy — simple artifact upload/download
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: azure-aci
+    azureResourceGroup: my-rg
+    azureStorageType: blob-copy
+    azureStorageAccount: myunitybuilds
+    azureBlobContainer: my-builds
+    targetPlatform: StandaloneLinux64
+```
+
+## Related
+
+- [GCP Cloud Run](gcp-cloud-run) — Google Cloud Run Jobs provider
+- [Custom Providers](custom-providers) — TypeScript provider plugins
+- [CLI Provider Protocol](cli-provider-protocol) — Write providers in any language
