@@ -12,24 +12,42 @@ game-ci orchestrate [options]
 ```
 
 This is the CLI equivalent of using `game-ci/unity-builder` with a `providerStrategy` in GitHub
-Actions. All [Orchestrator API parameters](../api-reference) are available as CLI flags.
+Actions.
+
+## Required Options
+
+| Flag | Description |
+| --- | --- |
+| `--target-platform` | Build target platform (e.g. `StandaloneLinux64`) |
 
 ## Provider Selection
 
-Choose where your build runs with the `--provider` flag:
+Choose where your build runs with the `--provider-strategy` flag:
 
 | Provider | Value | Description |
 | --- | --- | --- |
-| AWS Fargate | `aws` | Serverless containers on AWS (full release) |
-| Kubernetes | `k8s` | Run on any Kubernetes cluster (preview) |
-| Local Docker | `local-docker` | Run in a local Docker container (useful for testing) |
+| AWS Fargate | `aws` | Serverless containers on AWS (default) |
+| Kubernetes | `k8s` | Run on any Kubernetes cluster |
+| Local Docker | `local-docker` | Run in a local Docker container |
+| Local System | `local-system` | Run directly on the local system |
 
 ```bash
 game-ci orchestrate \
-  --unity-version 2022.3.56f1 \
   --target-platform StandaloneLinux64 \
-  --provider aws
+  --provider-strategy aws
 ```
+
+## Build Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--unity-version` | `auto` | Unity Editor version to use. Set to `auto` to detect from project. |
+| `--project-path` | `.` | Path to the Unity project directory |
+| `--build-name` | _(empty)_ | Name of the build |
+| `--builds-path` | `build` | Path where build artifacts are stored |
+| `--build-method` | _(empty)_ | Custom static C# build method to invoke |
+| `--custom-parameters` | _(empty)_ | Additional parameters for the Unity build |
+| `--versioning` | `None` | Versioning strategy: `None`, `Semantic`, `Tag`, `Custom` |
 
 ## AWS Options
 
@@ -37,7 +55,7 @@ game-ci orchestrate \
 | --- | --- | --- |
 | `--aws-stack-name` | `game-ci` | CloudFormation stack name for shared resources |
 | `--container-cpu` | `1024` | CPU units for the Fargate task (1024 = 1 vCPU) |
-| `--container-memory` | `4096` | Memory in MB for the Fargate task |
+| `--container-memory` | `3072` | Memory in MB for the Fargate task |
 
 AWS credentials are read from the standard AWS environment variables or credential files:
 
@@ -47,71 +65,47 @@ export AWS_SECRET_ACCESS_KEY="your-secret"
 export AWS_DEFAULT_REGION="us-east-1"
 
 game-ci orchestrate \
-  --unity-version 2022.3.56f1 \
   --target-platform StandaloneLinux64 \
-  --provider aws \
+  --provider-strategy aws \
   --container-cpu 2048 \
   --container-memory 8192
 ```
 
-### AWS Endpoint Overrides
-
-For testing with LocalStack or other AWS-compatible services:
-
-| Flag | Description |
-| --- | --- |
-| `--aws-endpoint` | Base endpoint override for all AWS services |
-| `--aws-cloudformation-endpoint` | CloudFormation endpoint override |
-| `--aws-ecs-endpoint` | ECS endpoint override |
-| `--aws-s3-endpoint` | S3 endpoint override |
-| `--aws-cloudwatch-logs-endpoint` | CloudWatch Logs endpoint override |
-| `--aws-kinesis-endpoint` | Kinesis endpoint override |
-
 ## Kubernetes Options
 
-| Flag | Description |
-| --- | --- |
-| `--kube-config` | Base64-encoded kubeconfig file contents |
-| `--kube-volume` | Name of the persistent volume to use |
-| `--kube-volume-size` | Size of the persistent volume (default: `5Gi`) |
-| `--kube-storage-class` | Kubernetes storage class for the volume |
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--kube-config` | _(empty)_ | Base64-encoded kubeconfig file contents |
+| `--kube-volume` | _(empty)_ | Name of the persistent volume to use |
+| `--kube-volume-size` | `5Gi` | Size of the persistent volume |
 
 ```bash
 game-ci orchestrate \
-  --unity-version 2022.3.56f1 \
   --target-platform StandaloneLinux64 \
-  --provider k8s \
+  --provider-strategy k8s \
   --kube-config "$(base64 -w 0 ~/.kube/config)" \
   --kube-volume-size 25Gi
 ```
 
-## Cache and Storage Options
+## Cache Options
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--cache-key` | Branch name | Key used to scope cache entries |
-| `--storage-provider` | `s3` | Storage backend: `s3` or `rclone` |
-| `--rclone-remote` | _(none)_ | Rclone remote endpoint (required when using `rclone` storage) |
-| `--use-compression` | `true` | Use LZ4 compression for cache and artifacts |
-| `--max-retained-workspaces` | `0` | Number of full project snapshots to retain |
+| `--cache-key` | _(empty)_ | Key used to scope cache entries |
 
 ## Workspace Options
 
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--clone-depth` | `50` | Git clone depth (use `0` for full clone) |
-| `--use-large-packages` | `false` | Redirect large packages to a shared folder |
-| `--use-shared-builder` | `false` | Share a single Game CI clone across builds |
 
 ## Execution Options
 
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--watch-to-end` | `true` | Follow build logs until completion |
-| `--async` | `false` | Return immediately without waiting for the build |
-| `--orchestrator-branch` | `main` | Orchestrator release branch (`main` or `orchestrator-develop`) |
-| `--orchestrator-debug` | `false` | Enable verbose debug logging |
-| `--resource-tracking` | `false` | Log disk usage summaries during the build |
+| `--allow-dirty-build` | `false` | Allow builds from dirty (uncommitted changes) branches |
+| `--skip-activation` | `false` | Skip Unity license activation/deactivation |
 
 ## Git Authentication
 
@@ -119,46 +113,16 @@ The remote environment needs access to your repository. Provide a token with rep
 
 ```bash
 game-ci orchestrate \
-  --unity-version 2022.3.56f1 \
   --target-platform StandaloneLinux64 \
-  --provider aws \
+  --provider-strategy aws \
   --git-private-token "$GITHUB_TOKEN"
 ```
 
-| Flag | Description |
-| --- | --- |
-| `--git-private-token` | GitHub access token with repository read permission |
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--git-private-token` | _(empty)_ | GitHub access token with repository read permission |
 
 If not provided, the CLI attempts to read the token from the `GITHUB_TOKEN` environment variable.
-
-## Configuration Override
-
-Pull sensitive parameters from a secret manager instead of passing them on the command line:
-
-```bash
-game-ci orchestrate \
-  --unity-version 2022.3.56f1 \
-  --target-platform StandaloneLinux64 \
-  --provider aws \
-  --read-input-override-command 'gcloud secrets versions access 1 --secret="{0}"' \
-  --read-input-from-override-list "UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD"
-```
-
-See [Configuration Override](../advanced-topics/configuration-override) for details.
-
-## Resource Management
-
-List active cloud resources:
-
-```bash
-game-ci orchestrate --mode list-resources
-```
-
-Run garbage collection to clean up old resources:
-
-```bash
-game-ci orchestrate --mode garbage-collect --garbage-max-age 24
-```
 
 ## Full Example
 
@@ -168,14 +132,12 @@ export AWS_SECRET_ACCESS_KEY="..."
 export AWS_DEFAULT_REGION="us-east-1"
 
 game-ci orchestrate \
-  --unity-version 2022.3.56f1 \
   --target-platform StandaloneLinux64 \
-  --provider aws \
+  --provider-strategy aws \
   --git-private-token "$GITHUB_TOKEN" \
   --container-cpu 2048 \
   --container-memory 8192 \
   --cache-key "main" \
-  --use-compression true \
   --builds-path ./dist
 ```
 
@@ -185,4 +147,3 @@ game-ci orchestrate \
 - [Build Command](build-command) — local Docker builds
 - [API Reference](../api-reference) — full parameter reference
 - [Providers](../providers) — provider-specific setup guides
-- [Advanced Topics](../advanced-topics/caching) — caching, workspaces, and hooks

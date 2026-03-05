@@ -5,54 +5,48 @@ sidebar_position: 4
 # Other Commands
 
 Beyond `build` and `orchestrate`, the CLI provides commands for license management, cache
-operations, environment diagnostics, and version information.
+operations, environment diagnostics, version information, and self-updating.
 
 ## activate
 
-Manage Unity license activation. Required before running builds.
+Verify and prepare Unity license activation. Checks that valid license credentials are available
+before running builds.
 
 ```bash
 game-ci activate
 ```
 
-### Interactive Activation
+The `activate` command checks for license credentials from environment variables and reports whether
+activation will succeed. License activation itself is handled automatically when a build runs.
 
-Running `activate` without flags starts an interactive flow that walks you through license
-activation:
+### License Methods
 
-1. Choose license type (Personal, Plus, or Pro)
-2. Enter credentials or provide a license file
-3. The CLI stores the activated license for future builds
-
-### Environment Variable Activation
-
-You can skip the interactive flow by setting environment variables before running builds:
+Provide credentials via environment variables:
 
 | Variable | Description |
 | --- | --- |
+| `UNITY_SERIAL` | Serial key (Professional/Plus licenses) |
 | `UNITY_LICENSE` | Contents of a `.ulf` license file (base64 or raw XML) |
-| `UNITY_EMAIL` | Unity account email |
-| `UNITY_PASSWORD` | Unity account password |
-| `UNITY_SERIAL` | Serial key (Professional/Plus licenses only) |
-
-### Activation Flags
-
-| Flag | Description |
-| --- | --- |
-| `--license-file` | Path to a `.ulf` license file |
-| `--serial` | Unity serial key |
-| `--email` | Unity account email |
-| `--password` | Unity account password |
 
 ```bash
-# Activate with a license file
-game-ci activate --license-file ~/Unity_v2022.x.ulf
+# Using a serial key
+UNITY_SERIAL=XX-XXXX-XXXX-XXXX-XXXX-XXXX game-ci activate
 
-# Activate with serial key
-game-ci activate \
-  --serial "XX-XXXX-XXXX-XXXX-XXXX-XXXX" \
-  --email "you@example.com" \
-  --password "your-password"
+# Using a license file
+export UNITY_LICENSE="$(cat ~/Unity_v2022.x.ulf)"
+game-ci activate
+```
+
+### Flags
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--unity-version` | `auto` | Version of Unity to activate |
+| `--unity-licensing-server` | _(empty)_ | Unity floating license server address |
+
+```bash
+# Using a floating license server
+game-ci activate --unity-licensing-server http://license-server:8080
 ```
 
 ## cache
@@ -61,48 +55,44 @@ Manage build caches. Caches store the Unity Library folder and other intermediat
 up subsequent builds.
 
 ```bash
-game-ci cache <subcommand> [options]
+game-ci cache <action> [options]
 ```
+
+The `<action>` positional argument is required and must be one of: `list`, `restore`, or `clear`.
 
 ### cache list
 
-List cached entries:
+List cache status, including Library folder presence and any cache archives:
 
 ```bash
 game-ci cache list
 ```
 
-Output includes cache keys, sizes, and last-modified timestamps.
+Output includes Library folder path, entry count, last-modified timestamp, and key subdirectory
+status (PackageCache, ScriptAssemblies, ShaderCache, Bee).
 
 ### cache restore
 
-Restore a cache entry by key:
+Check for available cache archives to restore:
 
 ```bash
-game-ci cache restore --key main
+game-ci cache restore --cache-dir ./my-cache
 ```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--key` | Current branch name | Cache key to restore |
-| `--path` | `./Library` | Local path to restore into |
 
 ### cache clear
 
-Remove cached entries:
+Remove cache archive files:
 
 ```bash
-# Clear a specific cache key
-game-ci cache clear --key main
-
-# Clear all caches
-game-ci cache clear --all
+game-ci cache clear
 ```
 
-| Flag | Description |
-| --- | --- |
-| `--key` | Specific cache key to remove |
-| `--all` | Remove all cached entries |
+### Cache Flags
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--cache-dir` | _(empty)_ | Path to the cache directory (defaults to `<project-path>/Library`) |
+| `--project-path` | `.` | Path to the Unity project |
 
 ## status
 
@@ -114,42 +104,63 @@ game-ci status
 
 Reports:
 
-- **CLI version** — installed `game-ci` package version
+- **Project** — detected Unity project path and whether a project was found
+- **Unity Version** — version detected from `ProjectSettings/ProjectVersion.txt`
+- **Library Cache** — whether the Library folder is present and when it was last modified
+- **Build Outputs** — any existing build output directories
+- **Environment** — platform, Node.js version, and which license environment variables are set
+  (`UNITY_SERIAL`, `UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD` — shown as Set/Not set)
 - **Docker** — whether Docker is available and its version
-- **Unity license** — whether a valid license is detected
-- **Project** — detected Unity project path, Unity version from `ProjectSettings/ProjectVersion.txt`
-- **Git** — repository URL, branch, and commit SHA
-- **Environment** — relevant environment variables that are set (`UNITY_LICENSE`, `UNITY_EMAIL`,
-  AWS credentials, etc. — values are masked)
 
 ### Flags
 
-| Flag | Description |
-| --- | --- |
-| `--json` | Output status as JSON for scripting |
-
-```bash
-# JSON output for scripting
-game-ci status --json | jq '.unityVersion'
-```
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--project-path` | `.` | Path to the Unity project |
 
 ## version
 
-Print the installed CLI version:
+Print the installed CLI version, Node.js version, and platform:
 
 ```bash
 game-ci version
 ```
 
 ```
-game-ci v1.0.0
+game-ci (unity-builder) v3.0.0
+Node.js v20.5.1
+Platform: win32 x64
 ```
 
-Also available via the standard `--version` flag:
+## update
+
+Update the `game-ci` CLI to the latest version. Downloads the appropriate binary from GitHub
+Releases for your platform and architecture.
 
 ```bash
-game-ci --version
+game-ci update
 ```
+
+### Flags
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--force`, `-f` | `false` | Force update even if already on the latest version |
+| `--version` | _(empty)_ | Update to a specific version (e.g. `v2.1.0`) |
+
+```bash
+# Update to the latest version
+game-ci update
+
+# Update to a specific version
+game-ci update --version v2.1.0
+
+# Force reinstall of the current version
+game-ci update --force
+```
+
+If running via Node.js (not as a standalone binary), the command will print instructions for
+updating via npm instead.
 
 ## Global Flags
 
@@ -158,9 +169,6 @@ These flags are available on all commands:
 | Flag | Description |
 | --- | --- |
 | `--help`, `-h` | Show help for any command |
-| `--version`, `-v` | Print the CLI version |
-| `--verbose` | Enable verbose output |
-| `--quiet` | Suppress non-essential output |
 
 ```bash
 # Get help for any command

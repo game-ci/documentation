@@ -9,51 +9,80 @@ terminal — no GitHub Actions or CI platform required.
 
 ## Installation
 
-Install the CLI globally via npm:
+### Standalone Binary (Recommended)
+
+Download a pre-built binary from the
+[GitHub Releases page](https://github.com/game-ci/unity-builder/releases). Binaries are available
+for Linux (x64, arm64), macOS (x64, arm64), and Windows (x64).
+
+On Linux or macOS, you can use the install script:
 
 ```bash
-npm install -g game-ci
+curl -fsSL https://raw.githubusercontent.com/game-ci/unity-builder/main/install.sh | sh
+```
+
+### npm
+
+You can also install via npm. The package name is `unity-builder`, but the binary is called
+`game-ci`:
+
+```bash
+npm install -g unity-builder
 ```
 
 Or run it without installing using npx:
 
 ```bash
-npx game-ci --help
+npx unity-builder --help
 ```
 
 ## Unity License Activation
 
-Before building, you need an activated Unity license. The CLI provides an interactive activation
-command:
+Before building, you need a Unity license. Set one of the following environment variables:
+
+| Variable | Description |
+| --- | --- |
+| `UNITY_SERIAL` | Unity serial key (Professional/Plus licenses) |
+| `UNITY_LICENSE` | Contents of a Unity `.ulf` license file (base64 or raw XML) |
+
+You can verify your license is detected by running:
 
 ```bash
 game-ci activate
 ```
 
-This walks you through license activation and stores the result for future builds.
+This checks for valid license credentials and reports whether activation will succeed. If using a
+floating license server, pass the `--unity-licensing-server` flag instead:
+
+```bash
+game-ci activate --unity-licensing-server http://license-server:8080
+```
 
 ### Environment Variables
-
-You can also provide license credentials via environment variables:
-
-| Variable | Description |
-| --- | --- |
-| `UNITY_LICENSE` | Contents of a Unity `.ulf` license file (base64 or raw XML) |
-| `UNITY_EMAIL` | Unity account email address |
-| `UNITY_PASSWORD` | Unity account password |
-| `UNITY_SERIAL` | Unity serial key (for Professional/Plus licenses) |
 
 Set these in your shell profile or pass them inline:
 
 ```bash
-export UNITY_EMAIL="you@example.com"
-export UNITY_PASSWORD="your-password"
+export UNITY_SERIAL="XX-XXXX-XXXX-XXXX-XXXX-XXXX"
+```
+
+Or for personal licenses:
+
+```bash
 export UNITY_LICENSE="$(cat ~/Unity_v2022.x.ulf)"
 ```
 
 ## Your First Build
 
-Run a build by specifying your Unity version and target platform:
+Run a build by specifying your target platform. The Unity version is auto-detected from your
+project's `ProjectSettings/ProjectVersion.txt` by default:
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64
+```
+
+You can also specify the Unity version explicitly:
 
 ```bash
 game-ci build \
@@ -66,7 +95,7 @@ The CLI will:
 1. Pull the matching Unity Docker image
 2. Mount your project into a container
 3. Run the Unity build
-4. Output build artifacts to the `./builds/` directory
+4. Output build artifacts to the `build/` directory
 
 ### Specifying a Project Path
 
@@ -74,7 +103,6 @@ If your Unity project is not in the current directory, use `--project-path`:
 
 ```bash
 game-ci build \
-  --unity-version 2022.3.56f1 \
   --target-platform StandaloneWindows64 \
   --project-path ./my-unity-project
 ```
@@ -98,8 +126,8 @@ Use the `status` command to verify your environment:
 game-ci status
 ```
 
-This reports your installed CLI version, detected Unity license, Docker availability, and current
-project info.
+This reports whether a Unity project is detected, the Unity version, Library cache status, Docker
+availability, and which license environment variables are set.
 
 ## Next Steps
 
