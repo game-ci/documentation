@@ -1,0 +1,136 @@
+---
+sidebar_position: 2
+---
+
+# Build Command
+
+The `build` command runs a Unity build inside a Docker container. It accepts the same parameters as
+the `game-ci/unity-builder` GitHub Action, translated to CLI flags.
+
+```bash
+game-ci build [options]
+```
+
+## Required Options
+
+| Flag | Description |
+| --- | --- |
+| `--unity-version` | Unity Editor version to use (e.g. `2022.3.56f1`) |
+| `--target-platform` | Build target platform (e.g. `StandaloneLinux64`) |
+
+## Project Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--project-path` | `.` | Path to the Unity project directory |
+| `--build-name` | Target platform name | Name of the build output file |
+| `--builds-path` | `./builds` | Output directory for build artifacts |
+| `--build-method` | _(none)_ | Custom static C# build method to invoke (e.g. `MyBuild.PerformBuild`) |
+
+## Versioning Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--versioning` | `None` | Versioning strategy: `None`, `Semantic`, `Tag`, `Custom` |
+| `--version` | _(none)_ | Explicit version string (used with `--versioning Custom`) |
+| `--android-version-code` | _(auto)_ | Android `versionCode` override |
+
+## Custom Build Parameters
+
+Pass arbitrary parameters to the Unity build process:
+
+```bash
+game-ci build \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --custom-parameters "-myFlag -myKey myValue"
+```
+
+The `--custom-parameters` string is appended to the Unity command line arguments.
+
+## Android Options
+
+| Flag | Description |
+| --- | --- |
+| `--android-keystore-name` | Filename of the keystore |
+| `--android-keystore-base64` | Base64-encoded keystore file contents |
+| `--android-keystore-pass` | Keystore password |
+| `--android-keyalias-name` | Key alias name within the keystore |
+| `--android-keyalias-pass` | Key alias password |
+| `--android-target-sdk` | Target Android SDK version (e.g. `AndroidApiLevel31`) |
+| `--android-export-type` | Export type: `androidPackage` (APK) or `androidAppBundle` (AAB) |
+
+### Android Build Example
+
+```bash
+game-ci build \
+  --unity-version 2022.3.56f1 \
+  --target-platform Android \
+  --android-keystore-base64 "$(base64 -w 0 release.keystore)" \
+  --android-keystore-pass "$KEYSTORE_PASS" \
+  --android-keyalias-name "release" \
+  --android-keyalias-pass "$KEY_PASS" \
+  --android-target-sdk AndroidApiLevel31 \
+  --android-export-type androidAppBundle
+```
+
+## Docker Options
+
+Control the Docker container used for the build:
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--docker-image` | _(auto)_ | Override the Docker image (defaults to `unityci/editor` with the specified version and platform) |
+| `--docker-cpu-limit` | _(unlimited)_ | CPU limit for the container (e.g. `4` for 4 cores) |
+| `--docker-memory-limit` | _(unlimited)_ | Memory limit for the container (e.g. `8g` for 8 GB) |
+
+### Custom Docker Image Example
+
+```bash
+game-ci build \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --docker-image my-registry.com/unity-editor:2022.3.56f1-linux
+```
+
+## IL2CPP Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--allow-dirty-build` | `false` | Allow building without a clean working tree |
+
+When building with the IL2CPP scripting backend, the CLI automatically configures the Docker
+container with the required build tools. No additional flags are needed beyond selecting the correct
+target platform.
+
+## Output
+
+Build artifacts are written to the path specified by `--builds-path` (default `./builds/`). The
+directory structure is:
+
+```
+builds/
+  <target-platform>/
+    <build-name>
+```
+
+## Full Example
+
+```bash
+game-ci build \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --project-path ./my-project \
+  --build-name MyGame \
+  --builds-path ./dist \
+  --versioning Semantic \
+  --custom-parameters "-enableAnalytics" \
+  --docker-cpu-limit 4 \
+  --docker-memory-limit 8g
+```
+
+## See Also
+
+- [Getting Started](getting-started) — installation and first build
+- [Orchestrate Command](orchestrate-command) — run builds on cloud infrastructure
+- [API Reference](../api-reference) — full parameter reference for the GitHub Action

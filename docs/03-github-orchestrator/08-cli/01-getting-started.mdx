@@ -1,0 +1,108 @@
+---
+sidebar_position: 1
+---
+
+# Getting Started with the CLI
+
+The `game-ci` CLI lets you run Unity builds, activate licenses, and manage caches directly from your
+terminal — no GitHub Actions or CI platform required.
+
+## Installation
+
+Install the CLI globally via npm:
+
+```bash
+npm install -g game-ci
+```
+
+Or run it without installing using npx:
+
+```bash
+npx game-ci --help
+```
+
+## Unity License Activation
+
+Before building, you need an activated Unity license. The CLI provides an interactive activation
+command:
+
+```bash
+game-ci activate
+```
+
+This walks you through license activation and stores the result for future builds.
+
+### Environment Variables
+
+You can also provide license credentials via environment variables:
+
+| Variable | Description |
+| --- | --- |
+| `UNITY_LICENSE` | Contents of a Unity `.ulf` license file (base64 or raw XML) |
+| `UNITY_EMAIL` | Unity account email address |
+| `UNITY_PASSWORD` | Unity account password |
+| `UNITY_SERIAL` | Unity serial key (for Professional/Plus licenses) |
+
+Set these in your shell profile or pass them inline:
+
+```bash
+export UNITY_EMAIL="you@example.com"
+export UNITY_PASSWORD="your-password"
+export UNITY_LICENSE="$(cat ~/Unity_v2022.x.ulf)"
+```
+
+## Your First Build
+
+Run a build by specifying your Unity version and target platform:
+
+```bash
+game-ci build \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64
+```
+
+The CLI will:
+
+1. Pull the matching Unity Docker image
+2. Mount your project into a container
+3. Run the Unity build
+4. Output build artifacts to the `./builds/` directory
+
+### Specifying a Project Path
+
+If your Unity project is not in the current directory, use `--project-path`:
+
+```bash
+game-ci build \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneWindows64 \
+  --project-path ./my-unity-project
+```
+
+### Common Target Platforms
+
+| Platform | Value |
+| --- | --- |
+| Linux (64-bit) | `StandaloneLinux64` |
+| Windows (64-bit) | `StandaloneWindows64` |
+| macOS | `StandaloneOSX` |
+| WebGL | `WebGL` |
+| Android | `Android` |
+| iOS | `iOS` |
+
+## Checking Your Setup
+
+Use the `status` command to verify your environment:
+
+```bash
+game-ci status
+```
+
+This reports your installed CLI version, detected Unity license, Docker availability, and current
+project info.
+
+## Next Steps
+
+- [Build Command Reference](build-command) — full list of build flags and options
+- [Orchestrate Command](orchestrate-command) — run builds on cloud infrastructure
+- [Other Commands](other-commands) — license activation, cache management, and more

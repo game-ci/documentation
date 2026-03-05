@@ -1,0 +1,176 @@
+---
+sidebar_position: 4
+---
+
+# Other Commands
+
+Beyond `build` and `orchestrate`, the CLI provides commands for license management, cache
+operations, environment diagnostics, and version information.
+
+## activate
+
+Manage Unity license activation. Required before running builds.
+
+```bash
+game-ci activate
+```
+
+### Interactive Activation
+
+Running `activate` without flags starts an interactive flow that walks you through license
+activation:
+
+1. Choose license type (Personal, Plus, or Pro)
+2. Enter credentials or provide a license file
+3. The CLI stores the activated license for future builds
+
+### Environment Variable Activation
+
+You can skip the interactive flow by setting environment variables before running builds:
+
+| Variable | Description |
+| --- | --- |
+| `UNITY_LICENSE` | Contents of a `.ulf` license file (base64 or raw XML) |
+| `UNITY_EMAIL` | Unity account email |
+| `UNITY_PASSWORD` | Unity account password |
+| `UNITY_SERIAL` | Serial key (Professional/Plus licenses only) |
+
+### Activation Flags
+
+| Flag | Description |
+| --- | --- |
+| `--license-file` | Path to a `.ulf` license file |
+| `--serial` | Unity serial key |
+| `--email` | Unity account email |
+| `--password` | Unity account password |
+
+```bash
+# Activate with a license file
+game-ci activate --license-file ~/Unity_v2022.x.ulf
+
+# Activate with serial key
+game-ci activate \
+  --serial "XX-XXXX-XXXX-XXXX-XXXX-XXXX" \
+  --email "you@example.com" \
+  --password "your-password"
+```
+
+## cache
+
+Manage build caches. Caches store the Unity Library folder and other intermediate artifacts to speed
+up subsequent builds.
+
+```bash
+game-ci cache <subcommand> [options]
+```
+
+### cache list
+
+List cached entries:
+
+```bash
+game-ci cache list
+```
+
+Output includes cache keys, sizes, and last-modified timestamps.
+
+### cache restore
+
+Restore a cache entry by key:
+
+```bash
+game-ci cache restore --key main
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--key` | Current branch name | Cache key to restore |
+| `--path` | `./Library` | Local path to restore into |
+
+### cache clear
+
+Remove cached entries:
+
+```bash
+# Clear a specific cache key
+game-ci cache clear --key main
+
+# Clear all caches
+game-ci cache clear --all
+```
+
+| Flag | Description |
+| --- | --- |
+| `--key` | Specific cache key to remove |
+| `--all` | Remove all cached entries |
+
+## status
+
+Display information about the current environment, useful for debugging setup issues:
+
+```bash
+game-ci status
+```
+
+Reports:
+
+- **CLI version** — installed `game-ci` package version
+- **Docker** — whether Docker is available and its version
+- **Unity license** — whether a valid license is detected
+- **Project** — detected Unity project path, Unity version from `ProjectSettings/ProjectVersion.txt`
+- **Git** — repository URL, branch, and commit SHA
+- **Environment** — relevant environment variables that are set (`UNITY_LICENSE`, `UNITY_EMAIL`,
+  AWS credentials, etc. — values are masked)
+
+### Flags
+
+| Flag | Description |
+| --- | --- |
+| `--json` | Output status as JSON for scripting |
+
+```bash
+# JSON output for scripting
+game-ci status --json | jq '.unityVersion'
+```
+
+## version
+
+Print the installed CLI version:
+
+```bash
+game-ci version
+```
+
+```
+game-ci v1.0.0
+```
+
+Also available via the standard `--version` flag:
+
+```bash
+game-ci --version
+```
+
+## Global Flags
+
+These flags are available on all commands:
+
+| Flag | Description |
+| --- | --- |
+| `--help`, `-h` | Show help for any command |
+| `--version`, `-v` | Print the CLI version |
+| `--verbose` | Enable verbose output |
+| `--quiet` | Suppress non-essential output |
+
+```bash
+# Get help for any command
+game-ci build --help
+game-ci orchestrate --help
+game-ci cache --help
+```
+
+## See Also
+
+- [Getting Started](getting-started) — installation and first build
+- [Build Command](build-command) — full build reference
+- [Orchestrate Command](orchestrate-command) — cloud builds

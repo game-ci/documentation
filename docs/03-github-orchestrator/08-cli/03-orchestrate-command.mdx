@@ -1,0 +1,188 @@
+---
+sidebar_position: 3
+---
+
+# Orchestrate Command
+
+The `orchestrate` command runs Unity builds on cloud infrastructure instead of the local machine.
+It provisions a remote environment, syncs your project, runs the build, and retrieves artifacts.
+
+```bash
+game-ci orchestrate [options]
+```
+
+This is the CLI equivalent of using `game-ci/unity-builder` with a `providerStrategy` in GitHub
+Actions. All [Orchestrator API parameters](../api-reference) are available as CLI flags.
+
+## Provider Selection
+
+Choose where your build runs with the `--provider` flag:
+
+| Provider | Value | Description |
+| --- | --- | --- |
+| AWS Fargate | `aws` | Serverless containers on AWS (full release) |
+| Kubernetes | `k8s` | Run on any Kubernetes cluster (preview) |
+| Local Docker | `local-docker` | Run in a local Docker container (useful for testing) |
+
+```bash
+game-ci orchestrate \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --provider aws
+```
+
+## AWS Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--aws-stack-name` | `game-ci` | CloudFormation stack name for shared resources |
+| `--container-cpu` | `1024` | CPU units for the Fargate task (1024 = 1 vCPU) |
+| `--container-memory` | `4096` | Memory in MB for the Fargate task |
+
+AWS credentials are read from the standard AWS environment variables or credential files:
+
+```bash
+export AWS_ACCESS_KEY_ID="your-key"
+export AWS_SECRET_ACCESS_KEY="your-secret"
+export AWS_DEFAULT_REGION="us-east-1"
+
+game-ci orchestrate \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --provider aws \
+  --container-cpu 2048 \
+  --container-memory 8192
+```
+
+### AWS Endpoint Overrides
+
+For testing with LocalStack or other AWS-compatible services:
+
+| Flag | Description |
+| --- | --- |
+| `--aws-endpoint` | Base endpoint override for all AWS services |
+| `--aws-cloudformation-endpoint` | CloudFormation endpoint override |
+| `--aws-ecs-endpoint` | ECS endpoint override |
+| `--aws-s3-endpoint` | S3 endpoint override |
+| `--aws-cloudwatch-logs-endpoint` | CloudWatch Logs endpoint override |
+| `--aws-kinesis-endpoint` | Kinesis endpoint override |
+
+## Kubernetes Options
+
+| Flag | Description |
+| --- | --- |
+| `--kube-config` | Base64-encoded kubeconfig file contents |
+| `--kube-volume` | Name of the persistent volume to use |
+| `--kube-volume-size` | Size of the persistent volume (default: `5Gi`) |
+| `--kube-storage-class` | Kubernetes storage class for the volume |
+
+```bash
+game-ci orchestrate \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --provider k8s \
+  --kube-config "$(base64 -w 0 ~/.kube/config)" \
+  --kube-volume-size 25Gi
+```
+
+## Cache and Storage Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--cache-key` | Branch name | Key used to scope cache entries |
+| `--storage-provider` | `s3` | Storage backend: `s3` or `rclone` |
+| `--rclone-remote` | _(none)_ | Rclone remote endpoint (required when using `rclone` storage) |
+| `--use-compression` | `true` | Use LZ4 compression for cache and artifacts |
+| `--max-retained-workspaces` | `0` | Number of full project snapshots to retain |
+
+## Workspace Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--clone-depth` | `50` | Git clone depth (use `0` for full clone) |
+| `--use-large-packages` | `false` | Redirect large packages to a shared folder |
+| `--use-shared-builder` | `false` | Share a single Game CI clone across builds |
+
+## Execution Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--watch-to-end` | `true` | Follow build logs until completion |
+| `--async` | `false` | Return immediately without waiting for the build |
+| `--orchestrator-branch` | `main` | Orchestrator release branch (`main` or `orchestrator-develop`) |
+| `--orchestrator-debug` | `false` | Enable verbose debug logging |
+| `--resource-tracking` | `false` | Log disk usage summaries during the build |
+
+## Git Authentication
+
+The remote environment needs access to your repository. Provide a token with repo access:
+
+```bash
+game-ci orchestrate \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --provider aws \
+  --git-private-token "$GITHUB_TOKEN"
+```
+
+| Flag | Description |
+| --- | --- |
+| `--git-private-token` | GitHub access token with repository read permission |
+
+If not provided, the CLI attempts to read the token from the `GITHUB_TOKEN` environment variable.
+
+## Configuration Override
+
+Pull sensitive parameters from a secret manager instead of passing them on the command line:
+
+```bash
+game-ci orchestrate \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --provider aws \
+  --read-input-override-command 'gcloud secrets versions access 1 --secret="{0}"' \
+  --read-input-from-override-list "UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD"
+```
+
+See [Configuration Override](../advanced-topics/configuration-override) for details.
+
+## Resource Management
+
+List active cloud resources:
+
+```bash
+game-ci orchestrate --mode list-resources
+```
+
+Run garbage collection to clean up old resources:
+
+```bash
+game-ci orchestrate --mode garbage-collect --garbage-max-age 24
+```
+
+## Full Example
+
+```bash
+export AWS_ACCESS_KEY_ID="AKIA..."
+export AWS_SECRET_ACCESS_KEY="..."
+export AWS_DEFAULT_REGION="us-east-1"
+
+game-ci orchestrate \
+  --unity-version 2022.3.56f1 \
+  --target-platform StandaloneLinux64 \
+  --provider aws \
+  --git-private-token "$GITHUB_TOKEN" \
+  --container-cpu 2048 \
+  --container-memory 8192 \
+  --cache-key "main" \
+  --use-compression true \
+  --builds-path ./dist
+```
+
+## See Also
+
+- [Getting Started](getting-started) — installation and first build
+- [Build Command](build-command) — local Docker builds
+- [API Reference](../api-reference) — full parameter reference
+- [Providers](../providers) — provider-specific setup guides
+- [Advanced Topics](../advanced-topics/caching) — caching, workspaces, and hooks
