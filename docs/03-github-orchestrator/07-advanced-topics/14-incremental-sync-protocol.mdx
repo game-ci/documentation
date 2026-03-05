@@ -1,0 +1,125 @@
+# Incremental Sync Protocol
+
+The incremental sync protocol delivers workspace changes to build/test environments without
+traditional caching. Changes come from git deltas, direct input, or generic storage.
+
+## Overview
+
+Traditional caching archives the Library folder, pushes to storage, pulls on next build, and
+extracts. Even with cache hits, this takes minutes. The incremental sync protocol eliminates
+caching entirely for warm environments — instead of "restore the world," it says "here's what
+changed."
+
+## Sync Strategies
+
+| Strategy | Source | Use Case |
+|----------|--------|----------|
+| `full` | Full clone + cache restore | Default, cold environments |
+| `git-delta` | Git diff since last sync | Standard CI, PR builds |
+| `direct-input` | File content passed as job input | No-push workflows, rapid iteration |
+| `storage-pull` | Changed files from rclone remote | Large inputs, binary assets |
+
+## Git Delta Sync
+
+For git-based workflows:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    syncStrategy: git-delta
+```
+
+The protocol:
+1. Runner tracks its last sync commit SHA
+2. On job dispatch, receives target commit SHA
+3. Fetches and diffs: `git diff --name-only <last>..<target>`
+4. Checks out target commit
+5. Unity reimports only changed assets (Library stays warm)
+
+## Direct Input Sync
+
+Trigger jobs **without pushing to git**. Changes are passed as input:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    syncStrategy: direct-input
+    syncInputRef: storage://my-remote/inputs/changes.tar.lz4
+```
+
+For small changes, content can be inline. For large inputs, content is pulled from generic
+storage — backed by rclone, so **any storage provider works**: S3, GCS, Azure Blob, local
+filesystem, WebDAV, SFTP, and dozens more.
+
+This enables powerful workflows:
+- "Run tests on these changes before I commit"
+- "Build with this asset override without touching the repo"
+- "Apply this config and validate"
+- "Test a hotfix without a PR"
+
+## Storage-Backed Input
+
+Large inputs are stored via rclone and referenced by URI:
+
+```yaml
+syncInputRef: storage://my-remote/job-inputs/changes.tar.lz4
+```
+
+The protocol:
+1. Job includes a storage URI reference
+2. Runner pulls the archive from the rclone remote
+3. Extracts and overlays onto workspace
+4. Executes the build/test
+5. Optionally reverts the overlay after completion
+
+Users don't need git push access to trigger builds — just write access to the storage backend.
+
+### Why rclone?
+
+rclone supports 70+ storage backends out of the box. By using rclone as the storage
+abstraction, any provider is supported without additional configuration:
+
+```
+storage://s3:my-bucket/inputs/          # AWS S3
+storage://gcs:my-bucket/inputs/         # Google Cloud Storage
+storage://azure:container/inputs/       # Azure Blob
+storage:///mnt/shared/inputs/           # Local filesystem
+storage://webdav:server/inputs/         # WebDAV
+storage://sftp:server/inputs/           # SFTP
+```
+
+## Composability
+
+The incremental sync protocol is **independent of hot runners**. It's a workspace update
+strategy that works with any provider:
+
+| Provider | Sync Strategy | How It Works |
+|----------|--------------|--------------|
+| Hot runner (persistent) | `git-delta` | Fastest — warm editor, minimal changes |
+| Hot runner (persistent) | `direct-input` | No-push iteration |
+| Retained workspace | `git-delta` | Fast — workspace persists, no editor warmth |
+| Cold container | `storage-pull` | Pull overlay, apply to fresh clone |
+
+Hot runners + incremental sync = fastest possible iteration cycle.
+
+## Sync State
+
+Runners maintain sync state for delta calculations:
+
+```json
+{
+  "lastSyncCommit": "abc123def",
+  "lastSyncTimestamp": "2024-01-15T10:30:00Z",
+  "workspaceHash": "sha256:...",
+  "pendingOverlays": []
+}
+```
+
+## Inputs Reference
+
+| Input | Description |
+|-------|-------------|
+| `syncStrategy` | Sync approach: `full`, `git-delta`, `direct-input`, `storage-pull` |
+| `syncInputRef` | URI for direct-input or storage-pull content |
+| `syncStorageRemote` | rclone remote for storage-backed inputs (defaults to `rcloneRemote`) |
+| `syncRevertAfter` | Revert overlaid changes after job (default: `true`) |
