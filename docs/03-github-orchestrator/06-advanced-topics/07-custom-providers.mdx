@@ -1,0 +1,182 @@
+# Custom Providers
+
+Orchestrator uses a plugin system that lets you extend it with custom providers. A **provider** is a
+pluggable backend that controls where and how your builds run. Built-in providers include `aws`,
+`k8s`, `local-docker`, and `local`.
+
+With custom providers, you can point `providerStrategy` at a GitHub repository, NPM package, or
+local path and Orchestrator will dynamically load it at runtime.
+
+## Using a Custom Provider
+
+Set `providerStrategy` to a provider source instead of a built-in name:
+
+```yaml
+# GitHub repository
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: 'https://github.com/your-org/my-provider'
+    targetPlatform: StandaloneLinux64
+
+# GitHub shorthand
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: 'your-org/my-provider'
+    targetPlatform: StandaloneLinux64
+
+# Specific branch
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: 'your-org/my-provider@develop'
+    targetPlatform: StandaloneLinux64
+```
+
+### Supported Source Formats
+
+| Format                                | Example                                                  |
+| ------------------------------------- | -------------------------------------------------------- |
+| GitHub HTTPS URL                      | `https://github.com/user/repo`                           |
+| GitHub URL with branch                | `https://github.com/user/repo/tree/main`                 |
+| GitHub URL with branch and path       | `https://github.com/user/repo/tree/main/src/my-provider` |
+| GitHub shorthand                      | `user/repo`                                              |
+| GitHub shorthand with branch          | `user/repo@develop`                                      |
+| GitHub shorthand with branch and path | `user/repo@develop/src/my-provider`                      |
+| GitHub SSH                            | `git@github.com:user/repo.git`                           |
+| NPM package                           | `my-provider-package`                                    |
+| Scoped NPM package                    | `@scope/my-provider`                                     |
+| Local relative path                   | `./my-local-provider`                                    |
+| Local absolute path                   | `/path/to/provider`                                      |
+
+## Creating a Custom Provider
+
+A provider is a module that exports a class implementing the `ProviderInterface`. The module must
+have an entry point at one of: `index.js`, `index.ts`, `src/index.js`, `src/index.ts`,
+`lib/index.js`, `lib/index.ts`, or `dist/index.js`.
+
+### Required Methods
+
+Every provider must implement these 7 methods:
+
+```typescript
+interface ProviderInterface {
+  setupWorkflow(
+    buildGuid: string,
+    buildParameters: BuildParameters,
+    branchName: string,
+    defaultSecretsArray: {
+      ParameterKey: string;
+      EnvironmentVariable: string;
+      ParameterValue: string;
+    }[],
+  ): Promise<void>;
+
+  runTaskInWorkflow(
+    buildGuid: string,
+    image: string,
+    commands: string,
+    mountdir: string,
+    workingdir: string,
+    environment: OrchestratorEnvironmentVariable[],
+    secrets: OrchestratorSecret[],
+  ): Promise<string>;
+
+  cleanupWorkflow(
+    buildParameters: BuildParameters,
+    branchName: string,
+    defaultSecretsArray: {
+      ParameterKey: string;
+      EnvironmentVariable: string;
+      ParameterValue: string;
+    }[],
+  ): Promise<void>;
+
+  garbageCollect(
+    filter: string,
+    previewOnly: boolean,
+    olderThan: Number,
+    fullCache: boolean,
+    baseDependencies: boolean,
+  ): Promise<string>;
+
+  listResources(): Promise<ProviderResource[]>;
+  listWorkflow(): Promise<ProviderWorkflow[]>;
+  watchWorkflow(): Promise<string>;
+}
+```
+
+### Example Implementation
+
+```typescript
+// index.ts
+export default class MyProvider {
+  constructor(private buildParameters: any) {}
+
+  async setupWorkflow(buildGuid, buildParameters, branchName, defaultSecretsArray) {
+    // Initialize your build environment
+  }
+
+  async runTaskInWorkflow(buildGuid, image, commands, mountdir, workingdir, environment, secrets) {
+    // Execute the build task in your environment
+    return 'Build output';
+  }
+
+  async cleanupWorkflow(buildParameters, branchName, defaultSecretsArray) {
+    // Tear down resources after the build
+  }
+
+  async garbageCollect(filter, previewOnly, olderThan, fullCache, baseDependencies) {
+    // Clean up old resources
+    return 'Garbage collection complete';
+  }
+
+  async listResources() {
+    // Return active resources
+    return [];
+  }
+
+  async listWorkflow() {
+    // Return running workflows
+    return [];
+  }
+
+  async watchWorkflow() {
+    // Stream logs from a running workflow
+    return '';
+  }
+}
+```
+
+## How It Works
+
+When `providerStrategy` is set to a value that doesn't match a built-in provider name, Orchestrator
+will:
+
+1. **Detect the source type** — GitHub URL, NPM package, or local path.
+2. **Fetch the provider** — For GitHub repos, the repository is cloned (shallow, depth 1) into a
+   `.provider-cache/` directory. Cached repos are automatically updated on subsequent runs.
+3. **Load the module** — The entry point is imported and the default export is used.
+4. **Validate the interface** — All 7 required methods are checked. If any are missing, loading
+   fails.
+5. **Fallback** — If loading fails for any reason, Orchestrator logs the error and falls back to the
+   local provider so your pipeline doesn't break.
+
+## Caching
+
+GitHub repositories are cached in the `.provider-cache/` directory, keyed by owner, repo, and
+branch. On subsequent runs the loader checks for updates and pulls them automatically.
+
+### Environment Variables
+
+| Variable             | Default           | Description                             |
+| -------------------- | ----------------- | --------------------------------------- |
+| `PROVIDER_CACHE_DIR` | `.provider-cache` | Custom cache directory for cloned repos |
+| `GIT_TIMEOUT`        | `30000`           | Git operation timeout in milliseconds   |
+
+## Best Practices
+
+- **Pin a branch or tag** — Use `user/repo@v1.0` or a specific branch to avoid unexpected changes.
+- **Test locally first** — Use a local path during development before publishing.
+- **Handle errors gracefully** — Your provider methods should throw clear errors so Orchestrator can
+  log them and fall back if needed.
+- **Keep it lightweight** — The provider module is loaded at runtime. Minimize dependencies to keep
+  startup fast.

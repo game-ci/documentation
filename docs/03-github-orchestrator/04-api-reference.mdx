@@ -90,8 +90,9 @@ attempt to read them from current directory's git repo (e.g branch, commit SHA, 
 providerStrategy
 ```
 
-Specifies the Cloud Provider to use for Orchestrator jobs. Accepted values: `aws`, `k8s`,
-`local-docker`, `local`.
+Specifies the Cloud Provider to use for Orchestrator jobs. Built-in values: `aws`, `k8s`,
+`local-docker`, `local`. You can also specify a custom provider via GitHub URL, NPM package, or
+local path (see [Custom Providers](advanced-topics/custom-providers)).
 
 ```bash
 - containerCpu
