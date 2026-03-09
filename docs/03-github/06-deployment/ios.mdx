@@ -121,12 +121,12 @@ Within your project directory, create a directory called `fastlane`, and then cr
 directory called `Fastfile`.
 
 ```ruby title="fastlane/Fastfile"
-
-org, repo = (ENV["GITHUB_REPOSITORY"]||"").split("/")
-match_org, match_repo = (ENV["MATCH_REPOSITORY"]||"").split("/")
-
 platform :ios do
-  lane :init_ci do
+
+  desc "Initialize Match certificates for GitHub Actions"
+  lane :match_init_ci do
+    org, repo = (ENV["GITHUB_REPOSITORY"]||"").split("/")
+    match_org, match_repo = (ENV["MATCH_REPOSITORY"]||"").split("/")
     setup_ci
     github_action(
       api_token: ENV["GH_PAT"],
@@ -176,8 +176,8 @@ keystore to both generate and store this password.
 
 Next, create the following two GitHub Actions workflows.
 
-```yaml title=".github/workflows/ios_setup.yml"
-name: iOS One-Time Setup
+```yaml title=".github/workflows/ios_match_certificates_setup.yml"
+name: iOS Match Certificates Setup
 
 on: workflow_dispatch
 
@@ -188,7 +188,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2
+          ruby-version: 3.4
           bundler-cache: true
 
       - name: Build iOS
@@ -199,18 +199,17 @@ jobs:
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
-
           GH_PAT: ${{ secrets.GH_PAT }}
           GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
           MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}
 ```
 
-```yaml title=".github/workflows/generate_certs.yml"
-name: Generate iOS Certs
+```yaml title=".github/workflows/ios_sync_certificates.yml"
+name: iOS Sync Certificates
 
 on:
   workflow_run:
-    workflows: ['iOS One-Time Setup']
+    workflows: ['iOS Match Certificates Setup']
     types:
       - completed
   workflow_dispatch:
@@ -222,7 +221,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2
+          ruby-version: 3.4
           bundler-cache: true
 
       - name: Build iOS
@@ -235,14 +234,12 @@ jobs:
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
-
-          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
-
           GH_PAT: ${{ secrets.GH_PAT }}
           GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
           MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}
           MATCH_DEPLOY_KEY: ${{ secrets.MATCH_DEPLOY_KEY }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
 ```
 
 The first workflow will set up your Match repository. It creates a deploy key in that repo, and
@@ -251,14 +248,15 @@ changes to that git repo.
 
 The second one fetches your certificates with Apple, and stores any updates in your private Match
 git repo. This will run automatically after you run the first workflow, but it also can be manually
-re-run when your initial certificates expire a year or two after generation.
+re-run. When your certificates expire after a year, you can run `fastlane match nuke distribution`,
+delete the Match Deploy Key, and re-run the "iOS Match Certificates Setup" action.
 
-Go to the "Actions" tab in your GitHub repository, and manually run the "iOS One-Time Setup" action
-by selecting it from the list on the left, clicking the "Run Workflow" button, and then clicking the
-next "Run Workflow" button after confirming the branch is correct. This will run both of those two
+Go to the "Actions" tab in your GitHub repository, and manually run the "iOS Match Certificates Setup"
+action by selecting it from the list on the left, clicking the "Run Workflow" button, and then clicking
+the next "Run Workflow" button after confirming the branch is correct. This will run both of those two
 workflows, configuring your Match git repository and then generating certificates with Apple.
 
-> -- **Note:** If `Generate iOS Certs` causes an `Unknown platform` issue, go into the
+> -- **Note:** If `iOS Sync Certificates` causes an `Unknown platform` issue, go into the
 > `Gemfile.lock` file and under `PLATFORMS` delete any lines that are not `x86_64-darwin-19` or
 > `x86_64-linux`. Don't forget to commit and push the file before running the action again.
 
