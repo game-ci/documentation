@@ -249,7 +249,7 @@ changes to that git repo.
 The second one fetches your certificates with Apple, and stores any updates in your private Match
 git repo. This will run automatically after you run the first workflow, but it also can be manually
 re-run. When your certificates expire after a year, you can run `fastlane match nuke distribution`,
-delete the Match Deploy Key, and re-run the "iOS Match Certificates Setup" action.
+delete the certificates repo and the MATCH_DEPLOY_KEY, and re-run the action.
 
 Go to the "Actions" tab in your GitHub repository, and manually run the "iOS Match Certificates Setup"
 action by selecting it from the list on the left, clicking the "Run Workflow" button, and then clicking
