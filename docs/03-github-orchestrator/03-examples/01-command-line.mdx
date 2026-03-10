@@ -1,67 +1,87 @@
 # Command Line
 
-You can install Game CI locally and start orchestrator jobs from the command line or by integrating
-your own tools. All parameters in the [API Reference](../api-reference) can be specified as CLI
-flags.
+You can run orchestrator builds directly from your terminal - no GitHub Actions or CI platform
+required. All parameters in the [API Reference](../api-reference) can be specified as CLI flags.
 
 ## Install
 
-```bash
-git clone https://github.com/game-ci/unity-builder.git
-cd unity-builder
-yarn install
-```
-
-## Usage
+### Linux / macOS
 
 ```bash
-yarn run cli -m <mode> --projectPath <path> [options]
+curl -fsSL https://raw.githubusercontent.com/game-ci/orchestrator/main/install.sh | sh
 ```
 
-### Examples
+### Windows (PowerShell)
 
-Run a standard build:
+```powershell
+irm https://raw.githubusercontent.com/game-ci/orchestrator/main/install.ps1 | iex
+```
+
+Pre-built binaries for every platform are available on the
+[GitHub Releases](https://github.com/game-ci/orchestrator/releases) page.
+
+## Examples
+
+### Local build
 
 ```bash
-yarn run cli -m cli-build \
-  --projectPath /path/to/your/unity/project \
-  --providerStrategy aws \
-  --targetPlatform StandaloneLinux64 \
-  --gitPrivateToken $GIT_TOKEN
+game-ci build \
+  --target-platform StandaloneLinux64
 ```
 
-List active resources:
+### Cloud build (AWS)
 
 ```bash
-yarn run cli -m list-resources --providerStrategy aws
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --provider-strategy aws \
+  --git-private-token $GIT_TOKEN
 ```
 
-Watch a running build:
+### Cloud build (Kubernetes)
 
 ```bash
-yarn run cli -m watch --providerStrategy aws
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --provider-strategy k8s \
+  --git-private-token $GIT_TOKEN
 ```
 
-Clean up old resources:
+### List active resources
 
 ```bash
-yarn run cli -m garbage-collect --providerStrategy aws
+game-ci list-resources --provider-strategy aws
 ```
 
-## Help
+### Watch a running build
 
-Run `yarn run cli --help` to list all modes and parameters with descriptions.
+```bash
+game-ci watch --provider-strategy aws
+```
+
+### Clean up old resources
+
+```bash
+game-ci garbage-collect --provider-strategy aws
+```
 
 ## Keeping Commands Short
 
-You can avoid long CLI flags for credentials by using environment variables or the
-[Pull Secrets](../secrets#-pulling-secrets-from-external-sources) feature.
-
-This lets you pull input from a secret manager:
+Avoid long CLI flags for credentials by using environment variables or the
+[Pull Secrets](../secrets#-pulling-secrets-from-external-sources) feature:
 
 ```bash
-yarn run cli \
-  --populateOverride true \
-  --pullInputList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD \
-  --inputPullCommand='gcloud secrets versions access 1 --secret="{0}"'
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --populate-override true \
+  --pull-input-list UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD \
+  --input-pull-command='gcloud secrets versions access 1 --secret="{0}"'
 ```
+
+## Further Reading
+
+- [CLI Getting Started](../cli/getting-started) - installation options, license activation, first
+  build walkthrough
+- [Build Command Reference](../cli/build-command) - full list of build flags
+- [Orchestrate Command](../cli/orchestrate-command) - cloud-specific options
+- [Other Commands](../cli/other-commands) - license activation, cache management, and more
