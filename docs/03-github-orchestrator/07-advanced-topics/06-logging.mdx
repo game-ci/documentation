@@ -2,12 +2,9 @@
 
 Orchestrator streams logs from the remote build back to your CI runner in real time.
 
-```
-  Cloud Container         Orchestrator          Your CI
- ┌───────────────┐       ┌──────────────┐      ┌──────────────┐
- │ Build output  │──────►│ Log stream   │─────►│ Console      │
- │               │       │              │      │ output       │
- └───────────────┘       └──────────────┘      └──────────────┘
+```mermaid
+flowchart LR
+  A["Cloud Container\nBuild output"] --> B["Orchestrator\nLog stream"] --> C["Your CI\nConsole output"]
 ```
 
 ## Provider-Specific Log Transport

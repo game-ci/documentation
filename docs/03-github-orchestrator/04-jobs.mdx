@@ -7,15 +7,11 @@ provider. Understanding job types and their flow is key to customizing your buil
 
 Every Orchestrator run follows the same lifecycle, regardless of provider:
 
-```
-  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-  │  Setup       │────►│  Pre-Build  │────►│  Build      │────►│  Post-Build │
-  │  Provider    │     │  Jobs       │     │  Job        │     │  Jobs       │
-  └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-        │                                                            │
-        │                    ┌─────────────┐                         │
-        └───────────────────►│  Cleanup    │◄────────────────────────┘
-                             └─────────────┘
+```mermaid
+flowchart LR
+  S["Setup\nProvider"] --> PRE["Pre-Build\nJobs"] --> B["Build\nJob"] --> POST["Post-Build\nJobs"]
+  S --> C["Cleanup"]
+  POST --> C
 ```
 
 1. **Setup** - Provision cloud resources (stacks, volumes, secrets). Skipped for local providers.

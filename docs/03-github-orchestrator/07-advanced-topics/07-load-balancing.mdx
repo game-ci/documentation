@@ -4,18 +4,12 @@ Orchestrator can intelligently route builds across providers. Built-in load bala
 availability and routes to the best provider automatically - no custom scripting needed. For
 advanced scenarios, standard GitHub Actions scripting gives you full control.
 
-```
-  unity-builder
- ┌──────────────────────────────────┐
- │ 1. Check runner availability    │
- │ 2. Route to best provider       │
- │ 3. Build (sync or async)        │
- │ 4. Retry on alternate if failed │
- └──┬──────────┬───────────────┬───┘
-    │          │               │
-    ▼          ▼               ▼
- local-docker  aws            k8s
- (self-hosted) (scalable)     (flexible)
+```mermaid
+flowchart TD
+  UB["unity-builder\n1. Check runner availability\n2. Route to best provider\n3. Build (sync or async)\n4. Retry on alternate if failed"]
+  UB --> LD["local-docker\n(self-hosted)"]
+  UB --> AWS["aws\n(scalable)"]
+  UB --> K8S["k8s\n(flexible)"]
 ```
 
 ## Built-in Load Balancing
@@ -466,21 +460,13 @@ load balancing of long builds. When enabled, the action dispatches the build and
 
 - no runner minutes wasted waiting.
 
-```
-  Workflow Step (seconds)      Provider A              Provider B
- ┌───────────────────────┐   ┌──────────────┐        ┌──────────────┐
- │ 1. Check runners      │   │              │        │              │
- │ 2. Route to provider  │   │              │        │              │
- │ 3. Dispatch build     ├──►│ 3a. Building │  OR  ──►│ 3b. Building │
- │ 4. Return (done)      │   │     ...      │        │     ...      │
- └───────────────────────┘   │     ...      │        │     ...      │
-   Completes instantly       │ 5. Complete  │        │ 5. Complete  │
-                             └──────┬───────┘        └──────┬───────┘
-                                    │                       │
-                             ┌──────▼───────────────────────▼──────┐
-                             │         GitHub Check updated        │
-                             │         (monitor from PR page)      │
-                             └─────────────────────────────────────┘
+```mermaid
+flowchart TD
+  WF["Workflow Step (seconds)\n1. Check runners\n2. Route to provider\n3. Dispatch build\n4. Return (done)\n\nCompletes instantly"]
+  WF --> PA["Provider A\nBuilding...\nComplete"]
+  WF --> PB["Provider B\nBuilding...\nComplete"]
+  PA --> GH["GitHub Check updated\n(monitor from PR page)"]
+  PB --> GH
 ```
 
 - **Without async** - The build occupies the runner. Routing still works, but you're paying for

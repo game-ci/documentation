@@ -5,25 +5,15 @@ and Git LFS assets), **build output** (the compiled game), and **caches** (Unity
 LFS files). This page explains how each category flows through the system and how to configure the
 storage backend.
 
-```
-  CI / Local Machine                   Build Container
- ┌──────────────────┐                 ┌──────────────────────────────────┐
- │  Git repository  │──── clone ────►│  /data/{buildGuid}/repo/         │
- │  + LFS assets    │                │    ├── Assets/                   │
- │                  │                │    ├── Library/       (cached)   │
- └──────────────────┘                │    └── .git/lfs/     (cached)   │
-                                     │                                  │
-                                     │  /data/cache/{cacheKey}/         │
-                                     │    ├── Library/       (tar.lz4) │
-                                     │    └── build/         (tar.lz4) │
-                                     └────────────┬─────────────────────┘
-                                                  │
-                                     ┌────────────▼─────────────────────┐
-                                     │  Cloud Storage (S3 / rclone)     │
-                                     │    ├── Library cache archives    │
-                                     │    ├── Build artifacts           │
-                                     │    └── Workspace locks           │
-                                     └──────────────────────────────────┘
+```mermaid
+flowchart TD
+  CI["CI / Local Machine\nGit repository\n+ LFS assets"]
+  CI -->|clone| BC
+  subgraph BC["Build Container"]
+    REPO["/data/{buildGuid}/repo/\n├── Assets/\n├── Library/ (cached)\n└── .git/lfs/ (cached)"]
+    CACHE["/data/cache/{cacheKey}/\n├── Library/ (tar.lz4)\n└── build/ (tar.lz4)"]
+  end
+  BC --> CS["Cloud Storage (S3 / rclone)\n├── Library cache archives\n├── Build artifacts\n└── Workspace locks"]
 ```
 
 ## File Categories
@@ -88,19 +78,14 @@ skip re-importing unchanged assets.
 
 Orchestrator supports two storage backends for caches, artifacts, and workspace locks.
 
-```
-  storageProvider: "s3"              storageProvider: "rclone"
- ┌────────────────────┐             ┌────────────────────┐
- │  AWS S3             │             │  Rclone             │
- │                     │             │                     │
- │  - Default backend  │             │  - 70+ backends     │
- │  - Works with       │             │  - Google Cloud     │
- │    LocalStack       │             │  - Azure Blob       │
- │  - Built-in lock    │             │  - Backblaze B2     │
- │    support          │             │  - SFTP, FTP        │
- │                     │             │  - Any rclone       │
- │                     │             │    remote            │
- └────────────────────┘             └────────────────────┘
+```mermaid
+flowchart LR
+  subgraph "storageProvider: s3"
+    S3["AWS S3\n\n- Default backend\n- Works with LocalStack\n- Built-in lock support"]
+  end
+  subgraph "storageProvider: rclone"
+    RC["Rclone\n\n- 70+ backends\n- Google Cloud\n- Azure Blob\n- Backblaze B2\n- SFTP, FTP\n- Any rclone remote"]
+  end
 ```
 
 ### S3 (Default)

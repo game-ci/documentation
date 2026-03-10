@@ -20,18 +20,16 @@ the CI runner itself. This is useful when:
 - You need **more CPU or memory** than the CI platform provides
 - You want to **scale to many concurrent builds** without managing servers
 
-```
-  Standard Game-CI               Orchestrator Mode
-
- ┌────────────────┐            ┌─────────────────┐    ┌──────────────┐
- │ GitHub         │            │ GitHub Action    │    │              │
- │ Runner         │            │ CLI / Any CI     │───►│ Cloud        │
- │                │            │                  │    │ Container    │
- │ (builds        │            │ (dispatches      │◄───│ (builds      │
- │  locally)      │            │  only)           │    │  remotely)   │
- └────────────────┘            └─────────────────┘    └──────────────┘
-   ~14 GB disk                   Configurable CPU, memory, disk
-   Fixed resources               Scales to zero when idle
+```mermaid
+flowchart LR
+  subgraph Standard Game-CI
+    GR["GitHub Runner\n(builds locally)\n\n~14 GB disk\nFixed resources"]
+  end
+  subgraph Orchestrator Mode
+    GA["GitHub Action\nCLI / Any CI\n(dispatches only)\n\nConfigurable CPU, memory, disk\nScales to zero when idle"]
+    CC["Cloud Container\n(builds remotely)"]
+    GA <--> CC
+  end
 ```
 
 ## Self-Hosted Runners vs Orchestrator

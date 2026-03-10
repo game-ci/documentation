@@ -4,18 +4,12 @@ Write orchestrator providers in **any language** - Go, Python, Rust, shell, or a
 read stdin and write stdout. The CLI provider protocol uses JSON messages over stdin/stdout with the
 subcommand as the first argument.
 
-```
-  providerExecutable                      Your executable
- ┌──────────────────────┐                ┌──────────────────────┐
- │ ./my-provider        │   argv[1]      │                      │
- │                      │───────────────►│  setup-workflow      │
- │ Orchestrator spawns  │   JSON stdin   │  run-task            │
- │ your executable per  │───────────────►│  cleanup-workflow    │
- │ subcommand           │   JSON stdout  │  garbage-collect     │
- │                      │◄───────────────│  list-resources      │
- └──────────────────────┘   stderr→logs  │  list-workflow       │
-                                         │  watch-workflow      │
-                                         └──────────────────────┘
+```mermaid
+graph LR
+    Orch["providerExecutable<br/>./my-provider<br/>Orchestrator spawns your<br/>executable per subcommand"]
+    Exec["Your executable<br/>setup-workflow<br/>run-task<br/>cleanup-workflow<br/>garbage-collect<br/>list-resources<br/>list-workflow<br/>watch-workflow"]
+    Orch -->|"argv[1], JSON stdin"| Exec
+    Exec -->|"JSON stdout, stderr→logs"| Orch
 ```
 
 ## Quick Start

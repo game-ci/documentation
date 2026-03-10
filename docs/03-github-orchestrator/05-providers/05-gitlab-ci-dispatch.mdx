@@ -75,22 +75,19 @@ gitlabApiUrl: https://gitlab.internal.company.com
 
 ## How It Works
 
-```
-  Orchestrator (GitHub)                     GitLab CI
- ┌──────────────────────┐                 ┌──────────────────────┐
- │                      │  POST /trigger   │                      │
- │  1. Verify project   │────────────────►│  3. Run pipeline     │
- │     access           │                 │     jobs on GitLab   │
- │                      │                 │     Runners          │
- │  2. Trigger pipeline │                 │                      │
- │     with variables   │  poll status     │  4. Execute build    │
- │                      │◄───────────────►│     commands         │
- │  5. Monitor pipeline │                 │                      │
- │     status           │  fetch job logs  │  5. Complete         │
- │                      │◄────────────────│                      │
- │  6. Collect per-job  │                 │                      │
- │     logs and report  │                 │                      │
- └──────────────────────┘                 └──────────────────────┘
+```mermaid
+sequenceDiagram
+    participant O as Orchestrator (GitHub)
+    participant G as GitLab CI
+    O->>O: 1. Verify project access
+    O->>G: 2. Trigger pipeline with variables (POST /trigger)
+    G->>G: 3. Run pipeline jobs on GitLab Runners
+    G->>G: 4. Execute build commands
+    O->>G: 5. Monitor pipeline status (poll)
+    G-->>O: Status updates
+    G->>G: 5. Complete
+    G-->>O: Fetch job logs
+    O->>O: 6. Collect per-job logs and report
 ```
 
 1. **Setup** - The orchestrator verifies access to the GitLab project using the provided token.

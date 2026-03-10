@@ -138,21 +138,18 @@ all:
 
 ## How It Works
 
-```
-  Orchestrator (runner)                     Ansible → Target Machines
- ┌──────────────────────┐                 ┌──────────────────────┐
- │                      │  verify ansible  │                      │
- │  1. Check ansible    │  verify inventory│                      │
- │     is installed     │                 │                      │
- │                      │                 │                      │
- │  2. Build extra-vars │  ansible-playbook│  3. Connect to hosts │
- │     from build       │────────────────►│     in inventory     │
- │     parameters       │                 │                      │
- │                      │                 │  4. Execute playbook │
- │                      │  stdout stream   │     tasks            │
- │  5. Capture output   │◄────────────────│                      │
- │     and report       │                 │  6. Complete         │
- └──────────────────────┘                 └──────────────────────┘
+```mermaid
+sequenceDiagram
+    participant O as Orchestrator (runner)
+    participant A as Ansible / Target Machines
+    O->>O: 1. Check ansible is installed, verify inventory
+    O->>O: 2. Build extra-vars from build parameters
+    O->>A: Run ansible-playbook
+    A->>A: 3. Connect to hosts in inventory
+    A->>A: 4. Execute playbook tasks
+    A-->>O: stdout stream
+    O->>O: 5. Capture output and report
+    A->>A: 6. Complete
 ```
 
 1. **Setup** - The orchestrator verifies that `ansible` is available on `PATH` and that the

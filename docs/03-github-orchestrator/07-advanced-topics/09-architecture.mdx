@@ -3,54 +3,28 @@
 This page describes the internal architecture of Orchestrator - how the components fit together, how
 a build flows through the system, and where to look in the source code.
 
-```
-                                    ┌───────────────────────────┐
-                                    │  Entry Point              │
-                                    │  GitHub Action / CLI      │
-                                    └─────────────┬─────────────┘
-                                                  │
-                                    ┌─────────────▼─────────────┐
-                                    │  Orchestrator             │
-                                    │  (orchestrator.ts)        │
-                                    │                           │
-                                    │  - setup()                │
-                                    │  - run()                  │
-                                    │  - Provider selection     │
-                                    └──┬──────────┬──────────┬──┘
-                                       │          │          │
-                    ┌──────────────────▼┐  ┌──────▼───────┐  ┌▼──────────────────┐
-                    │  Provider          │  │  Workflow     │  │  Services          │
-                    │  (pluggable)       │  │  Composition  │  │                    │
-                    │                    │  │  Root         │  │  - Logger          │
-                    │  - aws             │  │               │  │  - Hooks           │
-                    │  - k8s             │  │  - Standard   │  │  - Caching         │
-                    │  - local-docker    │  │  - Async      │  │  - Locking         │
-                    │  - local           │  │  - Custom Job │  │  - LFS             │
-                    │  - custom plugin   │  │               │  │  - GitHub Checks   │
-                    └────────────────────┘  └──────────────┘  └────────────────────┘
+```mermaid
+flowchart TD
+  EP["Entry Point\nGitHub Action / CLI"]
+  EP --> O["Orchestrator\n(orchestrator.ts)\n\n- setup()\n- run()\n- Provider selection"]
+  O --> P["Provider\n(pluggable)\n\n- aws\n- k8s\n- local-docker\n- local\n- custom plugin"]
+  O --> W["Workflow\nComposition Root\n\n- Standard\n- Async\n- Custom Job"]
+  O --> S["Services\n\n- Logger\n- Hooks\n- Caching\n- Locking\n- LFS\n- GitHub Checks"]
 ```
 
 ## Build Lifecycle
 
 A standard Orchestrator build follows these steps:
 
-```
-  1. Initialize          2. Setup Provider      3. Acquire Workspace
- ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
- │ Parse inputs     │   │ Create cloud     │   │ Lock retained    │
- │ Select provider  │──►│ resources        │──►│ workspace        │
- │ Generate GUID    │   │ (stacks, PVCs)   │   │ (if enabled)     │
- │ Create GH check  │   │                  │   │                  │
- └──────────────────┘   └──────────────────┘   └──────────────────┘
-                                                        │
-  6. Cleanup             5. Post-Build          4. Build
- ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
- │ Release workspace│   │ Push Library     │   │ Clone repo + LFS │
- │ Delete cloud     │◄──│ and build cache  │◄──│ Restore cache    │
- │ resources        │   │ Run post hooks   │   │ Run Unity build  │
- │ Update GH check  │   │                  │   │ Run pre/post     │
- └──────────────────┘   └──────────────────┘   │ container hooks  │
-                                                └──────────────────┘
+```mermaid
+flowchart LR
+  S1["1. Initialize\nParse inputs\nSelect provider\nGenerate GUID\nCreate GH check"]
+  S2["2. Setup Provider\nCreate cloud resources\n(stacks, PVCs)"]
+  S3["3. Acquire Workspace\nLock retained workspace\n(if enabled)"]
+  S4["4. Build\nClone repo + LFS\nRestore cache\nRun Unity build\nRun pre/post\ncontainer hooks"]
+  S5["5. Post-Build\nPush Library\nand build cache\nRun post hooks"]
+  S6["6. Cleanup\nRelease workspace\nDelete cloud resources\nUpdate GH check"]
+  S1 --> S2 --> S3 --> S4 --> S5 --> S6
 ```
 
 ### Step-by-Step
@@ -140,26 +114,13 @@ See [Custom Providers](../providers/custom-providers) for the user-facing guide.
 
 The `WorkflowCompositionRoot` selects which workflow to run:
 
-```
-  asyncOrchestrator: true?
-        │
-   ┌────▼────┐
-   │  Yes    │──► AsyncWorkflow
-   └────┬────┘     Dispatches build to cloud container
-        │          and returns immediately
-   ┌────▼────┐
-   │  No     │
-   └────┬────┘
-        │
-   customJob set?
-        │
-   ┌────▼────┐
-   │  Yes    │──► CustomWorkflow
-   └────┬────┘     Parses YAML job definition
-        │          and runs container steps
-   ┌────▼────┐
-   │  No     │──► BuildAutomationWorkflow
-   └─────────┘     Standard build pipeline
+```mermaid
+flowchart TD
+  Q1{"asyncOrchestrator: true?"}
+  Q1 -->|Yes| AW["AsyncWorkflow\nDispatches build to cloud container\nand returns immediately"]
+  Q1 -->|No| Q2{"customJob set?"}
+  Q2 -->|Yes| CW["CustomWorkflow\nParses YAML job definition\nand runs container steps"]
+  Q2 -->|No| BAW["BuildAutomationWorkflow\nStandard build pipeline"]
 ```
 
 **BuildAutomationWorkflow** generates a shell script that runs inside the container. The script:
@@ -193,18 +154,13 @@ See [Hooks](hooks/container-hooks) for the full guide.
 
 Orchestrator reads configuration from multiple sources with this priority:
 
-```
-  Highest Priority
- ┌──────────────────────┐
- │ GitHub Action inputs  │  with: providerStrategy: aws
- ├──────────────────────┤
- │ CLI flags             │  --providerStrategy aws
- ├──────────────────────┤
- │ Query overrides       │  Pull Secrets from external sources
- ├──────────────────────┤
- │ Environment variables │  PROVIDER_STRATEGY=aws
- └──────────────────────┘
-  Lowest Priority
+```mermaid
+flowchart TD
+  A["GitHub Action inputs\nwith: providerStrategy: aws"] -->|overrides| B["CLI flags\n--providerStrategy aws"]
+  B -->|overrides| C["Query overrides\nPull Secrets from external sources"]
+  C -->|overrides| D["Environment variables\nPROVIDER_STRATEGY=aws"]
+  style A fill:#4a9,color:#fff
+  style D fill:#a94,color:#fff
 ```
 
 The `OrchestratorOptions` class handles this resolution. Environment variables accept both

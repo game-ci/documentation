@@ -16,18 +16,15 @@ Each retained workspace is locked during use - only one build can use a workspac
 Orchestrator handles locking automatically via S3 or rclone. See [Caching](caching) for storage
 provider details.
 
-```
-  maxRetainedWorkspaces: 3
-
-  Workspace 1         Workspace 2         Workspace 3
- ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
- │ [locked]      │   │ [locked]      │   │ (idle)        │
- │ Build A       │   │ Build B       │   │               │
- │ Full project  │   │ Full project  │   │ Full project  │
- └───────────────┘   └───────────────┘   └───────────────┘
-
-  Build C arrives --> claims Workspace 3
-  Build D arrives --> all locked --> falls back to standard caching
+```mermaid
+flowchart LR
+  subgraph maxRetainedWorkspaces: 3
+    W1["Workspace 1\n🔒 locked\nBuild A\nFull project"]
+    W2["Workspace 2\n🔒 locked\nBuild B\nFull project"]
+    W3["Workspace 3\n💤 idle\nFull project"]
+  end
+  C["Build C arrives"] --> W3
+  D["Build D arrives"] -.->|all locked| FB["Falls back to\nstandard caching"]
 ```
 
 ## Example

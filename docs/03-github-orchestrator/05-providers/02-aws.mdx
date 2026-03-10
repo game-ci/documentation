@@ -4,23 +4,15 @@
 
 Orchestrator creates and manages these AWS resources automatically:
 
-```
-  CloudFormation (base stack)
- ┌──────────────────────────────────────────────────┐
- │                                                  │
- │  ┌────────────┐    ┌─────────────┐               │
- │  │ ECS        │    │ S3          │               │
- │  │ Fargate    │    │ Bucket      │               │
- │  │ (build     │    │ (cache +    │               │
- │  │  tasks)    │    │  artifacts) │               │
- │  └────────────┘    └─────────────┘               │
- │                                                  │
- │  ┌────────────┐    ┌─────────────┐               │
- │  │ CloudWatch │───►│ Kinesis     │──► Log stream │
- │  │ Logs       │    │ Stream      │    to CI      │
- │  └────────────┘    └─────────────┘               │
- │                                                  │
- └──────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph CF["CloudFormation (base stack)"]
+        ECS["ECS Fargate<br/>(build tasks)"]
+        S3["S3 Bucket<br/>(cache + artifacts)"]
+        CW["CloudWatch Logs"]
+        KS["Kinesis Stream"]
+    end
+    CW --> KS --> Log["Log stream to CI"]
 ```
 
 ## Requirements

@@ -4,22 +4,18 @@ Run Unity builds as
 [Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/) -
 serverless containers with configurable storage backends.
 
-:::caution Experimental This provider is experimental. APIs and behavior may change between
-releases. :::
+:::caution Experimental
 
-```
-  GitHub Actions Runner
- ┌──────────────────────────┐
- │  unity-builder            │
- │  providerStrategy:        │     Azure CLI
- │    azure-aci              │────────────────►  Container Instances API
- │                           │                   ┌─────────────────┐
- │  azureStorageType:        │                   │ Container:      │
- │    azure-files /          │                   │   unity-build   │
- │    blob-copy /            │                   │                 │
- │    azure-files-nfs /      │                   │ Image: unityci  │
- │    in-memory              │                   │ Storage: ...    │
- └──────────────────────────┘                   └─────────────────┘
+This provider is experimental. APIs and behavior may change between releases.
+
+:::
+
+```mermaid
+graph LR
+    Runner["GitHub Actions Runner<br/>unity-builder<br/>providerStrategy: azure-aci<br/>azureStorageType:<br/>azure-files / blob-copy /<br/>azure-files-nfs / in-memory"]
+    API["Container Instances API"]
+    Container["Container: unity-build<br/>Image: unityci<br/>Storage: ..."]
+    Runner -->|Azure CLI| API --> Container
 ```
 
 ## Prerequisites

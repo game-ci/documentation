@@ -6,29 +6,36 @@
 command line, or any CI system. Orchestrator provisions a cloud environment, sends your project to
 be built, and streams results back.
 
-```
-  Your Machine / CI                  Cloud Provider
- ┌──────────────┐     git push      ┌─────────────────┐
- │ GitHub       │ ─────────────────►│  AWS Fargate     │
- │ Actions,     │                   │  Kubernetes      │
- │ GitLab CI,   │ ◄─────────────────│  Local Docker    │
- │ CLI, etc.    │   build artifacts │                  │
- └──────────────┘                   └─────────────────┘
-        │                                   │
-        │       Orchestrator handles:       │
-        │       * Provisioning              │
-        │       * Git sync + LFS            │
-        │       * Caching (S3 / rclone)     │
-        │       * Automatic cleanup         │
-        └───────────────────────────────────┘
+```mermaid
+flowchart LR
+  subgraph local["Your Machine / CI"]
+    A["GitHub Actions\nGitLab CI\nCLI, etc."]
+  end
+  subgraph cloud["Cloud Provider"]
+    B["AWS Fargate\nKubernetes\nLocal Docker"]
+  end
+  A -- "git push" --> B
+  B -- "build artifacts" --> A
+
+  subgraph handles["Orchestrator handles"]
+    direction TB
+    C["Provisioning"]
+    D["Git sync + LFS"]
+    E["Caching (S3 / rclone)"]
+    F["Automatic cleanup"]
+  end
 ```
 
 Orchestrator supports large projects with first-class Unity support and native cloud services like
 AWS Fargate and Kubernetes.
 
-:::info Standalone Package The orchestrator is available as a standalone package
+:::info Standalone Package
+
+The orchestrator is available as a standalone package
 [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator). When installed, unity-builder
-automatically detects and loads it via the plugin interface. :::
+automatically detects and loads it via the plugin interface.
+
+:::
 
 ## ✅ Why Orchestrator?
 

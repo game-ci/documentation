@@ -4,16 +4,17 @@ Build services run during the build lifecycle to handle submodule initialization
 configuration, and git hooks. They work with any provider - local, AWS, Kubernetes, GCP Cloud Run,
 Azure ACI, or custom CLI providers.
 
-```
- Build lifecycle
- ┌─────────────────────────────────────────────────────────┐
- │ 1. Submodule init   (selective, from YAML profile)      │
- │ 2. LFS agent config (custom transfer agent)             │
- │ 3. Cache restore    (Library + LFS from filesystem)     │
- │ 4. Hook install     (lefthook / husky)                  │
- │ 5. ──── BUILD ────                                      │
- │ 6. Cache save       (Library + LFS to filesystem)       │
- └─────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  subgraph Build Lifecycle
+    S1["1. Submodule init (selective, from YAML profile)"]
+    S2["2. LFS agent config (custom transfer agent)"]
+    S3["3. Cache restore (Library + LFS from filesystem)"]
+    S4["4. Hook install (lefthook / husky)"]
+    S5["5. BUILD"]
+    S6["6. Cache save (Library + LFS to filesystem)"]
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6
+  end
 ```
 
 ## Submodule Profiles

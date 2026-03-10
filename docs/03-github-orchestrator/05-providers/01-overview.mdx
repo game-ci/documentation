@@ -3,16 +3,12 @@
 A **provider** is the backend that Orchestrator uses to run your builds. You choose a provider by
 setting the `providerStrategy` parameter.
 
-```
- ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
- │     aws      │  │     k8s      │  │ local-docker │  │    local     │
- │              │  │              │  │              │  │              │
- │ Fargate      │  │ Cluster      │  │ Container    │  │ Direct       │
- │ Fully        │  │ Bring your   │  │ No cloud     │  │ No container │
- │ managed      │  │ own cluster  │  │ needed       │  │ needed       │
- └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘
-  Cloud scaling     Cloud scaling     Local builds      Local builds
-  No servers        Flexible          Docker required    Simplest setup
+```mermaid
+graph LR
+    aws["<b>aws</b><br/>Fargate<br/>Fully managed<br/><i>Cloud scaling</i><br/><i>No servers</i>"]
+    k8s["<b>k8s</b><br/>Cluster<br/>Bring your own cluster<br/><i>Cloud scaling</i><br/><i>Flexible</i>"]
+    ld["<b>local-docker</b><br/>Container<br/>No cloud needed<br/><i>Local builds</i><br/><i>Docker required</i>"]
+    local["<b>local</b><br/>Direct<br/>No container needed<br/><i>Local builds</i><br/><i>Simplest setup</i>"]
 ```
 
 ## Built-in Providers

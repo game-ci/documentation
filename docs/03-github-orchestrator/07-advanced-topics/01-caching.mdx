@@ -4,16 +4,14 @@ Orchestrator supports two caching strategies. You can mix both by setting
 [`maxRetainedWorkspaces`](../api-reference#caching) - once the limit is reached, additional jobs
 fall back to standard caching.
 
-```
-  Standard Caching                Retained Workspace
- ┌─────────────────┐             ┌─────────────────┐
- │ LFS files       │             │ Entire project   │
- │ Library/        │             │ folder           │
- │                 │             │                  │
- │ Smaller storage │             │ Faster builds    │
- │ Good for small  │             │ Good for large   │
- │ projects        │             │ projects         │
- └─────────────────┘             └─────────────────┘
+```mermaid
+flowchart LR
+  subgraph Standard Caching
+    A1["LFS files\nLibrary/\n\nSmaller storage\nGood for small projects"]
+  end
+  subgraph Retained Workspace
+    B1["Entire project folder\n\nFaster builds\nGood for large projects"]
+  end
 ```
 
 ## Standard Caching

@@ -84,22 +84,20 @@ Set `providerStrategy: github-actions` and supply the required inputs:
 
 ## How It Works
 
-```
-  Orchestrator (your repo)                    Target repo
- ┌──────────────────────┐                   ┌──────────────────────┐
- │                      │   workflow_dispatch│                      │
- │  1. Validate target  │──────────────────►│  4. Run build job    │
- │     workflow exists   │                   │     on target runner │
- │                      │                   │                      │
- │  2. Dispatch event   │                   │  5. Execute commands │
- │     with build inputs│                   │                      │
- │                      │   poll status      │                      │
- │  3. Wait for run to  │◄─────────────────►│  6. Complete         │
- │     appear           │                   │                      │
- │                      │   fetch logs       │                      │
- │  7. Stream logs and  │◄──────────────────│                      │
- │     report result    │                   │                      │
- └──────────────────────┘                   └──────────────────────┘
+```mermaid
+sequenceDiagram
+    participant O as Orchestrator (your repo)
+    participant T as Target repo
+    O->>O: 1. Validate target workflow exists
+    O->>T: 2. Dispatch event with build inputs (workflow_dispatch)
+    O->>O: 3. Wait for run to appear
+    T->>T: 4. Run build job on target runner
+    T->>T: 5. Execute commands
+    O->>T: Poll status
+    T-->>O: Status updates
+    T->>T: 6. Complete
+    T-->>O: Fetch logs
+    O->>O: 7. Stream logs and report result
 ```
 
 1. **Setup** - The orchestrator verifies the target workflow exists by querying the GitHub API.

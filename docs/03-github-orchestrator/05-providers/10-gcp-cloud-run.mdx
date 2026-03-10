@@ -3,21 +3,18 @@
 Run Unity builds as [Cloud Run Jobs](https://cloud.google.com/run/docs/create-jobs) - one-off
 serverless container executions with configurable storage backends.
 
-:::caution Experimental This provider is experimental. APIs and behavior may change between
-releases. :::
+:::caution Experimental
 
-```
-  GitHub Actions Runner
- ┌──────────────────────────┐
- │  unity-builder            │
- │  providerStrategy:        │     gcloud CLI
- │    gcp-cloud-run          │────────────────►  Cloud Run Jobs API
- │                           │                   ┌─────────────────┐
- │  gcpStorageType:          │                   │ Job: unity-build│
- │    gcs-fuse / gcs-copy /  │                   │                 │
- │    nfs / in-memory        │                   │ Image: unityci  │
- │                           │                   │ Storage: ...    │
- └──────────────────────────┘                   └─────────────────┘
+This provider is experimental. APIs and behavior may change between releases.
+
+:::
+
+```mermaid
+graph LR
+    Runner["GitHub Actions Runner<br/>unity-builder<br/>providerStrategy: gcp-cloud-run<br/>gcpStorageType:<br/>gcs-fuse / gcs-copy /<br/>nfs / in-memory"]
+    API["Cloud Run Jobs API"]
+    Job["Job: unity-build<br/>Image: unityci<br/>Storage: ..."]
+    Runner -->|gcloud CLI| API --> Job
 ```
 
 ## Prerequisites

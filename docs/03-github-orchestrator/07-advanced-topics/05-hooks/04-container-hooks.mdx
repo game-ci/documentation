@@ -4,16 +4,18 @@ Run custom Docker containers as steps in the build workflow. Useful for uploadin
 deploying builds, or running additional tools. For inline shell commands instead, see
 [Command Hooks](command-hooks).
 
-```
-  Build Pipeline
-
-  preBuildContainerHooks      Unity Build       postBuildContainerHooks
- ┌──────────────────────┐   ┌──────────────┐   ┌──────────────────────┐
- │  Pull cache          │   │              │   │  Upload build        │
- │  Setup deps          │──►│  Build       │──►│  Deploy to Steam     │
- │  ...                 │   │              │   │  ...                 │
- └──────────────────────┘   └──────────────┘   └──────────────────────┘
-  Runs before build          Core build step    Runs after build
+```mermaid
+flowchart LR
+  subgraph preBuildContainerHooks
+    A["Pull cache\nSetup deps\n..."]
+  end
+  subgraph Unity Build
+    B["Build"]
+  end
+  subgraph postBuildContainerHooks
+    C["Upload build\nDeploy to Steam\n..."]
+  end
+  A -->|Runs before build| B -->|Core build step| C
 ```
 
 ## Format

@@ -3,30 +3,28 @@
 Orchestrator lets you run Unity builds on remote cloud infrastructure instead of GitHub-hosted
 runners. This is useful for large projects that exceed GitHub's disk or resource limits.
 
-The orchestrator is distributed as a standalone npm package
-([`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator)). When installed alongside
-unity-builder, it is automatically detected and loaded via the plugin interface.
+The orchestrator is distributed as a standalone package
+([`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator)). It can be used from GitHub
+Actions (via `game-ci/unity-builder`) or directly from the command line.
 
 ## Prerequisites
 
-- A Unity project in a GitHub repository
+- A Unity project
 - A cloud provider account (AWS or a Kubernetes cluster)
-- Provider credentials configured as GitHub [secrets](secrets)
+- Provider credentials (as GitHub secrets or environment variables)
 
-## Quick Start
+## GitHub Actions
 
-1. **Choose a provider**: `aws` (AWS Fargate) or `k8s` (Kubernetes)
-2. **Configure credentials** for your chosen provider
-3. **Add the orchestrator step** to your workflow
+### 1. Install the orchestrator
 
-See the provider-specific setup guides:
+Add a step before `unity-builder` to install the orchestrator package:
 
-- [AWS Fargate](providers/aws)
-- [Kubernetes](providers/kubernetes)
-- [Local Docker](providers/local-docker)
-- [Command Line](examples/command-line)
+```yaml
+- name: Install orchestrator
+  run: npm install -g @game-ci/orchestrator
+```
 
-## Minimal Example
+### 2. Run the build
 
 ```yaml
 - uses: game-ci/unity-builder@main
@@ -36,4 +34,73 @@ See the provider-specific setup guides:
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-For full parameter documentation, see the [API Reference](api-reference).
+### Full workflow example
+
+```yaml
+name: Build
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install orchestrator
+        run: npm install -g @game-ci/orchestrator
+
+      - uses: game-ci/unity-builder@main
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          providerStrategy: aws
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Command Line
+
+### 1. Install
+
+```bash
+# Linux / macOS
+curl -fsSL https://raw.githubusercontent.com/game-ci/orchestrator/main/install.sh | sh
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/game-ci/orchestrator/main/install.ps1 | iex
+```
+
+### 2. Set credentials
+
+```bash
+export UNITY_SERIAL="XX-XXXX-XXXX-XXXX-XXXX-XXXX"
+export AWS_ACCESS_KEY_ID="..."
+export AWS_SECRET_ACCESS_KEY="..."
+```
+
+### 3. Run a build
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --provider-strategy aws
+```
+
+See the [CLI documentation](cli/getting-started) for full details.
+
+## Choose a Provider
+
+| Provider                               | Best for                     |
+| -------------------------------------- | ---------------------------- |
+| [AWS Fargate](providers/aws)           | Fully managed, no servers    |
+| [Kubernetes](providers/kubernetes)     | Existing K8s clusters        |
+| [Local Docker](providers/local-docker) | Testing locally before cloud |
+
+## Next Steps
+
+- [Provider setup guides](providers/overview) - configure your cloud credentials
+- [API Reference](api-reference) - full parameter documentation
+- [Examples](examples/github-actions) - more workflow examples
+- [CLI Reference](cli/build-command) - full CLI flag reference

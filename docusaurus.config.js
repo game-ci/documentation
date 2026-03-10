@@ -17,6 +17,10 @@ const config = {
   favicon: 'icons/favicon.ico',
   organizationName: 'game-ci', // Usually your GitHub org/user name.
   projectName: 'documentation', // Usually your repo name.
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 
   plugins: [
     ['docusaurus-plugin-sass', {}],
