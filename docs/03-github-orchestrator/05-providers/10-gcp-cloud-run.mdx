@@ -3,9 +3,8 @@
 Run Unity builds as [Cloud Run Jobs](https://cloud.google.com/run/docs/create-jobs) — one-off
 serverless container executions with configurable storage backends.
 
-:::caution Experimental
-This provider is experimental. APIs and behavior may change between releases.
-:::
+:::caution Experimental This provider is experimental. APIs and behavior may change between
+releases. :::
 
 ```
   GitHub Actions Runner
@@ -23,7 +22,8 @@ This provider is experimental. APIs and behavior may change between releases.
 
 ## Prerequisites
 
-- Google Cloud SDK installed and authenticated (`gcloud auth login` or `GOOGLE_APPLICATION_CREDENTIALS`)
+- Google Cloud SDK installed and authenticated (`gcloud auth login` or
+  `GOOGLE_APPLICATION_CREDENTIALS`)
 - Cloud Run Jobs API enabled: `gcloud services enable run.googleapis.com`
 - Service account with roles: **Cloud Run Admin**, **Storage Admin**, **Logs Viewer**
 
@@ -32,43 +32,43 @@ This provider is experimental. APIs and behavior may change between releases.
 Set `gcpStorageType` to control how the build accesses large files. Each type has different
 trade-offs for performance, persistence, and complexity.
 
-| Type | How it works | Best for | Size limit |
-| ----------- | ------------------------------------------------- | ----------------------------------- | ---------- |
-| `gcs-fuse`  | Mounts a GCS bucket as a POSIX filesystem via FUSE | Large sequential I/O, artifacts     | Unlimited  |
-| `gcs-copy`  | Copies artifacts in/out via `gsutil`               | Simple upload/download              | Unlimited  |
-| `nfs`       | Mounts a Filestore instance as NFS share           | Unity Library (small random reads)  | 100 TiB    |
-| `in-memory` | tmpfs volume inside the container                  | Scratch/temp during builds          | 32 GiB     |
+| Type        | How it works                                       | Best for                           | Size limit |
+| ----------- | -------------------------------------------------- | ---------------------------------- | ---------- |
+| `gcs-fuse`  | Mounts a GCS bucket as a POSIX filesystem via FUSE | Large sequential I/O, artifacts    | Unlimited  |
+| `gcs-copy`  | Copies artifacts in/out via `gsutil`               | Simple upload/download             | Unlimited  |
+| `nfs`       | Mounts a Filestore instance as NFS share           | Unity Library (small random reads) | 100 TiB    |
+| `in-memory` | tmpfs volume inside the container                  | Scratch/temp during builds         | 32 GiB     |
 
 ### When to use each type
 
 - **gcs-fuse** (default) — Good general-purpose option. Handles very large files well and persists
   across builds. Has some latency on small file I/O and eventual consistency edge cases.
 
-- **gcs-copy** — Simpler than FUSE (no driver). Copies everything before the build starts and uploads
-  after it finishes. Best when you only need artifact upload/download, not live filesystem access
-  during the build.
+- **gcs-copy** — Simpler than FUSE (no driver). Copies everything before the build starts and
+  uploads after it finishes. Best when you only need artifact upload/download, not live filesystem
+  access during the build.
 
 - **nfs** — True POSIX semantics with good random I/O performance. The best choice for caching the
   Unity Library folder (thousands of small files). Requires a
   [Filestore](https://cloud.google.com/filestore) instance and a VPC connector.
 
-- **in-memory** — Fastest option (RAM-backed). Data is lost when the job ends. Capped at 32 GiB.
-  Use for temporary build artifacts that don't need to persist.
+- **in-memory** — Fastest option (RAM-backed). Data is lost when the job ends. Capped at 32 GiB. Use
+  for temporary build artifacts that don't need to persist.
 
 ## Inputs
 
-| Input              | Default          | Description                                       |
-| ------------------ | ---------------- | ------------------------------------------------- |
-| `gcpProject`       | `$GOOGLE_CLOUD_PROJECT` | GCP project ID                              |
-| `gcpRegion`        | `us-central1`    | Cloud Run region                                  |
-| `gcpStorageType`   | `gcs-fuse`       | Storage backend (see above)                       |
-| `gcpBucket`        | —                | GCS bucket name (for `gcs-fuse`, `gcs-copy`)      |
-| `gcpFilestoreIp`   | —                | Filestore IP address (for `nfs`)                  |
-| `gcpFilestoreShare`| `/share1`        | Filestore share name (for `nfs`)                  |
-| `gcpMachineType`   | `e2-standard-4`  | Machine type                                      |
-| `gcpDiskSizeGb`    | `100`            | In-memory volume size (for `in-memory`, max 32)   |
-| `gcpServiceAccount`| —                | Service account email                             |
-| `gcpVpcConnector`  | —                | VPC connector (required for `nfs`)                |
+| Input               | Default                 | Description                                     |
+| ------------------- | ----------------------- | ----------------------------------------------- |
+| `gcpProject`        | `$GOOGLE_CLOUD_PROJECT` | GCP project ID                                  |
+| `gcpRegion`         | `us-central1`           | Cloud Run region                                |
+| `gcpStorageType`    | `gcs-fuse`              | Storage backend (see above)                     |
+| `gcpBucket`         | —                       | GCS bucket name (for `gcs-fuse`, `gcs-copy`)    |
+| `gcpFilestoreIp`    | —                       | Filestore IP address (for `nfs`)                |
+| `gcpFilestoreShare` | `/share1`               | Filestore share name (for `nfs`)                |
+| `gcpMachineType`    | `e2-standard-4`         | Machine type                                    |
+| `gcpDiskSizeGb`     | `100`                   | In-memory volume size (for `in-memory`, max 32) |
+| `gcpServiceAccount` | —                       | Service account email                           |
+| `gcpVpcConnector`   | —                       | VPC connector (required for `nfs`)              |
 
 ## Examples
 

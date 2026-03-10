@@ -1,11 +1,11 @@
 # Azure ACI (Experimental)
 
-Run Unity builds as [Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/) —
+Run Unity builds as
+[Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/) —
 serverless containers with configurable storage backends.
 
-:::caution Experimental
-This provider is experimental. APIs and behavior may change between releases.
-:::
+:::caution Experimental This provider is experimental. APIs and behavior may change between
+releases. :::
 
 ```
   GitHub Actions Runner
@@ -32,12 +32,12 @@ This provider is experimental. APIs and behavior may change between releases.
 
 Set `azureStorageType` to control how the build accesses large files.
 
-| Type              | How it works                                        | Best for                          | Size limit        |
-| ----------------- | --------------------------------------------------- | --------------------------------- | ----------------- |
-| `azure-files`     | Mounts an Azure File Share via SMB                  | General artifact storage          | 100 TiB           |
-| `blob-copy`       | Copies artifacts in/out via `az storage blob`       | Simple upload/download            | Unlimited         |
-| `azure-files-nfs` | Mounts an Azure File Share via NFS 4.1              | Unity Library (small random reads)| 100 TiB           |
-| `in-memory`       | emptyDir volume (tmpfs)                             | Scratch/temp during builds        | Container memory  |
+| Type              | How it works                                  | Best for                           | Size limit       |
+| ----------------- | --------------------------------------------- | ---------------------------------- | ---------------- |
+| `azure-files`     | Mounts an Azure File Share via SMB            | General artifact storage           | 100 TiB          |
+| `blob-copy`       | Copies artifacts in/out via `az storage blob` | Simple upload/download             | Unlimited        |
+| `azure-files-nfs` | Mounts an Azure File Share via NFS 4.1        | Unity Library (small random reads) | 100 TiB          |
+| `in-memory`       | emptyDir volume (tmpfs)                       | Scratch/temp during builds         | Container memory |
 
 ### When to use each type
 
@@ -52,24 +52,24 @@ Set `azureStorageType` to control how the build accesses large files.
   Library files (thousands of small files). Requires **Premium FileStorage** (auto-created) and
   **VNet integration** via `azureSubnetId`.
 
-- **in-memory** — Fastest option (RAM-backed). Data is lost when the container stops. Size is limited
-  by the container's memory allocation. Use for temporary build artifacts.
+- **in-memory** — Fastest option (RAM-backed). Data is lost when the container stops. Size is
+  limited by the container's memory allocation. Use for temporary build artifacts.
 
 ## Inputs
 
-| Input                 | Default                 | Description                                       |
-| --------------------- | ----------------------- | ------------------------------------------------- |
-| `azureResourceGroup`  | `$AZURE_RESOURCE_GROUP` | Resource group name                               |
-| `azureLocation`       | `eastus`                | Azure region                                      |
-| `azureStorageType`    | `azure-files`           | Storage backend (see above)                       |
-| `azureStorageAccount` | `$AZURE_STORAGE_ACCOUNT`| Storage account name                              |
-| `azureBlobContainer`  | `unity-builds`          | Blob container (for `blob-copy`)                  |
-| `azureFileShareName`  | `unity-builds`          | File share name (for `azure-files`, `azure-files-nfs`) |
-| `azureSubscriptionId` | `$AZURE_SUBSCRIPTION_ID`| Subscription ID                                   |
-| `azureCpu`            | `4`                     | CPU cores (1–16)                                  |
-| `azureMemoryGb`       | `16`                    | Memory in GB (1–16)                               |
-| `azureDiskSizeGb`     | `100`                   | File share quota in GB                            |
-| `azureSubnetId`       | —                       | Subnet ID for VNet (required for `azure-files-nfs`) |
+| Input                 | Default                  | Description                                            |
+| --------------------- | ------------------------ | ------------------------------------------------------ |
+| `azureResourceGroup`  | `$AZURE_RESOURCE_GROUP`  | Resource group name                                    |
+| `azureLocation`       | `eastus`                 | Azure region                                           |
+| `azureStorageType`    | `azure-files`            | Storage backend (see above)                            |
+| `azureStorageAccount` | `$AZURE_STORAGE_ACCOUNT` | Storage account name                                   |
+| `azureBlobContainer`  | `unity-builds`           | Blob container (for `blob-copy`)                       |
+| `azureFileShareName`  | `unity-builds`           | File share name (for `azure-files`, `azure-files-nfs`) |
+| `azureSubscriptionId` | `$AZURE_SUBSCRIPTION_ID` | Subscription ID                                        |
+| `azureCpu`            | `4`                      | CPU cores (1–16)                                       |
+| `azureMemoryGb`       | `16`                     | Memory in GB (1–16)                                    |
+| `azureDiskSizeGb`     | `100`                    | File share quota in GB                                 |
+| `azureSubnetId`       | —                        | Subnet ID for VNet (required for `azure-files-nfs`)    |
 
 ## Examples
 

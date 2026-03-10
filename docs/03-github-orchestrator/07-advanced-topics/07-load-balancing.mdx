@@ -1,8 +1,8 @@
 # Load Balancing
 
-Orchestrator can intelligently route builds across providers. Built-in load balancing checks
-runner availability and routes to the best provider automatically — no custom scripting needed.
-For advanced scenarios, standard GitHub Actions scripting gives you full control.
+Orchestrator can intelligently route builds across providers. Built-in load balancing checks runner
+availability and routes to the best provider automatically — no custom scripting needed. For
+advanced scenarios, standard GitHub Actions scripting gives you full control.
 
 ```
   unity-builder
@@ -23,30 +23,30 @@ For advanced scenarios, standard GitHub Actions scripting gives you full control
 Set `fallbackProviderStrategy` to an alternate provider and the action handles routing
 automatically. Three mechanisms work together:
 
-- **Runner availability check** — Queries the GitHub Runners API. If your self-hosted runners
-  are busy or offline, routes to the alternate provider.
-- **Retry on alternate provider** — If the primary provider fails mid-build (transient cloud
-  error, quota limit), retries the entire build on the alternate provider.
-- **Provider init timeout** — If the primary provider is slow to spin up, switches to the
-  alternate after a configurable timeout.
+- **Runner availability check** — Queries the GitHub Runners API. If your self-hosted runners are
+  busy or offline, routes to the alternate provider.
+- **Retry on alternate provider** — If the primary provider fails mid-build (transient cloud error,
+  quota limit), retries the entire build on the alternate provider.
+- **Provider init timeout** — If the primary provider is slow to spin up, switches to the alternate
+  after a configurable timeout.
 
 ### Inputs
 
-| Input                      | Default | Description                                          |
-| -------------------------- | ------- | ---------------------------------------------------- |
-| `fallbackProviderStrategy` | `''`    | Alternate provider for load balancing                |
-| `runnerCheckEnabled`       | `false` | Check runner availability before routing             |
-| `runnerCheckLabels`        | `''`    | Filter runners by labels (e.g. `self-hosted,linux`)  |
-| `runnerCheckMinAvailable`  | `1`     | Minimum idle runners before routing to alternate     |
-| `retryOnFallback`          | `false` | Retry failed builds on the alternate provider        |
-| `providerInitTimeout`      | `0`     | Max seconds for provider startup (0 = no limit)      |
+| Input                      | Default | Description                                         |
+| -------------------------- | ------- | --------------------------------------------------- |
+| `fallbackProviderStrategy` | `''`    | Alternate provider for load balancing               |
+| `runnerCheckEnabled`       | `false` | Check runner availability before routing            |
+| `runnerCheckLabels`        | `''`    | Filter runners by labels (e.g. `self-hosted,linux`) |
+| `runnerCheckMinAvailable`  | `1`     | Minimum idle runners before routing to alternate    |
+| `retryOnFallback`          | `false` | Retry failed builds on the alternate provider       |
+| `providerInitTimeout`      | `0`     | Max seconds for provider startup (0 = no limit)     |
 
 ### Outputs
 
-| Output                   | Description                                         |
-| ------------------------ | --------------------------------------------------- |
-| `providerFallbackUsed`   | `true` if the build was routed to the alternate     |
-| `providerFallbackReason` | Why the build was rerouted                          |
+| Output                   | Description                                     |
+| ------------------------ | ----------------------------------------------- |
+| `providerFallbackUsed`   | `true` if the build was routed to the alternate |
+| `providerFallbackReason` | Why the build was rerouted                      |
 
 ### Route busy runners to cloud
 
@@ -78,8 +78,8 @@ regardless of which provider handles the build.
     fallbackProviderStrategy: aws
     runnerCheckEnabled: true
     runnerCheckLabels: self-hosted,linux
-    asyncOrchestrator: true         # dispatch and return immediately
-    githubCheck: true               # report progress via PR checks
+    asyncOrchestrator: true # dispatch and return immediately
+    githubCheck: true # report progress via PR checks
     targetPlatform: StandaloneLinux64
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -106,15 +106,15 @@ Docker provider instead of failing the entire workflow.
 
 ### Timeout slow provider startup
 
-Cloud providers sometimes take a long time to provision infrastructure. Set `providerInitTimeout`
-to swap to the alternate provider if startup takes too long.
+Cloud providers sometimes take a long time to provision infrastructure. Set `providerInitTimeout` to
+swap to the alternate provider if startup takes too long.
 
 ```yaml
 - uses: game-ci/unity-builder@v4
   with:
     providerStrategy: k8s
     fallbackProviderStrategy: aws
-    providerInitTimeout: 120        # 2 minutes max for K8s to spin up
+    providerInitTimeout: 120 # 2 minutes max for K8s to spin up
     retryOnFallback: true
     targetPlatform: StandaloneLinux64
 ```
@@ -227,8 +227,8 @@ jobs:
 
 ### Manual Runner Check
 
-If you need custom runner check logic beyond what the built-in inputs support (e.g. checking
-runner groups, org-level runners, or external capacity APIs):
+If you need custom runner check logic beyond what the built-in inputs support (e.g. checking runner
+groups, org-level runners, or external capacity APIs):
 
 ```yaml
 jobs:
@@ -461,9 +461,9 @@ the routing decision and build result together in the GitHub Actions UI.
 
 ## Async Mode and Load Balancing
 
-The [`asyncOrchestrator`](../api-reference#github-integration) parameter is essential for
-effective load balancing of long builds. When enabled, the action dispatches the build and returns
-immediately — no runner minutes wasted waiting.
+The [`asyncOrchestrator`](../api-reference#github-integration) parameter is essential for effective
+load balancing of long builds. When enabled, the action dispatches the build and returns immediately
+— no runner minutes wasted waiting.
 
 ```
   Workflow Step (seconds)      Provider A              Provider B
@@ -516,18 +516,18 @@ jobs:
 
 ## When to Use What
 
-| Scenario                                       | Approach                                       |
-| ---------------------------------------------- | ---------------------------------------------- |
-| Runners busy → offload to cloud                | Built-in (`runnerCheckEnabled` + async)         |
-| Retry transient cloud failures                 | Built-in (`retryOnFallback`)                    |
-| Slow provider startup                          | Built-in (`providerInitTimeout`)                |
-| Filter runners by labels                       | Built-in (`runnerCheckLabels`)                  |
-| Route by platform or branch                    | Matrix or script                                |
-| Custom capacity logic (org runners, external)  | Script-based runner check                       |
-| Weighted distribution (70/30 split)            | Script with hash                                |
-| Dispatch entirely different workflow            | `workflow_dispatch` routing                     |
-| Shared build config, dynamic routing           | Reusable workflow (`workflow_call`)              |
-| Chained routing (A → B → C)                    | Script                                          |
+| Scenario                                      | Approach                                |
+| --------------------------------------------- | --------------------------------------- |
+| Runners busy → offload to cloud               | Built-in (`runnerCheckEnabled` + async) |
+| Retry transient cloud failures                | Built-in (`retryOnFallback`)            |
+| Slow provider startup                         | Built-in (`providerInitTimeout`)        |
+| Filter runners by labels                      | Built-in (`runnerCheckLabels`)          |
+| Route by platform or branch                   | Matrix or script                        |
+| Custom capacity logic (org runners, external) | Script-based runner check               |
+| Weighted distribution (70/30 split)           | Script with hash                        |
+| Dispatch entirely different workflow          | `workflow_dispatch` routing             |
+| Shared build config, dynamic routing          | Reusable workflow (`workflow_call`)     |
+| Chained routing (A → B → C)                   | Script                                  |
 
 ## Tips
 
@@ -539,8 +539,8 @@ jobs:
 - **Cache keys are provider-independent** — The [`cacheKey`](../api-reference#caching) parameter
   works the same across all providers, so builds routed to different providers can still share
   caches if they use the same storage backend.
-- **Test routing logic** — Temporarily disable your self-hosted runner to verify that routing
-  works before you need it in production.
+- **Test routing logic** — Temporarily disable your self-hosted runner to verify that routing works
+  before you need it in production.
 - **Custom providers** — The same routing patterns work with
   [custom providers](../providers/custom-providers). Set `providerStrategy` to a GitHub repo or NPM
   package and Orchestrator loads it dynamically.

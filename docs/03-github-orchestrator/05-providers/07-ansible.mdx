@@ -15,8 +15,8 @@ dispatching to a CI platform.
 
 - **Large-scale build infrastructure** — Distribute builds across a fleet of machines managed by
   Ansible, with automatic host selection and load distribution handled by your playbooks.
-- **Configuration-as-code** — Define build machine setup, Unity installation, and build execution
-  as versioned Ansible playbooks alongside your game source.
+- **Configuration-as-code** — Define build machine setup, Unity installation, and build execution as
+  versioned Ansible playbooks alongside your game source.
 - **Heterogeneous environments** — Target different machine types (Windows, Linux, macOS) from a
   single inventory with platform-specific playbooks.
 - **Existing Ansible infrastructure** — Teams already using Ansible for server management can extend
@@ -62,15 +62,16 @@ Set `providerStrategy: ansible` and supply the required inputs:
 The orchestrator passes build parameters to the playbook as extra variables. Your playbook must
 accept and use these variables:
 
-| Variable | Description |
-|----------|-------------|
-| `build_guid` | Unique identifier for the build |
-| `build_image` | Unity Docker image (if applicable) |
-| `build_commands` | Build commands to execute |
-| `mount_dir` | Mount directory path |
-| `working_dir` | Working directory path |
+| Variable         | Description                        |
+| ---------------- | ---------------------------------- |
+| `build_guid`     | Unique identifier for the build    |
+| `build_image`    | Unity Docker image (if applicable) |
+| `build_commands` | Build commands to execute          |
+| `mount_dir`      | Mount directory path               |
+| `working_dir`    | Working directory path             |
 
-Additionally, any environment variables from the orchestrator are passed as lowercase variable names.
+Additionally, any environment variables from the orchestrator are passed as lowercase variable
+names.
 
 ### Example Playbook
 
@@ -88,31 +89,31 @@ Additionally, any environment variables from the orchestrator are passed as lowe
   tasks:
     - name: Ensure build directory exists
       file:
-        path: "{{ working_dir }}/{{ build_guid }}"
+        path: '{{ working_dir }}/{{ build_guid }}'
         state: directory
 
     - name: Clone repository
       git:
-        repo: "{{ git_repo_url }}"
-        dest: "{{ working_dir }}/{{ build_guid }}/project"
+        repo: '{{ git_repo_url }}'
+        dest: '{{ working_dir }}/{{ build_guid }}/project'
         version: "{{ git_ref | default('main') }}"
 
     - name: Execute build commands
-      shell: "{{ build_commands }}"
+      shell: '{{ build_commands }}'
       args:
-        chdir: "{{ working_dir }}/{{ build_guid }}/project"
+        chdir: '{{ working_dir }}/{{ build_guid }}/project'
       register: build_result
 
     - name: Upload build artifacts
       fetch:
-        src: "{{ working_dir }}/{{ build_guid }}/project/Builds/"
-        dest: "./artifacts/{{ build_guid }}/"
+        src: '{{ working_dir }}/{{ build_guid }}/project/Builds/'
+        dest: './artifacts/{{ build_guid }}/'
         flat: true
       when: build_result.rc == 0
 
     - name: Cleanup build directory
       file:
-        path: "{{ working_dir }}/{{ build_guid }}"
+        path: '{{ working_dir }}/{{ build_guid }}'
         state: absent
       when: cleanup | default(true) | bool
 ```
@@ -250,18 +251,18 @@ jobs:
   include Ansible by default; add a `pip install ansible` step or use a custom runner image.
 - **No garbage collection** — The provider does not manage remote machine state. Build cleanup
   (temporary files, old builds) should be handled within playbook tasks.
-- **Sequential execution** — The orchestrator runs a single `ansible-playbook` command and waits
-  for it to complete. Parallelism across hosts is managed by Ansible's built-in `forks` setting,
-  not by the orchestrator.
+- **Sequential execution** — The orchestrator runs a single `ansible-playbook` command and waits for
+  it to complete. Parallelism across hosts is managed by Ansible's built-in `forks` setting, not by
+  the orchestrator.
 - **Extra-vars JSON parsing** — The `ansibleExtraVars` input is parsed as JSON. If parsing fails,
   the raw string is passed through, which may cause unexpected behavior. Always provide valid JSON.
 
 ## Inputs Reference
 
-| Input | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `providerStrategy` | Yes | — | Must be `ansible` |
-| `ansibleInventory` | Yes | — | Path to Ansible inventory file or dynamic inventory script |
-| `ansiblePlaybook` | Yes | — | Path to Ansible playbook for Unity builds |
-| `ansibleExtraVars` | No | — | Additional Ansible variables as a JSON string |
-| `ansibleVaultPassword` | No | — | Path to Ansible Vault password file |
+| Input                  | Required | Default | Description                                                |
+| ---------------------- | -------- | ------- | ---------------------------------------------------------- |
+| `providerStrategy`     | Yes      | —       | Must be `ansible`                                          |
+| `ansibleInventory`     | Yes      | —       | Path to Ansible inventory file or dynamic inventory script |
+| `ansiblePlaybook`      | Yes      | —       | Path to Ansible playbook for Unity builds                  |
+| `ansibleExtraVars`     | No       | —       | Additional Ansible variables as a JSON string              |
+| `ansibleVaultPassword` | No       | —       | Path to Ansible Vault password file                        |

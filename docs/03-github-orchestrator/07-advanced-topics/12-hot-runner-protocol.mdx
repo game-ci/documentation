@@ -9,10 +9,11 @@ Unity editor processes that accept jobs immediately without cold-start overhead.
 
 ## Overview
 
-Traditional providers follow a cold-start model: provision → clone → cache restore → build →
-tear down. Hot runners eliminate startup latency by keeping editors warm and ready.
+Traditional providers follow a cold-start model: provision → clone → cache restore → build → tear
+down. Hot runners eliminate startup latency by keeping editors warm and ready.
 
 A hot runner is an **actively running process** that:
+
 - Stays alive between jobs
 - Accepts work via a transport protocol
 - Returns structured results via the [artifact system](build-output-system)
@@ -22,13 +23,13 @@ A hot runner is an **actively running process** that:
 
 Runners connect via pluggable transport protocols:
 
-| Transport | Description | Use Case |
-|-----------|-------------|----------|
-| `github` | Self-hosted GitHub Actions runner | Standard CI infrastructure |
-| `websocket` | WebSocket/SignalR real-time connection | Custom dashboards, game platforms |
-| `file` | Shared directory watch for job files | Simple setups, NAS-based farms |
-| `local-network` | mDNS/Bonjour discovery + HTTP API | LAN build farms, office setups |
-| `custom` | User-implemented runner interface | Any transport |
+| Transport       | Description                            | Use Case                          |
+| --------------- | -------------------------------------- | --------------------------------- |
+| `github`        | Self-hosted GitHub Actions runner      | Standard CI infrastructure        |
+| `websocket`     | WebSocket/SignalR real-time connection | Custom dashboards, game platforms |
+| `file`          | Shared directory watch for job files   | Simple setups, NAS-based farms    |
+| `local-network` | mDNS/Bonjour discovery + HTTP API      | LAN build farms, office setups    |
+| `custom`        | User-implemented runner interface      | Any transport                     |
 
 ### GitHub Runner Transport
 
@@ -89,14 +90,15 @@ editorMode: ephemeral
 
 ### Persistent
 
-Editor stays running between jobs. Combine with
-[incremental sync](incremental-sync-protocol) for fastest iteration:
+Editor stays running between jobs. Combine with [incremental sync](incremental-sync-protocol) for
+fastest iteration:
 
 ```yaml
 editorMode: persistent
 ```
 
 Benefits:
+
 - No editor startup time (saves 30–120 seconds per build)
 - Unity Library folder stays warm — only changed assets reimport
 - Domain reload only when scripts change
@@ -122,6 +124,7 @@ runnerLabels: unity-2022,linux,gpu,hot
 Runners communicate using a JSON protocol, regardless of transport:
 
 **Register:**
+
 ```json
 {
   "type": "register",
@@ -135,6 +138,7 @@ Runners communicate using a JSON protocol, regardless of transport:
 ```
 
 **Heartbeat:**
+
 ```json
 {
   "type": "heartbeat",
@@ -149,16 +153,16 @@ Job dispatch and results follow the same JSON protocol.
 
 Hot runners compose with other orchestrator features:
 
-- **[Incremental Sync](incremental-sync-protocol)** — Receive workspace updates without full
-  clone. Hot runners + incremental sync = fastest possible iteration.
+- **[Incremental Sync](incremental-sync-protocol)** — Receive workspace updates without full clone.
+  Hot runners + incremental sync = fastest possible iteration.
 - **[Artifact System](build-output-system)** — Return structured, typed results.
 - **[Test Workflow Engine](test-workflow-engine)** — Execute test suites with taxonomy filtering.
 
 ## Inputs Reference
 
-| Input | Description |
-|-------|-------------|
+| Input             | Description                                                                  |
+| ----------------- | ---------------------------------------------------------------------------- |
 | `runnerTransport` | Transport protocol: `github`, `websocket`, `file`, `local-network`, `custom` |
-| `runnerEndpoint` | Connection endpoint for the transport |
-| `runnerLabels` | Comma-separated runner labels for job routing |
-| `editorMode` | Editor lifecycle: `ephemeral`, `persistent`, `hybrid` |
+| `runnerEndpoint`  | Connection endpoint for the transport                                        |
+| `runnerLabels`    | Comma-separated runner labels for job routing                                |
+| `editorMode`      | Editor lifecycle: `ephemeral`, `persistent`, `hybrid`                        |

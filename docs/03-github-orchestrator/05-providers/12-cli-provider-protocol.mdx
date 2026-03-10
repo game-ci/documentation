@@ -1,7 +1,7 @@
 # CLI Provider Protocol
 
-Write orchestrator providers in **any language** — Go, Python, Rust, shell, or anything that can read
-stdin and write stdout. The CLI provider protocol uses JSON messages over stdin/stdout with the
+Write orchestrator providers in **any language** — Go, Python, Rust, shell, or anything that can
+read stdin and write stdout. The CLI provider protocol uses JSON messages over stdin/stdout with the
 subcommand as the first argument.
 
 ```
@@ -102,15 +102,15 @@ messages, warnings, and debug output.
 
 ## Subcommands
 
-| Subcommand           | Purpose                                | Timeout   |
-| -------------------- | -------------------------------------- | --------- |
-| `setup-workflow`     | Initialize infrastructure              | 300s      |
-| `run-task`           | Execute the build                      | No limit  |
-| `cleanup-workflow`   | Tear down infrastructure               | 300s      |
-| `garbage-collect`    | Remove old resources                   | 300s      |
-| `list-resources`     | List active resources                  | 300s      |
-| `list-workflow`      | List active workflows                  | 300s      |
-| `watch-workflow`     | Watch a workflow until completion      | No limit  |
+| Subcommand         | Purpose                           | Timeout  |
+| ------------------ | --------------------------------- | -------- |
+| `setup-workflow`   | Initialize infrastructure         | 300s     |
+| `run-task`         | Execute the build                 | No limit |
+| `cleanup-workflow` | Tear down infrastructure          | 300s     |
+| `garbage-collect`  | Remove old resources              | 300s     |
+| `list-resources`   | List active resources             | 300s     |
+| `list-workflow`    | List active workflows             | 300s     |
+| `watch-workflow`   | Watch a workflow until completion | No limit |
 
 `run-task` and `watch-workflow` have no timeout because builds can run for hours.
 
@@ -172,22 +172,23 @@ Make it executable and point `providerExecutable` at it:
 
 ## CLI Provider vs TypeScript Provider
 
-| Feature                | CLI Provider           | TypeScript Provider       |
-| ---------------------- | ---------------------- | ------------------------- |
-| Language               | Any                    | TypeScript/JavaScript     |
-| Setup                  | `providerExecutable`   | `providerStrategy`        |
-| Communication          | JSON stdin/stdout      | Direct function calls     |
-| Streaming              | stdout lines           | Native logging            |
-| Distribution           | Any executable         | GitHub, NPM, local path   |
-| Dependencies           | None (self-contained)  | Node.js runtime           |
+| Feature       | CLI Provider          | TypeScript Provider     |
+| ------------- | --------------------- | ----------------------- |
+| Language      | Any                   | TypeScript/JavaScript   |
+| Setup         | `providerExecutable`  | `providerStrategy`      |
+| Communication | JSON stdin/stdout     | Direct function calls   |
+| Streaming     | stdout lines          | Native logging          |
+| Distribution  | Any executable        | GitHub, NPM, local path |
+| Dependencies  | None (self-contained) | Node.js runtime         |
 
-Use CLI providers when you want to write in a non-TypeScript language, need to wrap an existing tool,
-or want a self-contained executable with no Node.js dependency.
+Use CLI providers when you want to write in a non-TypeScript language, need to wrap an existing
+tool, or want a self-contained executable with no Node.js dependency.
 
-Use [TypeScript custom providers](custom-providers) when you want direct access to the BuildParameters
-object and orchestrator internals.
+Use [TypeScript custom providers](custom-providers) when you want direct access to the
+BuildParameters object and orchestrator internals.
 
 ## Related
 
 - [Custom Providers](custom-providers) — TypeScript provider plugin system
-- [Build Services](/docs/github-orchestrator/advanced-topics/build-services) — Submodule profiles, caching, LFS agents, hooks
+- [Build Services](/docs/github-orchestrator/advanced-topics/build-services) — Submodule profiles,
+  caching, LFS agents, hooks

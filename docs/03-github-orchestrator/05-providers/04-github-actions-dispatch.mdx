@@ -152,21 +152,21 @@ jobs:
 - **API rate limits** — Each status poll is an API call. Long builds will accumulate many calls. The
   15-second poll interval keeps usage well within GitHub's rate limits for authenticated requests
   (5,000/hour).
-- **No artifact transfer** — Build artifacts remain in the target repository's workflow run. You must
-  configure artifact upload/download separately (e.g., via `actions/upload-artifact` in the target
-  workflow).
+- **No artifact transfer** — Build artifacts remain in the target repository's workflow run. You
+  must configure artifact upload/download separately (e.g., via `actions/upload-artifact` in the
+  target workflow).
 - **PAT scope** — The token needs `actions:write` on the target repo. Use a fine-grained PAT scoped
   to only the build farm repository for least-privilege access.
-- **Concurrent dispatch** — If multiple dispatches happen simultaneously, the orchestrator identifies
-  its run by filtering on creation time. Rapid concurrent dispatches to the same workflow could
-  theoretically cause misidentification.
+- **Concurrent dispatch** — If multiple dispatches happen simultaneously, the orchestrator
+  identifies its run by filtering on creation time. Rapid concurrent dispatches to the same workflow
+  could theoretically cause misidentification.
 
 ## Inputs Reference
 
-| Input | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `providerStrategy` | Yes | — | Must be `github-actions` |
-| `githubActionsRepo` | Yes | — | Target repository in `owner/repo` format |
-| `githubActionsWorkflow` | Yes | — | Workflow filename (e.g., `unity-build.yml`) or workflow ID |
-| `githubActionsToken` | Yes | — | Personal Access Token with `actions:write` scope on the target repo |
-| `githubActionsRef` | No | `main` | Branch or ref to run the dispatched workflow on |
+| Input                   | Required | Default | Description                                                         |
+| ----------------------- | -------- | ------- | ------------------------------------------------------------------- |
+| `providerStrategy`      | Yes      | —       | Must be `github-actions`                                            |
+| `githubActionsRepo`     | Yes      | —       | Target repository in `owner/repo` format                            |
+| `githubActionsWorkflow` | Yes      | —       | Workflow filename (e.g., `unity-build.yml`) or workflow ID          |
+| `githubActionsToken`    | Yes      | —       | Personal Access Token with `actions:write` scope on the target repo |
+| `githubActionsRef`      | No       | `main`  | Branch or ref to run the dispatched workflow on                     |

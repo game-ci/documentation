@@ -28,8 +28,8 @@ Every Orchestrator run follows the same lifecycle, regardless of provider:
 
 ### Build Job
 
-The standard job — runs the Unity Editor to produce a build artifact. This is what most users
-care about.
+The standard job — runs the Unity Editor to produce a build artifact. This is what most users care
+about.
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -40,6 +40,7 @@ care about.
 ```
 
 The build job:
+
 - Installs the toolchain (Node.js, git-lfs) inside the container
 - Clones `game-ci/unity-builder` into the container
 - Runs `remote-cli-pre-build` to set up the workspace
@@ -67,6 +68,7 @@ lifecycle.
 ### Custom Editor Method Jobs
 
 Run any static C# method in the Unity Editor. Useful for:
+
 - Asset processing or validation
 - Addressables builds
 - Custom pipeline steps
@@ -86,8 +88,8 @@ The `buildMethod` must be a fully qualified static method: `Namespace.Class.Meth
 
 ### Custom Jobs
 
-Replace the entire build workflow with your own container steps. Useful for non-Unity workloads
-or fully custom pipelines that still benefit from Orchestrator's cloud infrastructure.
+Replace the entire build workflow with your own container steps. Useful for non-Unity workloads or
+fully custom pipelines that still benefit from Orchestrator's cloud infrastructure.
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -118,8 +120,8 @@ continues in the cloud. Progress is reported via GitHub Checks.
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-This is useful when builds exceed GitHub Actions' job time limits, or when you want to
-free up your CI runner immediately.
+This is useful when builds exceed GitHub Actions' job time limits, or when you want to free up your
+CI runner immediately.
 
 ## Pre-Build and Post-Build
 
@@ -128,6 +130,7 @@ Orchestrator runs additional steps before and after the main build job.
 ### Pre-Build Steps
 
 The `remote-cli-pre-build` phase handles:
+
 - Git clone of the target repository
 - Git LFS pull
 - Cache restoration (Library folder, LFS objects)
@@ -149,6 +152,7 @@ You can inject additional pre-build steps:
 ### Post-Build Steps
 
 The `remote-cli-post-build` phase handles:
+
 - Library folder cache push
 - Build artifact upload
 - LFS cache push
@@ -167,20 +171,20 @@ You can inject additional post-build steps:
 ### Hooks
 
 For more granular control, use [container hooks](advanced-topics/hooks/container-hooks) or
-[command hooks](advanced-topics/hooks/command-hooks) to inject steps at specific points in the
-build lifecycle.
+[command hooks](advanced-topics/hooks/command-hooks) to inject steps at specific points in the build
+lifecycle.
 
 ## Job Execution by Provider
 
 Each provider runs jobs differently:
 
-| Provider | How jobs execute |
-|----------|----------------|
-| **AWS Fargate** | ECS Fargate task with CloudFormation stack. Logs streamed via Kinesis. |
-| **Kubernetes** | Kubernetes Job with PVC for workspace. Logs streamed from pod. |
-| **Local Docker** | Docker container with volume mounts. Logs piped to stdout. |
-| **Local** | Direct shell execution on the host. No container isolation. |
-| **CLI Provider** | Delegated to external executable via JSON protocol. |
+| Provider         | How jobs execute                                                       |
+| ---------------- | ---------------------------------------------------------------------- |
+| **AWS Fargate**  | ECS Fargate task with CloudFormation stack. Logs streamed via Kinesis. |
+| **Kubernetes**   | Kubernetes Job with PVC for workspace. Logs streamed from pod.         |
+| **Local Docker** | Docker container with volume mounts. Logs piped to stdout.             |
+| **Local**        | Direct shell execution on the host. No container isolation.            |
+| **CLI Provider** | Delegated to external executable via JSON protocol.                    |
 
 ## Next Steps
 

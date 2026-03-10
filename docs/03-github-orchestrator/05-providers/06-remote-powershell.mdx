@@ -116,8 +116,8 @@ explicit credentials.
   format. Always store this as a GitHub secret, never in plain text. The provider constructs a
   `PSCredential` object at runtime and does not persist credentials.
 - **WinRM HTTPS** — For production use, configure WinRM over HTTPS (port 5986) with a valid TLS
-  certificate to encrypt traffic. The default HTTP transport (port 5985) sends credentials in
-  clear text over the network.
+  certificate to encrypt traffic. The default HTTP transport (port 5985) sends credentials in clear
+  text over the network.
 - **SSH key authentication** — Prefer SSH transport with key-based authentication over WinRM with
   password credentials when possible. SSH keys avoid transmitting passwords entirely.
 - **Network segmentation** — Restrict WinRM/SSH access to the build machines from only the
@@ -148,7 +148,8 @@ jobs:
           gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
           remotePowershellHost: ${{ secrets.BUILD_SERVER_HOST }}
           remotePowershellTransport: wsman
-          remotePowershellCredential: ${{ secrets.BUILD_SERVER_USER }}:${{ secrets.BUILD_SERVER_PASS }}
+          remotePowershellCredential:
+            ${{ secrets.BUILD_SERVER_USER }}:${{ secrets.BUILD_SERVER_PASS }}
 ```
 
 ## Limitations and Considerations
@@ -167,9 +168,9 @@ jobs:
 
 ## Inputs Reference
 
-| Input | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `providerStrategy` | Yes | — | Must be `remote-powershell` |
-| `remotePowershellHost` | Yes | — | Hostname or IP address of the target machine |
-| `remotePowershellCredential` | No | — | Credentials in `username:password` format (required for WinRM) |
-| `remotePowershellTransport` | No | `wsman` | Transport protocol: `wsman` (WinRM) or `ssh` |
+| Input                        | Required | Default | Description                                                    |
+| ---------------------------- | -------- | ------- | -------------------------------------------------------------- |
+| `providerStrategy`           | Yes      | —       | Must be `remote-powershell`                                    |
+| `remotePowershellHost`       | Yes      | —       | Hostname or IP address of the target machine                   |
+| `remotePowershellCredential` | No       | —       | Credentials in `username:password` format (required for WinRM) |
+| `remotePowershellTransport`  | No       | `wsman` | Transport protocol: `wsman` (WinRM) or `ssh`                   |

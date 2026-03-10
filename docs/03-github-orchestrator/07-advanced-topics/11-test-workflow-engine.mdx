@@ -9,9 +9,9 @@ multi-dimensional taxonomy filtering, and structured test result reporting.
 
 ## Overview
 
-Instead of running tests via a single `buildMethod`, the test workflow engine lets you define
-test suites as YAML configurations — specifying exactly which tests run for each CI event,
-filtered by taxonomy metadata, with sequential execution dependencies.
+Instead of running tests via a single `buildMethod`, the test workflow engine lets you define test
+suites as YAML configurations — specifying exactly which tests run for each CI event, filtered by
+taxonomy metadata, with sequential execution dependencies.
 
 ## Test Suite Definitions
 
@@ -49,23 +49,23 @@ runs:
 
 ### Suite Fields
 
-| Field | Description |
-|-------|-------------|
-| `name` | Suite identifier, used for cache keys and reporting |
-| `description` | Human-readable description |
-| `runs` | Ordered list of test runs |
+| Field         | Description                                         |
+| ------------- | --------------------------------------------------- |
+| `name`        | Suite identifier, used for cache keys and reporting |
+| `description` | Human-readable description                          |
+| `runs`        | Ordered list of test runs                           |
 
 ### Run Fields
 
-| Field | Description |
-|-------|-------------|
-| `name` | Run identifier |
-| `needs` | List of run names that must complete first |
-| `editMode` | Run Unity EditMode tests (default: false) |
-| `playMode` | Run Unity PlayMode tests (default: false) |
+| Field         | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `name`        | Run identifier                                    |
+| `needs`       | List of run names that must complete first        |
+| `editMode`    | Run Unity EditMode tests (default: false)         |
+| `playMode`    | Run Unity PlayMode tests (default: false)         |
 | `builtClient` | Run tests against a built client (default: false) |
-| `filters` | Taxonomy filters to select tests |
-| `timeout` | Maximum run duration in seconds |
+| `filters`     | Taxonomy filters to select tests                  |
+| `timeout`     | Maximum run duration in seconds                   |
 
 ## Taxonomy Filters
 
@@ -74,15 +74,15 @@ against these dimensions:
 
 ### Built-in Dimensions
 
-| Dimension | Values | Description |
-|-----------|--------|-------------|
-| Scope | Unit, Integration, System, End To End | Test boundary |
-| Maturity | Trusted, Adolescent, Experimental | Test reliability |
-| FeedbackSpeed | Fast, Moderate, Slow | Expected execution time |
-| Execution | Synchronous, Asynchronous, Coroutine | Execution model |
-| Rigor | Strict, Normal, Relaxed | Assertion strictness |
-| Determinism | Deterministic, NonDeterministic | Repeatability |
-| IsolationLevel | Full, Partial, None | External dependency isolation |
+| Dimension      | Values                                | Description                   |
+| -------------- | ------------------------------------- | ----------------------------- |
+| Scope          | Unit, Integration, System, End To End | Test boundary                 |
+| Maturity       | Trusted, Adolescent, Experimental     | Test reliability              |
+| FeedbackSpeed  | Fast, Moderate, Slow                  | Expected execution time       |
+| Execution      | Synchronous, Asynchronous, Coroutine  | Execution model               |
+| Rigor          | Strict, Normal, Relaxed               | Assertion strictness          |
+| Determinism    | Deterministic, NonDeterministic       | Repeatability                 |
+| IsolationLevel | Full, Partial, None                   | External dependency isolation |
 
 ### Filter Syntax
 
@@ -90,9 +90,9 @@ Filters accept comma-separated values, regex patterns, and hierarchical dot-nota
 
 ```yaml
 filters:
-  Scope: Unit,Integration          # Match any of these values
-  Maturity: /Trusted|Adolescent/   # Regex pattern
-  Domain: Combat.Melee             # Hierarchical match
+  Scope: Unit,Integration # Match any of these values
+  Maturity: /Trusted|Adolescent/ # Regex pattern
+  Domain: Combat.Melee # Hierarchical match
 ```
 
 ### Custom Dimensions
@@ -155,7 +155,7 @@ Test results are output in machine-readable formats:
 - uses: game-ci/unity-builder@v4
   with:
     testSuitePath: .game-ci/test-suites/pr-suite.yml
-    testResultFormat: junit    # junit, json, or both
+    testResultFormat: junit # junit, json, or both
     testResultPath: ./test-results/
 ```
 
@@ -163,10 +163,10 @@ Results integrate with GitHub Checks for inline failure reporting on pull reques
 
 ## Inputs Reference
 
-| Input | Description |
-|-------|-------------|
-| `testSuitePath` | Path to YAML test suite definition file |
-| `testSuiteEvent` | CI event name for suite selection (pr, push, release) |
-| `testTaxonomyPath` | Path to custom taxonomy definition YAML |
-| `testResultFormat` | Output format: `junit`, `json`, or `both` |
-| `testResultPath` | Directory for structured result output |
+| Input              | Description                                           |
+| ------------------ | ----------------------------------------------------- |
+| `testSuitePath`    | Path to YAML test suite definition file               |
+| `testSuiteEvent`   | CI event name for suite selection (pr, push, release) |
+| `testTaxonomyPath` | Path to custom taxonomy definition YAML               |
+| `testResultFormat` | Output format: `junit`, `json`, or `both`             |
+| `testResultPath`   | Directory for structured result output                |

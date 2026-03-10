@@ -23,9 +23,9 @@ activation will succeed. License activation itself is handled automatically when
 
 Provide credentials via environment variables:
 
-| Variable | Description |
-| --- | --- |
-| `UNITY_SERIAL` | Serial key (Professional/Plus licenses) |
+| Variable        | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `UNITY_SERIAL`  | Serial key (Professional/Plus licenses)               |
 | `UNITY_LICENSE` | Contents of a `.ulf` license file (base64 or raw XML) |
 
 ```bash
@@ -39,9 +39,9 @@ game-ci activate
 
 ### Flags
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--unity-version` | `auto` | Version of Unity to activate |
+| Flag                       | Default   | Description                           |
+| -------------------------- | --------- | ------------------------------------- |
+| `--unity-version`          | `auto`    | Version of Unity to activate          |
 | `--unity-licensing-server` | _(empty)_ | Unity floating license server address |
 
 ```bash
@@ -89,10 +89,10 @@ game-ci cache clear
 
 ### Cache Flags
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--cache-dir` | _(empty)_ | Path to the cache directory (defaults to `<project-path>/Library`) |
-| `--project-path` | `.` | Path to the Unity project |
+| Flag             | Default   | Description                                                        |
+| ---------------- | --------- | ------------------------------------------------------------------ |
+| `--cache-dir`    | _(empty)_ | Path to the cache directory (defaults to `<project-path>/Library`) |
+| `--project-path` | `.`       | Path to the Unity project                                          |
 
 ## status
 
@@ -114,9 +114,9 @@ Reports:
 
 ### Flags
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--project-path` | `.` | Path to the Unity project |
+| Flag             | Default | Description               |
+| ---------------- | ------- | ------------------------- |
+| `--project-path` | `.`     | Path to the Unity project |
 
 ## version
 
@@ -144,10 +144,10 @@ game-ci update
 
 ### Flags
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--force`, `-f` | `false` | Force update even if already on the latest version |
-| `--version` | _(empty)_ | Update to a specific version (e.g. `v2.1.0`) |
+| Flag            | Default   | Description                                        |
+| --------------- | --------- | -------------------------------------------------- |
+| `--force`, `-f` | `false`   | Force update even if already on the latest version |
+| `--version`     | _(empty)_ | Update to a specific version (e.g. `v2.1.0`)       |
 
 ```bash
 # Update to the latest version
@@ -167,8 +167,8 @@ updating via npm instead.
 
 These flags are available on all commands:
 
-| Flag | Description |
-| --- | --- |
+| Flag           | Description               |
+| -------------- | ------------------------- |
 | `--help`, `-h` | Show help for any command |
 
 ```bash

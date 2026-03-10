@@ -14,37 +14,37 @@ game-ci build [options]
 
 ## Required Options
 
-| Flag | Description |
-| --- | --- |
+| Flag                | Description                                      |
+| ------------------- | ------------------------------------------------ |
 | `--target-platform` | Build target platform (e.g. `StandaloneLinux64`) |
 
 ## Project Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--unity-version` | `auto` | Unity Editor version to use. Set to `auto` to detect from `ProjectSettings/ProjectVersion.txt`. |
-| `--project-path` | `.` | Path to the Unity project directory |
-| `--build-name` | _(empty)_ | Name of the build output file (no file extension) |
-| `--builds-path` | `build` | Output directory for build artifacts |
-| `--build-method` | _(empty)_ | Custom static C# build method to invoke (e.g. `MyBuild.PerformBuild`) |
-| `--build-profile` | _(empty)_ | Path to the build profile to activate, relative to the project root |
-| `--custom-parameters` | _(empty)_ | Additional parameters appended to the Unity command line |
+| Flag                  | Default   | Description                                                                                     |
+| --------------------- | --------- | ----------------------------------------------------------------------------------------------- |
+| `--unity-version`     | `auto`    | Unity Editor version to use. Set to `auto` to detect from `ProjectSettings/ProjectVersion.txt`. |
+| `--project-path`      | `.`       | Path to the Unity project directory                                                             |
+| `--build-name`        | _(empty)_ | Name of the build output file (no file extension)                                               |
+| `--builds-path`       | `build`   | Output directory for build artifacts                                                            |
+| `--build-method`      | _(empty)_ | Custom static C# build method to invoke (e.g. `MyBuild.PerformBuild`)                           |
+| `--build-profile`     | _(empty)_ | Path to the build profile to activate, relative to the project root                             |
+| `--custom-parameters` | _(empty)_ | Additional parameters appended to the Unity command line                                        |
 
 ## Versioning Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--versioning` | `Semantic` | Versioning strategy: `Semantic`, `Tag`, `Custom`, `None` |
-| `--version` | _(empty)_ | Explicit version string (used with `--versioning Custom`) |
+| Flag           | Default    | Description                                               |
+| -------------- | ---------- | --------------------------------------------------------- |
+| `--versioning` | `Semantic` | Versioning strategy: `Semantic`, `Tag`, `Custom`, `None`  |
+| `--version`    | _(empty)_  | Explicit version string (used with `--versioning Custom`) |
 
 ## Unity Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--manual-exit` | `false` | Suppresses the `-quit` flag. Use when your build method calls `EditorApplication.Exit(0)` manually. |
-| `--enable-gpu` | `false` | Launches Unity without specifying `-nographics` |
-| `--skip-activation` | `false` | Skip Unity license activation/deactivation |
-| `--unity-licensing-server` | _(empty)_ | Unity floating license server address |
+| Flag                       | Default   | Description                                                                                         |
+| -------------------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| `--manual-exit`            | `false`   | Suppresses the `-quit` flag. Use when your build method calls `EditorApplication.Exit(0)` manually. |
+| `--enable-gpu`             | `false`   | Launches Unity without specifying `-nographics`                                                     |
+| `--skip-activation`        | `false`   | Skip Unity license activation/deactivation                                                          |
+| `--unity-licensing-server` | _(empty)_ | Unity floating license server address                                                               |
 
 ## Custom Build Parameters
 
@@ -60,17 +60,17 @@ The `--custom-parameters` string is appended to the Unity command line arguments
 
 ## Android Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--android-version-code` | _(empty)_ | Android `versionCode` override |
-| `--android-export-type` | `androidPackage` | Export type: `androidPackage` (APK), `androidAppBundle` (AAB), or `androidStudioProject` |
-| `--android-keystore-name` | _(empty)_ | Filename of the keystore |
-| `--android-keystore-base64` | _(empty)_ | Base64-encoded keystore file contents |
-| `--android-keystore-pass` | _(empty)_ | Keystore password |
-| `--android-keyalias-name` | _(empty)_ | Key alias name within the keystore |
-| `--android-keyalias-pass` | _(empty)_ | Key alias password |
-| `--android-target-sdk-version` | _(empty)_ | Target Android SDK version (e.g. `AndroidApiLevel31`) |
-| `--android-symbol-type` | `none` | Android symbol type to export: `none`, `public`, or `debugging` |
+| Flag                           | Default          | Description                                                                              |
+| ------------------------------ | ---------------- | ---------------------------------------------------------------------------------------- |
+| `--android-version-code`       | _(empty)_        | Android `versionCode` override                                                           |
+| `--android-export-type`        | `androidPackage` | Export type: `androidPackage` (APK), `androidAppBundle` (AAB), or `androidStudioProject` |
+| `--android-keystore-name`      | _(empty)_        | Filename of the keystore                                                                 |
+| `--android-keystore-base64`    | _(empty)_        | Base64-encoded keystore file contents                                                    |
+| `--android-keystore-pass`      | _(empty)_        | Keystore password                                                                        |
+| `--android-keyalias-name`      | _(empty)_        | Key alias name within the keystore                                                       |
+| `--android-keyalias-pass`      | _(empty)_        | Key alias password                                                                       |
+| `--android-target-sdk-version` | _(empty)_        | Target Android SDK version (e.g. `AndroidApiLevel31`)                                    |
+| `--android-symbol-type`        | `none`           | Android symbol type to export: `none`, `public`, or `debugging`                          |
 
 ### Android Build Example
 
@@ -89,14 +89,14 @@ game-ci build \
 
 Control the Docker container used for the build:
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--custom-image` | _(empty)_ | Override the Docker image (defaults to `unityci/editor` with the detected version and platform) |
-| `--docker-cpu-limit` | _(empty)_ | CPU limit for the container (e.g. `4` for 4 cores) |
-| `--docker-memory-limit` | _(empty)_ | Memory limit for the container (e.g. `8g` for 8 GB) |
-| `--docker-workspace-path` | `/github/workspace` | Path where the workspace is mounted inside the container |
-| `--run-as-host-user` | `false` | Run as a user that matches the host system |
-| `--chown-files-to` | _(empty)_ | User and optionally group to give ownership of build artifacts (e.g. `1000:1000`) |
+| Flag                      | Default             | Description                                                                                     |
+| ------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
+| `--custom-image`          | _(empty)_           | Override the Docker image (defaults to `unityci/editor` with the detected version and platform) |
+| `--docker-cpu-limit`      | _(empty)_           | CPU limit for the container (e.g. `4` for 4 cores)                                              |
+| `--docker-memory-limit`   | _(empty)_           | Memory limit for the container (e.g. `8g` for 8 GB)                                             |
+| `--docker-workspace-path` | `/github/workspace` | Path where the workspace is mounted inside the container                                        |
+| `--run-as-host-user`      | `false`             | Run as a user that matches the host system                                                      |
+| `--chown-files-to`        | _(empty)_           | User and optionally group to give ownership of build artifacts (e.g. `1000:1000`)               |
 
 ### Custom Docker Image Example
 
@@ -108,9 +108,9 @@ game-ci build \
 
 ## Authentication Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--ssh-agent` | _(empty)_ | SSH Agent path to forward to the container |
+| Flag                  | Default   | Description                                                |
+| --------------------- | --------- | ---------------------------------------------------------- |
+| `--ssh-agent`         | _(empty)_ | SSH Agent path to forward to the container                 |
 | `--git-private-token` | _(empty)_ | GitHub private token for pulling from private repositories |
 
 ## Provider Strategy
@@ -118,8 +118,8 @@ game-ci build \
 By default, the `build` command runs locally. You can redirect execution to a remote orchestrator
 provider:
 
-| Flag | Default | Description |
-| --- | --- | --- |
+| Flag                  | Default | Description                                  |
+| --------------------- | ------- | -------------------------------------------- |
 | `--provider-strategy` | `local` | Execution strategy: `local`, `k8s`, or `aws` |
 
 When set to anything other than `local`, the build is handed off to the orchestrator. See

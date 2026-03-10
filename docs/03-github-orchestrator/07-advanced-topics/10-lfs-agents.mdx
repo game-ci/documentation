@@ -1,7 +1,7 @@
 # Custom LFS Agents
 
-Orchestrator supports custom Git LFS transfer agents — external executables that handle
-LFS upload and download instead of the default HTTPS transport.
+Orchestrator supports custom Git LFS transfer agents — external executables that handle LFS upload
+and download instead of the default HTTPS transport.
 
 ## elastic-git-storage (Built-in)
 
@@ -74,19 +74,19 @@ The agent name is derived from the executable filename (without extension).
 
 ## Storage Paths
 
-The `lfsStoragePaths` input sets the `LFS_STORAGE_PATHS` environment variable. How these paths
-are interpreted depends on the agent:
+The `lfsStoragePaths` input sets the `LFS_STORAGE_PATHS` environment variable. How these paths are
+interpreted depends on the agent:
 
-| Agent | Path format |
-|-------|------------|
+| Agent               | Path format                                        |
+| ------------------- | -------------------------------------------------- |
 | elastic-git-storage | Local paths, `webdav://` URLs, `rclone://` remotes |
-| lfs-folderstore | Local directory paths |
-| Custom | Agent-specific |
+| lfs-folderstore     | Local directory paths                              |
+| Custom              | Agent-specific                                     |
 
 ## Inputs Reference
 
-| Input | Description |
-|-------|-------------|
-| `lfsTransferAgent` | Agent name (e.g., `elastic-git-storage`) or path to executable. Append `@version` for release pinning. |
-| `lfsTransferAgentArgs` | Additional arguments passed to the agent |
-| `lfsStoragePaths` | Semicolon-separated storage paths (set as `LFS_STORAGE_PATHS` env var) |
+| Input                  | Description                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| `lfsTransferAgent`     | Agent name (e.g., `elastic-git-storage`) or path to executable. Append `@version` for release pinning. |
+| `lfsTransferAgentArgs` | Additional arguments passed to the agent                                                               |
+| `lfsStoragePaths`      | Semicolon-separated storage paths (set as `LFS_STORAGE_PATHS` env var)                                 |

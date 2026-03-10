@@ -27,10 +27,10 @@ monorepos where builds only need a subset of submodules.
 primary_submodule: MyGameFramework
 submodules:
   - name: CoreFramework
-    branch: main          # initialize this submodule
+    branch: main # initialize this submodule
   - name: OptionalModule
-    branch: empty         # skip this submodule (empty branch)
-  - name: Plugins*        # glob pattern — matches PluginsCore, PluginsAudio, etc.
+    branch: empty # skip this submodule (empty branch)
+  - name: Plugins* # glob pattern — matches PluginsCore, PluginsAudio, etc.
     branch: main
 ```
 
@@ -46,18 +46,18 @@ A variant file merges on top of the base profile for build-type or platform-spec
 # server-variant.yml
 submodules:
   - name: ClientOnlyAssets
-    branch: empty         # skip client assets for server builds
+    branch: empty # skip client assets for server builds
   - name: ServerTools
-    branch: main          # add server-only tools
+    branch: main # add server-only tools
 ```
 
 ### Inputs
 
-| Input                  | Default | Description                                      |
-| ---------------------- | ------- | ------------------------------------------------ |
-| `submoduleProfilePath` | —       | Path to YAML submodule profile                   |
-| `submoduleVariantPath` | —       | Path to variant overlay (merged on top)           |
-| `submoduleToken`       | —       | Auth token for private submodule clones           |
+| Input                  | Default | Description                             |
+| ---------------------- | ------- | --------------------------------------- |
+| `submoduleProfilePath` | —       | Path to YAML submodule profile          |
+| `submoduleVariantPath` | —       | Path to variant overlay (merged on top) |
+| `submoduleToken`       | —       | Auth token for private submodule clones |
 
 ### How It Works
 
@@ -96,12 +96,12 @@ Filesystem-based — works on self-hosted runners with persistent storage.
 
 ### Inputs
 
-| Input               | Default | Description                           |
-| ------------------- | ------- | ------------------------------------- |
-| `localCacheEnabled` | `false` | Enable filesystem caching             |
-| `localCacheRoot`    | —       | Cache directory override              |
-| `localCacheLibrary` | `true`  | Cache Unity Library folder            |
-| `localCacheLfs`     | `true`  | Cache LFS objects                     |
+| Input               | Default | Description                |
+| ------------------- | ------- | -------------------------- |
+| `localCacheEnabled` | `false` | Enable filesystem caching  |
+| `localCacheRoot`    | —       | Cache directory override   |
+| `localCacheLibrary` | `true`  | Cache Unity Library folder |
+| `localCacheLfs`     | `true`  | Cache LFS objects          |
 
 ### Example
 
@@ -110,7 +110,7 @@ Filesystem-based — works on self-hosted runners with persistent storage.
   with:
     providerStrategy: local
     localCacheEnabled: true
-    localCacheRoot: /mnt/cache    # persistent disk on self-hosted runner
+    localCacheRoot: /mnt/cache # persistent disk on self-hosted runner
     targetPlatform: StandaloneLinux64
 ```
 
@@ -119,8 +119,8 @@ Filesystem-based — works on self-hosted runners with persistent storage.
 ## Custom LFS Transfer Agents
 
 Register external Git LFS transfer agents that handle LFS object storage via custom backends like
-[elastic-git-storage](https://github.com/frostebite/elastic-git-storage), S3-backed agents, or
-any custom transfer protocol.
+[elastic-git-storage](https://github.com/frostebite/elastic-git-storage), S3-backed agents, or any
+custom transfer protocol.
 
 ### How It Works
 
@@ -137,11 +137,11 @@ The agent name is derived from the executable filename (e.g. `elastic-git-storag
 
 ### Inputs
 
-| Input               | Default | Description                                  |
-| ------------------- | ------- | -------------------------------------------- |
-| `lfsTransferAgent`  | —       | Path to custom LFS agent executable          |
-| `lfsTransferAgentArgs` | —    | Arguments passed to the agent                |
-| `lfsStoragePaths`   | —       | Sets `LFS_STORAGE_PATHS` environment variable|
+| Input                  | Default | Description                                   |
+| ---------------------- | ------- | --------------------------------------------- |
+| `lfsTransferAgent`     | —       | Path to custom LFS agent executable           |
+| `lfsTransferAgentArgs` | —       | Arguments passed to the agent                 |
+| `lfsStoragePaths`      | —       | Sets `LFS_STORAGE_PATHS` environment variable |
 
 ### Example
 
@@ -173,10 +173,10 @@ enable when your build pipeline depends on hooks running.
 
 ### Inputs
 
-| Input              | Default | Description                                 |
-| ------------------ | ------- | ------------------------------------------- |
-| `gitHooksEnabled`  | `false` | Install and run git hooks during build      |
-| `gitHooksSkipList` | —       | Comma-separated hooks to skip               |
+| Input              | Default | Description                            |
+| ------------------ | ------- | -------------------------------------- |
+| `gitHooksEnabled`  | `false` | Install and run git hooks during build |
+| `gitHooksSkipList` | —       | Comma-separated hooks to skip          |
 
 ### Example
 

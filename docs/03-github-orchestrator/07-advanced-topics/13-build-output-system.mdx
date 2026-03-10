@@ -27,16 +27,16 @@ Specify which output types a build produces:
 
 ## Built-in Output Types
 
-| Type | Default Path | Description |
-|------|-------------|-------------|
-| `build` | `./Builds/{platform}/` | Standard game build artifact |
-| `test-results` | `./TestResults/` | NUnit/JUnit XML test results |
-| `server-build` | `./Builds/{platform}-server/` | Dedicated server build |
-| `data-export` | `./Exports/` | Exported data files (CSV, JSON, binary) |
-| `images` | `./Captures/` | Screenshots, render captures, atlas previews |
-| `logs` | `./Logs/` | Structured build and test logs |
-| `metrics` | `./Metrics/` | Build performance metrics, asset statistics |
-| `coverage` | `./Coverage/` | Code coverage reports |
+| Type           | Default Path                  | Description                                  |
+| -------------- | ----------------------------- | -------------------------------------------- |
+| `build`        | `./Builds/{platform}/`        | Standard game build artifact                 |
+| `test-results` | `./TestResults/`              | NUnit/JUnit XML test results                 |
+| `server-build` | `./Builds/{platform}-server/` | Dedicated server build                       |
+| `data-export`  | `./Exports/`                  | Exported data files (CSV, JSON, binary)      |
+| `images`       | `./Captures/`                 | Screenshots, render captures, atlas previews |
+| `logs`         | `./Logs/`                     | Structured build and test logs               |
+| `metrics`      | `./Metrics/`                  | Build performance metrics, asset statistics  |
+| `coverage`     | `./Coverage/`                 | Code coverage reports                        |
 
 ## Output Manifest
 
@@ -108,8 +108,8 @@ outputPipelines:
     - archive: s3
 ```
 
-Test results appear as inline annotations on pull request files, showing exactly where
-failures occurred.
+Test results appear as inline annotations on pull request files, showing exactly where failures
+occurred.
 
 ### Image Captures
 
@@ -171,24 +171,24 @@ Custom types can also be defined in a file at `.game-ci/output-types.yml`.
 
 Output types automatically integrate with GitHub CI surfaces:
 
-| Output Type | GitHub Surface |
-|-------------|---------------|
-| Test results | Check annotations — inline failure markers on PR diffs |
-| Images | PR comment — image grid with baseline diffs |
-| Metrics | Check summary — trend charts and delta tables |
-| Coverage | PR comment — coverage percentage and delta |
-| Build artifacts | Check run — download links |
+| Output Type     | GitHub Surface                                         |
+| --------------- | ------------------------------------------------------ |
+| Test results    | Check annotations — inline failure markers on PR diffs |
+| Images          | PR comment — image grid with baseline diffs            |
+| Metrics         | Check summary — trend charts and delta tables          |
+| Coverage        | PR comment — coverage percentage and delta             |
+| Build artifacts | Check run — download links                             |
 
 ## Combining with Test Suites
 
-The output system works with the [Test Workflow Engine](test-workflow-engine) to provide
-structured test results per suite run:
+The output system works with the [Test Workflow Engine](test-workflow-engine) to provide structured
+test results per suite run:
 
 ```yaml
 - uses: game-ci/unity-builder@v4
   with:
     testSuitePath: .game-ci/test-suites/pr-suite.yml
-    testResultFormat: both       # junit + json
+    testResultFormat: both # junit + json
     testResultPath: ./TestResults/
     outputTypes: test-results,metrics,coverage
 ```
@@ -197,8 +197,8 @@ Each test suite run produces its own output entries in the manifest.
 
 ## Combining with Hot Runners
 
-[Hot runners](hot-runner-protocol) can produce multiple output types per job. The output
-manifest is returned as part of the job result:
+[Hot runners](hot-runner-protocol) can produce multiple output types per job. The output manifest is
+returned as part of the job result:
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -209,11 +209,11 @@ manifest is returned as part of the job result:
 
 ## Inputs Reference
 
-| Input | Description |
-|-------|-------------|
-| `outputTypes` | Comma-separated output types to collect |
-| `outputManifestPath` | Path for the output manifest JSON file |
-| `outputPipelines` | YAML defining per-type post-processing pipelines |
-| `customOutputTypes` | YAML defining project-specific output types |
-| `imageBaselinePath` | Path to baseline images for visual regression diffing |
-| `metricsHistory` | Number of historical builds for trend tracking |
+| Input                | Description                                           |
+| -------------------- | ----------------------------------------------------- |
+| `outputTypes`        | Comma-separated output types to collect               |
+| `outputManifestPath` | Path for the output manifest JSON file                |
+| `outputPipelines`    | YAML defining per-type post-processing pipelines      |
+| `customOutputTypes`  | YAML defining project-specific output types           |
+| `imageBaselinePath`  | Path to baseline images for visual regression diffing |
+| `metricsHistory`     | Number of historical builds for trend tracking        |

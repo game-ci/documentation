@@ -4,8 +4,8 @@ sidebar_position: 3
 
 # Orchestrate Command
 
-The `orchestrate` command runs Unity builds on cloud infrastructure instead of the local machine.
-It provisions a remote environment, syncs your project, runs the build, and retrieves artifacts.
+The `orchestrate` command runs Unity builds on cloud infrastructure instead of the local machine. It
+provisions a remote environment, syncs your project, runs the build, and retrieves artifacts.
 
 ```bash
 game-ci orchestrate [options]
@@ -16,20 +16,20 @@ Actions.
 
 ## Required Options
 
-| Flag | Description |
-| --- | --- |
+| Flag                | Description                                      |
+| ------------------- | ------------------------------------------------ |
 | `--target-platform` | Build target platform (e.g. `StandaloneLinux64`) |
 
 ## Provider Selection
 
 Choose where your build runs with the `--provider-strategy` flag:
 
-| Provider | Value | Description |
-| --- | --- | --- |
-| AWS Fargate | `aws` | Serverless containers on AWS (default) |
-| Kubernetes | `k8s` | Run on any Kubernetes cluster |
-| Local Docker | `local-docker` | Run in a local Docker container |
-| Local System | `local-system` | Run directly on the local system |
+| Provider     | Value          | Description                            |
+| ------------ | -------------- | -------------------------------------- |
+| AWS Fargate  | `aws`          | Serverless containers on AWS (default) |
+| Kubernetes   | `k8s`          | Run on any Kubernetes cluster          |
+| Local Docker | `local-docker` | Run in a local Docker container        |
+| Local System | `local-system` | Run directly on the local system       |
 
 ```bash
 game-ci orchestrate \
@@ -39,23 +39,23 @@ game-ci orchestrate \
 
 ## Build Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--unity-version` | `auto` | Unity Editor version to use. Set to `auto` to detect from project. |
-| `--project-path` | `.` | Path to the Unity project directory |
-| `--build-name` | _(empty)_ | Name of the build |
-| `--builds-path` | `build` | Path where build artifacts are stored |
-| `--build-method` | _(empty)_ | Custom static C# build method to invoke |
-| `--custom-parameters` | _(empty)_ | Additional parameters for the Unity build |
-| `--versioning` | `None` | Versioning strategy: `None`, `Semantic`, `Tag`, `Custom` |
+| Flag                  | Default   | Description                                                        |
+| --------------------- | --------- | ------------------------------------------------------------------ |
+| `--unity-version`     | `auto`    | Unity Editor version to use. Set to `auto` to detect from project. |
+| `--project-path`      | `.`       | Path to the Unity project directory                                |
+| `--build-name`        | _(empty)_ | Name of the build                                                  |
+| `--builds-path`       | `build`   | Path where build artifacts are stored                              |
+| `--build-method`      | _(empty)_ | Custom static C# build method to invoke                            |
+| `--custom-parameters` | _(empty)_ | Additional parameters for the Unity build                          |
+| `--versioning`        | `None`    | Versioning strategy: `None`, `Semantic`, `Tag`, `Custom`           |
 
 ## AWS Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--aws-stack-name` | `game-ci` | CloudFormation stack name for shared resources |
-| `--container-cpu` | `1024` | CPU units for the Fargate task (1024 = 1 vCPU) |
-| `--container-memory` | `3072` | Memory in MB for the Fargate task |
+| Flag                 | Default   | Description                                    |
+| -------------------- | --------- | ---------------------------------------------- |
+| `--aws-stack-name`   | `game-ci` | CloudFormation stack name for shared resources |
+| `--container-cpu`    | `1024`    | CPU units for the Fargate task (1024 = 1 vCPU) |
+| `--container-memory` | `3072`    | Memory in MB for the Fargate task              |
 
 AWS credentials are read from the standard AWS environment variables or credential files:
 
@@ -73,11 +73,11 @@ game-ci orchestrate \
 
 ## Kubernetes Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--kube-config` | _(empty)_ | Base64-encoded kubeconfig file contents |
-| `--kube-volume` | _(empty)_ | Name of the persistent volume to use |
-| `--kube-volume-size` | `5Gi` | Size of the persistent volume |
+| Flag                 | Default   | Description                             |
+| -------------------- | --------- | --------------------------------------- |
+| `--kube-config`      | _(empty)_ | Base64-encoded kubeconfig file contents |
+| `--kube-volume`      | _(empty)_ | Name of the persistent volume to use    |
+| `--kube-volume-size` | `5Gi`     | Size of the persistent volume           |
 
 ```bash
 game-ci orchestrate \
@@ -89,23 +89,23 @@ game-ci orchestrate \
 
 ## Cache Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
+| Flag          | Default   | Description                     |
+| ------------- | --------- | ------------------------------- |
 | `--cache-key` | _(empty)_ | Key used to scope cache entries |
 
 ## Workspace Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--clone-depth` | `50` | Git clone depth (use `0` for full clone) |
+| Flag            | Default | Description                              |
+| --------------- | ------- | ---------------------------------------- |
+| `--clone-depth` | `50`    | Git clone depth (use `0` for full clone) |
 
 ## Execution Options
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--watch-to-end` | `true` | Follow build logs until completion |
+| Flag                  | Default | Description                                            |
+| --------------------- | ------- | ------------------------------------------------------ |
+| `--watch-to-end`      | `true`  | Follow build logs until completion                     |
 | `--allow-dirty-build` | `false` | Allow builds from dirty (uncommitted changes) branches |
-| `--skip-activation` | `false` | Skip Unity license activation/deactivation |
+| `--skip-activation`   | `false` | Skip Unity license activation/deactivation             |
 
 ## Git Authentication
 
@@ -118,8 +118,8 @@ game-ci orchestrate \
   --git-private-token "$GITHUB_TOKEN"
 ```
 
-| Flag | Default | Description |
-| --- | --- | --- |
+| Flag                  | Default   | Description                                         |
+| --------------------- | --------- | --------------------------------------------------- |
 | `--git-private-token` | _(empty)_ | GitHub access token with repository read permission |
 
 If not provided, the CLI attempts to read the token from the `GITHUB_TOKEN` environment variable.
