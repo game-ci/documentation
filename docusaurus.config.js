@@ -42,6 +42,24 @@ const config = {
         },
       };
     },
+    function cytoscapeWebpackFix() {
+      return {
+        name: 'cytoscape-webpack-fix',
+        configureWebpack() {
+          return {
+            resolve: {
+              alias: {
+                // cytoscape 3.33+ only exports UMD under "require" condition,
+                // but mermaid imports it in a webpack "import" context.
+                'cytoscape/dist/cytoscape.umd.js': require.resolve(
+                  'cytoscape/dist/cytoscape.cjs.js',
+                ),
+              },
+            },
+          };
+        },
+      };
+    },
   ],
 
   presets: [
