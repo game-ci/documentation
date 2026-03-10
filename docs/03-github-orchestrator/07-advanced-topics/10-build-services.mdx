@@ -1,7 +1,7 @@
 # Build Services
 
 Build services run during the build lifecycle to handle submodule initialization, caching, LFS
-configuration, and git hooks. They work with any provider — local, AWS, Kubernetes, GCP Cloud Run,
+configuration, and git hooks. They work with any provider  -  local, AWS, Kubernetes, GCP Cloud Run,
 Azure ACI, or custom CLI providers.
 
 ```
@@ -30,12 +30,12 @@ submodules:
     branch: main # initialize this submodule
   - name: OptionalModule
     branch: empty # skip this submodule (empty branch)
-  - name: Plugins* # glob pattern — matches PluginsCore, PluginsAudio, etc.
+  - name: Plugins* # glob pattern  -  matches PluginsCore, PluginsAudio, etc.
     branch: main
 ```
 
-- `branch: main` — initialize the submodule on its configured branch
-- `branch: empty` — skip the submodule (checked out to an empty branch)
+- `branch: main`  -  initialize the submodule on its configured branch
+- `branch: empty`  -  skip the submodule (checked out to an empty branch)
 - Trailing `*` enables glob matching against submodule names
 
 ### Variant Overlays
@@ -55,9 +55,9 @@ submodules:
 
 | Input                  | Default | Description                             |
 | ---------------------- | ------- | --------------------------------------- |
-| `submoduleProfilePath` | —       | Path to YAML submodule profile          |
-| `submoduleVariantPath` | —       | Path to variant overlay (merged on top) |
-| `submoduleToken`       | —       | Auth token for private submodule clones |
+| `submoduleProfilePath` |  -        | Path to YAML submodule profile          |
+| `submoduleVariantPath` |  -        | Path to variant overlay (merged on top) |
+| `submoduleToken`       |  -        | Auth token for private submodule clones |
 
 ### How It Works
 
@@ -84,7 +84,7 @@ submodules:
 ## Local Build Caching
 
 Cache the Unity Library folder and LFS objects between local builds without external cache actions.
-Filesystem-based — works on self-hosted runners with persistent storage.
+Filesystem-based  -  works on self-hosted runners with persistent storage.
 
 ### How It Works
 
@@ -99,7 +99,7 @@ Filesystem-based — works on self-hosted runners with persistent storage.
 | Input               | Default | Description                |
 | ------------------- | ------- | -------------------------- |
 | `localCacheEnabled` | `false` | Enable filesystem caching  |
-| `localCacheRoot`    | —       | Cache directory override   |
+| `localCacheRoot`    |  -        | Cache directory override   |
 | `localCacheLibrary` | `true`  | Cache Unity Library folder |
 | `localCacheLfs`     | `true`  | Cache LFS objects          |
 
@@ -139,9 +139,9 @@ The agent name is derived from the executable filename (e.g. `elastic-git-storag
 
 | Input                  | Default | Description                                   |
 | ---------------------- | ------- | --------------------------------------------- |
-| `lfsTransferAgent`     | —       | Path to custom LFS agent executable           |
-| `lfsTransferAgentArgs` | —       | Arguments passed to the agent                 |
-| `lfsStoragePaths`      | —       | Sets `LFS_STORAGE_PATHS` environment variable |
+| `lfsTransferAgent`     |  -        | Path to custom LFS agent executable           |
+| `lfsTransferAgentArgs` |  -        | Arguments passed to the agent                 |
+| `lfsStoragePaths`      |  -        | Sets `LFS_STORAGE_PATHS` environment variable |
 
 ### Example
 
@@ -159,7 +159,7 @@ The agent name is derived from the executable filename (e.g. `elastic-git-storag
 
 ## Git Hooks
 
-Detect and install lefthook or husky during builds. **Disabled by default** for build performance —
+Detect and install lefthook or husky during builds. **Disabled by default** for build performance  - 
 enable when your build pipeline depends on hooks running.
 
 ### How It Works
@@ -176,7 +176,7 @@ enable when your build pipeline depends on hooks running.
 | Input              | Default | Description                            |
 | ------------------ | ------- | -------------------------------------- |
 | `gitHooksEnabled`  | `false` | Install and run git hooks during build |
-| `gitHooksSkipList` | —       | Comma-separated hooks to skip          |
+| `gitHooksSkipList` |  -        | Comma-separated hooks to skip          |
 
 ### Example
 
@@ -192,6 +192,6 @@ enable when your build pipeline depends on hooks running.
 
 ## Related
 
-- [CLI Provider Protocol](../providers/cli-provider-protocol) — Write providers in any language
-- [Cloud Providers](/docs/github-orchestrator/providers/gcp-cloud-run) — GCP Cloud Run and Azure ACI
-- [Caching](caching) — Orchestrator caching strategies
+- [CLI Provider Protocol](../providers/cli-provider-protocol)  -  Write providers in any language
+- [Cloud Providers](/docs/github-orchestrator/providers/gcp-cloud-run)  -  GCP Cloud Run and Azure ACI
+- [Caching](caching)  -  Orchestrator caching strategies

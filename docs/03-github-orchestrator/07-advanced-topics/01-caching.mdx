@@ -1,7 +1,7 @@
 # Caching
 
 Orchestrator supports two caching strategies. You can mix both by setting
-[`maxRetainedWorkspaces`](../api-reference#caching) — once the limit is reached, additional jobs
+[`maxRetainedWorkspaces`](../api-reference#caching)  -  once the limit is reached, additional jobs
 fall back to standard caching.
 
 ```
@@ -32,7 +32,7 @@ compiled output folder is archived and stored using the same cache key (branch n
 the next build with the same cache key, the previous build output is available at
 `/data/cache/{cacheKey}/build/`.
 
-This happens automatically — no configuration required. The cache key controls which builds share
+This happens automatically  -  no configuration required. The cache key controls which builds share
 output:
 
 ```yaml
@@ -74,4 +74,4 @@ When using retained workspaces, Orchestrator uses distributed locking (via S3 or
 only one build uses a workspace at a time. This enables safe concurrent builds that share and reuse
 workspaces without conflicts.
 
-Locking is managed automatically — no configuration required beyond setting `maxRetainedWorkspaces`.
+Locking is managed automatically  -  no configuration required beyond setting `maxRetainedWorkspaces`.

@@ -8,18 +8,18 @@ The **Ansible** provider orchestrates Unity builds by running Ansible playbooks 
 infrastructure. This enables teams with existing Ansible-based infrastructure management to
 integrate Unity builds into their configuration-as-code workflows.
 
-**Category:** Infrastructure Automation — runs playbooks against managed inventory rather than
+**Category:** Infrastructure Automation  -  runs playbooks against managed inventory rather than
 dispatching to a CI platform.
 
 ## Use Cases
 
-- **Large-scale build infrastructure** — Distribute builds across a fleet of machines managed by
+- **Large-scale build infrastructure**  -  Distribute builds across a fleet of machines managed by
   Ansible, with automatic host selection and load distribution handled by your playbooks.
-- **Configuration-as-code** — Define build machine setup, Unity installation, and build execution as
+- **Configuration-as-code**  -  Define build machine setup, Unity installation, and build execution as
   versioned Ansible playbooks alongside your game source.
-- **Heterogeneous environments** — Target different machine types (Windows, Linux, macOS) from a
+- **Heterogeneous environments**  -  Target different machine types (Windows, Linux, macOS) from a
   single inventory with platform-specific playbooks.
-- **Existing Ansible infrastructure** — Teams already using Ansible for server management can extend
+- **Existing Ansible infrastructure**  -  Teams already using Ansible for server management can extend
   their playbooks to handle Unity builds without adopting a separate CI system.
 
 ## Prerequisites
@@ -155,16 +155,16 @@ all:
  └──────────────────────┘                 └──────────────────────┘
 ```
 
-1. **Setup** — The orchestrator verifies that `ansible` is available on `PATH` and that the
+1. **Setup**  -  The orchestrator verifies that `ansible` is available on `PATH` and that the
    inventory file exists.
-2. **Variable assembly** — Build parameters are assembled into a JSON extra-vars payload. User-
+2. **Variable assembly**  -  Build parameters are assembled into a JSON extra-vars payload. User-
    provided `ansibleExtraVars` are merged in. Orchestrator secrets are passed as environment
    variables to the `ansible-playbook` process.
-3. **Execution** — The orchestrator runs `ansible-playbook` with the inventory, playbook, extra
+3. **Execution**  -  The orchestrator runs `ansible-playbook` with the inventory, playbook, extra
    vars, and optional vault password file. Output streams to the orchestrator in real time.
-4. **Result** — A zero exit code means success. Any non-zero exit code raises an error with the
+4. **Result**  -  A zero exit code means success. Any non-zero exit code raises an error with the
    playbook output.
-5. **Cleanup** — No orchestrator-side resources to clean up. Playbook cleanup tasks should handle
+5. **Cleanup**  -  No orchestrator-side resources to clean up. Playbook cleanup tasks should handle
    remote machine cleanup.
 
 ## Ansible Vault Integration
@@ -244,25 +244,25 @@ jobs:
 
 ## Limitations and Considerations
 
-- **Playbook required** — The Ansible provider does not ship with a default playbook. You must
+- **Playbook required**  -  The Ansible provider does not ship with a default playbook. You must
   provide a playbook that handles repository checkout, Unity build execution, and artifact
   collection for your specific infrastructure.
-- **Ansible installation** — Ansible must be installed on the runner. GitHub-hosted runners do not
+- **Ansible installation**  -  Ansible must be installed on the runner. GitHub-hosted runners do not
   include Ansible by default; add a `pip install ansible` step or use a custom runner image.
-- **No garbage collection** — The provider does not manage remote machine state. Build cleanup
+- **No garbage collection**  -  The provider does not manage remote machine state. Build cleanup
   (temporary files, old builds) should be handled within playbook tasks.
-- **Sequential execution** — The orchestrator runs a single `ansible-playbook` command and waits for
+- **Sequential execution**  -  The orchestrator runs a single `ansible-playbook` command and waits for
   it to complete. Parallelism across hosts is managed by Ansible's built-in `forks` setting, not by
   the orchestrator.
-- **Extra-vars JSON parsing** — The `ansibleExtraVars` input is parsed as JSON. If parsing fails,
+- **Extra-vars JSON parsing**  -  The `ansibleExtraVars` input is parsed as JSON. If parsing fails,
   the raw string is passed through, which may cause unexpected behavior. Always provide valid JSON.
 
 ## Inputs Reference
 
 | Input                  | Required | Default | Description                                                |
 | ---------------------- | -------- | ------- | ---------------------------------------------------------- |
-| `providerStrategy`     | Yes      | —       | Must be `ansible`                                          |
-| `ansibleInventory`     | Yes      | —       | Path to Ansible inventory file or dynamic inventory script |
-| `ansiblePlaybook`      | Yes      | —       | Path to Ansible playbook for Unity builds                  |
-| `ansibleExtraVars`     | No       | —       | Additional Ansible variables as a JSON string              |
-| `ansibleVaultPassword` | No       | —       | Path to Ansible Vault password file                        |
+| `providerStrategy`     | Yes      |  -        | Must be `ansible`                                          |
+| `ansibleInventory`     | Yes      |  -        | Path to Ansible inventory file or dynamic inventory script |
+| `ansiblePlaybook`      | Yes      |  -        | Path to Ansible playbook for Unity builds                  |
+| `ansibleExtraVars`     | No       |  -        | Additional Ansible variables as a JSON string              |
+| `ansibleVaultPassword` | No       |  -        | Path to Ansible Vault password file                        |

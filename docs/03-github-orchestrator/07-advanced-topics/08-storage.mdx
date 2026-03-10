@@ -33,11 +33,11 @@ storage backend.
 Your Unity project is cloned into the build container at `/data/{buildGuid}/repo/`. Orchestrator
 handles Git and LFS automatically:
 
-1. **Shallow clone** — The repository is cloned with `--depth` controlled by the
+1. **Shallow clone**  -  The repository is cloned with `--depth` controlled by the
    [`cloneDepth`](../api-reference#git-synchronization) parameter (default: 50).
-2. **LFS pull** — Git LFS is installed and configured inside the container. LFS files are pulled
+2. **LFS pull**  -  Git LFS is installed and configured inside the container. LFS files are pulled
    after the clone completes.
-3. **LFS hashing** — Orchestrator generates `.lfs-assets-guid` and `.lfs-assets-guid-sum` files to
+3. **LFS hashing**  -  Orchestrator generates `.lfs-assets-guid` and `.lfs-assets-guid-sum` files to
    track LFS content for cache invalidation.
 
 For retained workspaces, the project folder persists between builds at
@@ -107,7 +107,7 @@ Orchestrator supports two storage backends for caches, artifacts, and workspace 
 
 S3 is the default storage backend. It works with AWS S3 and LocalStack (for local testing).
 
-No extra configuration is needed when using the `aws` provider — the S3 bucket is created
+No extra configuration is needed when using the `aws` provider  -  the S3 bucket is created
 automatically as part of the CloudFormation base stack. For other providers, ensure AWS credentials
 and region are set in the environment.
 
@@ -209,7 +209,7 @@ and cache data.
 
 For the full list of storage-related parameters, see the API Reference:
 
-- [Storage](../api-reference#storage) — `storageProvider`, `rcloneRemote`
-- [Caching](../api-reference#caching) — `cacheKey`, `maxRetainedWorkspaces`
-- [Build Options](../api-reference#build-options) — `useCompressionStrategy`, `useLargePackages`
-- [AWS](../api-reference#aws) — `awsStackName`, `awsS3Endpoint`
+- [Storage](../api-reference#storage)  -  `storageProvider`, `rcloneRemote`
+- [Caching](../api-reference#caching)  -  `cacheKey`, `maxRetainedWorkspaces`
+- [Build Options](../api-reference#build-options)  -  `useCompressionStrategy`, `useLargePackages`
+- [AWS](../api-reference#aws)  -  `awsStackName`, `awsS3Endpoint`

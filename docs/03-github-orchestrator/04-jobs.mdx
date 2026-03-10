@@ -1,6 +1,6 @@
 # Orchestrator Jobs
 
-Orchestrator executes work as **jobs** — containerized or local tasks that run on your chosen
+Orchestrator executes work as **jobs**  -  containerized or local tasks that run on your chosen
 provider. Understanding job types and their flow is key to customizing your build pipeline.
 
 ## Job Flow
@@ -18,17 +18,17 @@ Every Orchestrator run follows the same lifecycle, regardless of provider:
                              └─────────────┘
 ```
 
-1. **Setup** — Provision cloud resources (stacks, volumes, secrets). Skipped for local providers.
-2. **Pre-build jobs** — Clone the repository, pull LFS, restore caches, run pre-build hooks.
-3. **Build job** — Execute the Unity build (or custom editor method).
-4. **Post-build jobs** — Push caches, upload artifacts, run post-build hooks.
-5. **Cleanup** — Release locks, tear down cloud resources, update GitHub Checks.
+1. **Setup**  -  Provision cloud resources (stacks, volumes, secrets). Skipped for local providers.
+2. **Pre-build jobs**  -  Clone the repository, pull LFS, restore caches, run pre-build hooks.
+3. **Build job**  -  Execute the Unity build (or custom editor method).
+4. **Post-build jobs**  -  Push caches, upload artifacts, run post-build hooks.
+5. **Cleanup**  -  Release locks, tear down cloud resources, update GitHub Checks.
 
 ## Job Types
 
 ### Build Job
 
-The standard job — runs the Unity Editor to produce a build artifact. This is what most users care
+The standard job  -  runs the Unity Editor to produce a build artifact. This is what most users care
 about.
 
 ```yaml
@@ -61,7 +61,7 @@ Run Unity tests without producing a build. Use a custom `buildMethod` that runs 
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-With `manualExit: true`, Unity doesn't quit automatically — your build method should call
+With `manualExit: true`, Unity doesn't quit automatically  -  your build method should call
 `EditorApplication.Exit(0)` after tests complete. This gives you full control over the test
 lifecycle.
 
@@ -188,6 +188,6 @@ Each provider runs jobs differently:
 
 ## Next Steps
 
-- [Custom Job](advanced-topics/custom-job) — Full reference for custom job definitions
-- [Hooks](advanced-topics/hooks/container-hooks) — Inject steps at specific lifecycle points
-- [Architecture](advanced-topics/architecture) — Deep dive into internal components
+- [Custom Job](advanced-topics/custom-job)  -  Full reference for custom job definitions
+- [Hooks](advanced-topics/hooks/container-hooks)  -  Inject steps at specific lifecycle points
+- [Architecture](advanced-topics/architecture)  -  Deep dive into internal components

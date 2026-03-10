@@ -1,6 +1,6 @@
 # GCP Cloud Run (Experimental)
 
-Run Unity builds as [Cloud Run Jobs](https://cloud.google.com/run/docs/create-jobs) — one-off
+Run Unity builds as [Cloud Run Jobs](https://cloud.google.com/run/docs/create-jobs)  -  one-off
 serverless container executions with configurable storage backends.
 
 :::caution Experimental This provider is experimental. APIs and behavior may change between
@@ -41,18 +41,18 @@ trade-offs for performance, persistence, and complexity.
 
 ### When to use each type
 
-- **gcs-fuse** (default) — Good general-purpose option. Handles very large files well and persists
+- **gcs-fuse** (default)  -  Good general-purpose option. Handles very large files well and persists
   across builds. Has some latency on small file I/O and eventual consistency edge cases.
 
-- **gcs-copy** — Simpler than FUSE (no driver). Copies everything before the build starts and
+- **gcs-copy**  -  Simpler than FUSE (no driver). Copies everything before the build starts and
   uploads after it finishes. Best when you only need artifact upload/download, not live filesystem
   access during the build.
 
-- **nfs** — True POSIX semantics with good random I/O performance. The best choice for caching the
+- **nfs**  -  True POSIX semantics with good random I/O performance. The best choice for caching the
   Unity Library folder (thousands of small files). Requires a
   [Filestore](https://cloud.google.com/filestore) instance and a VPC connector.
 
-- **in-memory** — Fastest option (RAM-backed). Data is lost when the job ends. Capped at 32 GiB. Use
+- **in-memory**  -  Fastest option (RAM-backed). Data is lost when the job ends. Capped at 32 GiB. Use
   for temporary build artifacts that don't need to persist.
 
 ## Inputs
@@ -62,17 +62,17 @@ trade-offs for performance, persistence, and complexity.
 | `gcpProject`        | `$GOOGLE_CLOUD_PROJECT` | GCP project ID                                  |
 | `gcpRegion`         | `us-central1`           | Cloud Run region                                |
 | `gcpStorageType`    | `gcs-fuse`              | Storage backend (see above)                     |
-| `gcpBucket`         | —                       | GCS bucket name (for `gcs-fuse`, `gcs-copy`)    |
-| `gcpFilestoreIp`    | —                       | Filestore IP address (for `nfs`)                |
+| `gcpBucket`         |  -                        | GCS bucket name (for `gcs-fuse`, `gcs-copy`)    |
+| `gcpFilestoreIp`    |  -                        | Filestore IP address (for `nfs`)                |
 | `gcpFilestoreShare` | `/share1`               | Filestore share name (for `nfs`)                |
 | `gcpMachineType`    | `e2-standard-4`         | Machine type                                    |
 | `gcpDiskSizeGb`     | `100`                   | In-memory volume size (for `in-memory`, max 32) |
-| `gcpServiceAccount` | —                       | Service account email                           |
-| `gcpVpcConnector`   | —                       | VPC connector (required for `nfs`)              |
+| `gcpServiceAccount` |  -                        | Service account email                           |
+| `gcpVpcConnector`   |  -                        | VPC connector (required for `nfs`)              |
 
 ## Examples
 
-### GCS FUSE — mount bucket as filesystem
+### GCS FUSE  -  mount bucket as filesystem
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -83,7 +83,7 @@ trade-offs for performance, persistence, and complexity.
     targetPlatform: StandaloneLinux64
 ```
 
-### NFS — Filestore for fast Library caching
+### NFS  -  Filestore for fast Library caching
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -97,7 +97,7 @@ trade-offs for performance, persistence, and complexity.
     targetPlatform: StandaloneLinux64
 ```
 
-### Copy — simple artifact upload/download
+### Copy  -  simple artifact upload/download
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -111,6 +111,6 @@ trade-offs for performance, persistence, and complexity.
 
 ## Related
 
-- [Azure ACI](azure-aci) — Azure Container Instances provider
-- [Custom Providers](custom-providers) — TypeScript provider plugins
-- [CLI Provider Protocol](cli-provider-protocol) — Write providers in any language
+- [Azure ACI](azure-aci)  -  Azure Container Instances provider
+- [Custom Providers](custom-providers)  -  TypeScript provider plugins
+- [CLI Provider Protocol](cli-provider-protocol)  -  Write providers in any language

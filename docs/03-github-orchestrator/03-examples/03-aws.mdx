@@ -40,7 +40,7 @@ jobs:
 Build for multiple platforms in parallel. Each platform runs as a separate Fargate task.
 
 ```yaml
-name: Orchestrator — AWS Multi-Platform
+name: Orchestrator  -  AWS Multi-Platform
 
 on:
   push:
@@ -170,7 +170,7 @@ Chain container hooks to export to S3 and deploy to Steam in one step.
 Clean up stale CloudFormation stacks and Fargate tasks.
 
 ```yaml
-name: Orchestrator — Garbage Collect
+name: Orchestrator  -  Garbage Collect
 
 on:
   schedule:
@@ -225,7 +225,7 @@ game-ci status --providerStrategy aws
 
 ## Next Steps
 
-- [AWS Provider Reference](../providers/aws) — architecture, parameters, and setup
-- [Container Hooks](../advanced-topics/hooks/built-in-hooks) — S3, rclone, Steam hooks
-- [Garbage Collection](../advanced-topics/garbage-collection) — automated cleanup
-- [API Reference](../api-reference) — full parameter list
+- [AWS Provider Reference](../providers/aws)  -  architecture, parameters, and setup
+- [Container Hooks](../advanced-topics/hooks/built-in-hooks)  -  S3, rclone, Steam hooks
+- [Garbage Collection](../advanced-topics/garbage-collection)  -  automated cleanup
+- [API Reference](../api-reference)  -  full parameter list

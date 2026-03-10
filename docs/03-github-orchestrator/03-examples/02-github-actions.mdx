@@ -49,7 +49,7 @@ jobs:
 Full workflow with custom CPU/memory, S3 artifact export, and GitHub Checks.
 
 ```yaml
-name: Orchestrator — AWS Fargate
+name: Orchestrator  -  AWS Fargate
 
 on:
   push:
@@ -109,7 +109,7 @@ See the [AWS provider page](../providers/aws) for allowed CPU/memory combination
 Full workflow targeting a Kubernetes cluster.
 
 ```yaml
-name: Orchestrator — Kubernetes
+name: Orchestrator  -  Kubernetes
 
 on:
   push:
@@ -165,7 +165,7 @@ See the [Kubernetes provider page](../providers/kubernetes) for cluster tips and
 Run builds in Docker on your own machine. No cloud account needed.
 
 ```yaml
-name: Orchestrator — Local Docker
+name: Orchestrator  -  Local Docker
 
 on:
   push:
@@ -213,7 +213,7 @@ Add a scheduled workflow to clean up stale cloud resources. Useful as a safety n
 automatic cleanup cron.
 
 ```yaml
-name: Orchestrator — Garbage Collect
+name: Orchestrator  -  Garbage Collect
 
 on:
   schedule:
@@ -247,7 +247,7 @@ See [Garbage Collection](../advanced-topics/garbage-collection) for details.
 Build for multiple platforms in parallel. Each platform runs as a separate Orchestrator job.
 
 ```yaml
-name: Orchestrator — Multi-Platform
+name: Orchestrator  -  Multi-Platform
 
 on:
   push:
@@ -309,7 +309,7 @@ rebuilds at the cost of more storage.
 See [Retained Workspaces](../advanced-topics/retained-workspace) and
 [Caching](../advanced-topics/caching) for details on storage strategies.
 
-## 🪝 Container Hooks — S3 Upload + Steam Deploy
+## 🪝 Container Hooks  -  S3 Upload + Steam Deploy
 
 Chain multiple container hooks to export builds to S3 and deploy to Steam in a single workflow.
 
@@ -331,8 +331,8 @@ Steam).
 
 ## 🔗 Reference
 
-- [API Reference](../api-reference) — full list of all parameters
-- [Providers](../providers/overview) — setup guides for each provider
-- [Secrets](../secrets) — how credentials are transferred to build containers
+- [API Reference](../api-reference)  -  full list of all parameters
+- [Providers](../providers/overview)  -  setup guides for each provider
+- [Secrets](../secrets)  -  how credentials are transferred to build containers
 - [Real-world pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/orchestrator-integrity.yml)
-  — Game CI's own Orchestrator test pipeline
+   -  Game CI's own Orchestrator test pipeline

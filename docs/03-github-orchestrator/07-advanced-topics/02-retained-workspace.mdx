@@ -12,7 +12,7 @@ Set `maxRetainedWorkspaces` to control how many workspaces are kept:
 | `0`   | Unlimited retained workspaces (default).                                  |
 | `> 0` | Keep at most N workspaces. Additional jobs fall back to standard caching. |
 
-Each retained workspace is locked during use — only one build can use a workspace at a time.
+Each retained workspace is locked during use  -  only one build can use a workspace at a time.
 Orchestrator handles locking automatically via S3 or rclone. See [Caching](caching) for storage
 provider details.
 

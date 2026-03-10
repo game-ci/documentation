@@ -1,7 +1,7 @@
 # Load Balancing
 
 Orchestrator can intelligently route builds across providers. Built-in load balancing checks runner
-availability and routes to the best provider automatically — no custom scripting needed. For
+availability and routes to the best provider automatically  -  no custom scripting needed. For
 advanced scenarios, standard GitHub Actions scripting gives you full control.
 
 ```
@@ -23,11 +23,11 @@ advanced scenarios, standard GitHub Actions scripting gives you full control.
 Set `fallbackProviderStrategy` to an alternate provider and the action handles routing
 automatically. Three mechanisms work together:
 
-- **Runner availability check** — Queries the GitHub Runners API. If your self-hosted runners are
+- **Runner availability check**  -  Queries the GitHub Runners API. If your self-hosted runners are
   busy or offline, routes to the alternate provider.
-- **Retry on alternate provider** — If the primary provider fails mid-build (transient cloud error,
+- **Retry on alternate provider**  -  If the primary provider fails mid-build (transient cloud error,
   quota limit), retries the entire build on the alternate provider.
-- **Provider init timeout** — If the primary provider is slow to spin up, switches to the alternate
+- **Provider init timeout**  -  If the primary provider is slow to spin up, switches to the alternate
   after a configurable timeout.
 
 ### Inputs
@@ -68,7 +68,7 @@ Runner idle? Build runs locally. Runner busy? Routes to AWS automatically.
 ### Non-blocking with async mode
 
 For long Unity builds, combine load balancing with `asyncOrchestrator: true`. The build dispatches
-to the best available provider and returns immediately — the GitHub runner is freed in seconds
+to the best available provider and returns immediately  -  the GitHub runner is freed in seconds
 regardless of which provider handles the build.
 
 ```yaml
@@ -123,9 +123,9 @@ swap to the alternate provider if startup takes too long.
 
 The built-in load balancing is designed to never block a build:
 
-- **No token** — Skips the runner check, uses the primary provider.
-- **API error** (permissions, rate limit) — Logs a warning, uses the primary provider.
-- **No alternate set** — The runner check runs for informational logging but never swaps.
+- **No token**  -  Skips the runner check, uses the primary provider.
+- **API error** (permissions, rate limit)  -  Logs a warning, uses the primary provider.
+- **No alternate set**  -  The runner check runs for informational logging but never swaps.
 
 ### Log the routing decision
 
@@ -294,7 +294,7 @@ The pattern uses two workflows: a primary workflow that checks runner availabili
 locally or dispatches a cloud workflow, and a cloud workflow that handles the remote build
 independently.
 
-**Primary workflow** — checks runners and either builds or dispatches:
+**Primary workflow**  -  checks runners and either builds or dispatches:
 
 ```yaml
 name: Build (Primary)
@@ -325,7 +325,7 @@ jobs:
           gh workflow run cloud-build.yml \
             -f targetPlatform=StandaloneLinux64 \
             -f ref=${{ github.sha }}
-          echo "Self-hosted runners busy — dispatched to cloud-build workflow"
+          echo "Self-hosted runners busy  -  dispatched to cloud-build workflow"
 
       # If runners are available, build locally
       - uses: actions/checkout@v4
@@ -341,7 +341,7 @@ jobs:
           gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-**Cloud build workflow** — runs on `workflow_dispatch`, handles the remote build:
+**Cloud build workflow**  -  runs on `workflow_dispatch`, handles the remote build:
 
 ```yaml
 name: Build (Cloud)
@@ -372,7 +372,7 @@ jobs:
           gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-This pattern lets each workflow have completely different configurations — different runners,
+This pattern lets each workflow have completely different configurations  -  different runners,
 secrets, environment variables, and setup steps. The trade-off is that the dispatched workflow runs
 independently, so you need to check its status separately (via GitHub Actions UI or
 [`gh run list`](https://cli.github.com/manual/gh_run_list)).
@@ -456,14 +456,14 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-Unlike the workflow dispatch pattern, this keeps everything in a single workflow run — you can see
+Unlike the workflow dispatch pattern, this keeps everything in a single workflow run  -  you can see
 the routing decision and build result together in the GitHub Actions UI.
 
 ## Async Mode and Load Balancing
 
 The [`asyncOrchestrator`](../api-reference#github-integration) parameter is essential for effective
 load balancing of long builds. When enabled, the action dispatches the build and returns immediately
-— no runner minutes wasted waiting.
+ -  no runner minutes wasted waiting.
 
 ```
   Workflow Step (seconds)      Provider A              Provider B
@@ -482,9 +482,9 @@ load balancing of long builds. When enabled, the action dispatches the build and
                              └─────────────────────────────────────┘
 ```
 
-- **Without async** — The build occupies the runner. Routing still works, but you're paying for
+- **Without async**  -  The build occupies the runner. Routing still works, but you're paying for
   runner time while the build runs remotely.
-- **With async** — The step finishes in seconds. The build continues on the selected provider and
+- **With async**  -  The step finishes in seconds. The build continues on the selected provider and
   reports status via GitHub Checks. This is the recommended approach for long builds.
 
 ```yaml
@@ -531,16 +531,16 @@ jobs:
 
 ## Tips
 
-- **Start with built-in** — For most teams, `runnerCheckEnabled` + `fallbackProviderStrategy` +
+- **Start with built-in**  -  For most teams, `runnerCheckEnabled` + `fallbackProviderStrategy` +
   `asyncOrchestrator` covers the common case. Add script-based routing only when you need custom
   logic.
-- **Always use async for long builds** — Combining `asyncOrchestrator: true` with
+- **Always use async for long builds**  -  Combining `asyncOrchestrator: true` with
   `githubCheck: true` keeps your routing step fast and gives you build status on the PR page.
-- **Cache keys are provider-independent** — The [`cacheKey`](../api-reference#caching) parameter
+- **Cache keys are provider-independent**  -  The [`cacheKey`](../api-reference#caching) parameter
   works the same across all providers, so builds routed to different providers can still share
   caches if they use the same storage backend.
-- **Test routing logic** — Temporarily disable your self-hosted runner to verify that routing works
+- **Test routing logic**  -  Temporarily disable your self-hosted runner to verify that routing works
   before you need it in production.
-- **Custom providers** — The same routing patterns work with
+- **Custom providers**  -  The same routing patterns work with
   [custom providers](../providers/custom-providers). Set `providerStrategy` to a GitHub repo or NPM
   package and Orchestrator loads it dynamically.
