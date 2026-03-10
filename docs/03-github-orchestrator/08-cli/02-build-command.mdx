@@ -5,7 +5,8 @@ sidebar_position: 2
 # Build Command
 
 The `build` command runs a Unity build inside a Docker container (or natively on macOS). It accepts
-the same parameters as the `game-ci/unity-builder` GitHub Action, translated to CLI flags.
+the same parameters as the `game-ci/unity-builder` GitHub Action, translated to CLI flags. The CLI
+is provided by the [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) package.
 
 ```bash
 game-ci build [options]
