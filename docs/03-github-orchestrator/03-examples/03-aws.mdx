@@ -1,0 +1,231 @@
+# AWS Examples
+
+Complete workflow examples for running Unity builds on AWS Fargate via Orchestrator.
+
+## Minimal AWS Build
+
+The simplest AWS workflow. Uses default CPU and memory.
+
+```yaml
+name: Build with Orchestrator (AWS)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: aws
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Multi-Platform Matrix Build
+
+Build for multiple platforms in parallel. Each platform runs as a separate Fargate task.
+
+```yaml
+name: Orchestrator — AWS Multi-Platform
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build (${{ matrix.targetPlatform }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneLinux64
+          - StandaloneWindows64
+          - StandaloneOSX
+          - iOS
+          - Android
+          - WebGL
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - uses: game-ci/unity-builder@v4
+        id: build
+        with:
+          providerStrategy: aws
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: 2022.3.0f1
+          containerCpu: 2048
+          containerMemory: 8192
+          containerHookFiles: aws-s3-upload-build
+          githubCheck: true
+```
+
+## Custom Resources and S3 Artifacts
+
+Specify CPU/memory and export build artifacts to S3.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  id: aws-build
+  with:
+    providerStrategy: aws
+    versioning: None
+    projectPath: path/to/your/project
+    unityVersion: 2022.3.0f1
+    targetPlatform: ${{ matrix.targetPlatform }}
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    containerCpu: 2048
+    containerMemory: 8192
+    # Export builds to S3:
+    containerHookFiles: aws-s3-upload-build
+```
+
+### Valid CPU/Memory Combinations
+
+AWS Fargate only accepts specific combinations (`1024 = 1 vCPU`, memory in MB):
+
+| CPU (`containerCpu`) | Memory (`containerMemory`)   |
+| -------------------- | ---------------------------- |
+| `256` (0.25 vCPU)    | `512`, `1024`, `2048`        |
+| `512` (0.5 vCPU)     | `1024` – `4096`              |
+| `1024` (1 vCPU)      | `2048` – `8192`              |
+| `2048` (2 vCPU)      | `4096` – `16384`             |
+| `4096` (4 vCPU)      | `8192` – `30720`             |
+
+## Async Mode
+
+For long builds, use async mode so the GitHub Action returns immediately. Monitor via GitHub Checks.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    asyncOrchestrator: true
+    githubCheck: true
+```
+
+## Retained Workspaces
+
+Keep the entire project cached between builds for dramatically faster rebuilds.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    maxRetainedWorkspaces: 3
+    containerCpu: 2048
+    containerMemory: 8192
+```
+
+## S3 Upload + Steam Deploy
+
+Chain container hooks to export to S3 and deploy to Steam in one step.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    containerHookFiles: aws-s3-upload-build,steam-deploy-client
+  env:
+    STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+    STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
+    STEAM_APPID: ${{ secrets.STEAM_APPID }}
+```
+
+## Scheduled Garbage Collection
+
+Clean up stale CloudFormation stacks and Fargate tasks.
+
+```yaml
+name: Orchestrator — Garbage Collect
+
+on:
+  schedule:
+    - cron: '0 4 * * *' # Daily at 4 AM UTC
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: aws
+          mode: garbage-collect
+          garbageMaxAge: 24
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## CLI Usage
+
+Run AWS builds from the command line:
+
+```bash
+game-ci build \
+  --providerStrategy aws \
+  --projectPath /path/to/unity/project \
+  --targetPlatform StandaloneLinux64 \
+  --containerCpu 2048 \
+  --containerMemory 8192
+```
+
+List active AWS resources:
+
+```bash
+game-ci status --providerStrategy aws
+```
+
+## Required Secrets
+
+| Secret                  | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
+| `AWS_ACCESS_KEY_ID`     | IAM access key with ECS, CloudFormation, S3, Kinesis, CloudWatch |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret key                                                   |
+
+## Next Steps
+
+- [AWS Provider Reference](../providers/aws) — architecture, parameters, and setup
+- [Container Hooks](../advanced-topics/hooks/built-in-hooks) — S3, rclone, Steam hooks
+- [Garbage Collection](../advanced-topics/garbage-collection) — automated cleanup
+- [API Reference](../api-reference) — full parameter list
