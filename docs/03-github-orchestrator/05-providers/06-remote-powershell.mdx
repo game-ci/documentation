@@ -8,27 +8,27 @@ The **Remote PowerShell** provider executes Unity builds on remote Windows machi
 Remoting. Unlike CI dispatch providers that trigger pipelines on another CI system, this provider
 connects directly to target machines and runs build commands over a remote session.
 
-**Category:** Infrastructure Automation  -  executes directly on target machines rather than
+**Category:** Infrastructure Automation - executes directly on target machines rather than
 dispatching to a CI platform.
 
 ## Use Cases
 
-- **Dedicated build machines**  -  On-premises Windows workstations or servers with Unity installed
+- **Dedicated build machines** - On-premises Windows workstations or servers with Unity installed
   that are not part of any CI system.
-- **Windows build farms**  -  Multiple Windows machines available for parallel builds, managed without
+- **Windows build farms** - Multiple Windows machines available for parallel builds, managed without
   a formal CI/CD platform.
-- **Air-gapped environments**  -  Build machines on internal networks not reachable by cloud CI
+- **Air-gapped environments** - Build machines on internal networks not reachable by cloud CI
   services.
-- **Quick prototyping**  -  Run builds on a colleague's powerful workstation without setting up a full
+- **Quick prototyping** - Run builds on a colleague's powerful workstation without setting up a full
   CI pipeline.
 
 ## Prerequisites
 
 1. **PowerShell 5.1+** on both the orchestrator runner and target machine(s).
 2. **PowerShell Remoting enabled** on the target machine via one of:
-   - **WinRM (WSMan)**  -  Windows default. Enable with `Enable-PSRemoting -Force` on the target.
-   - **SSH**  -  Cross-platform transport. Requires OpenSSH server on the target.
-3. **Network connectivity**  -  The orchestrator runner must reach the target machine on port 5985
+   - **WinRM (WSMan)** - Windows default. Enable with `Enable-PSRemoting -Force` on the target.
+   - **SSH** - Cross-platform transport. Requires OpenSSH server on the target.
+3. **Network connectivity** - The orchestrator runner must reach the target machine on port 5985
    (WinRM HTTP), 5986 (WinRM HTTPS), or 22 (SSH).
 4. **Unity installed** on the target machine with the required build support modules.
 
@@ -96,29 +96,29 @@ sequenceDiagram
     T->>T: 6. Complete
 ```
 
-1. **Setup**  -  The orchestrator tests connectivity to the remote host using `Test-WSMan`.
-2. **Execution**  -  Build commands are wrapped in a PowerShell script block that sets environment
+1. **Setup** - The orchestrator tests connectivity to the remote host using `Test-WSMan`.
+2. **Execution** - Build commands are wrapped in a PowerShell script block that sets environment
    variables, changes to the working directory, and runs the build. The entire block is sent via
    `Invoke-Command`.
-3. **Transport**  -  For WinRM, credentials are constructed as a `PSCredential` object from the
+3. **Transport** - For WinRM, credentials are constructed as a `PSCredential` object from the
    `remotePowershellCredential` input. For SSH, `Invoke-Command -HostName` is used instead.
-4. **Output**  -  Command output streams back to the orchestrator in real time through the remote
+4. **Output** - Command output streams back to the orchestrator in real time through the remote
    session.
-5. **Cleanup**  -  Remote PowerShell sessions are stateless per invocation, so no cleanup is needed.
+5. **Cleanup** - Remote PowerShell sessions are stateless per invocation, so no cleanup is needed.
 
 ## Security Considerations
 
-- **Credential handling**  -  The `remotePowershellCredential` input expects a `username:password`
+- **Credential handling** - The `remotePowershellCredential` input expects a `username:password`
   format. Always store this as a GitHub secret, never in plain text. The provider constructs a
   `PSCredential` object at runtime and does not persist credentials.
-- **WinRM HTTPS**  -  For production use, configure WinRM over HTTPS (port 5986) with a valid TLS
+- **WinRM HTTPS** - For production use, configure WinRM over HTTPS (port 5986) with a valid TLS
   certificate to encrypt traffic. The default HTTP transport (port 5985) sends credentials in clear
   text over the network.
-- **SSH key authentication**  -  Prefer SSH transport with key-based authentication over WinRM with
+- **SSH key authentication** - Prefer SSH transport with key-based authentication over WinRM with
   password credentials when possible. SSH keys avoid transmitting passwords entirely.
-- **Network segmentation**  -  Restrict WinRM/SSH access to the build machines from only the
+- **Network segmentation** - Restrict WinRM/SSH access to the build machines from only the
   orchestrator runners' IP range.
-- **Least privilege**  -  The remote user account should have only the permissions needed to run Unity
+- **Least privilege** - The remote user account should have only the permissions needed to run Unity
   builds (read/write to the project directory, execute Unity).
 
 ## Full Workflow Example
@@ -150,23 +150,23 @@ jobs:
 
 ## Limitations and Considerations
 
-- **Windows targets only**  -  PowerShell Remoting via WinRM is a Windows technology. For Linux/macOS
+- **Windows targets only** - PowerShell Remoting via WinRM is a Windows technology. For Linux/macOS
   build machines, use SSH transport or consider the Ansible provider instead.
-- **No container isolation**  -  Builds run directly on the target machine's environment. Conflicting
+- **No container isolation** - Builds run directly on the target machine's environment. Conflicting
   Unity versions or project dependencies between concurrent builds can cause issues.
-- **No built-in queuing**  -  The provider does not queue builds. If multiple orchestrator runs
+- **No built-in queuing** - The provider does not queue builds. If multiple orchestrator runs
   dispatch to the same machine simultaneously, they will execute concurrently (or fail if resources
   conflict).
-- **Garbage collection**  -  Not supported. Build artifacts and temporary files on the remote machine
+- **Garbage collection** - Not supported. Build artifacts and temporary files on the remote machine
   must be managed separately.
-- **Firewall configuration**  -  Ensure the required ports (5985/5986 for WinRM, 22 for SSH) are open
+- **Firewall configuration** - Ensure the required ports (5985/5986 for WinRM, 22 for SSH) are open
   between the orchestrator runner and the target machine.
 
 ## Inputs Reference
 
 | Input                        | Required | Default | Description                                                    |
 | ---------------------------- | -------- | ------- | -------------------------------------------------------------- |
-| `providerStrategy`           | Yes      |  -        | Must be `remote-powershell`                                    |
-| `remotePowershellHost`       | Yes      |  -        | Hostname or IP address of the target machine                   |
-| `remotePowershellCredential` | No       |  -        | Credentials in `username:password` format (required for WinRM) |
+| `providerStrategy`           | Yes      | -       | Must be `remote-powershell`                                    |
+| `remotePowershellHost`       | Yes      | -       | Hostname or IP address of the target machine                   |
+| `remotePowershellCredential` | No       | -       | Credentials in `username:password` format (required for WinRM) |
 | `remotePowershellTransport`  | No       | `wsman` | Transport protocol: `wsman` (WinRM) or `ssh`                   |

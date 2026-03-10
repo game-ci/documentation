@@ -57,7 +57,7 @@ Connect to a coordinator via WebSocket or SignalR:
 
 ### File-Based Transport
 
-Watch a shared directory for JSON job files  -  the simplest transport:
+Watch a shared directory for JSON job files - the simplest transport:
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -100,7 +100,7 @@ editorMode: persistent
 Benefits:
 
 - No editor startup time (saves 30–120 seconds per build)
-- Unity Library folder stays warm  -  only changed assets reimport
+- Unity Library folder stays warm - only changed assets reimport
 - Domain reload only when scripts change
 
 ### Hybrid
@@ -153,10 +153,10 @@ Job dispatch and results follow the same JSON protocol.
 
 Hot runners compose with other orchestrator features:
 
-- **[Incremental Sync](incremental-sync-protocol)**  -  Receive workspace updates without full clone.
+- **[Incremental Sync](incremental-sync-protocol)** - Receive workspace updates without full clone.
   Hot runners + incremental sync = fastest possible iteration.
-- **[Artifact System](build-output-system)**  -  Return structured, typed results.
-- **[Test Workflow Engine](test-workflow-engine)**  -  Execute test suites with taxonomy filtering.
+- **[Artifact System](build-output-system)** - Return structured, typed results.
+- **[Test Workflow Engine](test-workflow-engine)** - Execute test suites with taxonomy filtering.
 
 ## Inputs Reference
 

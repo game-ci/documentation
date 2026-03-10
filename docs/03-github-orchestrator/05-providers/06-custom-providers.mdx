@@ -164,13 +164,13 @@ export default class MyProvider {
 When `providerStrategy` is set to a value that doesn't match a built-in provider name, Orchestrator
 will:
 
-1. **Detect the source type**  -  GitHub URL, NPM package, or local path.
-2. **Fetch the provider**  -  For GitHub repos, the repository is cloned (shallow, depth 1) into a
+1. **Detect the source type** - GitHub URL, NPM package, or local path.
+2. **Fetch the provider** - For GitHub repos, the repository is cloned (shallow, depth 1) into a
    `.provider-cache/` directory. Cached repos are automatically updated on subsequent runs.
-3. **Load the module**  -  The entry point is imported and the default export is used.
-4. **Validate the interface**  -  All 7 required methods are checked. If any are missing, loading
+3. **Load the module** - The entry point is imported and the default export is used.
+4. **Validate the interface** - All 7 required methods are checked. If any are missing, loading
    fails.
-5. **Fallback**  -  If loading fails for any reason, Orchestrator logs the error and falls back to the
+5. **Fallback** - If loading fails for any reason, Orchestrator logs the error and falls back to the
    local provider so your pipeline doesn't break.
 
 ## Caching
@@ -187,9 +187,9 @@ branch. On subsequent runs the loader checks for updates and pulls them automati
 
 ## Best Practices
 
-- **Pin a branch or tag**  -  Use `user/repo@v1.0` or a specific branch to avoid unexpected changes.
-- **Test locally first**  -  Use a local path during development before publishing.
-- **Handle errors gracefully**  -  Your provider methods should throw clear errors so Orchestrator can
+- **Pin a branch or tag** - Use `user/repo@v1.0` or a specific branch to avoid unexpected changes.
+- **Test locally first** - Use a local path during development before publishing.
+- **Handle errors gracefully** - Your provider methods should throw clear errors so Orchestrator can
   log them and fall back if needed.
-- **Keep it lightweight**  -  The provider module is loaded at runtime. Minimize dependencies to keep
+- **Keep it lightweight** - The provider module is loaded at runtime. Minimize dependencies to keep
   startup fast.

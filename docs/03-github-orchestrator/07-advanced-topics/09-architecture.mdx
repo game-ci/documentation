@@ -1,6 +1,6 @@
 # Architecture
 
-This page describes the internal architecture of Orchestrator  -  how the components fit together, how
+This page describes the internal architecture of Orchestrator - how the components fit together, how
 a build flows through the system, and where to look in the source code.
 
 ```
@@ -55,26 +55,26 @@ A standard Orchestrator build follows these steps:
 
 ### Step-by-Step
 
-1. **Initialize**  -  `Orchestrator.setup()` parses inputs from GitHub Action `with`, CLI flags, or
+1. **Initialize** - `Orchestrator.setup()` parses inputs from GitHub Action `with`, CLI flags, or
    environment variables. It selects a provider, generates a unique build GUID, and optionally
    creates a GitHub Check.
 
-2. **Setup Provider**  -  `Provider.setupWorkflow()` provisions cloud resources. For AWS this means
+2. **Setup Provider** - `Provider.setupWorkflow()` provisions cloud resources. For AWS this means
    creating a CloudFormation base stack (ECS cluster, S3 bucket, Kinesis stream). For Kubernetes it
    creates a service account. Local providers skip this step.
 
-3. **Acquire Workspace**  -  If `maxRetainedWorkspaces` is set, `SharedWorkspaceLocking` acquires a
+3. **Acquire Workspace** - If `maxRetainedWorkspaces` is set, `SharedWorkspaceLocking` acquires a
    distributed lock on a workspace via S3 or rclone. If all workspaces are locked, the build falls
    back to standard caching.
 
-4. **Build**  -  The workflow composition root selects a workflow (standard, async, or custom job).
+4. **Build** - The workflow composition root selects a workflow (standard, async, or custom job).
    The standard workflow clones your repo, restores caches, runs the Unity build, and executes
    pre/post container hooks.
 
-5. **Post-Build**  -  `remote-cli-post-build` archives the Unity Library folder and build output,
+5. **Post-Build** - `remote-cli-post-build` archives the Unity Library folder and build output,
    pushes them to cloud storage, and runs any post-build hooks.
 
-6. **Cleanup**  -  The workspace lock is released, cloud resources are torn down
+6. **Cleanup** - The workspace lock is released, cloud resources are torn down
    (`Provider.cleanupWorkflow()`), and the GitHub Check is updated with the final result.
 
 ## Core Components
@@ -83,10 +83,10 @@ A standard Orchestrator build follows these steps:
 
 The static `Orchestrator` class is the central coordinator. It holds:
 
-- `Provider`  -  the selected provider implementation
-- `buildParameters`  -  all resolved configuration
-- `buildGuid`  -  unique identifier for this build
-- `lockedWorkspace`  -  retained workspace name (if any)
+- `Provider` - the selected provider implementation
+- `buildParameters` - all resolved configuration
+- `buildGuid` - unique identifier for this build
+- `lockedWorkspace` - retained workspace name (if any)
 
 `Orchestrator.run()` is the main entry point that drives the full lifecycle. Provider selection
 happens in `setupSelectedBuildPlatform()`, which handles LocalStack detection, `AWS_FORCE_PROVIDER`
@@ -180,10 +180,10 @@ Action returns immediately. Progress is reported via
 
 Orchestrator has two hook mechanisms:
 
-**Command Hooks**  -  Shell commands injected before or after the setup and build steps. Defined via
+**Command Hooks** - Shell commands injected before or after the setup and build steps. Defined via
 the `customCommandHooks` YAML parameter or as files in `.game-ci/command-hooks/`.
 
-**Container Hooks**  -  Separate Docker containers that run before or after the build. Defined via
+**Container Hooks** - Separate Docker containers that run before or after the build. Defined via
 `containerHookFiles` (built-in names like `aws-s3-upload-build`) or `preBuildSteps` /
 `postBuildSteps` YAML. Each hook specifies an image, commands, and optional secrets.
 
@@ -215,19 +215,19 @@ The `OrchestratorOptions` class handles this resolution. Environment variables a
 The remote client runs **inside** the build container (not on the CI runner). It provides two CLI
 modes:
 
-- **`remote-cli-pre-build`**  -  Called before the Unity build. Handles git clone, LFS pull, cache
+- **`remote-cli-pre-build`** - Called before the Unity build. Handles git clone, LFS pull, cache
   restoration, retained workspace setup, large package optimization, and custom hook execution.
-- **`remote-cli-post-build`**  -  Called after the Unity build. Pushes the Library and build caches to
+- **`remote-cli-post-build`** - Called after the Unity build. Pushes the Library and build caches to
   cloud storage.
 
 ### GitHub Integration
 
 The `GitHub` class manages GitHub Checks and async workflow dispatch:
 
-- **`createGitHubCheck()`**  -  Creates a check run on the commit via the GitHub API.
-- **`updateGitHubCheck()`**  -  Updates check status. In async environments, updates are routed
+- **`createGitHubCheck()`** - Creates a check run on the commit via the GitHub API.
+- **`updateGitHubCheck()`** - Updates check status. In async environments, updates are routed
   through the `Async Checks API` workflow (since containers can't call the Checks API directly).
-- **`runUpdateAsyncChecksWorkflow()`**  -  Triggers a GitHub Actions workflow that updates the check
+- **`runUpdateAsyncChecksWorkflow()`** - Triggers a GitHub Actions workflow that updates the check
   run on behalf of the container.
 
 ### Caching and Storage
@@ -235,8 +235,8 @@ The `GitHub` class manages GitHub Checks and async workflow dispatch:
 Caching is split between the remote client (push/pull logic) and the storage provider (S3 or
 rclone):
 
-- **Standard caching**  -  Archives the `Library/` folder and LFS files as `.tar.lz4` archives.
-- **Retained workspaces**  -  Keeps the entire project folder. Uses distributed locking via S3 or
+- **Standard caching** - Archives the `Library/` folder and LFS files as `.tar.lz4` archives.
+- **Retained workspaces** - Keeps the entire project folder. Uses distributed locking via S3 or
   rclone to prevent concurrent access.
 
 See [Storage](storage) for the full breakdown of file categories, compression, and storage backends.

@@ -1,7 +1,7 @@
 # Azure ACI (Experimental)
 
 Run Unity builds as
-[Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)  - 
+[Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/) -
 serverless containers with configurable storage backends.
 
 :::caution Experimental This provider is experimental. APIs and behavior may change between
@@ -41,18 +41,18 @@ Set `azureStorageType` to control how the build accesses large files.
 
 ### When to use each type
 
-- **azure-files** (default)  -  Simplest persistent option. Works out of the box  -  auto-creates the
+- **azure-files** (default) - Simplest persistent option. Works out of the box - auto-creates the
   storage account and file share if they don't exist. SMB has some overhead from opportunistic
   locking but is reliable for most use cases.
 
-- **blob-copy**  -  Avoids mount overhead entirely. Copies everything before the build starts and
+- **blob-copy** - Avoids mount overhead entirely. Copies everything before the build starts and
   uploads after it finishes. Good when you only need artifact upload/download.
 
-- **azure-files-nfs**  -  Eliminates SMB lock overhead for better random I/O performance with Unity
+- **azure-files-nfs** - Eliminates SMB lock overhead for better random I/O performance with Unity
   Library files (thousands of small files). Requires **Premium FileStorage** (auto-created) and
   **VNet integration** via `azureSubnetId`.
 
-- **in-memory**  -  Fastest option (RAM-backed). Data is lost when the container stops. Size is
+- **in-memory** - Fastest option (RAM-backed). Data is lost when the container stops. Size is
   limited by the container's memory allocation. Use for temporary build artifacts.
 
 ## Inputs
@@ -69,11 +69,11 @@ Set `azureStorageType` to control how the build accesses large files.
 | `azureCpu`            | `4`                      | CPU cores (1–16)                                       |
 | `azureMemoryGb`       | `16`                     | Memory in GB (1–16)                                    |
 | `azureDiskSizeGb`     | `100`                    | File share quota in GB                                 |
-| `azureSubnetId`       |  -                         | Subnet ID for VNet (required for `azure-files-nfs`)    |
+| `azureSubnetId`       | -                        | Subnet ID for VNet (required for `azure-files-nfs`)    |
 
 ## Examples
 
-### Azure Files  -  SMB mount (default)
+### Azure Files - SMB mount (default)
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -84,7 +84,7 @@ Set `azureStorageType` to control how the build accesses large files.
     targetPlatform: StandaloneLinux64
 ```
 
-### NFS  -  better POSIX performance
+### NFS - better POSIX performance
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -97,7 +97,7 @@ Set `azureStorageType` to control how the build accesses large files.
     targetPlatform: StandaloneLinux64
 ```
 
-### Blob copy  -  simple artifact upload/download
+### Blob copy - simple artifact upload/download
 
 ```yaml
 - uses: game-ci/unity-builder@v4
@@ -112,6 +112,6 @@ Set `azureStorageType` to control how the build accesses large files.
 
 ## Related
 
-- [GCP Cloud Run](gcp-cloud-run)  -  Google Cloud Run Jobs provider
-- [Custom Providers](custom-providers)  -  TypeScript provider plugins
-- [CLI Provider Protocol](cli-provider-protocol)  -  Write providers in any language
+- [GCP Cloud Run](gcp-cloud-run) - Google Cloud Run Jobs provider
+- [Custom Providers](custom-providers) - TypeScript provider plugins
+- [CLI Provider Protocol](cli-provider-protocol) - Write providers in any language

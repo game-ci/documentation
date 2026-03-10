@@ -43,8 +43,8 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 | Parameter           | Default  | Description                                                         |
 | ------------------- | -------- | ------------------------------------------------------------------- |
-| `gitPrivateToken`   |  -         | GitHub access token with repo access. Used for git clone and LFS.   |
-| `githubOwner`       |  -         | GitHub owner or organization name.                                  |
+| `gitPrivateToken`   | -        | GitHub access token with repo access. Used for git clone and LFS.   |
+| `githubOwner`       | -        | GitHub owner or organization name.                                  |
 | `GITHUB_REPOSITORY` | _(auto)_ | Repository in `owner/repo` format. Auto-detected in GitHub Actions. |
 | `GITHUB_REF`        | _(auto)_ | Git ref to build. Falls back to `branch` or `GitSHA` parameters.    |
 | `cloneDepth`        | `50`     | Depth of the git clone. Use `0` for a full clone.                   |
@@ -54,49 +54,49 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 | Parameter                 | Default | Description                                                                                              |
 | ------------------------- | ------- | -------------------------------------------------------------------------------------------------------- |
-| `containerHookFiles`      |  -        | Names of [container hook](advanced-topics/hooks/container-hooks) files from `.game-ci/container-hooks/`. |
-| `customHookFiles`         |  -        | Names of custom hook files from `.game-ci/hooks/`.                                                       |
-| `customCommandHooks`      |  -        | Inline [command hooks](advanced-topics/hooks/command-hooks) as YAML.                                     |
-| `postBuildSteps`          |  -        | Post-build job in YAML format with keys: `image`, `secrets`, `command`.                                  |
-| `preBuildSteps`           |  -        | Pre-build job (after repo setup, before build) in YAML format.                                           |
-| `postBuildContainerHooks` |  -        | Container hook files to run after the build step.                                                        |
-| `preBuildContainerHooks`  |  -        | Container hook files to run before the build step.                                                       |
-| `customJob`               |  -        | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/custom-job).    |
+| `containerHookFiles`      | -       | Names of [container hook](advanced-topics/hooks/container-hooks) files from `.game-ci/container-hooks/`. |
+| `customHookFiles`         | -       | Names of custom hook files from `.game-ci/hooks/`.                                                       |
+| `customCommandHooks`      | -       | Inline [command hooks](advanced-topics/hooks/command-hooks) as YAML.                                     |
+| `postBuildSteps`          | -       | Post-build job in YAML format with keys: `image`, `secrets`, `command`.                                  |
+| `preBuildSteps`           | -       | Pre-build job (after repo setup, before build) in YAML format.                                           |
+| `postBuildContainerHooks` | -       | Container hook files to run after the build step.                                                        |
+| `preBuildContainerHooks`  | -       | Container hook files to run before the build step.                                                       |
+| `customJob`               | -       | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/custom-job).    |
 
 ### Pull Secrets
 
 | Parameter                   | Default | Description                                                                                                                                                                                   |
 | --------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `readInputOverrideCommand`  |  -        | Command to read a parameter value from an external source. Use `{0}` as the parameter name placeholder. Built-in presets: `gcp-secret-manager`, `aws-secret-manager`. See [Secrets](secrets). |
-| `readInputFromOverrideList` |  -        | Comma-separated list of parameter names to pull via `readInputOverrideCommand`.                                                                                                               |
+| `readInputOverrideCommand`  | -       | Command to read a parameter value from an external source. Use `{0}` as the parameter name placeholder. Built-in presets: `gcp-secret-manager`, `aws-secret-manager`. See [Secrets](secrets). |
+| `readInputFromOverrideList` | -       | Comma-separated list of parameter names to pull via `readInputOverrideCommand`.                                                                                                               |
 
 ### Storage
 
 | Parameter         | Default | Description                                                                                            |
 | ----------------- | ------- | ------------------------------------------------------------------------------------------------------ |
 | `storageProvider` | `s3`    | Storage backend for [caching](advanced-topics/caching) and artifacts. Accepted values: `s3`, `rclone`. |
-| `rcloneRemote`    |  -        | Rclone remote endpoint. Required when `storageProvider` is `rclone`.                                   |
+| `rcloneRemote`    | -       | Rclone remote endpoint. Required when `storageProvider` is `rclone`.                                   |
 
 ### AWS
 
 | Parameter                   | Default   | Description                                                    |
 | --------------------------- | --------- | -------------------------------------------------------------- |
 | `awsStackName`              | `game-ci` | Name of the persistent shared CloudFormation base stack.       |
-| `awsEndpoint`               |  -          | Base endpoint override for all AWS services (e.g. LocalStack). |
-| `awsCloudFormationEndpoint` |  -          | CloudFormation service endpoint override.                      |
-| `awsEcsEndpoint`            |  -          | ECS service endpoint override.                                 |
-| `awsKinesisEndpoint`        |  -          | Kinesis service endpoint override.                             |
-| `awsCloudWatchLogsEndpoint` |  -          | CloudWatch Logs service endpoint override.                     |
-| `awsS3Endpoint`             |  -          | S3 service endpoint override.                                  |
+| `awsEndpoint`               | -         | Base endpoint override for all AWS services (e.g. LocalStack). |
+| `awsCloudFormationEndpoint` | -         | CloudFormation service endpoint override.                      |
+| `awsEcsEndpoint`            | -         | ECS service endpoint override.                                 |
+| `awsKinesisEndpoint`        | -         | Kinesis service endpoint override.                             |
+| `awsCloudWatchLogsEndpoint` | -         | CloudWatch Logs service endpoint override.                     |
+| `awsS3Endpoint`             | -         | S3 service endpoint override.                                  |
 
 ### Kubernetes
 
 | Parameter          | Default | Description                                                             |
 | ------------------ | ------- | ----------------------------------------------------------------------- |
-| `kubeConfig`       |  -        | Base64-encoded Kubernetes config file.                                  |
-| `kubeVolume`       |  -        | Name of the persistent volume claim to use.                             |
+| `kubeConfig`       | -       | Base64-encoded Kubernetes config file.                                  |
+| `kubeVolume`       | -       | Name of the persistent volume claim to use.                             |
 | `kubeVolumeSize`   | `5Gi`   | Size of the persistent volume.                                          |
-| `kubeStorageClass` |  -        | Storage class for the persistent volume. Empty = auto-install via rook. |
+| `kubeStorageClass` | -       | Storage class for the persistent volume. Empty = auto-install via rook. |
 
 ### Caching
 
@@ -110,7 +110,7 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 | Parameter           | Default | Description                                                                                               |
 | ------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
 | `githubCheck`       | `false` | Create a GitHub Check for each orchestrator step. See [GitHub Integration](providers/github-integration). |
-| `asyncOrchestrator` | `false` | Run in async mode  -  returns immediately without waiting for the build to complete.                        |
+| `asyncOrchestrator` | `false` | Run in async mode - returns immediately without waiting for the build to complete.                        |
 | `watchToEnd`        | `true`  | Whether to follow the build logs until completion.                                                        |
 
 ### Build Options

@@ -11,7 +11,7 @@ traditional caching. Changes come from git deltas, direct input, or generic stor
 
 Traditional caching archives the Library folder, pushes to storage, pulls on next build, and
 extracts. Even with cache hits, this takes minutes. The incremental sync protocol eliminates caching
-entirely for warm environments  -  instead of "restore the world," it says "here's what changed."
+entirely for warm environments - instead of "restore the world," it says "here's what changed."
 
 ## Sync Strategies
 
@@ -51,7 +51,7 @@ Trigger jobs **without pushing to git**. Changes are passed as input:
     syncInputRef: storage://my-remote/inputs/changes.tar.lz4
 ```
 
-For small changes, content can be inline. For large inputs, content is pulled from generic storage  - 
+For small changes, content can be inline. For large inputs, content is pulled from generic storage -
 backed by rclone, so **any storage provider works**: S3, GCS, Azure Blob, local filesystem, WebDAV,
 SFTP, and dozens more.
 
@@ -78,7 +78,7 @@ The protocol:
 4. Executes the build/test
 5. Optionally reverts the overlay after completion
 
-Users don't need git push access to trigger builds  -  just write access to the storage backend.
+Users don't need git push access to trigger builds - just write access to the storage backend.
 
 ### Why rclone?
 
@@ -101,9 +101,9 @@ that works with any provider:
 
 | Provider                | Sync Strategy  | How It Works                                |
 | ----------------------- | -------------- | ------------------------------------------- |
-| Hot runner (persistent) | `git-delta`    | Fastest  -  warm editor, minimal changes      |
+| Hot runner (persistent) | `git-delta`    | Fastest - warm editor, minimal changes      |
 | Hot runner (persistent) | `direct-input` | No-push iteration                           |
-| Retained workspace      | `git-delta`    | Fast  -  workspace persists, no editor warmth |
+| Retained workspace      | `git-delta`    | Fast - workspace persists, no editor warmth |
 | Cold container          | `storage-pull` | Pull overlay, apply to fresh clone          |
 
 Hot runners + incremental sync = fastest possible iteration cycle.

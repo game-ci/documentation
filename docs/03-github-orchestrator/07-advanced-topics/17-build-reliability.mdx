@@ -6,7 +6,7 @@ sidebar_position: 17
 
 Build reliability features harden CI builds against common failure modes: git corruption on
 persistent runners, Windows filesystem issues with cross-platform repositories, and build output
-management. All features are opt-in via action inputs and fail gracefully  -  a reliability check that
+management. All features are opt-in via action inputs and fail gracefully - a reliability check that
 encounters an error logs a warning rather than failing the build.
 
 ## Git Integrity Checking
@@ -21,16 +21,16 @@ Git integrity checking catches corruption before it causes build failures.
 
 The integrity check runs three validations in sequence:
 
-1. **`git fsck --no-dangling`**  -  Detects broken links, missing objects, and corrupt pack data in
+1. **`git fsck --no-dangling`** - Detects broken links, missing objects, and corrupt pack data in
    the local repository. The `--no-dangling` flag suppresses harmless warnings about unreachable
    objects that are normal in CI environments.
 
-2. **Stale lock files**  -  Scans the `.git/` directory recursively for any files ending in `.lock`
+2. **Stale lock files** - Scans the `.git/` directory recursively for any files ending in `.lock`
    (`index.lock`, `shallow.lock`, `config.lock`, `HEAD.lock`, `refs/**/*.lock`). These are left
    behind by git processes that were killed mid-operation and prevent subsequent git commands from
    running. All lock files found are removed.
 
-3. **Submodule backing stores**  -  For each submodule declared in `.gitmodules`, validates that the
+3. **Submodule backing stores** - For each submodule declared in `.gitmodules`, validates that the
    `.git` file inside the submodule directory points to an existing backing store under
    `.git/modules/`. A broken backing store reference means the submodule's history is inaccessible,
    and any git operation inside it will fail.
@@ -83,7 +83,7 @@ these names, checking them out on Windows causes problems.
 ### The Problem
 
 Unity is particularly sensitive to reserved filenames. When the asset importer encounters a file
-named `aux.meta`, `nul.png`, or similar, it can enter an infinite reimport loop  -  detecting the
+named `aux.meta`, `nul.png`, or similar, it can enter an infinite reimport loop - detecting the
 file, failing to process it, detecting it again. This manifests as:
 
 - Unity hanging during asset import with no progress
@@ -134,7 +134,7 @@ managed with a count-based retention policy.
 
 1. After a successful build, the build output directory is moved (or copied, if a cross-device move
    is not possible) to `{archivePath}/{platform}/build-{timestamp}`.
-2. Archives are organized by platform  -  each target platform gets its own subdirectory.
+2. Archives are organized by platform - each target platform gets its own subdirectory.
 3. The retention policy keeps the N most recent builds per platform. Older builds are automatically
    removed.
 
@@ -168,7 +168,7 @@ archives are removed.
 
 The reliability service configures a git environment variable automatically:
 
-- `GIT_CONFIG_NOSYSTEM=1`  -  Bypasses the system-level git configuration file. This prevents
+- `GIT_CONFIG_NOSYSTEM=1` - Bypasses the system-level git configuration file. This prevents
   corrupted or misconfigured system git configs on self-hosted runners from affecting builds.
 
 This is applied automatically and does not require any configuration.
