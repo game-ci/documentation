@@ -2,76 +2,101 @@
 
 ## What Does Orchestrator Do?
 
-**Orchestrator runs Unity builds on cloud infrastructure.** Start jobs from GitHub Actions, the
-command line, or any CI system. Orchestrator provisions a cloud environment, sends your project to
-be built, and streams results back.
+**Orchestrator is an advanced build layer on top of
+[Game CI unity-builder](../docker/01-getting-started.mdx).** It dispatches Unity builds to cloud
+infrastructure, self-hosted runners, or local Docker containers instead of running them directly on
+your CI runner. Start jobs from GitHub Actions, the command line, or any CI system. Orchestrator
+provisions the environment, syncs your project, runs the build, and streams results back.
 
 ```mermaid
 flowchart LR
-  subgraph local["Your Machine / CI"]
-    A["GitHub Actions\nGitLab CI\nCLI, etc."]
+  subgraph trigger["Trigger"]
+    A["GitHub Actions\nGitLab CI\nCLI"]
   end
-  subgraph cloud["Cloud Provider"]
-    B["AWS Fargate\nKubernetes\nLocal Docker"]
+  subgraph orchestrator["Orchestrator"]
+    B["Provision\nSync\nCache\nBuild\nCleanup"]
   end
-  A -- "git push" --> B
-  B -- "build artifacts" --> A
-
-  subgraph handles["Orchestrator handles"]
-    direction TB
-    C["Provisioning"]
-    D["Git sync + LFS"]
-    E["Caching (S3 / rclone)"]
-    F["Automatic cleanup"]
+  subgraph target["Build Target"]
+    C["AWS Fargate\nKubernetes\nLocal Docker\nSelf-Hosted"]
   end
+  A --> B --> C
+  C -- "artifacts + logs" --> A
 ```
-
-Orchestrator supports large projects with first-class Unity support and native cloud services like
-AWS Fargate and Kubernetes.
 
 :::info Standalone Package
 
 The orchestrator is available as a standalone package
 [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator). When installed, unity-builder
-automatically detects and loads it via the plugin interface.
+automatically detects and loads it via the plugin interface. It can also be used independently from
+the command line.
 
 :::
 
-## ✅ Why Orchestrator?
+## Why Orchestrator?
 
-1. **Flexible and elastic** - balance speed and cost, configure CPU, memory, and disk per build
-2. **Scale from zero** - no idle servers, pay only while builds run
-3. **Easy setup** - minimal configuration to [get started](getting-started)
-4. **Extensible** - run [custom hooks](advanced-topics/hooks/container-hooks), or bring your own
-   [provider plugin](providers/custom-providers)
+Orchestrator benefits projects of any size. Even small projects gain access to configurable
+resources, caching, and cost-efficient scaling. Larger projects get retained workspaces, automatic
+failover, and multi-provider load balancing.
 
-## ❌ When You Don't Need It
+| Benefit                    | What it means                                                                                                                    |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Configurable resources** | Set CPU, memory, and disk per build instead of accepting CI runner defaults                                                      |
+| **Scale from zero**        | No idle servers. Cloud providers provision on demand and tear down when done                                                     |
+| **Retained workspaces**    | Cache the entire project folder across builds for faster rebuilds on large projects                                              |
+| **Automatic caching**      | Unity Library, LFS objects, and build output cached to S3 or 70+ backends via rclone                                             |
+| **Provider failover**      | Automatically route to a fallback provider when the primary is unavailable or overloaded                                         |
+| **Extensible**             | Run [custom hooks](advanced-topics/hooks/container-hooks), middleware, or your own [provider plugin](providers/custom-providers) |
+| **Self-hosted friendly**   | Complements self-hosted runners with automatic fallback, load balancing, and runner availability checks                          |
 
-- Your project is under 5 GB - standard GitHub runners should work fine
-- You have dedicated build servers already running
+## When You Might Not Need It
 
-## 📦 Supported Providers
+- Your project fits comfortably on standard GitHub runners and you don't need caching, hooks, or
+  custom resources
+- You already have a fully managed build pipeline that meets your needs
 
-| Cloud Provider                         | Description                                              |
+See [Standard Game-CI vs Orchestrator](game-ci-vs-orchestrator) for a detailed comparison.
+
+## What Orchestrator Handles
+
+Orchestrator manages the full build lifecycle so you don't have to script it yourself:
+
+- **Provisioning** - creates cloud resources (CloudFormation stacks, Kubernetes jobs, Docker
+  containers) and tears them down after the build
+- **Git sync** - clones your repo with configurable depth, pulls LFS objects, initializes
+  submodules, and handles SSH/HTTP auth
+- **Caching** - persists the Unity Library folder, LFS objects, and build output across builds using
+  S3 or rclone
+- **Hooks** - inject custom containers or shell commands at any point in the build lifecycle with
+  phase, provider, and platform filtering
+- **Secrets** - pulls secrets from AWS Secrets Manager, GCP Secret Manager, Azure Key Vault, or
+  HashiCorp Vault and injects them as environment variables
+- **Logging** - streams structured build logs in real-time via Kinesis (AWS), kubectl (K8s), or
+  stdout (local)
+- **Cleanup** - removes cloud resources, temporary files, and expired caches automatically
+
+## Supported Providers
+
+| Provider                               | Description                                              |
 | -------------------------------------- | -------------------------------------------------------- |
 | [AWS Fargate](providers/aws)           | Fully managed containers on AWS. No servers to maintain. |
 | [Kubernetes](providers/kubernetes)     | Run on any Kubernetes cluster.                           |
 | [Local Docker](providers/local-docker) | Docker containers on the local machine.                  |
 | [Local](providers/local)               | Direct execution on the host machine.                    |
 
-See [Providers](providers/overview) for the full list including [custom](providers/custom-providers)
-and [community](providers/community-providers) providers.
+See [Providers](providers/overview) for the full list including
+[GCP Cloud Run](providers/gcp-cloud-run), [Azure ACI](providers/azure-aci),
+[custom](providers/custom-providers), and [community](providers/community-providers) providers.
 
-## 🖥️ Supported Platforms
+## Supported Platforms
 
 | Platform                                       | Description                           |
 | ---------------------------------------------- | ------------------------------------- |
-| [GitHub Actions](providers/github-integration) | First-class support with Checks.      |
-| [GitLab CI](providers/gitlab-integration)      | Via the Command Line mode.            |
+| [GitHub Actions](providers/github-integration) | First-class support with Checks API.  |
+| [GitLab CI](providers/gitlab-integration)      | Via the command line mode.            |
 | [Command Line](examples/command-line)          | Run from any terminal or script.      |
 | Any CI system                                  | Anything that can run shell commands. |
 
-## 🔗 External Links
+## External Links
 
 - [Orchestrator Repository](https://github.com/game-ci/orchestrator) - standalone orchestrator
   package
