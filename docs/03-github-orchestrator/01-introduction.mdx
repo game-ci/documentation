@@ -24,12 +24,11 @@ flowchart LR
   C -- "artifacts + logs" --> A
 ```
 
-:::info Standalone Package
+:::info Built-in and Standalone
 
-The orchestrator is available as a standalone package
-[`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator). When installed, unity-builder
-automatically detects and loads it via the plugin interface. It can also be used independently from
-the command line.
+The orchestrator is built into [`game-ci/unity-builder`](https://github.com/game-ci/unity-builder)
+and activates automatically when you set `providerStrategy`. It is also available as a
+[standalone CLI](https://github.com/game-ci/orchestrator) for use outside GitHub Actions.
 
 :::
 

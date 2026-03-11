@@ -1,33 +1,24 @@
 # Getting Started
 
-Orchestrator lets you run Unity builds on remote cloud infrastructure instead of GitHub-hosted
-runners. This is useful for large projects that exceed GitHub's disk or resource limits.
-
-The orchestrator is distributed as a standalone package
-([`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator)). It can be used from GitHub
-Actions (via `game-ci/unity-builder`) or directly from the command line.
+Orchestrator lets you run Unity builds on cloud infrastructure, self-hosted runners, or local Docker
+containers. It works as a built-in plugin for `game-ci/unity-builder` in GitHub Actions, or as a
+standalone CLI tool.
 
 ## Prerequisites
 
 - A Unity project
-- A cloud provider account (AWS or a Kubernetes cluster)
+- A cloud provider account (AWS or a Kubernetes cluster) or Docker installed locally
 - Provider credentials (as GitHub secrets or environment variables)
 
 ## GitHub Actions
 
-### 1. Install the orchestrator
+When you set `providerStrategy` in `game-ci/unity-builder`, the orchestrator activates
+automatically. No separate install step is needed.
 
-Add a step before `unity-builder` to install the orchestrator package:
-
-```yaml
-- name: Install orchestrator
-  run: npm install -g @game-ci/orchestrator
-```
-
-### 2. Run the build
+### Basic example
 
 ```yaml
-- uses: game-ci/unity-builder@main
+- uses: game-ci/unity-builder@v4
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -46,10 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install orchestrator
-        run: npm install -g @game-ci/orchestrator
-
-      - uses: game-ci/unity-builder@main
+      - uses: game-ci/unity-builder@v4
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -97,6 +85,8 @@ See the [CLI documentation](cli/getting-started) for full details.
 | [AWS Fargate](providers/aws)           | Fully managed, no servers    |
 | [Kubernetes](providers/kubernetes)     | Existing K8s clusters        |
 | [Local Docker](providers/local-docker) | Testing locally before cloud |
+
+See [Providers](providers/overview) for the full list.
 
 ## Next Steps
 

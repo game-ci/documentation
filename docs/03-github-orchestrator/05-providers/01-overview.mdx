@@ -29,6 +29,25 @@ Each provider has its own page with setup instructions:
 - [Local Docker](local-docker)
 - [Local](local)
 
+## Dispatch Providers
+
+Route builds to external CI systems instead of running them directly.
+
+- [GitHub Actions Dispatch](github-actions-dispatch) - trigger a GitHub Actions workflow
+- [GitLab CI Dispatch](gitlab-ci-dispatch) - trigger a GitLab CI pipeline
+
+## Experimental Providers
+
+These providers are under active development. APIs and behavior may change between releases.
+
+- [GCP Cloud Run](gcp-cloud-run) - serverless containers on Google Cloud
+- [Azure ACI](azure-aci) - serverless containers on Azure
+
+## Additional Providers
+
+- [Ansible](ansible) - provision and run builds via Ansible playbooks
+- [Remote PowerShell](remote-powershell) - execute builds on remote Windows machines
+
 ## Custom Providers
 
 Extend Orchestrator with your own provider by pointing `providerStrategy` at a GitHub repository,
