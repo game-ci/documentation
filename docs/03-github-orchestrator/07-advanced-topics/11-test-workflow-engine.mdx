@@ -34,7 +34,7 @@ runs:
     editMode: true
     playMode: true
     filters:
-      Maturity: Trusted,Adolescent
+      Maturity: Trusted,Stable
       Scope: Unit,Integration,System
     timeout: 600
 
@@ -72,12 +72,15 @@ runs:
 Tests are categorized by multi-dimensional taxonomy metadata. Filters select tests by matching
 against these dimensions:
 
-### Built-in Dimensions
+### Example Dimensions
+
+The dimensions below are provided as a starting point. Projects can rename, remove, or replace
+any of these, and add entirely new dimensions — the taxonomy system is fully extensible.
 
 | Dimension      | Values                                | Description                   |
 | -------------- | ------------------------------------- | ----------------------------- |
 | Scope          | Unit, Integration, System, End To End | Test boundary                 |
-| Maturity       | Trusted, Adolescent, Experimental     | Test reliability              |
+| Maturity       | Trusted, Stable, Experimental     | Test reliability              |
 | FeedbackSpeed  | Fast, Moderate, Slow                  | Expected execution time       |
 | Execution      | Synchronous, Asynchronous, Coroutine  | Execution model               |
 | Rigor          | Strict, Normal, Relaxed               | Assertion strictness          |
@@ -91,13 +94,14 @@ Filters accept comma-separated values, regex patterns, and hierarchical dot-nota
 ```yaml
 filters:
   Scope: Unit,Integration # Match any of these values
-  Maturity: /Trusted|Adolescent/ # Regex pattern
+  Maturity: /Trusted|Stable/ # Regex pattern
   Domain: Combat.Melee # Hierarchical match
 ```
 
-### Custom Dimensions
+### Defining Your Own Dimensions
 
-Projects can define additional taxonomy dimensions via a taxonomy definition file:
+Projects can define their own taxonomy dimensions (or override the examples above) via a
+taxonomy definition file:
 
 ```yaml
 # .game-ci/taxonomy.yml
