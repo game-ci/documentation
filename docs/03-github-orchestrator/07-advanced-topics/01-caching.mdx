@@ -16,8 +16,9 @@ flowchart LR
 
 ## Standard Caching
 
-Caches only the Unity **Library** folder and **LFS** files between builds. Uses less storage but
-requires re-importing unchanged assets.
+Caches the engine's asset folders and **LFS** files between builds. For Unity this is the `Library`
+folder. For other engines, the cached folders are defined by the [engine plugin](engine-plugins)
+(e.g. `.godot/imported` for Godot). Uses less storage but requires re-importing unchanged assets.
 
 - ✅ Minimum storage cost
 - ✅ Best for smaller projects

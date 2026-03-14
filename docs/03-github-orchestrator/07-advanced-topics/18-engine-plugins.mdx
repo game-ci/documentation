@@ -1,0 +1,203 @@
+---
+sidebar_position: 18
+---
+
+# Engine Plugins
+
+Orchestrator is game-engine agnostic. While Unity is the built-in default, you can plug in any game
+engine — Godot, Unreal, a custom engine, or anything else — without forking the orchestrator.
+
+An **engine plugin** tells the orchestrator how to handle engine-specific concerns like cache
+folders and container lifecycle hooks. Everything else (provisioning, git sync, logging, hooks,
+secrets) works the same regardless of engine.
+
+## How It Works
+
+The orchestrator only needs to know two things about your engine:
+
+1. **Which folders to cache** between builds (e.g. `Library` for Unity, `.godot/imported` for Godot)
+2. **What to run on container shutdown** (e.g. Unity needs to return its license)
+
+That's the entire `EnginePlugin` interface:
+
+```typescript
+interface EnginePlugin {
+  name: string; // 'unity', 'godot', 'unreal', etc.
+  cacheFolders: string[]; // folders to cache, relative to project root
+  preStopCommand?: string; // shell command for container shutdown (optional)
+}
+```
+
+## Built-in: Unity
+
+Unity is the default engine plugin. When you don't specify `--engine` or `--engine-plugin`, the
+orchestrator behaves exactly as it always has — caching the `Library` folder and returning the Unity
+license on container shutdown.
+
+No configuration needed. Existing workflows are unchanged.
+
+## Using a Different Engine
+
+Set `engine` and `enginePlugin` to load a community or custom engine plugin:
+
+```yaml
+# GitHub Actions
+- uses: game-ci/unity-builder@v4
+  with:
+    engine: godot
+    enginePlugin: '@game-ci/godot-engine'
+    targetPlatform: StandaloneLinux64
+```
+
+```bash
+# CLI
+game-ci build \
+  --engine godot \
+  --engine-plugin @game-ci/godot-engine \
+  --target-platform linux
+```
+
+## Plugin Sources
+
+Engine plugins can be loaded from three sources:
+
+| Source             | Format                     | Example                                   |
+| ------------------ | -------------------------- | ----------------------------------------- |
+| **NPM module**     | Package name or local path | `@game-ci/godot-engine`, `./my-plugin.js` |
+| **CLI executable** | `cli:<path>`               | `cli:/usr/local/bin/my-engine-plugin`     |
+| **Docker image**   | `docker:<image>`           | `docker:gameci/godot-engine-plugin`       |
+
+When no prefix is specified, the plugin is loaded as an NPM module.
+
+### NPM Module
+
+The simplest way to distribute an engine plugin. Publish an NPM package that exports an
+`EnginePlugin` object:
+
+```typescript
+// index.ts
+export default {
+  name: 'godot',
+  cacheFolders: ['.godot/imported', '.godot/shader_cache'],
+};
+```
+
+Supports default export, named `plugin` export, or `module.exports`:
+
+```javascript
+// CommonJS
+module.exports = {
+  name: 'godot',
+  cacheFolders: ['.godot/imported'],
+};
+```
+
+Install the package in your project, then reference it:
+
+```yaml
+enginePlugin: '@your-org/godot-engine'
+```
+
+Or point to a local file during development:
+
+```yaml
+enginePlugin: './my-engine-plugin.js'
+```
+
+### CLI Executable
+
+For plugins written in any language (Go, Python, Rust, shell, etc.). The executable receives a
+`get-engine-config` argument and must print a JSON config on stdout:
+
+```bash
+$ my-engine-plugin get-engine-config
+{"name": "godot", "cacheFolders": [".godot/imported"], "preStopCommand": ""}
+```
+
+Reference it with the `cli:` prefix:
+
+```yaml
+enginePlugin: 'cli:/usr/local/bin/my-engine-plugin'
+```
+
+### Docker Image
+
+For containerized plugin distribution. The image is run with
+`docker run --rm <image> get-engine-config` and must print JSON config on stdout:
+
+```dockerfile
+FROM alpine
+COPY config.json /config.json
+ENTRYPOINT ["sh", "-c", "cat /config.json"]
+```
+
+Reference it with the `docker:` prefix:
+
+```yaml
+enginePlugin: 'docker:your-org/godot-engine-plugin'
+```
+
+## Writing an Engine Plugin
+
+To create a plugin for your engine, you need to answer two questions:
+
+1. **What folders should be cached?** These are directories that take a long time to regenerate but
+   don't change between builds. For Unity this is `Library`, for Godot it's `.godot/imported`.
+
+2. **Does your engine need cleanup on container shutdown?** Unity needs to return its license. Most
+   engines don't need anything here — just omit `preStopCommand`.
+
+### Example: Minimal Godot Plugin
+
+```typescript
+export default {
+  name: 'godot',
+  cacheFolders: ['.godot/imported', '.godot/shader_cache'],
+};
+```
+
+### Example: Engine with License Cleanup
+
+```typescript
+export default {
+  name: 'my-engine',
+  cacheFolders: ['Cache', 'Intermediate'],
+  preStopCommand: '/opt/my-engine/return-license.sh',
+};
+```
+
+## What the Plugin Controls
+
+The engine plugin **only** controls orchestrator-level behavior that varies by engine:
+
+| Behavior               | Controlled by plugin | Notes                                                 |
+| ---------------------- | -------------------- | ----------------------------------------------------- |
+| Cache folders          | Yes                  | Which project folders to persist between builds       |
+| Container preStop hook | Yes                  | Shell command run on K8s container shutdown           |
+| Docker image           | No                   | Passed by the caller via `customImage` or `baseImage` |
+| Build scripts          | No                   | Owned by the builder action (e.g. unity-builder)      |
+| Version detection      | No                   | Handled by the caller or builder action               |
+| License activation     | No                   | Handled by the builder action's entrypoint            |
+
+This keeps plugins minimal. A complete engine plugin is typically 3-5 lines of config.
+
+## Programmatic Usage
+
+If you're building a custom integration, you can use the engine plugin API directly:
+
+```typescript
+import { setEngine, getEngine, loadEngineFromModule } from '@game-ci/orchestrator';
+
+// Load from an NPM package
+const plugin = loadEngineFromModule('@game-ci/godot-engine');
+setEngine(plugin);
+
+// Or set inline
+setEngine({
+  name: 'godot',
+  cacheFolders: ['.godot/imported'],
+});
+
+// Check current engine
+console.log(getEngine().name); // 'godot'
+```

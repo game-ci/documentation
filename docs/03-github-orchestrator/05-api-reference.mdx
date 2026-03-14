@@ -39,6 +39,13 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 | `orchestratorBranch`   | `main`                  | Release branch of Orchestrator for remote containers. Use `orchestrator-develop` for latest development builds.                                                                   |
 | `orchestratorRepoName` | `game-ci/unity-builder` | Repository for Orchestrator source. Override to use a fork for testing or custom builds.                                                                                          |
 
+### Engine
+
+| Parameter      | Default | Description                                                                                                                                                |
+| -------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `engine`       | `unity` | Game engine name. Built-in: `unity`. Other engines require `enginePlugin`.                                                                                 |
+| `enginePlugin` | -       | Engine plugin source. NPM package, `cli:<path>`, or `docker:<image>`. See [Engine Plugins](advanced-topics/engine-plugins) for details and source formats. |
+
 ### Git Synchronization
 
 | Parameter           | Default  | Description                                                         |

@@ -46,6 +46,24 @@ game-ci build [options]
 | `--skip-activation`        | `false`   | Skip Unity license activation/deactivation                                                          |
 | `--unity-licensing-server` | _(empty)_ | Unity floating license server address                                                               |
 
+## Engine Options
+
+| Flag              | Default   | Description                                                                                                                    |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `--engine`        | `unity`   | Game engine name (`unity`, `godot`, `unreal`, etc.)                                                                            |
+| `--engine-plugin` | _(empty)_ | Engine plugin source: NPM package, `cli:<path>`, or `docker:<image>`. See [Engine Plugins](../advanced-topics/engine-plugins). |
+
+### Non-Unity Engine Example
+
+```bash
+game-ci build \
+  --engine godot \
+  --engine-plugin @game-ci/godot-engine \
+  --target-platform linux \
+  --custom-image my-godot-image:4.2 \
+  --provider-strategy aws
+```
+
 ## Custom Build Parameters
 
 Pass arbitrary parameters to the Unity build process:
