@@ -88,6 +88,8 @@ supply a valid authentication token and URL for your registry as an environment 
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
     UPM_REGISTRY_TOKEN: ${{ secrets.UPM_REGISTRY_TOKEN }}
+    # May be required by some hosts:
+    # UPM_REGISTRY_USER: myUser
   with:
     scopedRegistryUrl: https://example.com/registry
 ```
@@ -139,6 +141,8 @@ your Unity License.
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
     UPM_REGISTRY_TOKEN: ${{ secrets.UPM_REGISTRY_TOKEN }}
+    # May be required by some hosts:
+    # UPM_REGISTRY_USER: myUser
   with:
     scopedRegistryUrl: https://example.com/registry
     registryScopes: 'com.example'
