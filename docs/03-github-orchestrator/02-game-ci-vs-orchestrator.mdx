@@ -14,10 +14,10 @@ caching, hooks, or multi-provider routing.
 
 ## Orchestrator Mode
 
-Orchestrator is an advanced layer on top of Game CI. It takes whatever hardware you give it and
+Orchestrator is an advanced layer on top of Game CI. It takes whatever machines you give it and
 manages the full build lifecycle across it: provisioning, git sync, caching, hooks, and cleanup.
-Whether you're running on a cloud provider, a local machine, or your own servers, Orchestrator
-gives you the tools and flexibility to manage your workflows.
+Whether you're running on a cloud provider, a local machine, or your own servers, Orchestrator gives
+you the tools and flexibility to manage your workflows.
 
 Projects of any size can benefit from orchestrator features like configurable resources, automatic
 caching, and extensible hooks. Larger projects additionally benefit from retained workspaces,
@@ -30,7 +30,7 @@ flowchart LR
   end
   subgraph Orchestrator Mode
     GA["GitHub Action\nCLI / Any CI\n(dispatches only)\n\nConfigurable CPU, memory, disk\nScales to zero when idle"]
-    CC["Build Target\n(any hardware)"]
+    CC["Build Target\n(any machine)"]
     GA <--> CC
   end
 ```
