@@ -5,7 +5,7 @@ sidebar_position: 18
 # Engine Plugins
 
 Orchestrator is game-engine agnostic. While Unity is the built-in default, you can plug in any game
-engine — Godot, Unreal, a custom engine, or anything else — without forking the orchestrator.
+engine -Godot, Unreal, a custom engine, or anything else -without forking the orchestrator.
 
 An **engine plugin** tells the orchestrator how to handle engine-specific concerns like cache
 folders and container lifecycle hooks. Everything else (provisioning, git sync, logging, hooks,
@@ -31,7 +31,7 @@ interface EnginePlugin {
 ## Built-in: Unity
 
 Unity is the default engine plugin. When you don't specify `--engine` or `--engine-plugin`, the
-orchestrator behaves exactly as it always has — caching the `Library` folder and returning the Unity
+orchestrator behaves exactly as it always has -caching the `Library` folder and returning the Unity
 license on container shutdown.
 
 No configuration needed. Existing workflows are unchanged.
@@ -145,7 +145,7 @@ To create a plugin for your engine, you need to answer two questions:
    don't change between builds. For Unity this is `Library`, for Godot it's `.godot/imported`.
 
 2. **Does your engine need cleanup on container shutdown?** Unity needs to return its license. Most
-   engines don't need anything here — just omit `preStopCommand`.
+   engines don't need anything here -just omit `preStopCommand`.
 
 ### Example: Minimal Godot Plugin
 
