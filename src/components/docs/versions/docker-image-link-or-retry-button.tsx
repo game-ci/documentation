@@ -51,7 +51,7 @@ const DockerImageLinkOrRetryButton = ({ record }: Props) => {
       setRetryRequested(true);
       await notify.promise(retryBuild(), {
         loading: <Spinner type="spin" />,
-        success: (message) => message,
+        success: (response) => response.message,
         error: (error) => error.message,
       });
     } catch {
