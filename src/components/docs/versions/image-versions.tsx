@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SignInSignOutButton from '@site/src/components/auth/sign-in-sign-out-button';
+import CleanUpStuckBuildsButton from './clean-up-stuck-builds-button';
 import UnityVersions from './unity-versions';
 import styles from './unity-version.module.scss';
 
@@ -28,7 +29,10 @@ const ImageVersions = ({ versions }: Props) => {
             );
           })}
         </select>
-        <SignInSignOutButton style={{ float: 'right' }} />
+        <span style={{ float: 'right', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <CleanUpStuckBuildsButton />
+          <SignInSignOutButton />
+        </span>
       </div>
 
       <UnityVersions selectedRepoVersion={selectedVersion} />
