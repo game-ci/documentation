@@ -20,7 +20,7 @@ const CleanUpStuckBuildsButton = () => {
           const results = response.results || [];
           return results.length > 0 ? results.join('\n') : response.message;
         },
-        error: (err) => err.message || 'Cleanup failed',
+        error: (error) => error.message || 'Cleanup failed',
       });
     } finally {
       setRunning(false);
