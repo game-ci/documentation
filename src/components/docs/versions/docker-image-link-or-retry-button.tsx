@@ -36,7 +36,7 @@ interface Props {
 export { Record };
 
 const DockerImageLinkOrRetryButton = ({ record }: Props) => {
-  const { buildInfo, dockerInfo, buildId, relatedJobId, status } = record;
+  const { buildInfo, dockerInfo, buildId, relatedJobId, status, meta } = record;
   const { baseOs, editorVersion, targetPlatform, repoVersion } = buildInfo;
   const { imageRepo, imageName } = dockerInfo || {};
   const imageTag = `${baseOs}-${editorVersion}-${targetPlatform}-${repoVersion}`;
@@ -78,7 +78,7 @@ const DockerImageLinkOrRetryButton = ({ record }: Props) => {
     }
   };
 
-  const failureCount = record.meta?.failureCount || 0;
+  const failureCount = meta?.failureCount || 0;
   const isMaxedOut = failureCount >= 15;
   const buttonStyle = { padding: 0, border: 0, outline: 0, cursor: 'pointer' };
 
