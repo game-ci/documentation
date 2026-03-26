@@ -349,6 +349,55 @@ Here’s how to find and change the Lightmapper setting in Unity:
 Once the lightmapper is set to `Progressive CPU`, you should commit the changes to your project and
 re-run the pipeline to see if the error persists.
 
+### Container Overrides length must be at most 8192 (AWS)
+
+#### Error
+
+```plaintext
+Container Overrides length must be at most 8192
+```
+
+#### Explanation
+
+AWS ECS/Fargate imposes a hard 8192-byte limit on the `containerOverrides` JSON payload sent when
+starting a task. The orchestrator passes all build environment variables, secrets, and the build
+command in this payload. Workflows with many custom parameters, long file paths, base64-encoded
+values, or large numbers of secrets can exceed this limit.
+
+The main contributors to payload size are:
+
+- **Built-in environment variables** (~60+ variables set by the orchestrator for every build)
+- **Secrets passed as environment variables** (Unity license, serial, email, password, custom
+  secrets)
+- **The build command** (including any command hooks)
+
+#### Solution
+
+1. **Use secret pulling instead of inline secrets.** The orchestrator can fetch secrets at runtime
+   from your cloud provider's secret manager, keeping them out of the container override payload.
+   Set `secretSource` and `pullInputList` to move secrets to a pull-based model:
+
+   ```yaml
+   - uses: game-ci/unity-builder@v4
+     env:
+       pullInputList: UNITY_LICENSE,UNITY_SERIAL,UNITY_EMAIL,UNITY_PASSWORD
+       secretSource: aws-secrets-manager
+     with:
+       providerStrategy: aws
+       targetPlatform: StandaloneLinux64
+       gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+   ```
+
+   See [Secrets](/docs/github-orchestrator/secrets) for all available secret sources (AWS Secrets
+   Manager, AWS Parameter Store, GCP, Azure Key Vault, HashiCorp Vault).
+
+2. **Shorten custom environment variable values.** Long file paths, base64-encoded content, and
+   verbose custom parameters are common contributors. Where possible, store large values in a secret
+   manager and pull them at runtime.
+
+3. **Reduce the number of custom environment variables.** Each additional `env` variable in your
+   workflow adds to the payload. Only pass what the build actually needs.
+
 ## General tips
 
 These are tips that are usually applicable to problems you may encounter while working with a game
