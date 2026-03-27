@@ -31,8 +31,11 @@ export default function BuildRow({ children, build }: Props) {
     switch (status) {
       case 'started':
         return <Spinner type="slow" />;
-      case 'failed':
-        return <Tooltip content={build.failure?.reason}>{icon}</Tooltip>;
+      case 'failed': {
+        const failureCount = build.meta?.failureCount || 0;
+        const label = failureCount >= 15 ? `${icon} (${failureCount}/15)` : icon;
+        return <Tooltip content={build.failure?.reason}>{label}</Tooltip>;
+      }
       case 'published':
         return icon;
       default:
