@@ -300,6 +300,25 @@ This simple addition could speed up your test runs by more than 50%.
 Note that caching in this manner only applies to testing Unity **Projects**, not Unity **Packages**
 (see [Caveats](#caveats)).
 
+### Incremental build cache
+
+To further speed up consequent builds, you may want to cache the incremental build cache directory.
+
+Example:
+
+```yaml
+- uses: actions/cache@v3
+  with:
+    path: ~/work/_temp/_github_home/.cache/unity3d/bee
+    key: IncrementalBuildCache-MyProjectName-TargetPlatform
+    restore-keys: |
+      IncrementalBuildCache-MyProjectName-
+      IncrementalBuildCache-
+```
+
+On a Windows runner (e.g. if building for IL2CPP) this path is different, but the incremental build
+cache is automatically saved with the Library folder.
+
 ## Configuration options
 
 Below options can be specified under `with:` for the `unity-test-runner` action.
