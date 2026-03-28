@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SignInSignOutButton from '@site/src/components/auth/sign-in-sign-out-button';
 import CleanUpStuckBuildsButton from './clean-up-stuck-builds-button';
+import ResetAllFailedBuildsButton from './reset-all-failed-builds-button';
 import UnityVersions from './unity-versions';
 import styles from './unity-version.module.scss';
 
@@ -30,6 +31,7 @@ const ImageVersions = ({ versions }: Props) => {
           })}
         </select>
         <span style={{ float: 'right', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <ResetAllFailedBuildsButton />
           <CleanUpStuckBuildsButton />
           <SignInSignOutButton />
         </span>
