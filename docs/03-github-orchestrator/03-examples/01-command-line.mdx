@@ -1,49 +1,87 @@
 # Command Line
 
-_Preview Support Only_
+You can run orchestrator builds directly from your terminal - no GitHub Actions or CI platform
+required. All parameters in the [API Reference](../api-reference) can be specified as CLI flags.
 
-You can install Game CI locally and start orchestrator jobs from the command line or by integrating
-your own tools. All parameters in [API Reference](../api-reference) can be specified as command line
-input fields.
+## Install
 
-# Install
-
-Currently (development)
+### Linux / macOS
 
 ```bash
-git clone https://github.com/game-ci/unity-builder.git
-yarn install
-yarn run cli -m {mode parameter} --projectPath {Your project path} {... other command line parameters}
+curl -fsSL https://raw.githubusercontent.com/game-ci/orchestrator/main/install.sh | sh
 ```
 
-# Planned (does not work currently)
+### Windows (PowerShell)
 
-We plan to offer support for Game CI via Deno. This will enable fast, TypeScript native runtime, and
-you will be able to access this via the following:
+```powershell
+irm https://raw.githubusercontent.com/game-ci/orchestrator/main/install.ps1 | iex
+```
+
+Pre-built binaries for every platform are available on the
+[GitHub Releases](https://github.com/game-ci/orchestrator/releases) page.
+
+## Examples
+
+### Local build
 
 ```bash
-dpx game-ci build
+game-ci build \
+  --target-platform StandaloneLinux64
 ```
 
-# Help
-
-_You can run `yarn run cli -h` or `yarn run cli --help` to list all modes and paramters with
-descriptions_
-
-# Main Command Parameters
-
-- Default: `cli` (runs a standard build workflow)
-- See API Reference "Modes"
-
-# Keeping command line parameters short
-
-You can avoid specifying long command line input for credentials by using environment variables or
-[the input override feature](../advanced-topics/configuration-override#example) to shorten commands
-significantly.
-
-This enables you to provide a command to pull input, e.g. you can pull from a file or from a secret
-manager.
+### Cloud build (AWS)
 
 ```bash
-yarn run cli --populateOverride true --pullInputList UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD --inputPullCommand="gcloud secrets versions access 1 --secret=\"{0}\""
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --provider-strategy aws \
+  --git-private-token $GIT_TOKEN
 ```
+
+### Cloud build (Kubernetes)
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --provider-strategy k8s \
+  --git-private-token $GIT_TOKEN
+```
+
+### List active resources
+
+```bash
+game-ci list-resources --provider-strategy aws
+```
+
+### Watch a running build
+
+```bash
+game-ci watch --provider-strategy aws
+```
+
+### Clean up old resources
+
+```bash
+game-ci garbage-collect --provider-strategy aws
+```
+
+## Keeping Commands Short
+
+Avoid long CLI flags for credentials by using environment variables or the
+[Pull Secrets](../secrets#-pulling-secrets-from-external-sources) feature:
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --populate-override true \
+  --pull-input-list UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD \
+  --input-pull-command='gcloud secrets versions access 1 --secret="{0}"'
+```
+
+## Further Reading
+
+- [CLI Getting Started](../cli/getting-started) - installation options, license activation, first
+  build walkthrough
+- [Build Command Reference](../cli/build-command) - full list of build flags
+- [Orchestrate Command](../cli/orchestrate-command) - cloud-specific options
+- [Other Commands](../cli/other-commands) - license activation, cache management, and more

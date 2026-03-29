@@ -1,0 +1,76 @@
+# Caching
+
+Orchestrator supports two caching strategies. You can mix both by setting
+[`maxRetainedWorkspaces`](../api-reference#caching) - once the limit is reached, additional jobs
+fall back to standard caching.
+
+```mermaid
+flowchart LR
+  subgraph Standard Caching
+    A1["LFS files\nLibrary/\n\nSmaller storage\nGood for small projects"]
+  end
+  subgraph Retained Workspace
+    B1["Entire project folder\n\nFaster builds\nGood for large projects"]
+  end
+```
+
+## Standard Caching
+
+Caches the engine's asset folders and **LFS** files between builds. For Unity this is the `Library`
+folder. For other engines, the cached folders are defined by the [engine plugin](engine-plugins)
+(e.g. `.godot/imported` for Godot). Uses less storage but requires re-importing unchanged assets.
+
+- ✅ Minimum storage cost
+- ✅ Best for smaller projects
+- ⚠️ Slower rebuilds for large asset libraries
+
+## Build Caching
+
+Orchestrator automatically caches build output alongside the Library cache. After each build, the
+compiled output folder is archived and stored using the same cache key (branch name by default). On
+the next build with the same cache key, the previous build output is available at
+`/data/cache/{cacheKey}/build/`.
+
+This happens automatically - no configuration required. The cache key controls which builds share
+output:
+
+```yaml
+# Builds on the same branch share cached output (default behavior)
+cacheKey: ${{ github.ref_name }}
+
+# Or share across branches by using a fixed key
+cacheKey: shared-cache
+```
+
+Build caching uses the same compression and storage provider as Library caching. Archives are stored
+as `build-{buildGuid}.tar.lz4` (or `.tar` if compression is disabled). See [Storage](storage) for
+details on compression and storage backends.
+
+## Retained Workspace
+
+Caches the **entire project folder** between builds. Provides the fastest rebuilds but consumes more
+storage.
+
+- ✅ Maximum build speed
+- ✅ Best for large projects with long import times
+- ⚠️ Higher storage cost
+
+See [Retained Workspaces](retained-workspace) for configuration details.
+
+## 🗄️ Storage Providers
+
+| Provider | `storageProvider` | Description                                                                                                                      |
+| -------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| S3       | `s3` (default)    | AWS S3 storage. Works with both AWS and LocalStack.                                                                              |
+| Rclone   | `rclone`          | Flexible cloud storage via [rclone](https://rclone.org). Supports 70+ backends (Google Cloud, Azure Blob, Backblaze, SFTP, etc). |
+
+Configure with the [`storageProvider`](../api-reference#storage) parameter. When using rclone, also
+set `rcloneRemote` to your configured remote endpoint.
+
+## 🔒 Workspace Locking
+
+When using retained workspaces, Orchestrator uses distributed locking (via S3 or rclone) to ensure
+only one build uses a workspace at a time. This enables safe concurrent builds that share and reuse
+workspaces without conflicts.
+
+Locking is managed automatically - no configuration required beyond setting `maxRetainedWorkspaces`.

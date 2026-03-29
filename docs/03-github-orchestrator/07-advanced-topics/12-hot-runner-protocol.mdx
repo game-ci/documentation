@@ -1,0 +1,168 @@
+---
+sidebar_position: 12
+---
+
+# Hot Runner Protocol
+
+Orchestrator supports persistent, process-based build/test providers. Hot runners are long-lived
+Unity editor processes that accept jobs immediately without cold-start overhead.
+
+## Overview
+
+Traditional providers follow a cold-start model: provision → clone → cache restore → build → tear
+down. Hot runners eliminate startup latency by keeping editors warm and ready.
+
+A hot runner is an **actively running process** that:
+
+- Stays alive between jobs
+- Accepts work via a transport protocol
+- Returns structured results via the [artifact system](build-output-system)
+- Can run on any machine (local, server, cloud, container)
+
+## Runner Transports
+
+Runners connect via pluggable transport protocols:
+
+| Transport       | Description                            | Use Case                          |
+| --------------- | -------------------------------------- | --------------------------------- |
+| `github`        | Self-hosted GitHub Actions runner      | Standard CI infrastructure        |
+| `websocket`     | WebSocket/SignalR real-time connection | Custom dashboards, game platforms |
+| `file`          | Shared directory watch for job files   | Simple setups, NAS-based farms    |
+| `local-network` | mDNS/Bonjour discovery + HTTP API      | LAN build farms, office setups    |
+| `custom`        | User-implemented runner interface      | Any transport                     |
+
+### GitHub Runner Transport
+
+Register a hot runner as a self-hosted GitHub Actions runner:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: github
+    runnerLabels: unity-2022,linux,hot
+    editorMode: persistent
+```
+
+### WebSocket Transport
+
+Connect to a coordinator via WebSocket or SignalR:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: websocket
+    runnerEndpoint: wss://build.example.com/runners
+    runnerLabels: unity-2022,windows,gpu
+```
+
+### File-Based Transport
+
+Watch a shared directory for JSON job files - the simplest transport:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: file
+    runnerEndpoint: /mnt/shared/build-jobs/
+    runnerLabels: unity-2022,linux
+```
+
+### Local Network Transport
+
+Discover runners on the local network via mDNS:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: local-network
+    runnerLabels: unity-2022,macos,m1
+```
+
+## Editor Modes
+
+### Ephemeral (Default)
+
+Editor launches for each job and exits. Current behavior for all providers:
+
+```yaml
+editorMode: ephemeral
+```
+
+### Persistent
+
+Editor stays running between jobs. Combine with [incremental sync](incremental-sync-protocol) for
+fastest iteration:
+
+```yaml
+editorMode: persistent
+```
+
+Benefits:
+
+- No editor startup time (saves 30–120 seconds per build)
+- Unity Library folder stays warm - only changed assets reimport
+- Domain reload only when scripts change
+
+### Hybrid
+
+Pool of persistent editors, scale up ephemeral instances for burst load:
+
+```yaml
+editorMode: hybrid
+```
+
+## Runner Labels
+
+Runners self-describe with labels. Jobs are dispatched to runners matching required labels:
+
+```yaml
+runnerLabels: unity-2022,linux,gpu,hot
+```
+
+## Runner Registration Protocol
+
+Runners communicate using a JSON protocol, regardless of transport:
+
+**Register:**
+
+```json
+{
+  "type": "register",
+  "labels": ["unity-2022", "linux", "gpu"],
+  "capabilities": {
+    "unityVersion": "2022.3.20f1",
+    "platform": "StandaloneLinux64",
+    "gpu": true
+  }
+}
+```
+
+**Heartbeat:**
+
+```json
+{
+  "type": "heartbeat",
+  "runnerId": "runner-abc-123",
+  "status": "idle"
+}
+```
+
+Job dispatch and results follow the same JSON protocol.
+
+## Composability
+
+Hot runners compose with other orchestrator features:
+
+- **[Incremental Sync](incremental-sync-protocol)** - Receive workspace updates without full clone.
+  Hot runners + incremental sync = fastest possible iteration.
+- **[Artifact System](build-output-system)** - Return structured, typed results.
+- **[Test Workflow Engine](test-workflow-engine)** - Execute test suites with taxonomy filtering.
+
+## Inputs Reference
+
+| Input             | Description                                                                  |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `runnerTransport` | Transport protocol: `github`, `websocket`, `file`, `local-network`, `custom` |
+| `runnerEndpoint`  | Connection endpoint for the transport                                        |
+| `runnerLabels`    | Comma-separated runner labels for job routing                                |
+| `editorMode`      | Editor lifecycle: `ephemeral`, `persistent`, `hybrid`                        |

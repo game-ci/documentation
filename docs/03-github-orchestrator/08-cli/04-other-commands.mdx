@@ -1,0 +1,185 @@
+---
+sidebar_position: 4
+---
+
+# Other Commands
+
+Beyond `build` and `orchestrate`, the CLI provides commands for license management, cache
+operations, environment diagnostics, version information, and self-updating.
+
+## activate
+
+Verify and prepare Unity license activation. Checks that valid license credentials are available
+before running builds.
+
+```bash
+game-ci activate
+```
+
+The `activate` command checks for license credentials from environment variables and reports whether
+activation will succeed. License activation itself is handled automatically when a build runs.
+
+### License Methods
+
+Provide credentials via environment variables:
+
+| Variable        | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `UNITY_SERIAL`  | Serial key (Professional/Plus licenses)               |
+| `UNITY_LICENSE` | Contents of a `.ulf` license file (base64 or raw XML) |
+
+```bash
+# Using a serial key
+UNITY_SERIAL=XX-XXXX-XXXX-XXXX-XXXX-XXXX game-ci activate
+
+# Using a license file
+export UNITY_LICENSE="$(cat ~/Unity_v2022.x.ulf)"
+game-ci activate
+```
+
+### Flags
+
+| Flag                       | Default   | Description                           |
+| -------------------------- | --------- | ------------------------------------- |
+| `--unity-version`          | `auto`    | Version of Unity to activate          |
+| `--unity-licensing-server` | _(empty)_ | Unity floating license server address |
+
+```bash
+# Using a floating license server
+game-ci activate --unity-licensing-server http://license-server:8080
+```
+
+## cache
+
+Manage build caches. Caches store the Unity Library folder and other intermediate artifacts to speed
+up subsequent builds.
+
+```bash
+game-ci cache <action> [options]
+```
+
+The `<action>` positional argument is required and must be one of: `list`, `restore`, or `clear`.
+
+### cache list
+
+List cache status, including Library folder presence and any cache archives:
+
+```bash
+game-ci cache list
+```
+
+Output includes Library folder path, entry count, last-modified timestamp, and key subdirectory
+status (PackageCache, ScriptAssemblies, ShaderCache, Bee).
+
+### cache restore
+
+Check for available cache archives to restore:
+
+```bash
+game-ci cache restore --cache-dir ./my-cache
+```
+
+### cache clear
+
+Remove cache archive files:
+
+```bash
+game-ci cache clear
+```
+
+### Cache Flags
+
+| Flag             | Default   | Description                                                        |
+| ---------------- | --------- | ------------------------------------------------------------------ |
+| `--cache-dir`    | _(empty)_ | Path to the cache directory (defaults to `<project-path>/Library`) |
+| `--project-path` | `.`       | Path to the Unity project                                          |
+
+## status
+
+Display information about the current environment, useful for debugging setup issues:
+
+```bash
+game-ci status
+```
+
+Reports:
+
+- **Project** - detected Unity project path and whether a project was found
+- **Unity Version** - version detected from `ProjectSettings/ProjectVersion.txt`
+- **Library Cache** - whether the Library folder is present and when it was last modified
+- **Build Outputs** - any existing build output directories
+- **Environment** - platform, Node.js version, and which license environment variables are set
+  (`UNITY_SERIAL`, `UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD` - shown as Set/Not set)
+- **Docker** - whether Docker is available and its version
+
+### Flags
+
+| Flag             | Default | Description               |
+| ---------------- | ------- | ------------------------- |
+| `--project-path` | `.`     | Path to the Unity project |
+
+## version
+
+Print the installed CLI version, Node.js version, and platform:
+
+```bash
+game-ci version
+```
+
+```
+game-ci (@game-ci/orchestrator) v3.0.0
+Node.js v20.5.1
+Platform: win32 x64
+```
+
+## update
+
+Update the `game-ci` CLI to the latest version. Downloads the appropriate binary from the
+[orchestrator GitHub Releases](https://github.com/game-ci/orchestrator/releases) for your platform
+and architecture.
+
+```bash
+game-ci update
+```
+
+### Flags
+
+| Flag            | Default   | Description                                        |
+| --------------- | --------- | -------------------------------------------------- |
+| `--force`, `-f` | `false`   | Force update even if already on the latest version |
+| `--version`     | _(empty)_ | Update to a specific version (e.g. `v2.1.0`)       |
+
+```bash
+# Update to the latest version
+game-ci update
+
+# Update to a specific version
+game-ci update --version v2.1.0
+
+# Force reinstall of the current version
+game-ci update --force
+```
+
+If running via Node.js (not as a standalone binary), the command will print instructions for
+updating via npm instead.
+
+## Global Flags
+
+These flags are available on all commands:
+
+| Flag           | Description               |
+| -------------- | ------------------------- |
+| `--help`, `-h` | Show help for any command |
+
+```bash
+# Get help for any command
+game-ci build --help
+game-ci orchestrate --help
+game-ci cache --help
+```
+
+## See Also
+
+- [Getting Started](getting-started) - installation and first build
+- [Build Command](build-command) - full build reference
+- [Orchestrate Command](orchestrate-command) - cloud builds

@@ -1,0 +1,176 @@
+---
+sidebar_position: 11
+---
+
+# Test Workflow Engine
+
+Orchestrator includes a test workflow engine that supports YAML-based test suite definitions,
+multi-dimensional taxonomy filtering, and structured test result reporting.
+
+## Overview
+
+Instead of running tests via a single `buildMethod`, the test workflow engine lets you define test
+suites as YAML configurations - specifying exactly which tests run for each CI event, filtered by
+taxonomy metadata, with sequential execution dependencies.
+
+## Test Suite Definitions
+
+Test suites are YAML files that define ordered runs with filters:
+
+```yaml
+name: pull-request
+description: Fast feedback for pull requests
+runs:
+  - name: fast
+    editMode: true
+    filters:
+      Maturity: Trusted
+      FeedbackSpeed: Fast,Moderate
+      Scope: Unit,Integration
+    timeout: 300
+
+  - name: basic
+    needs: [fast]
+    editMode: true
+    playMode: true
+    filters:
+      Maturity: Trusted,Stable
+      Scope: Unit,Integration,System
+    timeout: 600
+
+  - name: extended
+    needs: [basic]
+    playMode: true
+    filters:
+      Rigor: Strict
+      Scope: End To End
+    timeout: 1200
+```
+
+### Suite Fields
+
+| Field         | Description                                         |
+| ------------- | --------------------------------------------------- |
+| `name`        | Suite identifier, used for cache keys and reporting |
+| `description` | Human-readable description                          |
+| `runs`        | Ordered list of test runs                           |
+
+### Run Fields
+
+| Field         | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `name`        | Run identifier                                    |
+| `needs`       | List of run names that must complete first        |
+| `editMode`    | Run Unity EditMode tests (default: false)         |
+| `playMode`    | Run Unity PlayMode tests (default: false)         |
+| `builtClient` | Run tests against a built client (default: false) |
+| `filters`     | Taxonomy filters to select tests                  |
+| `timeout`     | Maximum run duration in seconds                   |
+
+## Taxonomy Filters
+
+Tests are categorized by multi-dimensional taxonomy metadata. Filters select tests by matching
+against these dimensions:
+
+### Example Dimensions
+
+The dimensions below are provided as a starting point. Projects can rename, remove, or replace any
+of these, and add entirely new dimensions -the taxonomy system is fully extensible.
+
+| Dimension      | Values                                | Description                   |
+| -------------- | ------------------------------------- | ----------------------------- |
+| Scope          | Unit, Integration, System, End To End | Test boundary                 |
+| Maturity       | Trusted, Stable, Experimental         | Test reliability              |
+| FeedbackSpeed  | Fast, Moderate, Slow                  | Expected execution time       |
+| Execution      | Synchronous, Asynchronous, Coroutine  | Execution model               |
+| Rigor          | Strict, Normal, Relaxed               | Assertion strictness          |
+| Determinism    | Deterministic, NonDeterministic       | Repeatability                 |
+| IsolationLevel | Full, Partial, None                   | External dependency isolation |
+
+### Filter Syntax
+
+Filters accept comma-separated values, regex patterns, and hierarchical dot-notation:
+
+```yaml
+filters:
+  Scope: Unit,Integration # Match any of these values
+  Maturity: /Trusted|Stable/ # Regex pattern
+  Domain: Combat.Melee # Hierarchical match
+```
+
+### Defining Your Own Dimensions
+
+Projects can define their own taxonomy dimensions (or override the examples above) via a taxonomy
+definition file:
+
+```yaml
+# .game-ci/taxonomy.yml
+extensible_groups:
+  - name: SubjectLevel
+    values: [Class, Feature, System, Product]
+  - name: DataScenario
+    values: [HappyPath, EdgeCase, BoundaryValue, ErrorPath]
+```
+
+## Test Execution
+
+### EditMode Tests
+
+Standard Unity Test Framework tests that run in the editor without entering play mode:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    testSuitePath: .game-ci/test-suites/pr-suite.yml
+    testSuiteEvent: pr
+    targetPlatform: StandaloneLinux64
+```
+
+### PlayMode Tests
+
+Unity tests that require entering play mode:
+
+```yaml
+runs:
+  - name: playmode-tests
+    playMode: true
+    filters:
+      Scope: Integration,System
+```
+
+### Built-Client Tests
+
+Run tests against a previously built game client. Requires a build step before the test step:
+
+```yaml
+runs:
+  - name: client-tests
+    builtClient: true
+    builtClientPath: ./Builds/StandaloneLinux64
+    filters:
+      Scope: End To End
+```
+
+## Structured Results
+
+Test results are output in machine-readable formats:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    testSuitePath: .game-ci/test-suites/pr-suite.yml
+    testResultFormat: junit # junit, json, or both
+    testResultPath: ./test-results/
+```
+
+Results integrate with GitHub Checks for inline failure reporting on pull requests.
+
+## Inputs Reference
+
+| Input              | Description                                           |
+| ------------------ | ----------------------------------------------------- |
+| `testSuitePath`    | Path to YAML test suite definition file               |
+| `testSuiteEvent`   | CI event name for suite selection (pr, push, release) |
+| `testTaxonomyPath` | Path to custom taxonomy definition YAML               |
+| `testResultFormat` | Output format: `junit`, `json`, or `both`             |
+| `testResultPath`   | Directory for structured result output                |

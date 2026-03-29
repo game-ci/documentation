@@ -1,0 +1,34 @@
+# Local Docker
+
+Runs the build workflow inside a Docker container on the local machine. No cloud account required.
+
+## Requirements
+
+- Docker installed and running on the build machine.
+
+## Example Workflow
+
+### GitHub Actions (self-hosted runner)
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local-docker
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Command Line
+
+```bash
+yarn run cli -m cli-build \
+  --providerStrategy local-docker \
+  --projectPath /path/to/your/project \
+  --targetPlatform StandaloneLinux64
+```
+
+## When to Use
+
+- You have a self-hosted runner with Docker installed
+- You want container isolation without cloud infrastructure
+- Testing builds locally before deploying to AWS or Kubernetes

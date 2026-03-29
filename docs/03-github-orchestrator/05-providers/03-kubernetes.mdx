@@ -1,0 +1,64 @@
+# Kubernetes
+
+## Requirements
+
+- A running Kubernetes cluster that supports persistent volumes.
+- A kubeconfig file encoded as base64.
+
+## K8s Credentials
+
+Pass the base64-encoded kubeconfig via the `kubeConfig` parameter or as an environment variable:
+
+```yaml
+env:
+  kubeConfig: ${{ secrets.KUBE_CONFIG }}
+```
+
+## CPU and Memory
+
+Kubernetes accepts the same unit format as AWS - `1024 = 1 vCPU`, memory in MB. Do not include the
+vCPU or GB suffix.
+
+| CPU (`containerCpu`) | Memory (`containerMemory`) |
+| -------------------- | -------------------------- |
+| `256` (0.25 vCPU)    | `512`, `1024`, `2048`      |
+| `512` (0.5 vCPU)     | `1024` – `4096`            |
+| `1024` (1 vCPU)      | `2048` – `8192`            |
+| `2048` (2 vCPU)      | `4096` – `16384`           |
+| `4096` (4 vCPU)      | `8192` – `30720`           |
+
+## Example Workflow
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  id: k8s-unity-build
+  with:
+    providerStrategy: k8s
+    versioning: None
+    projectPath: path/to/your/project
+    unityVersion: 2022.3.0f1
+    targetPlatform: ${{ matrix.targetPlatform }}
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    kubeVolumeSize: 10Gi
+    containerCpu: 1024
+    containerMemory: 4096
+    # Export builds to S3:
+    containerHookFiles: aws-s3-upload-build
+```
+
+See [Container Hooks](../advanced-topics/hooks/container-hooks) for more on `containerHookFiles`.
+
+A full workflow example is available in the builder source:
+[orchestrator-k8s-pipeline.yml](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/orchestrator-k8s-pipeline.yml).
+
+### Cluster Tips
+
+- **Keep the cluster running.** Cold-starting a Kubernetes cluster is slow. If you need auto-scaling
+  to zero, consider Google Cloud Kubernetes Autopilot.
+- **Cloud storage required.** Kubernetes requires cloud storage for
+  [caching](../advanced-topics/caching). S3 is built-in, or use rclone for other backends.
+
+## K8s Parameters
+
+For the full list of Kubernetes parameters (`kubeConfig`, `kubeVolume`, `kubeStorageClass`, etc.),
+see the [API Reference - Kubernetes section](../api-reference#kubernetes).

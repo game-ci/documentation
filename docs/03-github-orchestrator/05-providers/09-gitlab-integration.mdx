@@ -1,0 +1,30 @@
+# GitLab Integration
+
+You can use GitLab with Orchestrator via the Command Line mode. Orchestrator is not limited to
+GitHub Actions - any CI system that can run shell commands can trigger orchestrator builds.
+
+## Setup
+
+1. Install the Orchestrator CLI (see [Command Line](../examples/command-line))
+2. Set your git credentials and provider configuration as environment variables
+3. Run the CLI from your `.gitlab-ci.yml` pipeline
+
+## Example `.gitlab-ci.yml`
+
+```yaml
+build-unity:
+  stage: build
+  script:
+    - git clone https://github.com/game-ci/unity-builder.git /tmp/game-ci
+    - cd /tmp/game-ci && yarn install
+    - >
+      yarn run cli -m cli-build --projectPath $CI_PROJECT_DIR --providerStrategy aws
+      --gitPrivateToken $GIT_TOKEN
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: eu-west-2
+```
+
+See the [Command Line](../examples/command-line) page for more details on CLI usage and the
+[Secrets](../secrets) page for managing credentials.

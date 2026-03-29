@@ -1,0 +1,165 @@
+# API Reference
+
+## ⚙️ Configuration Methods
+
+| Method                    | Description                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Action `with`**  | Pass parameters directly in your workflow file. See [Getting Started](getting-started).                                   |
+| **Command Line**          | Pass parameters as CLI flags. See [Command Line](examples/command-line).                                                  |
+| **Environment Variables** | Set parameters as environment variables in your shell or CI environment.                                                  |
+| **Pull Secrets**          | Pull parameters dynamically from secret managers or files. See [Secrets](secrets#-pulling-secrets-from-external-sources). |
+
+## 🔧 Modes
+
+Set the mode to control what Orchestrator does. Default: `cli-build`.
+
+| Mode                    | Description                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| `cli-build`             | Run a standard build workflow.                                                        |
+| `list-resources`        | List active cloud resources.                                                          |
+| `list-workflow`         | List running workflows.                                                               |
+| `watch`                 | Follow logs of a running workflow.                                                    |
+| `garbage-collect`       | Clean up old resources. See [Garbage Collection](advanced-topics/garbage-collection). |
+| `cache-push`            | Push to the caching directory. Uses `cachePushTo`.                                    |
+| `cache-pull`            | Pull from the caching directory. Uses `cachePullFrom`.                                |
+| `hash`                  | Hash folder contents recursively.                                                     |
+| `print-input`           | Print all resolved input parameters.                                                  |
+| `remote-cli-pre-build`  | Set up a repository before a build (used internally by workflows).                    |
+| `remote-cli-post-build` | Push LFS files and Library cache after a build (used internally).                     |
+
+## 📋 Parameters
+
+### Provider
+
+| Parameter              | Default                 | Description                                                                                                                                                                       |
+| ---------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `providerStrategy`     | `local`                 | Cloud provider to use. Built-in: `aws`, `k8s`, `local-docker`, `local`. Also accepts a GitHub URL, NPM package, or local path for [custom providers](providers/custom-providers). |
+| `containerCpu`         | `1024`                  | CPU units for cloud containers (`1024` = 1 vCPU). See provider setup guides for allowed values.                                                                                   |
+| `containerMemory`      | `3072`                  | Memory in MB for cloud containers (`4096` = 4 GB). See provider setup guides for allowed values.                                                                                  |
+| `orchestratorBranch`   | `main`                  | Release branch of Orchestrator for remote containers. Use `orchestrator-develop` for latest development builds.                                                                   |
+| `orchestratorRepoName` | `game-ci/unity-builder` | Repository for Orchestrator source. Override to use a fork for testing or custom builds.                                                                                          |
+
+### Engine
+
+| Parameter      | Default | Description                                                                                                                                                |
+| -------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `engine`       | `unity` | Game engine name. Built-in: `unity`. Other engines require `enginePlugin`.                                                                                 |
+| `enginePlugin` | -       | Engine plugin source. NPM package, `cli:<path>`, or `docker:<image>`. See [Engine Plugins](advanced-topics/engine-plugins) for details and source formats. |
+
+### Git Synchronization
+
+| Parameter           | Default  | Description                                                         |
+| ------------------- | -------- | ------------------------------------------------------------------- |
+| `gitPrivateToken`   | -        | GitHub access token with repo access. Used for git clone and LFS.   |
+| `githubOwner`       | -        | GitHub owner or organization name.                                  |
+| `GITHUB_REPOSITORY` | _(auto)_ | Repository in `owner/repo` format. Auto-detected in GitHub Actions. |
+| `GITHUB_REF`        | _(auto)_ | Git ref to build. Falls back to `branch` or `GitSHA` parameters.    |
+| `cloneDepth`        | `50`     | Depth of the git clone. Use `0` for a full clone.                   |
+| `allowDirtyBuild`   | `false`  | Allow building from a branch with uncommitted changes.              |
+
+### Custom Hooks
+
+| Parameter                 | Default | Description                                                                                              |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `containerHookFiles`      | -       | Names of [container hook](advanced-topics/hooks/container-hooks) files from `.game-ci/container-hooks/`. |
+| `customHookFiles`         | -       | Names of custom hook files from `.game-ci/hooks/`.                                                       |
+| `customCommandHooks`      | -       | Inline [command hooks](advanced-topics/hooks/command-hooks) as YAML.                                     |
+| `postBuildSteps`          | -       | Post-build job in YAML format with keys: `image`, `secrets`, `command`.                                  |
+| `preBuildSteps`           | -       | Pre-build job (after repo setup, before build) in YAML format.                                           |
+| `postBuildContainerHooks` | -       | Container hook files to run after the build step.                                                        |
+| `preBuildContainerHooks`  | -       | Container hook files to run before the build step.                                                       |
+| `customJob`               | -       | Custom job YAML to override the default build workflow. See [Custom Job](advanced-topics/custom-job).    |
+
+### Pull Secrets
+
+| Parameter                   | Default | Description                                                                                                                                                                                   |
+| --------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `readInputOverrideCommand`  | -       | Command to read a parameter value from an external source. Use `{0}` as the parameter name placeholder. Built-in presets: `gcp-secret-manager`, `aws-secret-manager`. See [Secrets](secrets). |
+| `readInputFromOverrideList` | -       | Comma-separated list of parameter names to pull via `readInputOverrideCommand`.                                                                                                               |
+
+### Storage
+
+| Parameter         | Default | Description                                                                                            |
+| ----------------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `storageProvider` | `s3`    | Storage backend for [caching](advanced-topics/caching) and artifacts. Accepted values: `s3`, `rclone`. |
+| `rcloneRemote`    | -       | Rclone remote endpoint. Required when `storageProvider` is `rclone`.                                   |
+
+### AWS
+
+| Parameter                   | Default   | Description                                                    |
+| --------------------------- | --------- | -------------------------------------------------------------- |
+| `awsStackName`              | `game-ci` | Name of the persistent shared CloudFormation base stack.       |
+| `awsEndpoint`               | -         | Base endpoint override for all AWS services (e.g. LocalStack). |
+| `awsCloudFormationEndpoint` | -         | CloudFormation service endpoint override.                      |
+| `awsEcsEndpoint`            | -         | ECS service endpoint override.                                 |
+| `awsKinesisEndpoint`        | -         | Kinesis service endpoint override.                             |
+| `awsCloudWatchLogsEndpoint` | -         | CloudWatch Logs service endpoint override.                     |
+| `awsS3Endpoint`             | -         | S3 service endpoint override.                                  |
+
+### Kubernetes
+
+| Parameter          | Default | Description                                                             |
+| ------------------ | ------- | ----------------------------------------------------------------------- |
+| `kubeConfig`       | -       | Base64-encoded Kubernetes config file.                                  |
+| `kubeVolume`       | -       | Name of the persistent volume claim to use.                             |
+| `kubeVolumeSize`   | `5Gi`   | Size of the persistent volume.                                          |
+| `kubeStorageClass` | -       | Storage class for the persistent volume. Empty = auto-install via rook. |
+
+### Caching
+
+| Parameter               | Default         | Description                                                                                                                               |
+| ----------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `cacheKey`              | _(branch name)_ | Scope for sharing cache entries. Builds with the same key share a cache.                                                                  |
+| `maxRetainedWorkspaces` | `0`             | Maximum number of [retained workspaces](advanced-topics/retained-workspace). `0` = unlimited. Above the limit, jobs use standard caching. |
+
+### GitHub Integration
+
+| Parameter           | Default | Description                                                                                               |
+| ------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| `githubCheck`       | `false` | Create a GitHub Check for each orchestrator step. See [GitHub Integration](providers/github-integration). |
+| `asyncOrchestrator` | `false` | Run in async mode - returns immediately without waiting for the build to complete.                        |
+| `watchToEnd`        | `true`  | Whether to follow the build logs until completion.                                                        |
+
+### Build Options
+
+| Parameter                | Default | Description                                                                                                              |
+| ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `orchestratorDebug`      | `false` | Enable verbose debug logging (resource tracking, directory tree, environment listing).                                   |
+| `resourceTracking`       | `false` | Enable resource tracking logs with disk usage summaries.                                                                 |
+| `useLargePackages`       | `false` | Redirect packages containing "LargePackage" in `manifest.json` to a shared folder across builds with the same cache key. |
+| `useSharedBuilder`       | `false` | Use a shared clone of Game CI. Saves storage when using a single Orchestrator release branch.                            |
+| `useCompressionStrategy` | `true`  | Use LZ4 compression for cache and build artifacts.                                                                       |
+| `useCleanupCron`         | `true`  | Create an AWS CloudFormation cron job to automatically clean up old resources.                                           |
+
+### Garbage Collection
+
+| Parameter       | Default | Description                                           |
+| --------------- | ------- | ----------------------------------------------------- |
+| `garbageMaxAge` | `24`    | Maximum age in hours before resources are cleaned up. |
+
+## 🖥️ CLI-Only Parameters
+
+These parameters are only available when using Orchestrator from the command line.
+
+| Parameter          | Description                                                                                        |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| `populateOverride` | Enable [pulling secrets](secrets#-pulling-secrets-from-external-sources) from an external command. |
+| `cachePushFrom`    | Local directory to push cache from.                                                                |
+| `cachePushTo`      | Remote path to push cache to.                                                                      |
+| `artifactName`     | Name for the build artifact.                                                                       |
+| `select`           | Select a specific workflow or resource by name.                                                    |
+
+## 🌍 Environment Variables
+
+| Variable                           | Description                                                                       |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| `USE_IL2CPP`                       | Set to `false` to disable IL2CPP builds.                                          |
+| `AWS_FORCE_PROVIDER`               | Force provider when LocalStack is detected. Values: `aws`, `aws-local`, or empty. |
+| `ORCHESTRATOR_AWS_STACK_WAIT_TIME` | CloudFormation stack timeout in seconds. Default: `600`.                          |
+| `PURGE_REMOTE_BUILDER_CACHE`       | Set to clear the remote builder cache before a build.                             |
+| `GIT_PRIVATE_TOKEN`                | Separate token for LFS pulls (falls back to `gitPrivateToken`).                   |
+
+## 🔗 External Links
+
+All parameters with descriptions:
+[game-ci/unity-builder action.yml](https://github.com/game-ci/unity-builder/blob/main/action.yml)

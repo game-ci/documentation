@@ -34,8 +34,8 @@ included some resources for you to start your learning journey below.
 There are many ways to self-host CI/CD runners, and which one is best for you will depend on your
 own situation and constraints. For the purpose of this guide we will make the following assumptions:
 
-- 💻 User already has their own hardware
-- 💸 Budget for new hardware, software, or services is $0
+- 💻 User already has their own machines
+- 💸 Budget for new machines, software, or services is $0
 - 🛠️ FOSS tools should be prioritized where possible
 - 📜 We define `Self-Hosting` in this context to refer to a user taking responsibility for the
   operating-system level configuration and life-cycle-management of a given compute resource (metal,
@@ -44,7 +44,7 @@ own situation and constraints. For the purpose of this guide we will make the fo
 ## ⚠️ Security Disclaimer
 
 This guide strives to maintain a balance between convenience and security for the sake of usability.
-The examples included in this guide are intended for use with on-prem hardware without public IP
+The examples included in this guide are intended for use with on-prem machines without public IP
 addresses accessible from external networks. Security is a constantly moving target which requires
 continuous effort to maintain. Users should conduct their own security review before using the
 following techniques on production or public systems.
@@ -52,7 +52,7 @@ following techniques on production or public systems.
 ## ⚡️ Power Costs
 
 Hosting your own runners also comes with an increase in power consumption. This will vary based on
-the hardware you use and the prices of energy in your area. Below are some useful resources for
+the machines you use and the prices of energy in your area. Below are some useful resources for
 discovering the potential energy costs of self-hosting.
 
 - https://outervision.com/power-supply-calculator
@@ -72,7 +72,7 @@ This guide is tested on devices which meet the following requirements:
 ### Host Creation
 
 "Host Creation" in this context is the process of installing an operating system onto a piece of
-physical hardware, or the creation and configuration of virtualised compute resources.
+physical machine, or the creation and configuration of virtualised compute resources.
 
 - [Bare-Metal](./03-host-creation/02-bare-metal.mdx)
 - [Virtual Machines using Multipass](./03-host-creation/02-multipass.mdx)

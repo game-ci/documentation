@@ -1,0 +1,533 @@
+# Load Balancing
+
+Orchestrator can intelligently route builds across providers. Built-in load balancing checks runner
+availability and routes to the best provider automatically - no custom scripting needed. For
+advanced scenarios, standard GitHub Actions scripting gives you full control.
+
+```mermaid
+flowchart TD
+  UB["unity-builder\n1. Check runner availability\n2. Route to best provider\n3. Build (sync or async)\n4. Retry on alternate if failed"]
+  UB --> LD["local-docker\n(self-hosted)"]
+  UB --> AWS["aws\n(scalable)"]
+  UB --> K8S["k8s\n(flexible)"]
+```
+
+## Built-in Load Balancing
+
+Set `fallbackProviderStrategy` to an alternate provider and the action handles routing
+automatically. Three mechanisms work together:
+
+- **Runner availability check** - Queries the GitHub Runners API. If your self-hosted runners are
+  busy or offline, routes to the alternate provider.
+- **Retry on alternate provider** - If the primary provider fails mid-build (transient cloud error,
+  quota limit), retries the entire build on the alternate provider.
+- **Provider init timeout** - If the primary provider is slow to spin up, switches to the alternate
+  after a configurable timeout.
+
+### Inputs
+
+| Input                      | Default | Description                                         |
+| -------------------------- | ------- | --------------------------------------------------- |
+| `fallbackProviderStrategy` | `''`    | Alternate provider for load balancing               |
+| `runnerCheckEnabled`       | `false` | Check runner availability before routing            |
+| `runnerCheckLabels`        | `''`    | Filter runners by labels (e.g. `self-hosted,linux`) |
+| `runnerCheckMinAvailable`  | `1`     | Minimum idle runners before routing to alternate    |
+| `retryOnFallback`          | `false` | Retry failed builds on the alternate provider       |
+| `providerInitTimeout`      | `0`     | Max seconds for provider startup (0 = no limit)     |
+
+### Outputs
+
+| Output                   | Description                                     |
+| ------------------------ | ----------------------------------------------- |
+| `providerFallbackUsed`   | `true` if the build was routed to the alternate |
+| `providerFallbackReason` | Why the build was rerouted                      |
+
+### Route busy runners to cloud
+
+The most common pattern: prefer your self-hosted runner, but offload to the cloud when it's busy.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local-docker
+    fallbackProviderStrategy: aws
+    runnerCheckEnabled: true
+    runnerCheckLabels: self-hosted,linux
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Runner idle? Build runs locally. Runner busy? Routes to AWS automatically.
+
+### Non-blocking with async mode
+
+For long Unity builds, combine load balancing with `asyncOrchestrator: true`. The build dispatches
+to the best available provider and returns immediately - the GitHub runner is freed in seconds
+regardless of which provider handles the build.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local-docker
+    fallbackProviderStrategy: aws
+    runnerCheckEnabled: true
+    runnerCheckLabels: self-hosted,linux
+    asyncOrchestrator: true # dispatch and return immediately
+    githubCheck: true # report progress via PR checks
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Without async mode the routing still works correctly, but the build occupies the GitHub runner for
+the full duration. Async mode is the key to truly non-blocking load balancing.
+
+### Retry failed builds on alternate provider
+
+Enable `retryOnFallback` to automatically retry on the alternate provider when the primary fails.
+This is useful for long builds where transient cloud failures are common.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    fallbackProviderStrategy: local-docker
+    retryOnFallback: true
+    targetPlatform: StandaloneLinux64
+```
+
+If AWS fails (transient error, ECS quota exceeded, network issue), the build retries on the local
+Docker provider instead of failing the entire workflow.
+
+### Timeout slow provider startup
+
+Cloud providers sometimes take a long time to provision infrastructure. Set `providerInitTimeout` to
+swap to the alternate provider if startup takes too long.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: k8s
+    fallbackProviderStrategy: aws
+    providerInitTimeout: 120 # 2 minutes max for K8s to spin up
+    retryOnFallback: true
+    targetPlatform: StandaloneLinux64
+```
+
+### Graceful degradation
+
+The built-in load balancing is designed to never block a build:
+
+- **No token** - Skips the runner check, uses the primary provider.
+- **API error** (permissions, rate limit) - Logs a warning, uses the primary provider.
+- **No alternate set** - The runner check runs for informational logging but never swaps.
+
+### Log the routing decision
+
+Use the outputs to track which provider was selected and why:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  id: build
+  with:
+    providerStrategy: local-docker
+    fallbackProviderStrategy: aws
+    runnerCheckEnabled: true
+    targetPlatform: StandaloneLinux64
+
+- name: Log routing
+  if: always()
+  run: |
+    echo "Routed to alternate: ${{ steps.build.outputs.providerFallbackUsed }}"
+    echo "Reason: ${{ steps.build.outputs.providerFallbackReason }}"
+```
+
+## Script-Based Routing
+
+For scenarios that the built-in inputs don't cover, use GitHub Actions scripting. This gives you
+full control over routing logic.
+
+### Route by Platform
+
+```yaml
+name: Platform-Based Routing
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux builds go to AWS (fast, scalable)
+          - targetPlatform: StandaloneLinux64
+            provider: aws
+          # Windows builds go to self-hosted runner
+          - targetPlatform: StandaloneWindows64
+            provider: local-docker
+          # WebGL builds go to Kubernetes
+          - targetPlatform: WebGL
+            provider: k8s
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ matrix.provider }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Route by Branch
+
+Send production builds to a high-resource cloud provider and development builds to a cheaper option.
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Select provider
+        id: provider
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "strategy=aws" >> "$GITHUB_OUTPUT"
+            echo "cpu=4096" >> "$GITHUB_OUTPUT"
+            echo "memory=16384" >> "$GITHUB_OUTPUT"
+          else
+            echo "strategy=local-docker" >> "$GITHUB_OUTPUT"
+            echo "cpu=1024" >> "$GITHUB_OUTPUT"
+            echo "memory=3072" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ steps.provider.outputs.strategy }}
+          targetPlatform: StandaloneLinux64
+          containerCpu: ${{ steps.provider.outputs.cpu }}
+          containerMemory: ${{ steps.provider.outputs.memory }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Manual Runner Check
+
+If you need custom runner check logic beyond what the built-in inputs support (e.g. checking runner
+groups, org-level runners, or external capacity APIs):
+
+```yaml
+jobs:
+  check-runner:
+    name: Check self-hosted availability
+    runs-on: ubuntu-latest
+    outputs:
+      provider: ${{ steps.pick.outputs.provider }}
+    steps:
+      - name: Check if self-hosted runner is available
+        id: pick
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RUNNERS=$(gh api repos/${{ github.repository }}/actions/runners --jq '[.runners[] | select(.status == "online")] | length')
+          if [[ "$RUNNERS" -gt 0 ]]; then
+            echo "provider=local-docker" >> "$GITHUB_OUTPUT"
+          else
+            echo "provider=aws" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Build
+    needs: check-runner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ needs.check-runner.outputs.provider }}
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Weighted Distribution
+
+Distribute builds based on a ratio. This example sends 70% of builds to AWS and 30% to a local
+runner using a stable hash.
+
+```yaml
+- name: Weighted provider selection
+  id: provider
+  run: |
+    HASH=$(echo "${{ github.run_id }}" | md5sum | cut -c1-8)
+    DECIMAL=$((16#$HASH % 100))
+    if [[ $DECIMAL -lt 70 ]]; then
+      echo "strategy=aws" >> "$GITHUB_OUTPUT"
+    else
+      echo "strategy=local-docker" >> "$GITHUB_OUTPUT"
+    fi
+```
+
+### Route to alternate workflow when runners are busy
+
+Instead of switching providers within the same job, you can dispatch an entirely different workflow.
+This is useful when the alternate provider needs different runner labels, secrets, or setup steps
+that don't fit in the same job.
+
+The pattern uses two workflows: a primary workflow that checks runner availability and either builds
+locally or dispatches a cloud workflow, and a cloud workflow that handles the remote build
+independently.
+
+**Primary workflow** - checks runners and either builds or dispatches:
+
+```yaml
+name: Build (Primary)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  route-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check self-hosted runner availability
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IDLE=$(gh api repos/${{ github.repository }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online" and .busy == false)] | length')
+          echo "idle=$IDLE" >> "$GITHUB_OUTPUT"
+
+      # If no runners are idle, dispatch the cloud build workflow
+      - name: Dispatch cloud build
+        if: steps.check.outputs.idle == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run cloud-build.yml \
+            -f targetPlatform=StandaloneLinux64 \
+            -f ref=${{ github.sha }}
+          echo "Self-hosted runners busy  -  dispatched to cloud-build workflow"
+
+      # If runners are available, build locally
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.idle != '0'
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        if: steps.check.outputs.idle != '0'
+        with:
+          providerStrategy: local-docker
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+**Cloud build workflow** - runs on `workflow_dispatch`, handles the remote build:
+
+```yaml
+name: Build (Cloud)
+
+on:
+  workflow_dispatch:
+    inputs:
+      targetPlatform:
+        description: Platform to build
+        required: true
+      ref:
+        description: Git ref to build
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: aws
+          targetPlatform: ${{ inputs.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+This pattern lets each workflow have completely different configurations - different runners,
+secrets, environment variables, and setup steps. The trade-off is that the dispatched workflow runs
+independently, so you need to check its status separately (via GitHub Actions UI or
+[`gh run list`](https://cli.github.com/manual/gh_run_list)).
+
+For a simpler approach that keeps everything in one workflow, use the
+[built-in load balancing](#built-in-load-balancing) or [reusable workflow](#reusable-workflow)
+patterns instead.
+
+### Reusable Workflow
+
+Extract the build step into a reusable workflow and call it with different provider settings based
+on runner availability. This keeps the routing decision and build execution in separate jobs while
+maintaining a single workflow run for visibility.
+
+```yaml
+# .github/workflows/unity-build-reusable.yml
+name: Unity Build (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      providerStrategy:
+        required: true
+        type: string
+      targetPlatform:
+        required: true
+        type: string
+    secrets:
+      GH_TOKEN:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ inputs.providerStrategy }}
+          targetPlatform: ${{ inputs.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GH_TOKEN }}
+```
+
+```yaml
+# .github/workflows/build-on-push.yml
+name: Build on Push
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    outputs:
+      provider: ${{ steps.check.outputs.provider }}
+    steps:
+      - name: Check runners and select provider
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IDLE=$(gh api repos/${{ github.repository }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online" and .busy == false)] | length')
+          if [[ "$IDLE" -gt 0 ]]; then
+            echo "provider=local-docker" >> "$GITHUB_OUTPUT"
+          else
+            echo "provider=aws" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: route
+    uses: ./.github/workflows/unity-build-reusable.yml
+    with:
+      providerStrategy: ${{ needs.route.outputs.provider }}
+      targetPlatform: StandaloneLinux64
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Unlike the workflow dispatch pattern, this keeps everything in a single workflow run - you can see
+the routing decision and build result together in the GitHub Actions UI.
+
+## Async Mode and Load Balancing
+
+The [`asyncOrchestrator`](../api-reference#github-integration) parameter is essential for effective
+load balancing of long builds. When enabled, the action dispatches the build and returns immediately
+
+- no runner minutes wasted waiting.
+
+```mermaid
+flowchart TD
+  WF["Workflow Step (seconds)\n1. Check runners\n2. Route to provider\n3. Dispatch build\n4. Return (done)\n\nCompletes instantly"]
+  WF --> PA["Provider A\nBuilding...\nComplete"]
+  WF --> PB["Provider B\nBuilding...\nComplete"]
+  PA --> GH["GitHub Check updated\n(monitor from PR page)"]
+  PB --> GH
+```
+
+- **Without async** - The build occupies the runner. Routing still works, but you're paying for
+  runner time while the build runs remotely.
+- **With async** - The step finishes in seconds. The build continues on the selected provider and
+  reports status via GitHub Checks. This is the recommended approach for long builds.
+
+```yaml
+jobs:
+  build:
+    name: Build ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - targetPlatform: StandaloneLinux64
+            provider: aws
+          - targetPlatform: StandaloneWindows64
+            provider: k8s
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: ${{ matrix.provider }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          asyncOrchestrator: true
+          githubCheck: true
+```
+
+## When to Use What
+
+| Scenario                                      | Approach                                |
+| --------------------------------------------- | --------------------------------------- |
+| Runners busy → offload to cloud               | Built-in (`runnerCheckEnabled` + async) |
+| Retry transient cloud failures                | Built-in (`retryOnFallback`)            |
+| Slow provider startup                         | Built-in (`providerInitTimeout`)        |
+| Filter runners by labels                      | Built-in (`runnerCheckLabels`)          |
+| Route by platform or branch                   | Matrix or script                        |
+| Custom capacity logic (org runners, external) | Script-based runner check               |
+| Weighted distribution (70/30 split)           | Script with hash                        |
+| Dispatch entirely different workflow          | `workflow_dispatch` routing             |
+| Shared build config, dynamic routing          | Reusable workflow (`workflow_call`)     |
+| Chained routing (A → B → C)                   | Script                                  |
+
+## Tips
+
+- **Start with built-in** - For most teams, `runnerCheckEnabled` + `fallbackProviderStrategy` +
+  `asyncOrchestrator` covers the common case. Add script-based routing only when you need custom
+  logic.
+- **Always use async for long builds** - Combining `asyncOrchestrator: true` with
+  `githubCheck: true` keeps your routing step fast and gives you build status on the PR page.
+- **Cache keys are provider-independent** - The [`cacheKey`](../api-reference#caching) parameter
+  works the same across all providers, so builds routed to different providers can still share
+  caches if they use the same storage backend.
+- **Test routing logic** - Temporarily disable your self-hosted runner to verify that routing works
+  before you need it in production.
+- **Custom providers** - The same routing patterns work with
+  [custom providers](../providers/custom-providers). Set `providerStrategy` to a GitHub repo or NPM
+  package and Orchestrator loads it dynamically.

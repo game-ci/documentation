@@ -1,0 +1,338 @@
+# GitHub Actions
+
+Orchestrator has first-class GitHub Actions support. This page shows complete, copy-paste workflow
+files for every provider.
+
+## 🔑 Prerequisites
+
+1. A Unity project in a GitHub repository
+2. Provider credentials stored as
+   [GitHub Actions secrets](https://docs.github.com/en/actions/security/encrypted-secrets)
+3. A `UNITY_LICENSE` or activation secret (see the
+   [Game CI activation docs](https://game.ci/docs/github/activation))
+
+## Minimal Workflow
+
+The simplest possible Orchestrator workflow. Uses AWS Fargate with default CPU and memory.
+
+```yaml
+name: Build with Orchestrator
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: aws
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## ☁️ AWS Fargate
+
+Full workflow with custom CPU/memory, S3 artifact export, and GitHub Checks.
+
+```yaml
+name: Orchestrator  -  AWS Fargate
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build (${{ matrix.targetPlatform }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneLinux64
+          - StandaloneWindows64
+          - StandaloneOSX
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - uses: game-ci/unity-builder@v4
+        id: build
+        with:
+          providerStrategy: aws
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: 2022.3.0f1
+          containerCpu: 2048
+          containerMemory: 8192
+          # Export build artifacts to S3:
+          containerHookFiles: aws-s3-upload-build
+          # Show build progress as GitHub Checks:
+          githubCheck: true
+```
+
+### Required Secrets
+
+| Secret                  | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
+| `AWS_ACCESS_KEY_ID`     | IAM access key with ECS, CloudFormation, S3, Kinesis, CloudWatch |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret key                                                   |
+
+See the [AWS provider page](../providers/aws) for allowed CPU/memory combinations and full setup.
+
+## ☸️ Kubernetes
+
+Full workflow targeting a Kubernetes cluster.
+
+```yaml
+name: Orchestrator  -  Kubernetes
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build (${{ matrix.targetPlatform }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneLinux64
+          - StandaloneWindows64
+    env:
+      kubeConfig: ${{ secrets.KUBE_CONFIG }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        id: build
+        with:
+          providerStrategy: k8s
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: 2022.3.0f1
+          kubeVolumeSize: 10Gi
+          containerCpu: 1024
+          containerMemory: 4096
+          containerHookFiles: aws-s3-upload-build
+          githubCheck: true
+```
+
+### Required Secrets
+
+| Secret        | Description                     |
+| ------------- | ------------------------------- |
+| `KUBE_CONFIG` | Base64-encoded kubeconfig file. |
+
+Generate it with:
+
+```bash
+cat ~/.kube/config | base64 -w 0
+```
+
+See the [Kubernetes provider page](../providers/kubernetes) for cluster tips and full setup.
+
+## 🐳 Local Docker (Self-Hosted Runner)
+
+Run builds in Docker on your own machine. No cloud account needed.
+
+```yaml
+name: Orchestrator  -  Local Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: local-docker
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Requires Docker installed on the self-hosted runner.
+
+## ⏳ Async Mode
+
+For long builds, use async mode so the GitHub Action returns immediately. Monitor progress via
+GitHub Checks.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    asyncOrchestrator: true
+    githubCheck: true
+```
+
+The build runs in the background. Check progress from the **Checks** tab on your pull request.
+
+See [GitHub Integration](../providers/github-integration) for more on async mode and GitHub Checks.
+
+## 🗑️ Scheduled Garbage Collection
+
+Add a scheduled workflow to clean up stale cloud resources. Useful as a safety net alongside the
+automatic cleanup cron.
+
+```yaml
+name: Orchestrator  -  Garbage Collect
+
+on:
+  schedule:
+    - cron: '0 4 * * *' # Daily at 4 AM UTC
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: aws
+          mode: garbage-collect
+          garbageMaxAge: 24
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+See [Garbage Collection](../advanced-topics/garbage-collection) for details.
+
+## 📦 Multi-Platform Matrix Build
+
+Build for multiple platforms in parallel. Each platform runs as a separate Orchestrator job.
+
+```yaml
+name: Orchestrator  -  Multi-Platform
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneLinux64
+          - StandaloneWindows64
+          - StandaloneOSX
+          - iOS
+          - Android
+          - WebGL
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: aws
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          containerCpu: 2048
+          containerMemory: 8192
+          containerHookFiles: aws-s3-upload-build
+          githubCheck: true
+```
+
+## 🔁 Retained Workspaces for Faster Rebuilds
+
+For large projects, keep the entire project folder cached between builds. Dramatically speeds up
+rebuilds at the cost of more storage.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    maxRetainedWorkspaces: 3
+    containerCpu: 2048
+    containerMemory: 8192
+```
+
+See [Retained Workspaces](../advanced-topics/retained-workspace) and
+[Caching](../advanced-topics/caching) for details on storage strategies.
+
+## 🪝 Container Hooks - S3 Upload + Steam Deploy
+
+Chain multiple container hooks to export builds to S3 and deploy to Steam in a single workflow.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    containerHookFiles: aws-s3-upload-build,steam-deploy-client
+  env:
+    STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+    STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
+    STEAM_APPID: ${{ secrets.STEAM_APPID }}
+```
+
+See [Built-In Hooks](../advanced-topics/hooks/built-in-hooks) for all available hooks (S3, rclone,
+Steam).
+
+## 🔗 Reference
+
+- [API Reference](../api-reference) - full list of all parameters
+- [Providers](../providers/overview) - setup guides for each provider
+- [Secrets](../secrets) - how credentials are transferred to build containers
+- [Real-world pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/orchestrator-integrity.yml)
+  - Game CI's own Orchestrator test pipeline
