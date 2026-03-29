@@ -2,13 +2,15 @@ import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import UnityVersion from '@site/src/components/docs/versions/unity-version';
 import MajorEditorVersion from './major-editor-version';
+import type { StatusFilter } from './image-versions';
 
 interface Props {
   selectedRepoVersion: string | undefined;
-  // setIsLoading: Dispatch<SetStateAction<boolean>>;
+  searchQuery: string;
+  statusFilter: StatusFilter;
 }
 
-const UnityVersions = ({ selectedRepoVersion }: Props) => {
+const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props) => {
   if (!selectedRepoVersion) return null;
 
   const ciJobs = useFirestore()
@@ -22,34 +24,51 @@ const UnityVersions = ({ selectedRepoVersion }: Props) => {
   const isLoading = status === 'loading';
 
   const loading = <p>Fetching versions...</p>;
-  const failures = isLoading ? [] : data.filter((version) => version.status === 'failed');
+
+  // Apply filters
+  let filtered = isLoading ? [] : [...data];
+
+  // Status filter
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter((version) => {
+      if (statusFilter === 'stuck') {
+        return version.status === 'failed';
+      }
+      return version.status === statusFilter;
+    });
+  }
+
+  // Search filter (matches against the job ID which contains version info)
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter((version) => {
+      const id = (version.NO_ID_FIELD || '').toLowerCase();
+      const editor = version.editorVersionInfo
+        ? `${version.editorVersionInfo.major}.${version.editorVersionInfo.minor}.${version.editorVersionInfo.patch}`
+        : '';
+      return id.toLowerCase().includes(q) || editor.toLowerCase().includes(q);
+    });
+  }
+
+  const failures = filtered.filter((version) => version.status === 'failed');
 
   const versions = {};
 
-  if (data) {
+  if (filtered.length > 0) {
     // Sorting the data based on the version numbers to maintain the version order
-    data.sort((a, b) => {
+    filtered.sort((a, b) => {
       const infoA = a.editorVersionInfo;
       const infoB = b.editorVersionInfo;
 
-      // Using major , minor and patch to compare the two numbers
       const { major: majorA, minor: minorA, patch: patchA } = infoA;
       const { major: majorB, minor: minorB, patch: patchB } = infoB;
 
-      // First checking for major version.
       if (majorA > majorB) return -1;
       if (majorA < majorB) return 1;
 
-      // If major version is equal check for minor version.
       if (minorA > minorB) return -1;
       if (minorA < minorB) return 1;
 
-      // If major and minor both are equal check the patch version.
-
-      // For patch assuming "f" is present and splitting based on that.(Can use regex to split also).
-
-      // Calculating a patchNumber which is the priority offset based sum of the numbers in
-      // the array formed after split. The offset is used to correctly get the priority.
       let patchANumber = 0;
       for (const [index, currentValue] of patchA.split('f').entries()) {
         patchANumber += 10 ** (9 - 3 * index) * Number.parseInt(currentValue, 10);
@@ -63,8 +82,7 @@ const UnityVersions = ({ selectedRepoVersion }: Props) => {
     });
 
     // Sort versions into organized array by major version number
-    data.map((version) => {
-      // Ignore if version is older than 2018.x
+    filtered.map((version) => {
       if (Number.parseInt(version.editorVersionInfo.major, 10) <= 2017) return version;
 
       if (!versions[version.editorVersionInfo.major])
@@ -78,8 +96,16 @@ const UnityVersions = ({ selectedRepoVersion }: Props) => {
     });
   }
 
+  const hasFilters = searchQuery || statusFilter !== 'all';
+
   return (
     <main>
+      {hasFilters && !isLoading && (
+        <p style={{ opacity: 0.6, fontSize: '0.85em' }}>
+          Showing {filtered.length} of {data.length} versions
+        </p>
+      )}
+
       {failures.length > 0 && (
         <>
           <h3>Current failures</h3>
@@ -95,7 +121,7 @@ const UnityVersions = ({ selectedRepoVersion }: Props) => {
           : Object.keys(versions)
               .reverse()
               .map((major) => (
-                <MajorEditorVersion versionString={major} versions={versions[major]} />
+                <MajorEditorVersion key={major} versionString={major} versions={versions[major]} />
               ))}
       </div>
     </main>
