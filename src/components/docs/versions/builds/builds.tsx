@@ -54,6 +54,7 @@ const BulkActions = ({ selectedIds, onClear }: { selectedIds: string[]; onClear:
       const batchSize = 5;
       for (let offset = 0; offset < selectedIds.length; offset += batchSize) {
         const batch = selectedIds.slice(offset, offset + batchSize);
+        // eslint-disable-next-line no-await-in-loop -- sequential batching is intentional
         const results = await Promise.allSettled(
           batch.map((buildId) => callEndpoint(endpoint, { buildId })),
         );

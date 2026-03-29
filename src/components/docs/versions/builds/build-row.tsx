@@ -39,27 +39,28 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
   const [expanded, setExpanded] = useState(false);
   const [toolbarContent, setToolbarContent] = useState('Click to copy');
 
-  const MapBuildStatusToElement = (status: string) => {
-    const icon = mapBuildStatusToIcon[status];
+  const { buildId, status, failure, meta: rawMeta, addedDate, imageType, buildInfo } = build;
 
-    switch (status) {
+  const MapBuildStatusToElement = (buildStatus: string) => {
+    const icon = mapBuildStatusToIcon[buildStatus];
+
+    switch (buildStatus) {
       case 'started':
         return <Spinner type="slow" />;
       case 'failed': {
-        const count = build.meta?.failureCount || 0;
+        const count = rawMeta?.failureCount || 0;
         const label = count >= 15 ? `${icon} (${count}/15)` : icon;
-        return <Tooltip content={build.failure?.reason}>{label}</Tooltip>;
+        return <Tooltip content={failure?.reason}>{label}</Tooltip>;
       }
       case 'published':
         return icon;
       default:
-        return status;
+        return buildStatus;
     }
   };
 
   // Build timeline data
-  const meta = (build.meta || {}) as { [key: string]: any };
-  const { addedDate } = build;
+  const meta = (rawMeta || {}) as { [key: string]: any };
   const { lastBuildStart, lastBuildFailure, publishedDate, failureCount = 0 } = meta;
 
   const timelineItems: { label: string; time: string; color: string }[] = [];
@@ -87,14 +88,17 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
   return (
     <>
       <tr className={styles.tableRow}>
-        <SimpleAuthCheck fallback={<td style={{ width: 30 }} />} requiredClaims={{ admin: true }}>
+        <SimpleAuthCheck
+          fallback={<td aria-label="spacer" style={{ width: 30 }} />}
+          requiredClaims={{ admin: true }}
+        >
           <td style={{ width: 30, textAlign: 'center' }}>
-            {build.status === 'failed' && (
+            {status === 'failed' && (
               <input
                 type="checkbox"
                 checked={selected}
                 onChange={onToggleSelect}
-                aria-label={`Select build ${build.buildId}`}
+                aria-label={`Select build ${buildId}`}
                 style={{ cursor: 'pointer' }}
               />
             )}
@@ -103,16 +107,17 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
         <td
           onClick={() => setExpanded(!expanded)}
           className="text-center select-none cursor-pointer text-2xl"
+          aria-label={expanded ? 'Collapse build details' : 'Expand build details'}
         >
           {expanded ? '-' : '+'}
         </td>
-        <td className="text-center">{MapBuildStatusToElement(build.status)}</td>
+        <td className="text-center">{MapBuildStatusToElement(status)}</td>
         <td>
           <span>
             <Tooltip content={toolbarContent}>
               <button
                 onClick={() => {
-                  CopyToClipboard(build.buildId);
+                  CopyToClipboard(buildId);
                   setToolbarContent('Copied to clipboard!');
                 }}
                 onMouseLeave={() => {
@@ -120,24 +125,24 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
                 }}
                 type="button"
               >
-                {build.buildId}
+                {buildId}
               </button>
             </Tooltip>
             <DockerImageLinkOrRetryButton record={build} />
           </span>
         </td>
-        <td>{build.imageType}</td>
-        <td>{build.buildInfo.baseOs}</td>
-        <td>{build.buildInfo.targetPlatform}</td>
+        <td>{imageType}</td>
+        <td>{buildInfo.baseOs}</td>
+        <td>{buildInfo.targetPlatform}</td>
       </tr>
       {/* Inline failure reason row (visible without expanding) */}
-      {build.status === 'failed' && build.failure?.reason && !expanded && (
+      {status === 'failed' && failure?.reason && !expanded && (
         <tr>
           <td aria-label="spacer" />
           <td aria-label="spacer" />
           <td colSpan={5} style={{ padding: '2px 8px', fontSize: '0.8em', opacity: 0.7 }}>
-            {build.failure.reason.slice(0, 200)}
-            {build.failure.reason.length > 200 ? '...' : ''}
+            {failure.reason.slice(0, 200)}
+            {failure.reason.length > 200 ? '...' : ''}
           </td>
         </tr>
       )}
@@ -179,7 +184,7 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
               </div>
             )}
             {/* Failure log viewer */}
-            {build.status === 'failed' && build.failure && (
+            {status === 'failed' && failure && (
               <div
                 style={{
                   padding: '8px 12px',
@@ -190,8 +195,8 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
                   fontSize: '0.8em',
                 }}
               >
-                <strong>Failure reason:</strong> {build.failure.reason || 'Unknown'}
-                {build.failure.log && (
+                <strong>Failure reason:</strong> {failure.reason || 'Unknown'}
+                {failure.log && (
                   <details style={{ marginTop: 4 }}>
                     <summary style={{ cursor: 'pointer', opacity: 0.8 }}>Build log</summary>
                     <pre
@@ -208,7 +213,7 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
                         wordBreak: 'break-all',
                       }}
                     >
-                      {build.failure.log}
+                      {failure.log}
                     </pre>
                   </details>
                 )}
