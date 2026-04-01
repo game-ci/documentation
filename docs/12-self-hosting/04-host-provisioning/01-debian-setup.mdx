@@ -249,18 +249,11 @@ The Nvidia Container Toolkit allows contains to access the GPU resources of the 
 machine. Requires that the GPU drivers are already installed on the host. See the official docs
 here: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
 
-- Set your system distribution name to Debian 11 as workaround until Nvidia adds official Debian 12
-  support
-
-  ```bash
-  distribution=debian11
-  ```
-
 - Download the gpg key and add the repo to your apt sources
 
   ```bash
   curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-  && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+  && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
       sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
       sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
   ```
