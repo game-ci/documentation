@@ -17,6 +17,7 @@ type Props = {
   children: React.JSX.Element | React.JSX.Element[];
   build: Record;
   selected: boolean;
+  jobRepoVersion: string;
   onToggleSelect: () => void;
 };
 
@@ -35,11 +36,20 @@ const formatTimestamp = (ts: any): string => {
   });
 };
 
-export default function BuildRow({ children, build, selected, onToggleSelect }: Props) {
+export default function BuildRow({
+  children,
+  build,
+  selected,
+  jobRepoVersion,
+  onToggleSelect,
+}: Props) {
   const [expanded, setExpanded] = useState(false);
   const [toolbarContent, setToolbarContent] = useState('Click to copy');
 
   const { buildId, status, failure, meta: rawMeta, addedDate, imageType, buildInfo } = build;
+  const buildRepoVersion = buildInfo.repoVersion;
+  const hasRepoVersionDrift =
+    !!jobRepoVersion && !!buildRepoVersion && jobRepoVersion !== buildRepoVersion;
 
   const MapBuildStatusToElement = (buildStatus: string) => {
     const icon = mapBuildStatusToIcon[buildStatus];
@@ -129,7 +139,34 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
               </button>
             </Tooltip>
             <DockerImageLinkOrRetryButton record={build} />
+            {hasRepoVersionDrift && (
+              <span
+                style={{
+                  marginLeft: 8,
+                  padding: '2px 6px',
+                  borderRadius: 999,
+                  border: '1px solid #b4530933',
+                  background: '#b4530911',
+                  color: '#b45309',
+                  fontSize: '0.75em',
+                  fontWeight: 600,
+                }}
+              >
+                Repo drift
+              </span>
+            )}
           </span>
+        </td>
+        <td>
+          {hasRepoVersionDrift ? (
+            <Tooltip content="Job repo version and build repo version differ. This usually indicates retry churn against a newer repo version.">
+              <span style={{ color: '#b45309', fontWeight: 600 }}>
+                {jobRepoVersion} / {buildRepoVersion}
+              </span>
+            </Tooltip>
+          ) : (
+            buildRepoVersion
+          )}
         </td>
         <td>{imageType}</td>
         <td>{buildInfo.baseOs}</td>
@@ -140,7 +177,7 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
         <tr>
           <td aria-label="spacer" />
           <td aria-label="spacer" />
-          <td colSpan={5} style={{ padding: '2px 8px', fontSize: '0.8em', opacity: 0.7 }}>
+          <td colSpan={6} style={{ padding: '2px 8px', fontSize: '0.8em', opacity: 0.7 }}>
             {failure.reason.slice(0, 200)}
             {failure.reason.length > 200 ? '...' : ''}
           </td>
@@ -148,7 +185,7 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
       )}
       {expanded && (
         <tr className={styles.expandedContentRow}>
-          <td colSpan={7}>
+          <td colSpan={8}>
             {/* Build timeline */}
             {timelineItems.length > 0 && (
               <div
@@ -181,6 +218,23 @@ export default function BuildRow({ children, build, selected, onToggleSelect }: 
                     <strong>{item.label}:</strong> {item.time}
                   </span>
                 ))}
+              </div>
+            )}
+            {hasRepoVersionDrift && (
+              <div
+                style={{
+                  padding: '8px 12px',
+                  marginBottom: 8,
+                  borderRadius: 6,
+                  border: '1px solid #b4530933',
+                  background: '#b4530911',
+                  fontSize: '0.8em',
+                }}
+              >
+                <strong>Repo-version drift detected:</strong> job repo version is `{jobRepoVersion}`
+                while this build carries repo version `{buildRepoVersion}`. That usually means an
+                older failed job is being retried against the latest repo version instead of being
+                superseded.
               </div>
             )}
             {/* Failure log viewer */}

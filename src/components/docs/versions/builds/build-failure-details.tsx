@@ -18,6 +18,9 @@ const BuildFailureDetails = ({
 }: Props) => {
   const { editorVersion, baseOs, targetPlatform } = ciBuild.buildInfo;
   const { major, minor, patch } = repoVersionInfo;
+  const buildRepoVersion = ciBuild.buildInfo.repoVersion;
+  const jobRepoVersion = repoVersionInfo.version;
+  const hasRepoVersionDrift = jobRepoVersion !== buildRepoVersion;
 
   const reducer = (state, action) => {
     const { tag, value } = action;
@@ -72,6 +75,22 @@ docker build . \\
 
   return (
     <div {...rest}>
+      <h4>Operational diagnostics</h4>
+      <CodeBlock language="json">
+        {JSON.stringify(
+          {
+            jobRepoVersion,
+            buildRepoVersion,
+            hasRepoVersionDrift,
+            recommendedAction: hasRepoVersionDrift
+              ? 'Do not keep retrying this build as-is. Inspect stale older-version jobs and supersede them before retrying current jobs.'
+              : 'Retry/reset/cleanup actions on this page are safe to use if the failure is still active.',
+          },
+          null,
+          2,
+        )}
+      </CodeBlock>
+      <br />
       <h4>CI Job identification</h4>
       <CodeBlock language="json">{JSON.stringify(ciJob, null, 2)}</CodeBlock>
       <br />

@@ -201,6 +201,7 @@ const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo }: Props) => {
             <th> </th>
             <th className="text-center">Status</th>
             <th>Build ID</th>
+            <th>Repo Version</th>
             <th>Image type</th>
             <th>OS</th>
             <th>Target Platform</th>
@@ -212,6 +213,7 @@ const Builds = ({ ciJobId, repoVersionInfo, editorVersionInfo }: Props) => {
               key={build.buildId}
               build={build}
               selected={selectedBuilds.has(build.buildId)}
+              jobRepoVersion={repoVersionInfo.version}
               onToggleSelect={() => toggleBuild(build.buildId)}
             >
               {expandable.expandedRowRender(build)}
