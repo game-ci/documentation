@@ -28,6 +28,9 @@ const BulkActions = ({ selectedIds, onClear }: { selectedIds: string[]; onClear:
   const { data: user } = useUser();
 
   const callEndpoint = async (endpoint: string, payload: object) => {
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
     const token = await user.getIdToken();
     const response = await fetch(`${config.backendUrl}/${endpoint}`, {
       headers: {

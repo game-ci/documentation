@@ -11,16 +11,17 @@ interface Props {
 }
 
 const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props) => {
-  if (!selectedRepoVersion) return null;
-
-  const ciJobs = useFirestore()
+  const firestore = useFirestore();
+  const ciJobs = firestore
     .collection('ciJobs')
     .orderBy('editorVersionInfo.major', 'desc')
     .orderBy('editorVersionInfo.minor', 'desc')
     .orderBy('editorVersionInfo.patch', 'desc')
-    .where('repoVersionInfo.version', '==', selectedRepoVersion);
+    .where('repoVersionInfo.version', '==', selectedRepoVersion || '__none__');
 
   const { status, data } = useFirestoreCollectionData<{ [key: string]: any }>(ciJobs);
+
+  if (!selectedRepoVersion) return null;
   const isLoading = status === 'loading';
 
   const loading = <p>Fetching versions...</p>;
@@ -32,7 +33,7 @@ const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props
   if (statusFilter !== 'all') {
     filtered = filtered.filter((version) => {
       if (statusFilter === 'stuck') {
-        return version.status === 'failed';
+        return version.status === 'failed' && (version.meta?.failureCount || 0) >= 15;
       }
       return version.status === statusFilter;
     });

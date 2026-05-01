@@ -80,10 +80,17 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
     setError('');
     try {
       const response = await fetch(`${config.backendUrl}/queueStatus`);
-      const body = await response.json();
       if (!response.ok) {
-        throw new Error(body.message || `Request failed (${response.status})`);
+        let message = `Request failed (${response.status})`;
+        try {
+          const body = await response.json();
+          message = body.message || message;
+        } catch {
+          /* non-JSON response */
+        }
+        throw new Error(message);
       }
+      const body = await response.json();
       setData(body);
     } catch (fetchError: any) {
       setError(fetchError.message || 'Failed to load queue status');
@@ -93,7 +100,7 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
   };
 
   useEffect(() => {
-    void fetchQueueStatus();
+    fetchQueueStatus();
   }, []);
 
   const diagnostics = useMemo(() => {
@@ -101,12 +108,12 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
     const builds = data?.builds || [];
     const jobMap = new Map<string, QueueJob>();
 
-    jobs.forEach((job: any) => {
-      const id = job.NO_ID_FIELD || job.id;
+    for (const job of jobs) {
+      const id = (job as any).NO_ID_FIELD || (job as any).id;
       if (id) {
         jobMap.set(id, job);
       }
-    });
+    }
 
     const editorJobs = jobs.filter((job) => job.imageType === 'editor');
     const staleFailedJobs = editorJobs
@@ -186,7 +193,9 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
         </span>
         <button
           type="button"
-          onClick={() => void fetchQueueStatus()}
+          onClick={() => {
+            fetchQueueStatus();
+          }}
           style={{
             marginLeft: 'auto',
             padding: '4px 8px',

@@ -9,8 +9,8 @@ import styles from './builds.module.scss';
 
 const mapBuildStatusToIcon = {
   started: <Spinner type="slow" />,
-  failed: '\u26A0',
-  published: '\u2705',
+  failed: '⚠',
+  published: '✅',
 };
 
 type Props = {
@@ -177,7 +177,7 @@ export default function BuildRow({
         <tr>
           <td aria-label="spacer" />
           <td aria-label="spacer" />
-          <td colSpan={6} style={{ padding: '2px 8px', fontSize: '0.8em', opacity: 0.7 }}>
+          <td colSpan={8} style={{ padding: '2px 8px', fontSize: '0.8em', opacity: 0.7 }}>
             {failure.reason.slice(0, 200)}
             {failure.reason.length > 200 ? '...' : ''}
           </td>

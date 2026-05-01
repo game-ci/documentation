@@ -16,10 +16,13 @@ const BuildFailureDetails = ({
   ciBuild,
   ...rest
 }: Props) => {
-  const { editorVersion, baseOs, targetPlatform } = ciBuild.buildInfo;
-  const { major, minor, patch } = repoVersionInfo;
-  const buildRepoVersion = ciBuild.buildInfo.repoVersion;
-  const jobRepoVersion = repoVersionInfo.version;
+  const {
+    editorVersion,
+    baseOs,
+    targetPlatform,
+    repoVersion: buildRepoVersion,
+  } = ciBuild.buildInfo;
+  const { major, minor, patch, version: jobRepoVersion } = repoVersionInfo;
   const hasRepoVersionDrift = jobRepoVersion !== buildRepoVersion;
 
   const reducer = (state, action) => {

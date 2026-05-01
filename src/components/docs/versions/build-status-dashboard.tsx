@@ -7,13 +7,14 @@ interface Props {
 }
 
 const BuildStatusDashboard = ({ selectedRepoVersion }: Props) => {
-  if (!selectedRepoVersion) return null;
-
-  const ciBuilds = useFirestore()
+  const firestore = useFirestore();
+  const ciBuilds = firestore
     .collection('ciBuilds')
-    .where('buildInfo.repoVersion', '==', selectedRepoVersion);
+    .where('buildInfo.repoVersion', '==', selectedRepoVersion || '__none__');
 
   const { status, data } = useFirestoreCollectionData<{ [key: string]: any }>(ciBuilds);
+
+  if (!selectedRepoVersion) return null;
 
   if (status === 'loading') {
     return (
@@ -45,55 +46,58 @@ const BuildStatusDashboard = ({ selectedRepoVersion }: Props) => {
   });
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 8,
-        padding: '12px 0',
-        alignItems: 'center',
-      }}
-    >
-      <span style={statStyle('#666')}>
-        Total: <strong>{total}</strong>
-      </span>
-      <span style={statStyle('#22c55e')}>
-        Published: <strong>{published}</strong>
-      </span>
-      <span style={statStyle('#3b82f6')}>
-        In progress: <strong>{started}</strong>
-      </span>
-      <span style={statStyle('#ef4444')}>
-        Failed: <strong>{failed}</strong>
-      </span>
-      {maxedOut > 0 && (
-        <span style={statStyle('#b45309')}>
-          Stuck (15+): <strong>{maxedOut}</strong>
-        </span>
-      )}
-      <span
+    <>
+      <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
+      <div
         style={{
-          marginLeft: 'auto',
-          fontSize: '0.75em',
-          opacity: 0.6,
-          display: 'inline-flex',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 8,
+          padding: '12px 0',
           alignItems: 'center',
-          gap: 4,
         }}
       >
+        <span style={statStyle('#666')}>
+          Total: <strong>{total}</strong>
+        </span>
+        <span style={statStyle('#22c55e')}>
+          Published: <strong>{published}</strong>
+        </span>
+        <span style={statStyle('#3b82f6')}>
+          In progress: <strong>{started}</strong>
+        </span>
+        <span style={statStyle('#ef4444')}>
+          Failed: <strong>{failed}</strong>
+        </span>
+        {maxedOut > 0 && (
+          <span style={statStyle('#b45309')}>
+            Stuck (15+): <strong>{maxedOut}</strong>
+          </span>
+        )}
         <span
           style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: '#22c55e',
-            display: 'inline-block',
-            animation: 'pulse 2s infinite',
+            marginLeft: 'auto',
+            fontSize: '0.75em',
+            opacity: 0.6,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
           }}
-        />
-        Live
-      </span>
-    </div>
+        >
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              background: '#22c55e',
+              display: 'inline-block',
+              animation: 'pulse 2s ease-in-out infinite',
+            }}
+          />
+          Live
+        </span>
+      </div>
+    </>
   );
 };
 
