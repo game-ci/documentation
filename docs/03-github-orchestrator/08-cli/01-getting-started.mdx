@@ -75,6 +75,10 @@ Or for personal licenses:
 export UNITY_LICENSE="$(cat ~/Unity_v2022.x.ulf)"
 ```
 
+> **AWS SSO / credential chain:** If you don't set `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, the
+> orchestrator falls back to the AWS SDK default credential chain — SSO profiles, IAM roles, ECS
+> task roles, etc. For SSO: `aws sso login --profile my-profile` then set `AWS_PROFILE=my-profile`.
+
 ## Your First Build
 
 Run a build by specifying your target platform. The Unity version is auto-detected from your

@@ -25,6 +25,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,8 +36,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
       - uses: game-ci/unity-builder@v4
@@ -61,6 +64,9 @@ jobs:
   build:
     name: Build (${{ matrix.targetPlatform }})
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -76,8 +82,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
       - uses: game-ci/unity-builder@v4
@@ -97,10 +103,9 @@ jobs:
 
 ### Required Secrets
 
-| Secret                  | Description                                                      |
-| ----------------------- | ---------------------------------------------------------------- |
-| `AWS_ACCESS_KEY_ID`     | IAM access key with ECS, CloudFormation, S3, Kinesis, CloudWatch |
-| `AWS_SECRET_ACCESS_KEY` | IAM secret key                                                   |
+| Secret         | Description                                                                   |
+| -------------- | ----------------------------------------------------------------------------- |
+| `AWS_ROLE_ARN` | IAM role ARN for OIDC with ECS, CloudFormation, S3, Kinesis, CloudWatch perms |
 
 See the [AWS provider page](../providers/aws) for allowed CPU/memory combinations and full setup.
 
@@ -222,14 +227,17 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
       - uses: game-ci/unity-builder@v4
@@ -257,6 +265,9 @@ jobs:
   build:
     name: Build ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -275,8 +286,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
       - uses: game-ci/unity-builder@v4

@@ -65,6 +65,10 @@ game-ci watch --provider-strategy aws
 game-ci garbage-collect --provider-strategy aws
 ```
 
+Cleans up stale cloud resources (AWS only): stops old ECS tasks, deletes job CloudFormation stacks,
+and removes old CloudWatch log groups. Resources are deleted immediately without confirmation. Use
+`--garbageMaxAge` to control the age threshold (default: 24 hours).
+
 ## Keeping Commands Short
 
 Avoid long CLI flags for credentials by using environment variables or the
