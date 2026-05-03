@@ -110,9 +110,19 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "yarn@4.7.0",
-  "volta": {
-    "node": "20.5.1",
-    "yarn": "4.7.0"
+  "packageManager": "yarn@4.14.1",
+  "dependenciesMeta": {
+    "core-js": {
+      "built": true
+    },
+    "core-js-pure": {
+      "built": true
+    },
+    "lefthook": {
+      "built": true
+    },
+    "protobufjs": {
+      "built": true
+    }
   }
 }
