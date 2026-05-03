@@ -24,6 +24,15 @@ folder. For other engines, the cached folders are defined by the [engine plugin]
 - ✅ Best for smaller projects
 - ⚠️ Slower rebuilds for large asset libraries
 
+Unity Library restores are validated before being accepted. Empty Library folders and AssetDatabase
+skeletons, such as zero-byte `Library/ArtifactDB` or `Library/assetDatabase.info` files, are treated
+as cache misses. This prevents a broken or incomplete Library from being reused as if it were a warm
+cache hit.
+
+For local filesystem caches on persistent runners, see
+[Local Build Caching](build-services#local-build-caching) for fallback keys and directory-based
+cache modes.
+
 ## Build Caching
 
 Orchestrator automatically caches build output alongside the Library cache. After each build, the

@@ -91,18 +91,68 @@ Filesystem-based - works on self-hosted runners with persistent storage.
 
 - **Cache key**: `{platform}-{version}-{branch}` (sanitized)
 - **Cache root**: `localCacheRoot` > `$RUNNER_TEMP/game-ci-cache` > `.game-ci/cache`
-- **Restore**: extracts `library-{key}.tar` / `lfs-{key}.tar` if they exist
-- **Save**: creates tar archives of the Library and LFS folders after the build
+- **Restore**: restores the Library and LFS folders from the selected local cache mode
+- **Save**: saves the Library and LFS folders after the build
 - **Garbage collection**: removes cache entries that haven't been accessed recently
+
+Unity Library restores are validated before being accepted. Empty Library folders and AssetDatabase
+skeletons, such as zero-byte `Library/ArtifactDB` or `Library/assetDatabase.info` files, are treated
+as cache misses.
+
+### Fallback Keys
+
+When `localCacheFallback` is enabled, the exact cache key is still tried first. If it misses, the
+orchestrator searches for compatible local cache keys in this order:
+
+1. Same platform and Unity version
+2. Same platform
+3. Same Unity version
+
+This is useful for branch builds where a Library from `main` or `develop` is a better starting point
+than a cold import. When a fallback Library is restored, Unity compilation artifacts that are
+profile-dependent are cleared before the build:
+
+- `Library/ScriptAssemblies`
+- `Library/Bee`
+
+You can also provide explicit fallback keys with `localCacheFallbackKeys`.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local
+    localCacheEnabled: true
+    localCacheFallback: true
+    localCacheFallbackKeys: StandaloneWindows64-2022_3_20f1-main,StandaloneWindows64-2022_3_20f1-develop
+```
+
+### Cache Mode
+
+`localCacheMode` controls how the local cache stores and restores the Unity Library:
+
+| Mode             | Behavior                 | Best for                                                      |
+| ---------------- | ------------------------ | ------------------------------------------------------------- |
+| `tar`            | Portable tar archive     | Default; works across platforms and filesystems               |
+| `copy-directory` | Recursive directory copy | Shared seed caches that must remain available to other builds |
+| `move-directory` | Directory move / rename  | Same-volume Windows self-hosted runners with large Libraries  |
+
+`move-directory` can be much faster than tar extraction for very large Libraries because NTFS can
+rename a directory on the same volume without copying file contents. Use it only when the cache root
+and workspace are on the same volume and the workflow saves the Library back after the build. If
+`localCacheFallback` restores a fallback key while `localCacheMode` is `move-directory`, the
+fallback is copied instead of moved so the shared fallback seed remains available to other branches.
 
 ### Inputs
 
-| Input               | Default | Description                |
-| ------------------- | ------- | -------------------------- |
-| `localCacheEnabled` | `false` | Enable filesystem caching  |
-| `localCacheRoot`    | -       | Cache directory override   |
-| `localCacheLibrary` | `true`  | Cache Unity Library folder |
-| `localCacheLfs`     | `true`  | Cache LFS objects          |
+| Input                    | Default | Description                                              |
+| ------------------------ | ------- | -------------------------------------------------------- |
+| `localCacheEnabled`      | `false` | Enable filesystem caching                                |
+| `localCacheRoot`         | -       | Cache directory override                                 |
+| `localCacheLibrary`      | `true`  | Cache Unity Library folder                               |
+| `localCacheLfs`          | `true`  | Cache LFS objects                                        |
+| `localCacheFallback`     | `false` | Try compatible local cache keys after exact-key miss     |
+| `localCacheFallbackKeys` | -       | Comma-separated explicit fallback keys                   |
+| `localCacheMode`         | `tar`   | Cache mode: `tar`, `copy-directory`, or `move-directory` |
 
 ### Example
 

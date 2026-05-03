@@ -179,6 +179,38 @@ Make sure your branch is clean and all files are indeed present:
 A good way to verify this, is to (locally) clone the Unity project in a new folder and run the build
 from there.
 
+### Unity exits 0 but no new build was produced
+
+Unity can exit with code `0` even when the build method was never invoked. One known cause is an
+`InitializeOnLoad` script that creates or modifies assets during domain reload, causing
+`SourceAssetDB` timestamp mismatches. In CI this can be misleading if old build artifacts are still
+present and a later step finds them.
+
+Check the Unity Editor.log, not only the CI wrapper output. If the build method log marker is
+missing, treat the run as failed and reset the affected metadata before retrying:
+
+- Remove known auto-generated assets that are created by `InitializeOnLoad`
+- Remove `Library/SourceAssetDB`
+- Remove `Temp`
+
+When using the orchestrator APIs directly, `UnityBuildDiagnosticsService` detects this as a silent
+success and `BuildReliabilityService.resetSourceAssetDatabase(projectPath)` provides the targeted
+metadata reset.
+
+### PackageCache GUID or immutable package asset errors
+
+Errors such as `CS0246` under `Library/PackageCache` or `Could not restore immutable package asset`
+usually point to a stale or corrupt PackageCache, not a need to delete the whole Unity Library.
+
+Prefer clearing `Library/PackageCache` and retrying. This preserves imported assets while forcing
+Unity to rebuild the package cache.
+
+### Short Unity exit -1 with licensing messages
+
+If Unity exits with `-1` shortly after launch and Editor.log contains messages such as
+`Access token is unavailable`, it is usually a licensing startup race rather than Library
+corruption. Retry after a short delay and preserve the Library.
+
 ### Branch is dirty
 
 #### Error
