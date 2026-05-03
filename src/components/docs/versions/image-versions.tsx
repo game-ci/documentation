@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import SignInSignOutButton from '@site/src/components/auth/sign-in-sign-out-button';
+import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
 import CleanUpStuckBuildsButton from './clean-up-stuck-builds-button';
 import ResetAllFailedBuildsButton from './reset-all-failed-builds-button';
 import BuildStatusDashboard from './build-status-dashboard';
 import UnityVersions from './unity-versions';
 import QueueManagementPanel from './queue-management-panel';
-import { SimpleAuthCheck } from '@site/src/components/auth/safe-auth-check';
 import styles from './unity-version.module.scss';
 
 interface Props {
