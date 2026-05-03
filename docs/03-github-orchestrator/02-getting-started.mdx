@@ -1,34 +1,159 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started
 
-Orchestrator lets you run Unity builds on remote cloud infrastructure instead of GitHub-hosted
-runners. This is useful for large projects that exceed GitHub's disk or resource limits.
+Orchestrator lets you run Unity builds on whatever machines you have: cloud, on-premise, or your
+local machine. It works as a built-in plugin for `game-ci/unity-builder` in GitHub Actions, or as a
+standalone CLI tool.
 
 ## Prerequisites
 
-- A Unity project in a GitHub repository
-- A cloud provider account (AWS or a Kubernetes cluster)
-- Provider credentials configured as GitHub secrets
+- A Unity project
+- A cloud provider account (AWS or a Kubernetes cluster) or Docker installed locally
+- Provider credentials (as GitHub secrets or environment variables)
 
-## Quick Start
+## Choose a Provider
 
-1. **Choose a provider**: `aws` (AWS Fargate) or `k8s` (Kubernetes)
-2. **Configure credentials** for your chosen provider
-3. **Add the orchestrator step** to your workflow
+Pick the provider that fits your setup. Each tab shows a minimal quick-start snippet.
 
-See the provider-specific examples for complete setup:
+<Tabs>
+  <TabItem value="aws" label="AWS Fargate" default>
 
-- [AWS Example](examples/github-examples/aws)
-- [Kubernetes Example](examples/github-examples/kubernetes)
-- [Command Line](examples/command-line)
+**Easiest option — fully managed, no servers to maintain.**
 
-## Minimal Example
+Set up your AWS credentials as GitHub secrets (`AWS_ROLE_ARN` for OIDC or `AWS_ACCESS_KEY_ID` /
+`AWS_SECRET_ACCESS_KEY` for static keys), then use `providerStrategy: aws`:
 
 ```yaml
-- uses: game-ci/unity-builder@main
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v4
+  with:
+    role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+    aws-region: eu-west-2
+
+- uses: game-ci/unity-builder@v4
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-For full parameter documentation, see the [API Reference](api-reference).
+See the [AWS provider page](providers/aws) for full setup.
+
+  </TabItem>
+  <TabItem value="k8s" label="Kubernetes">
+
+**Best if you already have a cluster.**
+
+Base64-encode your kubeconfig and store it as a GitHub secret (`KUBE_CONFIG`):
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: k8s
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+  env:
+    kubeConfig: ${{ secrets.KUBE_CONFIG }}
+```
+
+See the [Kubernetes provider page](providers/kubernetes) for cluster tips.
+
+  </TabItem>
+  <TabItem value="local-docker" label="Local Docker">
+
+**No cloud account needed — runs on your own machine.**
+
+Requires Docker and a self-hosted GitHub Actions runner:
+
+```yaml
+# runs-on: self-hosted
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local-docker
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+See the [Local Docker provider page](providers/local-docker) for details.
+
+  </TabItem>
+</Tabs>
+
+See [Providers](providers/overview) for the full list and detailed setup guides.
+
+## GitHub Actions
+
+When you set `providerStrategy` in `game-ci/unity-builder`, the orchestrator activates
+automatically. No separate install step is needed.
+
+### Basic example
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Full workflow example
+
+```yaml
+name: Build
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          providerStrategy: aws
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Command Line
+
+### 1. Install
+
+```bash
+# Linux / macOS
+curl -fsSL https://raw.githubusercontent.com/game-ci/orchestrator/main/install.sh | sh
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/game-ci/orchestrator/main/install.ps1 | iex
+```
+
+### 2. Set credentials
+
+```bash
+export UNITY_SERIAL="XX-XXXX-XXXX-XXXX-XXXX-XXXX"
+export AWS_ACCESS_KEY_ID="..."
+export AWS_SECRET_ACCESS_KEY="..."
+```
+
+### 3. Run a build
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --provider-strategy aws
+```
+
+See the [CLI documentation](cli/getting-started) for full details.
+
+## Next Steps
+
+- [Provider setup guides](providers/overview) - configure your cloud credentials
+- [API Reference](api-reference) - full parameter documentation
+- [Examples](examples/github-actions) - more workflow examples
+- [CLI Reference](cli/build-command) - full CLI flag reference

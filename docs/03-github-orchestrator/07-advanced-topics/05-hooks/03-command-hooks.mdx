@@ -1,0 +1,40 @@
+# Command Hooks
+
+Inject custom shell commands into the standard build workflow at specific points.
+
+## Format
+
+```yaml
+- name: example hook
+  hook: |
+    step:
+      - before
+    commands: |
+      echo "hello world!"
+```
+
+## Hook Points
+
+| Step     | When it runs                    |
+| -------- | ------------------------------- |
+| `before` | Before the build step starts.   |
+| `after`  | After the build step completes. |
+
+## Usage
+
+Pass hooks inline via the `commandHooks` parameter or reference files from the `.game-ci/hooks/`
+directory via `customHookFiles`.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    customHookFiles: my-hook
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Place hook files at `.game-ci/hooks/my-hook.yaml` in your repository.
+
+For running Docker containers as build steps, see [Container Hooks](container-hooks). For
+ready-to-use hooks (S3, rclone, Steam), see [Built-In Hooks](built-in-hooks).

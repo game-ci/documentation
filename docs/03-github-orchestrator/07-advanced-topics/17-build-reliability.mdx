@@ -1,0 +1,210 @@
+---
+sidebar_position: 17
+---
+
+# Build Reliability
+
+Build reliability features harden CI builds against common failure modes: git corruption on
+persistent runners, Windows filesystem issues with cross-platform repositories, and build output
+management. All features are opt-in via action inputs and fail gracefully - a reliability check that
+encounters an error logs a warning rather than failing the build.
+
+## Git Integrity Checking
+
+Self-hosted runners with persistent workspaces accumulate state between builds. Aborted jobs, disk
+errors, and concurrent git operations can leave the repository in a corrupted state. When this
+happens, the next build fails with cryptic git errors that are difficult to diagnose.
+
+Git integrity checking catches corruption before it causes build failures.
+
+### What It Checks
+
+The integrity check runs three validations in sequence:
+
+1. **`git fsck --no-dangling`** - Detects broken links, missing objects, and corrupt pack data in
+   the local repository. The `--no-dangling` flag suppresses harmless warnings about unreachable
+   objects that are normal in CI environments.
+
+2. **Stale lock files** - Scans the `.git/` directory recursively for any files ending in `.lock`
+   (`index.lock`, `shallow.lock`, `config.lock`, `HEAD.lock`, `refs/**/*.lock`). These are left
+   behind by git processes that were killed mid-operation and prevent subsequent git commands from
+   running. All lock files found are removed.
+
+3. **Submodule backing stores** - For each submodule declared in `.gitmodules`, validates that the
+   `.git` file inside the submodule directory points to an existing backing store under
+   `.git/modules/`. A broken backing store reference means the submodule's history is inaccessible,
+   and any git operation inside it will fail.
+
+### Configuration
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    gitIntegrityCheck: 'true'
+```
+
+### Automatic Recovery
+
+When `gitAutoRecover` is enabled (the default when `gitIntegrityCheck` is on) and corruption is
+detected, the service attempts recovery:
+
+1. Remove the corrupted `.git` directory entirely
+2. Re-initialize the repository with `git init`
+3. The checkout action completes the clone on the next step
+
+This is a last-resort recovery. It works because the orchestrator's checkout step will re-populate
+the repository from the remote after re-initialization.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    gitIntegrityCheck: 'true'
+    gitAutoRecover: 'true' # this is the default when gitIntegrityCheck is enabled
+```
+
+To run integrity checks without automatic recovery (report-only mode), disable it explicitly:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    gitIntegrityCheck: 'true'
+    gitAutoRecover: 'false'
+```
+
+In report-only mode, detected corruption is logged as a warning and the build continues. This is
+useful for monitoring repository health without taking corrective action.
+
+## Reserved Filename Cleanup
+
+Windows has reserved device names (`CON`, `PRN`, `AUX`, `NUL`, `COM1`–`COM9`, `LPT1`–`LPT9`) that
+cannot be used as filenames. When a git repository created on macOS or Linux contains files with
+these names, checking them out on Windows causes problems.
+
+### The Problem
+
+Unity is particularly sensitive to reserved filenames. When the asset importer encounters a file
+named `aux.meta`, `nul.png`, or similar, it can enter an infinite reimport loop - detecting the
+file, failing to process it, detecting it again. This manifests as:
+
+- Unity hanging during asset import with no progress
+- 100% CPU usage from the asset import worker
+- Build jobs that run until they hit the timeout limit
+- Explorer crashes when navigating to affected directories
+
+These files are valid on macOS and Linux, so they can easily enter a repository through
+cross-platform contributions.
+
+### Solution
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    cleanReservedFilenames: 'true'
+```
+
+When enabled, the service scans the `Assets/` directory tree before Unity processes the project. Any
+file or directory whose name (without extension) matches a reserved device name is removed. Each
+removal is logged as a warning so the source of the problematic files can be traced.
+
+### Reserved Names
+
+The full list of reserved names checked (case-insensitive, with any file extension):
+
+`CON`, `PRN`, `AUX`, `NUL`, `COM1`, `COM2`, `COM3`, `COM4`, `COM5`, `COM6`, `COM7`, `COM8`, `COM9`,
+`LPT1`, `LPT2`, `LPT3`, `LPT4`, `LPT5`, `LPT6`, `LPT7`, `LPT8`, `LPT9`
+
+Examples of files that would be removed: `aux.meta`, `nul.png`, `CON.txt`, `com1.asset`.
+
+## Build Output Archival
+
+Automatically archive build outputs after successful builds. Archives are organized per platform and
+managed with a count-based retention policy.
+
+### Configuration
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    buildArchiveEnabled: 'true'
+    buildArchivePath: '/mnt/build-archives'
+    buildArchiveRetention: '5'
+```
+
+### How It Works
+
+1. After a successful build, the build output directory is moved (or copied, if a cross-device move
+   is not possible) to `{archivePath}/{platform}/build-{timestamp}`.
+2. Archives are organized by platform - each target platform gets its own subdirectory.
+3. The retention policy keeps the N most recent builds per platform. Older builds are automatically
+   removed.
+
+The archive path must be set when archival is enabled. This can be a local directory on the runner
+or a mounted network volume.
+
+### Retention Strategy
+
+Retention is count-based: the `buildArchiveRetention` value specifies how many builds to keep per
+platform. When a new build is archived and the total exceeds the retention count, the oldest
+archives are removed.
+
+- Default retention: **3** builds per platform
+- Set a higher value for release branches where rollback capability is important
+- Archives are sorted by modification time, so the most recent builds are always retained
+
+### Archive Layout
+
+```
+/mnt/build-archives/
+  StandaloneLinux64/
+    build-2025-01-15T10-30-00-000Z/
+    build-2025-01-16T14-22-00-000Z/
+    build-2025-01-17T09-15-00-000Z/
+  StandaloneWindows64/
+    build-2025-01-15T10-45-00-000Z/
+    build-2025-01-16T14-35-00-000Z/
+```
+
+## Git Environment Configuration
+
+The reliability service configures a git environment variable automatically:
+
+- `GIT_CONFIG_NOSYSTEM=1` - Bypasses the system-level git configuration file. This prevents
+  corrupted or misconfigured system git configs on self-hosted runners from affecting builds.
+
+This is applied automatically and does not require any configuration.
+
+## Inputs Reference
+
+| Input                    | Description                                                                      | Default   |
+| ------------------------ | -------------------------------------------------------------------------------- | --------- |
+| `gitIntegrityCheck`      | Run git integrity checks before build                                            | `'false'` |
+| `gitAutoRecover`         | Attempt automatic recovery if corruption detected (requires `gitIntegrityCheck`) | `'true'`  |
+| `cleanReservedFilenames` | Remove Windows reserved filenames from `Assets/`                                 | `'false'` |
+| `buildArchiveEnabled`    | Archive build output after successful build                                      | `'false'` |
+| `buildArchivePath`       | Path to store build archives (required when archival is enabled)                 | `''`      |
+| `buildArchiveRetention`  | Number of builds to retain per platform                                          | `'3'`     |
+
+## Recommended Configuration
+
+For self-hosted runners with persistent workspaces:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    gitIntegrityCheck: 'true'
+    gitAutoRecover: 'true'
+    cleanReservedFilenames: 'true'
+    buildArchiveEnabled: 'true'
+    buildArchivePath: '/mnt/build-archives'
+    buildArchiveRetention: '5'
+```
+
+For ephemeral runners (GitHub-hosted or fresh containers), git integrity checking is less valuable
+since the workspace is created fresh each time. Reserved filename cleanup is still useful if the
+repository contains cross-platform contributions:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    cleanReservedFilenames: 'true'
+```

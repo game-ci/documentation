@@ -1,42 +1,59 @@
-# Game-CI vs Orchestrator
+---
+sidebar_label: Game-CI vs Orchestrator
+---
 
-# Standard Game-CI (Use Cases)
+# Standard Game-CI vs Orchestrator Mode
 
-The Game CI core is a maintained set of docker images that can be used to run workloads in many
-scenarios.
+## Standard Game-CI
 
-Game CI also provides specific GitHub actions for running workflows on GitHub. And a similar
-workflow for running Game CI on GitLab and Circle CI. _All of these options use the build server
-resources provided by those systems, this can be a constraint or very convenient depending on the
-size of your project and the workloads you need to run._
+Game CI provides Docker images and GitHub Actions for running Unity workflows on the build server
+resources provided by your CI platform (GitHub, GitLab, Circle CI).
 
-# Orchestrator (Use Cases)
+**Best for:** Projects that fit within your CI runner's resource limits and don't need advanced
+caching, hooks, or multi-provider routing.
 
-## Sending Builds to the cloud
+## Orchestrator Mode
 
-You may want to take advantage of cloud resources for lots of reasons (scale, speed, cost,
-flexibility) or may want to start remote builds from the command line without slowing down your
-development machine. Orchestrator can help you do this.
+Orchestrator is an advanced layer on top of Game CI. It takes whatever machines you give it and
+manages the full build lifecycle across it: provisioning, git sync, caching, hooks, and cleanup.
+Whether you're running on a cloud provider, a local machine, or your own servers, Orchestrator gives
+you the tools and flexibility to manage your workflows.
 
-This may be a preference, more efficient, or you may want to use systems that struggle to handle
-large game development projects (GitHub being a good example).
+Projects of any size can benefit from orchestrator features like configurable resources, automatic
+caching, and extensible hooks. Larger projects additionally benefit from retained workspaces,
+provider failover, and load balancing.
 
-### Large GitHub Projects
+```mermaid
+flowchart LR
+  subgraph Standard Game-CI
+    GR["GitHub Runner\n(builds locally)\n\n~14 GB disk\nFixed resources"]
+  end
+  subgraph Orchestrator Mode
+    GA["GitHub Action\nCLI / Any CI\n(dispatches only)\n\nConfigurable CPU, memory, disk\nScales to zero when idle"]
+    CC["Build Target\n(any machine)"]
+    GA <--> CC
+  end
+```
 
-GitHub Actions by default run on
-[build machines provided by GitHub](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners).
-For Unity projects the available disk size is quite small. You may experience an error related to
-running out of disk space. You may also want to run the build on a server with more memory or
-processing resources.
+## Self-Hosted Runners + Orchestrator
 
-### GitHub Self-Hosted Runners vs Game CI Orchestrator
+Self-hosted runners and orchestrator are not mutually exclusive. Orchestrator **complements**
+self-hosted runners by adding automatic failover, load balancing, and runner availability checks.
 
-_GitHub users can consider:
-[GitHub self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners)
-and Orchestrator. Both can enable you to build larger projects._
+|                    | Self-Hosted Runners Alone           | Self-Hosted + Orchestrator                             |
+| ------------------ | ----------------------------------- | ------------------------------------------------------ |
+| **Failover**       | Manual intervention if server fails | Automatic fallback to cloud when runner is unavailable |
+| **Load balancing** | Fixed capacity                      | Overflow to cloud during peak demand                   |
+| **Caching**        | Local disk only                     | S3/rclone-backed caching with retained workspaces      |
+| **Hooks**          | Custom scripting                    | Built-in middleware pipeline with lifecycle hooks      |
+| **Maintenance**    | You manage everything               | Orchestrator handles provisioning, sync, and cleanup   |
 
-_Orchestrator is better if you don't have a server setup or don't want to manage or maintain your
-own build server._
+## Choosing Your Setup
 
-_Self-hosted runners are best used when you already have a server available, running 24/7 that you
-can setup as a runner. And you're happy to maintain and keep that server available and running._
+| Scenario                                       | Recommendation                                                    |
+| ---------------------------------------------- | ----------------------------------------------------------------- |
+| Small project, standard runners work fine      | Standard Game-CI                                                  |
+| Need configurable resources or caching         | Orchestrator with any provider                                    |
+| Large project, no existing servers             | Orchestrator with AWS Fargate or Kubernetes                       |
+| Existing self-hosted runners, want reliability | Orchestrator with self-hosted primary + cloud fallback            |
+| Want to test orchestrator locally before cloud | Orchestrator with [Local Docker](providers/local-docker) provider |

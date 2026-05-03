@@ -1,0 +1,176 @@
+---
+sidebar_position: 2
+---
+
+# Build Command
+
+The `build` command runs a Unity build inside a Docker container (or natively on macOS). It accepts
+the same parameters as the `game-ci/unity-builder` GitHub Action, translated to CLI flags. The CLI
+is provided by the [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) package.
+
+```bash
+game-ci build [options]
+```
+
+## Required Options
+
+| Flag                | Description                                      |
+| ------------------- | ------------------------------------------------ |
+| `--target-platform` | Build target platform (e.g. `StandaloneLinux64`) |
+
+## Project Options
+
+| Flag                  | Default   | Description                                                                                     |
+| --------------------- | --------- | ----------------------------------------------------------------------------------------------- |
+| `--unity-version`     | `auto`    | Unity Editor version to use. Set to `auto` to detect from `ProjectSettings/ProjectVersion.txt`. |
+| `--project-path`      | `.`       | Path to the Unity project directory                                                             |
+| `--build-name`        | _(empty)_ | Name of the build output file (no file extension)                                               |
+| `--builds-path`       | `build`   | Output directory for build artifacts                                                            |
+| `--build-method`      | _(empty)_ | Custom static C# build method to invoke (e.g. `MyBuild.PerformBuild`)                           |
+| `--build-profile`     | _(empty)_ | Path to the build profile to activate, relative to the project root                             |
+| `--custom-parameters` | _(empty)_ | Additional parameters appended to the Unity command line                                        |
+
+## Versioning Options
+
+| Flag           | Default    | Description                                               |
+| -------------- | ---------- | --------------------------------------------------------- |
+| `--versioning` | `Semantic` | Versioning strategy: `Semantic`, `Tag`, `Custom`, `None`  |
+| `--version`    | _(empty)_  | Explicit version string (used with `--versioning Custom`) |
+
+## Unity Options
+
+| Flag                       | Default   | Description                                                                                         |
+| -------------------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| `--manual-exit`            | `false`   | Suppresses the `-quit` flag. Use when your build method calls `EditorApplication.Exit(0)` manually. |
+| `--enable-gpu`             | `false`   | Launches Unity without specifying `-nographics`                                                     |
+| `--skip-activation`        | `false`   | Skip Unity license activation/deactivation                                                          |
+| `--unity-licensing-server` | _(empty)_ | Unity floating license server address                                                               |
+
+## Engine Options
+
+| Flag              | Default   | Description                                                                                                                    |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `--engine`        | `unity`   | Game engine name (`unity`, `godot`, `unreal`, etc.)                                                                            |
+| `--engine-plugin` | _(empty)_ | Engine plugin source: NPM package, `cli:<path>`, or `docker:<image>`. See [Engine Plugins](../advanced-topics/engine-plugins). |
+
+### Non-Unity Engine Example
+
+```bash
+game-ci build \
+  --engine godot \
+  --engine-plugin @game-ci/godot-engine \
+  --target-platform linux \
+  --custom-image my-godot-image:4.2 \
+  --provider-strategy aws
+```
+
+## Custom Build Parameters
+
+Pass arbitrary parameters to the Unity build process:
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --custom-parameters "-myFlag -myKey myValue"
+```
+
+The `--custom-parameters` string is appended to the Unity command line arguments.
+
+## Android Options
+
+| Flag                           | Default          | Description                                                                              |
+| ------------------------------ | ---------------- | ---------------------------------------------------------------------------------------- |
+| `--android-version-code`       | _(empty)_        | Android `versionCode` override                                                           |
+| `--android-export-type`        | `androidPackage` | Export type: `androidPackage` (APK), `androidAppBundle` (AAB), or `androidStudioProject` |
+| `--android-keystore-name`      | _(empty)_        | Filename of the keystore                                                                 |
+| `--android-keystore-base64`    | _(empty)_        | Base64-encoded keystore file contents                                                    |
+| `--android-keystore-pass`      | _(empty)_        | Keystore password                                                                        |
+| `--android-keyalias-name`      | _(empty)_        | Key alias name within the keystore                                                       |
+| `--android-keyalias-pass`      | _(empty)_        | Key alias password                                                                       |
+| `--android-target-sdk-version` | _(empty)_        | Target Android SDK version (e.g. `AndroidApiLevel31`)                                    |
+| `--android-symbol-type`        | `none`           | Android symbol type to export: `none`, `public`, or `debugging`                          |
+
+### Android Build Example
+
+```bash
+game-ci build \
+  --target-platform Android \
+  --android-keystore-base64 "$(base64 -w 0 release.keystore)" \
+  --android-keystore-pass "$KEYSTORE_PASS" \
+  --android-keyalias-name "release" \
+  --android-keyalias-pass "$KEY_PASS" \
+  --android-target-sdk-version AndroidApiLevel31 \
+  --android-export-type androidAppBundle
+```
+
+## Docker Options
+
+Control the Docker container used for the build:
+
+| Flag                      | Default             | Description                                                                                     |
+| ------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
+| `--custom-image`          | _(empty)_           | Override the Docker image (defaults to `unityci/editor` with the detected version and platform) |
+| `--docker-cpu-limit`      | _(empty)_           | CPU limit for the container (e.g. `4` for 4 cores)                                              |
+| `--docker-memory-limit`   | _(empty)_           | Memory limit for the container (e.g. `8g` for 8 GB)                                             |
+| `--docker-workspace-path` | `/github/workspace` | Path where the workspace is mounted inside the container                                        |
+| `--run-as-host-user`      | `false`             | Run as a user that matches the host system                                                      |
+| `--chown-files-to`        | _(empty)_           | User and optionally group to give ownership of build artifacts (e.g. `1000:1000`)               |
+
+### Custom Docker Image Example
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --custom-image my-registry.com/unity-editor:2022.3.56f1-linux
+```
+
+## Authentication Options
+
+| Flag                  | Default   | Description                                                |
+| --------------------- | --------- | ---------------------------------------------------------- |
+| `--ssh-agent`         | _(empty)_ | SSH Agent path to forward to the container                 |
+| `--git-private-token` | _(empty)_ | GitHub private token for pulling from private repositories |
+
+## Provider Strategy
+
+By default, the `build` command runs locally. You can redirect execution to a remote orchestrator
+provider:
+
+| Flag                  | Default | Description                                  |
+| --------------------- | ------- | -------------------------------------------- |
+| `--provider-strategy` | `local` | Execution strategy: `local`, `k8s`, or `aws` |
+
+When set to anything other than `local`, the build is handed off to the orchestrator. See
+[Orchestrate Command](orchestrate-command) for cloud-specific options.
+
+## Output
+
+Build artifacts are written to the path specified by `--builds-path` (default `build/`). The
+directory structure is:
+
+```
+build/
+  <target-platform>/
+    <build-name>
+```
+
+## Full Example
+
+```bash
+game-ci build \
+  --target-platform StandaloneLinux64 \
+  --unity-version 2022.3.56f1 \
+  --project-path ./my-project \
+  --build-name MyGame \
+  --builds-path ./dist \
+  --versioning Semantic \
+  --custom-parameters "-enableAnalytics" \
+  --docker-cpu-limit 4 \
+  --docker-memory-limit 8g
+```
+
+## See Also
+
+- [Getting Started](getting-started) - installation and first build
+- [Orchestrate Command](orchestrate-command) - run builds on cloud infrastructure
+- [API Reference](../api-reference) - full parameter reference for the GitHub Action

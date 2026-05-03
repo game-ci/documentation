@@ -1,0 +1,194 @@
+# Kubernetes Examples
+
+Complete workflow examples for running Unity builds on Kubernetes via Orchestrator.
+
+## Minimal Kubernetes Build
+
+The simplest K8s workflow. Requires a running cluster and a base64-encoded kubeconfig.
+
+```yaml
+name: Build with Orchestrator (Kubernetes)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      kubeConfig: ${{ secrets.KUBE_CONFIG }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          providerStrategy: k8s
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          kubeVolumeSize: 10Gi
+```
+
+## Multi-Platform Matrix Build
+
+Build for multiple platforms in parallel. Each platform runs as a separate Kubernetes Job.
+
+```yaml
+name: Orchestrator  -  Kubernetes Multi-Platform
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build (${{ matrix.targetPlatform }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneLinux64
+          - StandaloneWindows64
+    env:
+      kubeConfig: ${{ secrets.KUBE_CONFIG }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: game-ci/unity-builder@v4
+        id: build
+        with:
+          providerStrategy: k8s
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: 2022.3.0f1
+          kubeVolumeSize: 10Gi
+          containerCpu: 1024
+          containerMemory: 4096
+          containerHookFiles: aws-s3-upload-build
+          githubCheck: true
+```
+
+## Custom Resources and Storage
+
+Specify CPU/memory and persistent volume size for the build workspace.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  id: k8s-build
+  with:
+    providerStrategy: k8s
+    versioning: None
+    projectPath: path/to/your/project
+    unityVersion: 2022.3.0f1
+    targetPlatform: ${{ matrix.targetPlatform }}
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    kubeVolumeSize: 25Gi
+    kubeStorageClass: gp3
+    containerCpu: 2048
+    containerMemory: 8192
+    containerHookFiles: aws-s3-upload-build
+```
+
+### CPU and Memory
+
+Kubernetes uses the same unit format as AWS (`1024 = 1 vCPU`, memory in MB):
+
+| CPU (`containerCpu`) | Memory (`containerMemory`) |
+| -------------------- | -------------------------- |
+| `256` (0.25 vCPU)    | `512`, `1024`, `2048`      |
+| `512` (0.5 vCPU)     | `1024` – `4096`            |
+| `1024` (1 vCPU)      | `2048` – `8192`            |
+| `2048` (2 vCPU)      | `4096` – `16384`           |
+| `4096` (4 vCPU)      | `8192` – `30720`           |
+
+## Kubernetes with S3 Caching
+
+Use S3-backed caching for the Library folder to speed up rebuilds.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: k8s
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    kubeVolumeSize: 15Gi
+    containerCpu: 2048
+    containerMemory: 8192
+    # Cache Library folder to S3:
+    containerHookFiles: aws-s3-pull-cache,aws-s3-upload-cache,aws-s3-upload-build
+```
+
+Hook execution order matters - `aws-s3-pull-cache` restores the cache before the build,
+`aws-s3-upload-cache` saves it after, and `aws-s3-upload-build` uploads the final artifact.
+
+## Retained Workspaces
+
+Keep the build workspace persistent between builds for large projects.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: k8s
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    kubeVolumeSize: 50Gi
+    maxRetainedWorkspaces: 3
+    containerCpu: 2048
+    containerMemory: 8192
+```
+
+## CLI Usage
+
+Run Kubernetes builds from the command line:
+
+```bash
+game-ci build \
+  --providerStrategy k8s \
+  --projectPath /path/to/unity/project \
+  --targetPlatform StandaloneLinux64 \
+  --kubeVolumeSize 10Gi \
+  --containerCpu 1024 \
+  --containerMemory 4096
+```
+
+Make sure `KUBECONFIG` or `kubeConfig` is set in your environment.
+
+## Generating the kubeConfig Secret
+
+Base64-encode your kubeconfig file:
+
+```bash
+cat ~/.kube/config | base64 -w 0
+```
+
+Store the output as a GitHub Actions secret named `KUBE_CONFIG`.
+
+## Required Secrets
+
+| Secret        | Description                                           |
+| ------------- | ----------------------------------------------------- |
+| `KUBE_CONFIG` | Base64-encoded kubeconfig for your Kubernetes cluster |
+
+## Cluster Tips
+
+- **Keep the cluster running.** Cold-starting a Kubernetes cluster is slow. If you need auto-scaling
+  to zero, consider Google Cloud Kubernetes Autopilot.
+- **Cloud storage required.** Kubernetes requires cloud storage for
+  [caching](../advanced-topics/caching). S3 is built-in, or use rclone for other backends.
+- **Volume size matters.** Unity projects can be large. Start with `10Gi` and increase if builds
+  fail with disk space errors.
+
+## Next Steps
+
+- [Kubernetes Provider Reference](../providers/kubernetes) - full setup and parameters
+- [Caching](../advanced-topics/caching) - S3 and rclone caching strategies
+- [Retained Workspaces](../advanced-topics/retained-workspace) - persistent build environments
+- [Container Hooks](../advanced-topics/hooks/built-in-hooks) - S3, rclone, Steam hooks
+- [API Reference](../api-reference) - full parameter list

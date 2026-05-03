@@ -1,0 +1,31 @@
+# Logging
+
+Orchestrator streams logs from the remote build back to your CI runner in real time.
+
+```mermaid
+flowchart LR
+  A["Cloud Container\nBuild output"] --> B["Orchestrator\nLog stream"] --> C["Your CI\nConsole output"]
+```
+
+## Provider-Specific Log Transport
+
+### Kubernetes
+
+Uses the native Kubernetes logging API to stream pod logs directly.
+
+### AWS
+
+Logs flow through a CloudWatch → Kinesis pipeline:
+
+1. Orchestrator job (Fargate task) writes logs to **CloudWatch Logs**
+2. A **Kinesis** subscription forwards logs in real time
+3. Orchestrator consumes from the Kinesis stream
+
+## 🐛 Debug Logging
+
+Enable [`orchestratorDebug: true`](../api-reference#build-options) to get verbose output including:
+
+- Resource allocation summaries (CPU, memory, disk)
+- Directory structure via `tree`
+- Environment variable listing
+- Disk usage snapshots (`df -h`, `du -sh`)
