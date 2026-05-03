@@ -177,6 +177,62 @@ This gives you:
 | `useCompressionStrategy`  | boolean | `false`            | Use LZ4 compression for cache archives   |
 | `cacheKey`                | string  | branch name        | Override cache key for isolation         |
 
+## Pre-warming the Cache
+
+For projects where even the first checkpoint cycle takes too long, you can pre-warm the cache by
+uploading a Library folder from your local machine. This skips the cold-start entirely — the first
+cloud build pulls the warm cache and only reimports assets that changed since.
+
+### From a local Unity project
+
+```bash
+# 1. Tar your local Library folder
+cd /path/to/your/unity-project
+tar -cf library-warm.tar Library
+
+# 2. Upload to S3 at the path the orchestrator expects
+aws s3 cp library-warm.tar \
+  s3://<your-awsStackName>/orchestrator-cache/<your-cacheKey>/Library/library-warm.tar
+```
+
+Where:
+
+- `<your-awsStackName>` is the `awsStackName` input from your workflow
+- `<your-cacheKey>` is either your branch name (default) or the `cacheKey` input value
+
+### Using the CLI
+
+If you have the orchestrator CLI installed, you can push directly:
+
+```bash
+game-ci cache-push \
+  --cachePushFrom ./Library \
+  --cachePushTo /tmp/cache-upload/Library \
+  --artifactName library-warm
+
+# Then upload the generated tar to S3
+aws s3 cp /tmp/cache-upload/Library/ \
+  s3://<your-awsStackName>/orchestrator-cache/<your-cacheKey>/Library/ \
+  --recursive
+```
+
+### From a self-hosted runner or EC2 instance
+
+Run the full build once on a machine without time limits (self-hosted runner, EC2 instance, or local
+Docker). The build completes, cache is pushed to S3, and all subsequent GitHub Actions builds get a
+warm cache hit:
+
+```bash
+game-ci build \
+  --providerStrategy local-docker \
+  --targetPlatform StandaloneLinux64 \
+  --cacheKey main \
+  --awsStackName my-stack \
+  --containerHookFiles aws-s3-upload-cache
+```
+
+After this one-time run, all cloud builds on the `main` branch restore from the warm cache.
+
 ## Troubleshooting
 
 ### Checkpoints not being saved
