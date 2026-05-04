@@ -107,7 +107,7 @@ jobs:
 | -------------- | ----------------------------------------------------------------------------- |
 | `AWS_ROLE_ARN` | IAM role ARN for OIDC with ECS, CloudFormation, S3, Kinesis, CloudWatch perms |
 
-See the [AWS provider page](../providers/aws) for allowed CPU/memory combinations and full setup.
+See the [AWS provider page](../../providers/aws) for allowed CPU/memory combinations and full setup.
 
 ## ☸️ Kubernetes
 
@@ -163,7 +163,7 @@ Generate it with:
 cat ~/.kube/config | base64 -w 0
 ```
 
-See the [Kubernetes provider page](../providers/kubernetes) for cluster tips and full setup.
+See the [Kubernetes provider page](../../providers/kubernetes) for cluster tips and full setup.
 
 ## 🐳 Local Docker (Self-Hosted Runner)
 
@@ -210,7 +210,8 @@ GitHub Checks.
 
 The build runs in the background. Check progress from the **Checks** tab on your pull request.
 
-See [GitHub Integration](../providers/github-integration) for more on async mode and GitHub Checks.
+See [GitHub Integration](../../providers/github-integration) for more on async mode and GitHub
+Checks.
 
 ## 🗑️ Scheduled Garbage Collection
 
@@ -248,7 +249,7 @@ jobs:
           gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-See [Garbage Collection](../advanced-topics/garbage-collection) for details.
+See [Garbage Collection](../../advanced-topics/garbage-collection) for details.
 
 ## 📦 Multi-Platform Matrix Build
 
@@ -317,8 +318,8 @@ rebuilds at the cost of more storage.
     containerMemory: 8192
 ```
 
-See [Retained Workspaces](../advanced-topics/retained-workspace) and
-[Caching](../advanced-topics/caching) for details on storage strategies.
+See [Retained Workspaces](../../advanced-topics/retained-workspace) and
+[Caching](../../advanced-topics/caching) for details on storage strategies.
 
 ## 🪝 Container Hooks - S3 Upload + Steam Deploy
 
@@ -337,13 +338,13 @@ Chain multiple container hooks to export builds to S3 and deploy to Steam in a s
     STEAM_APPID: ${{ secrets.STEAM_APPID }}
 ```
 
-See [Built-In Hooks](../advanced-topics/hooks/built-in-hooks) for all available hooks (S3, rclone,
-Steam).
+See [Built-In Hooks](../../advanced-topics/hooks/built-in-hooks) for all available hooks (S3,
+rclone, Steam).
 
 ## 🔗 Reference
 
-- [API Reference](../api-reference) - full list of all parameters
-- [Providers](../providers/overview) - setup guides for each provider
-- [Secrets](../secrets) - how credentials are transferred to build containers
+- [API Reference](../../api-reference) - full list of all parameters
+- [Providers](../../providers/overview) - setup guides for each provider
+- [Secrets](../../secrets) - how credentials are transferred to build containers
 - [Real-world pipeline](https://github.com/game-ci/unity-builder/blob/main/.github/workflows/orchestrator-integrity.yml)
   - Game CI's own Orchestrator test pipeline

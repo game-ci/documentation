@@ -2,7 +2,7 @@
 sidebar_position: 15
 ---
 
-# Massive Projects
+# Large Projects
 
 Orchestrator includes specific support for Unity projects at extreme scale - repositories exceeding
 100 GB, asset counts above 500,000 files, and Library folders that dwarf the source tree itself.
@@ -148,7 +148,7 @@ bandwidth initializing the other 22.
 Submodule profiles define exactly which submodules to initialize for a given build context. See the
 [Monorepo Support](monorepo-support) page for full profile format and configuration.
 
-For massive projects, the key practice is keeping each build target's profile minimal:
+For large projects, the key practice is keeping each build target's profile minimal:
 
 ```yaml
 primary_submodule: CoreFramework
@@ -171,7 +171,7 @@ the active submodule set rather than the total repository size.
 For projects where even a targeted LFS pull is expensive, incremental sync avoids full re-clones
 entirely. See the [Incremental Sync Protocol](incremental-sync-protocol) page for the full protocol.
 
-The two strategies most relevant to massive projects:
+The two strategies most relevant to large projects:
 
 **git-delta** - The runner tracks its last sync commit SHA. On job dispatch it receives the target
 SHA, diffs the two, and checks out only the changed files. Assets that have not changed are not

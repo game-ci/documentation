@@ -39,7 +39,7 @@ Set up your AWS credentials as GitHub secrets (`AWS_ROLE_ARN` for OIDC or `AWS_A
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-See the [AWS provider page](providers/aws) for full setup.
+See the [AWS provider page](../providers/aws) for full setup.
 
   </TabItem>
   <TabItem value="k8s" label="Kubernetes">
@@ -58,7 +58,7 @@ Base64-encode your kubeconfig and store it as a GitHub secret (`KUBE_CONFIG`):
     kubeConfig: ${{ secrets.KUBE_CONFIG }}
 ```
 
-See the [Kubernetes provider page](providers/kubernetes) for cluster tips.
+See the [Kubernetes provider page](../providers/kubernetes) for cluster tips.
 
   </TabItem>
   <TabItem value="local-docker" label="Local Docker">
@@ -76,12 +76,12 @@ Requires Docker and a self-hosted GitHub Actions runner:
     gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-See the [Local Docker provider page](providers/local-docker) for details.
+See the [Local Docker provider page](../providers/local-docker) for details.
 
   </TabItem>
 </Tabs>
 
-See [Providers](providers/overview) for the full list and detailed setup guides.
+See [Providers](../providers/overview) for the full list and detailed setup guides.
 
 ## GitHub Actions
 
@@ -149,11 +149,11 @@ game-ci build \
   --provider-strategy aws
 ```
 
-See the [CLI documentation](cli/getting-started) for full details.
+See the [CLI documentation](../cli/getting-started) for full details.
 
 ## Next Steps
 
-- [Provider setup guides](providers/overview) - configure your cloud credentials
-- [API Reference](api-reference) - full parameter documentation
+- [Provider setup guides](../providers/overview) - configure your cloud credentials
+- [API Reference](../api-reference) - full parameter documentation
 - [Examples](examples/github-actions) - more workflow examples
-- [CLI Reference](cli/build-command) - full CLI flag reference
+- [CLI Reference](../cli/build-command) - full CLI flag reference
