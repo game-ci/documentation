@@ -81,7 +81,7 @@
     "@testing-library/react": "^12",
     "@typescript/native-preview": "^7.0.0-dev.20260505.1",
     "@vitejs/plugin-react-swc": "^4.3.0",
-    "@vitest/coverage-istanbul": "^3",
+    "@vitest/coverage-v8": "^3",
     "concurrently": "^7.2.1",
     "eslint": "^10.3.0",
     "eslint-config-airbnb": "^18.2.1",
