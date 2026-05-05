@@ -144,8 +144,7 @@ jobs:
           gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
           remotePowershellHost: ${{ secrets.BUILD_SERVER_HOST }}
           remotePowershellTransport: wsman
-          remotePowershellCredential:
-            ${{ secrets.BUILD_SERVER_USER }}:${{ secrets.BUILD_SERVER_PASS }}
+          remotePowershellCredential: ${{ secrets.BUILD_SERVER_USER }}:${{ secrets.BUILD_SERVER_PASS }}
 ```
 
 ## Limitations and Considerations

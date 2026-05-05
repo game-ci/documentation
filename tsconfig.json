@@ -5,7 +5,15 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "target": "es2015",
-    "types": ["jest"]
-  }
+    "module": "esnext",
+    "target": "es2022",
+    "types": ["node", "vitest/globals"]
+  },
+  "exclude": [
+    "**/node_modules/**",
+    "**/build/**",
+    "**/.docusaurus/**",
+    "e2e/**",
+    "vitest.config.mts"
+  ]
 }

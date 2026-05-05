@@ -1,0 +1,52 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "vitest", "jsx-a11y", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
+  },
+  "rules": {
+    "vitest/require-mock-type-parameters": "off",
+    "vitest/valid-title": "off",
+    "typescript/no-explicit-any": "warn",
+    "typescript/ban-ts-comment": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-bitwise": "off",
+    "no-shadow": "off",
+    "no-await-in-loop": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-reverse": "off",
+    "unicorn/prefer-set-has": "off",
+    "unicorn/consistent-function-scoping": "off",
+    "typescript/no-wrapper-object-types": "warn",
+    "oxc/no-map-spread": "warn",
+    "react/jsx-no-constructed-context-values": "warn",
+    "react/jsx-key": "warn",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      "rules": {
+        "typescript/no-explicit-any": "off",
+        "no-unused-vars": "off"
+      }
+    }
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true,
+    "vitest/globals": true
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/.docusaurus/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/.yarn/**",
+    "playwright.config.ts",
+    "e2e/**"
+  ]
+}
