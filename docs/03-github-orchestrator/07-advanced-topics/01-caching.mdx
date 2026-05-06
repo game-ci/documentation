@@ -230,7 +230,7 @@ single Library archive:
 ```yaml
 - uses: game-ci/unity-builder@v4
   env:
-    UNITY_ACCELERATOR_ENDPOINT: "127.0.0.1:10080"
+    UNITY_ACCELERATOR_ENDPOINT: '127.0.0.1:10080'
   with:
     providerStrategy: aws
     containerHookFiles: accelerator-start,aws-s3-upload-build,aws-s3-upload-cache,accelerator-upload
