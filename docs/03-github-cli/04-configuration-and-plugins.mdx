@@ -23,7 +23,7 @@ Options live under `cliOptions`.
 ```yaml
 cliOptions:
   plugin:
-    - "@game-ci/orchestrator-plugin"
+    - '@game-ci/orchestrator-plugin'
   verbose: true
   targetPlatform: StandaloneLinux64
   buildsPath: dist
@@ -63,7 +63,7 @@ You can also add the plugin to `.game-ci.yml`:
 ```yaml
 cliOptions:
   plugins:
-    - "@game-ci/orchestrator-plugin"
+    - '@game-ci/orchestrator-plugin'
   providerStrategy: local-docker
   targetPlatform: StandaloneLinux64
 ```
@@ -94,28 +94,28 @@ commands, test commands, option registration, providers, and an `onLoad` hook.
 
 ```ts
 export default {
-  name: "my-engine",
-  version: "1.0.0",
+  name: 'my-engine',
+  version: '1.0.0',
   engineDetectors: [
     {
-      name: "my-engine",
+      name: 'my-engine',
       detect(projectPath) {
-        return { engine: "my-engine", engineVersion: "1.2.3" };
+        return { engine: 'my-engine', engineVersion: '1.2.3' };
       },
     },
   ],
   commands: [
     {
-      engine: "my-engine",
+      engine: 'my-engine',
       createCommand(command, subCommands) {
-        if (command === "build") return new MyBuildCommand(command);
-        if (command === "test") return new MyTestCommand(command);
+        if (command === 'build') return new MyBuildCommand(command);
+        if (command === 'test') return new MyTestCommand(command);
         return null;
       },
     },
   ],
   providers: {
-    "my-provider": MyProvider,
+    'my-provider': MyProvider,
   },
 };
 ```
