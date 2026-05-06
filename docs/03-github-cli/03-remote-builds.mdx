@@ -21,6 +21,7 @@ The CLI owns the high-level command shape. Providers own infrastructure-specific
 execution behavior.
 
 <<<<<<< HEAD
+
 ## Public CLI vs Standalone Orchestrator
 
 Use `game-ci orchestrate` from the public CLI for normal provider-backed jobs. It keeps the command
@@ -31,11 +32,13 @@ direct, lower-level Orchestrator entry point for provider development, debugging
 that intentionally run Orchestrator without the public CLI. The verb is the same, but the installed
 package determines the command surface.
 
-| Need                                                     | Use                                  |
-| -------------------------------------------------------- | ------------------------------------ |
-| Friendly public CLI command for builds, tests, or jobs   | `game-ci orchestrate`                |
-| Backwards-compatible old public CLI command names        | `game-ci remote run`, `remote build` |
+| Need                                                   | Use                                  |
+| ------------------------------------------------------ | ------------------------------------ |
+| Friendly public CLI command for builds, tests, or jobs | `game-ci orchestrate`                |
+| Backwards-compatible old public CLI command names      | `game-ci remote run`, `remote build` |
+
 =======
+
 ## Remote Run vs Standalone Orchestrate
 
 Use `game-ci remote run` from the public CLI for normal remote jobs. It keeps the command model
@@ -46,13 +49,14 @@ direct, lower-level Orchestrator entry point for provider development, debugging
 that intentionally run Orchestrator without the public CLI. It is not the preferred public CLI
 command.
 
-| Need                                                     | Use                                  |
-| -------------------------------------------------------- | ------------------------------------ |
-| Friendly public CLI command for builds, tests, or jobs   | `game-ci remote run`                 |
-| Backwards-compatible old remote command name             | `game-ci remote build`               |
->>>>>>> origin/docs/unity-reliability-guide
-| Direct standalone Orchestrator provider execution        | `game-ci orchestrate`                |
-| Executable provider protocol integration with GameCI CLI | `game-ci serve` in the provider tool |
+| Need                                                   | Use                    |
+| ------------------------------------------------------ | ---------------------- |
+| Friendly public CLI command for builds, tests, or jobs | `game-ci remote run`   |
+| Backwards-compatible old remote command name           | `game-ci remote build` |
+
+> > > > > > > origin/docs/unity-reliability-guide
+> > > > > > > | Direct standalone Orchestrator provider execution | `game-ci orchestrate` |
+> > > > > > > | Executable provider protocol integration with GameCI CLI | `game-ci serve` in the provider tool |
 
 ## Orchestrator Plugin
 
@@ -82,10 +86,12 @@ Available Orchestrator provider types include:
 | Remote PowerShell | `remote-powershell` | Run on a remote Windows host.                  |
 | Ansible           | `ansible`           | Run through an Ansible inventory and playbook. |
 | CLI protocol      | `cli`               | Delegate to a custom provider executable.      |
-<<<<<<< HEAD
-=======
-| Config-defined    | `config:<path>`     | Map lifecycle commands from YAML or JSON.      |
->>>>>>> origin/docs/unity-reliability-guide
+
+# <<<<<<< HEAD
+
+| Config-defined | `config:<path>` | Map lifecycle commands from YAML or JSON. |
+
+> > > > > > > origin/docs/unity-reliability-guide
 
 ## Local Docker
 
