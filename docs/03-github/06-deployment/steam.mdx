@@ -59,12 +59,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download StandaloneWindows64 Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Build-StandaloneWindows64
           path: build/StandaloneWindows64
       - name: Download StandaloneLinux64 Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Build-StandaloneLinux64
           path: build/StandaloneLinux64
