@@ -3,15 +3,17 @@ sidebar_position: 20
 toc_max_heading_level: 4
 ---
 
-# Self-Hosted Runner Reliability
+# Self-Hosted Machines
 
-Self-hosted runners with persistent workspaces accumulate state across builds. Aborted jobs, disk
-errors, concurrent Unity instances, and cross-runner cache restores introduce failure modes that
-ephemeral runners never encounter. This page covers patterns for keeping persistent Windows runners
-healthy across thousands of CI runs.
+Self-hosted machines can make game CI much faster, but persistent workspaces also accumulate state
+across builds. Aborted jobs, disk errors, concurrent engine instances, cross-runner cache restores,
+and oversized local caches introduce optimization and reliability problems that ephemeral runners
+never encounter.
 
-These patterns apply to any self-hosted runner setup — bare metal, VMs, or on-prem machines — where
-the workspace survives between jobs.
+This page covers patterns for keeping persistent build machines fast, predictable, and recoverable
+across thousands of CI runs. The examples are Unity-heavy because Unity `Library` caching is the
+most common high-impact case, but the same principles apply to Godot import caches, Unreal
+intermediate data, custom engine providers, and lab machines running multiple projects.
 
 ## Library Cache Strategy
 

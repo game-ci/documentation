@@ -277,7 +277,7 @@ from a shared cache directory), the paths no longer match the current workspace.
 Repair DAG files after cross-runner restore by replacing the old workspace path with the current
 one. Without this, Bee either rebuilds everything from scratch (negating the cache) or produces
 incorrect incremental builds. See
-[Self-Hosted Runner Reliability](self-hosted-reliability#dag-file-repair) for implementation
+[Self-Hosted Machines](self-hosted-machines#dag-file-repair) for implementation
 details.
 
 ### LFS Pointer Poisoning
@@ -288,7 +288,7 @@ Git LFS pointer files that were not hydrated can end up in the workspace as smal
 
 Scan for unhydrated LFS pointers before Unity launches — not after a build failure. Any `.dll`,
 `.so`, or `.dylib` file under 200 bytes with an LFS header is a pointer that needs hydration. See
-[Self-Hosted Runner Reliability](self-hosted-reliability#lfs-pointer-poisoning) for detection
+[Self-Hosted Machines](self-hosted-machines#lfs-pointer-poisoning) for detection
 scripts.
 
 ### Profile Fingerprinting
@@ -298,8 +298,7 @@ when the profile changes. Generate a fingerprint from the profile's submodule se
 defines. When the fingerprint changes, clear `Library/ScriptAssemblies` and `Library/Bee` but
 preserve asset imports (textures, meshes, shader cache), which are profile-independent.
 
-See [Self-Hosted Runner Reliability](self-hosted-reliability#profile-switching) for the
-fingerprinting pattern.
+See [Self-Hosted Machines](self-hosted-machines#profile-switching) for the fingerprinting pattern.
 
 ## Inputs Reference
 

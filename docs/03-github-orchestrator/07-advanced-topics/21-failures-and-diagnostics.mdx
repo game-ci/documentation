@@ -3,18 +3,110 @@ sidebar_position: 21
 toc_max_heading_level: 4
 ---
 
-# Unity Build Failure Diagnostics
+# Failures and Diagnostics
+
+Orchestrator failures can come from provider setup, git synchronization, cache restore/save,
+container startup, engine execution, artifact upload, or cleanup. The right response depends on
+where the failure happened: retrying a provider API timeout is different from clearing a corrupt
+Unity `Library`, fixing an LFS pointer, or garbage-collecting stale cloud resources.
+
+This page covers the failure-handling model, diagnostic options, and remediation paths available in
+Orchestrator. Unity build diagnostics are included because Unity is the primary built-in engine
+package, but the same investigation flow applies to Godot, Unreal, custom jobs, and custom provider
+types.
+
+## Failure Layers
+
+Start by identifying the layer that failed before changing caches or retry settings.
+
+| Layer                        | Common signals                                               | First response                                                       |
+| ---------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Provider setup               | Authentication errors, missing region/cluster, quota errors  | Check provider credentials, provider-specific inputs, and IAM/RBAC.  |
+| Git sync and LFS             | Clone errors, missing files, pointer text in binary files    | Check `gitPrivateToken`, LFS hydration, submodule profile settings.  |
+| Cache restore/save           | Empty `Library`, stale assemblies, failed archive extraction | Inspect cache mode/key/root; clear only the affected cache segment.  |
+| Container or runner startup  | Docker pull failure, entrypoint errors, host path mismatch   | Verify image, runner filesystem, mounts, and provider working dir.   |
+| Engine execution             | Editor log errors, test failures, build method not invoked   | Read the engine log and apply engine-specific diagnostics.           |
+| Output and artifacts         | Build succeeded but upload failed or output path is empty    | Check `buildsPath`, artifact paths, storage provider, and retention. |
+| Cleanup and garbage collect  | Stale tasks, old pods, orphaned volumes, locked workspaces   | Run list/watch/garbage-collect commands before deleting state.       |
+| Custom provider/plugin logic | Provider method throws, protocol JSON invalid, stderr only   | Run the provider directly with debug logging and inspect stderr.     |
+
+Avoid treating every failure as cache corruption. Cache deletion is expensive and can hide the real
+root cause.
+
+## Diagnostic Controls
+
+Use these controls to increase visibility before changing behavior:
+
+| Control                   | Where used                   | What it gives you                                                   |
+| ------------------------- | ---------------------------- | ------------------------------------------------------------------- |
+| `orchestratorDebug`       | Unity Builder / Orchestrator | Verbose provider, workspace, and resolved-parameter logging.        |
+| `resourceTracking`        | Unity Builder / Orchestrator | Disk/resource summaries during provider runs.                       |
+| `githubCheck`             | GitHub Actions integrations  | GitHub Check records for Orchestrator steps.                        |
+| `watchToEnd`              | Async provider runs          | Follows provider logs until completion when supported.              |
+| `game-ci status`          | Standalone Orchestrator CLI  | Local environment diagnostics.                                      |
+| `game-ci list-resources`  | Standalone Orchestrator CLI  | Active provider resources, when supported by the selected provider. |
+| `game-ci watch`           | Standalone Orchestrator CLI  | Logs or state for an active workflow.                               |
+| `game-ci garbage-collect` | Standalone Orchestrator CLI  | Cleanup of stale provider resources and caches.                     |
+
+Provider stderr is treated as diagnostic output. Config-defined providers, CLI protocol providers,
+and TypeScript providers should write actionable setup or API details to stderr/loggers and reserve
+thrown errors for failures Orchestrator should treat as unsuccessful lifecycle operations.
+
+## Investigation Flow
+
+1. **Find the failing layer** - provider setup, sync, cache, runner startup, engine execution,
+   output, or cleanup.
+2. **Read the authoritative log** - provider API output for setup failures, git output for sync
+   failures, engine logs for build/test failures, and artifact/storage logs for upload failures.
+3. **Check whether the failure is transient** - cloud API throttling and network pulls may justify
+   retry; deterministic compile errors do not.
+4. **Apply targeted remediation** - clear only the affected cache area, retry only the failed
+   provider operation, or fix the input/configuration that caused the failure.
+5. **Escalate to full reset last** - full workspace, cache, or `Library` deletion should be the
+   final recovery step, not the default.
+
+## Provider and Infrastructure Failures
+
+Provider failures usually appear before the engine starts. Common causes include expired cloud
+credentials, missing Kubernetes context, unavailable Docker daemon, private image pull failures,
+quota limits, stale async workflows, and provider-specific resource naming conflicts.
+
+Useful commands:
+
+```bash
+game-ci list-resources --provider-strategy aws
+game-ci watch --provider-strategy aws
+game-ci garbage-collect --provider-strategy aws
+game-ci status
+```
+
+Use provider-specific docs when the failing layer is clearly infrastructure-related:
+
+- [AWS Provider](../providers/aws)
+- [Kubernetes Provider](../providers/kubernetes)
+- [GitHub Actions Dispatch](../providers/github-actions-dispatch)
+- [Config-Defined Providers](../providers/config-defined-providers)
+- [CLI Provider Protocol](../providers/cli-provider-protocol)
+
+## Cache and Workspace Failures
+
+Cache failures should be handled surgically. For Unity, clearing `Library/ScriptAssemblies`,
+`Library/Bee`, or `Library/PackageCache` is often enough. For Godot, imported asset caches such as
+`.godot/imported` may be the right target. For Unreal, Derived Data Cache and intermediate build
+folders are usually better first targets than deleting the whole workspace.
+
+See [Caching](caching), [Self-Hosted Machines](self-hosted-machines), and
+[Build Reliability](build-reliability) for cache modes, fallback behavior, LFS pointer checks, and
+self-hosted runner cleanup options.
+
+## Unity Failure Classification
 
 Unity CI builds fail in predictable patterns. Recognizing which failure mode you are dealing with
-determines whether the correct response is a retry, a targeted cleanup, or a full cache reset. This
-page documents the failure classification system, detection patterns, and remediation strategies
-built into the orchestrator's diagnostics services.
+determines whether the correct response is a retry, a targeted cleanup, or a full cache reset.
 
-## Failure Classification
-
-Every Unity CI failure falls into one of seven categories. The diagnostics service classifies
-failures by scanning the Unity Editor log for signal patterns and correlating them with the exit
-code and runtime duration.
+Unity engine failures fall into one of seven categories. The diagnostics service classifies failures
+by scanning the Unity Editor log for signal patterns and correlating them with the exit code and
+runtime duration.
 
 ```mermaid
 flowchart LR
@@ -146,10 +238,10 @@ infinite retry loops:
 The circuit breaker resets after a successful build. A single success demonstrates the runner is
 healthy and clears any accumulated failure state.
 
-## GitHub Step Summary Integration
+## GitHub Step Summary and Checks
 
-Build diagnostics are automatically written to the GitHub Actions Step Summary when running in a
-GitHub Actions environment. The summary includes:
+Failure diagnostics are written to the GitHub Actions Step Summary when running in a GitHub Actions
+environment and the installed integration supports summaries. The summary includes:
 
 - Failure category and confidence level
 - Key log excerpts that triggered the classification
@@ -157,6 +249,7 @@ GitHub Actions environment. The summary includes:
 - Retry history (if retries were attempted)
 
 This provides at-a-glance failure analysis in the GitHub Actions UI without requiring log downloads.
+Enable `githubCheck` when you also want Orchestrator step status reflected as GitHub Checks.
 
 ```yaml
 - name: Build
@@ -168,8 +261,8 @@ This provides at-a-glance failure analysis in the GitHub Actions UI without requ
 
 ## Using Diagnostics in Custom Scripts
 
-The diagnostics service is available as a programmatic API for custom build scripts and provider
-plugins:
+The Unity diagnostics service is available as a programmatic API for custom build scripts and
+provider plugins:
 
 ```ts
 import { UnityBuildDiagnosticsService, UnityRecoveryService } from '@game-ci/orchestrator';
