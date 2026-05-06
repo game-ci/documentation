@@ -32,7 +32,7 @@ handles Git and LFS automatically:
 
 For retained workspaces, the project folder persists between builds at
 `/data/{lockedWorkspace}/repo/` instead of being cloned fresh each time. See
-[Retained Workspaces](retained-workspace) for details.
+[Retained Workspaces](caching#retained-workspaces) for details.
 
 ### Build Output
 
@@ -196,8 +196,8 @@ useCompressionStrategy: false
 
 ## Workspace Locking
 
-When using [retained workspaces](retained-workspace), Orchestrator uses distributed locking to
-ensure only one build occupies a workspace at a time. Locks are stored in the configured storage
+When using [retained workspaces](caching#retained-workspaces), Orchestrator uses distributed locking
+to ensure only one build occupies a workspace at a time. Locks are stored in the configured storage
 provider:
 
 - **S3**: Lock files at `s3://{awsStackName}/locks/{workspaceName}/{buildGuid}`

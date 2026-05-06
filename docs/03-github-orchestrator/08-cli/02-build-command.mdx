@@ -4,9 +4,10 @@ sidebar_position: 2
 
 # Build Command
 
-The `build` command runs a Unity build inside a Docker container (or natively on macOS). It accepts
-the same parameters as the `game-ci/unity-builder` GitHub Action, translated to CLI flags. The CLI
-is provided by the [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) package.
+The standalone Orchestrator `build` command runs a local engine build with Orchestrator-compatible
+parameters. Unity is the default and primary supported package, but engine configuration is explicit
+so built-in or custom engine providers can supply cache folders and lifecycle behavior. The CLI is
+provided by the [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) package.
 
 ```bash
 game-ci build [options]
@@ -48,21 +49,23 @@ game-ci build [options]
 
 ## Engine Options
 
-| Flag              | Default   | Description                                                                                                                    |
-| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `--engine`        | `unity`   | Game engine name (`unity`, `godot`, `unreal`, etc.)                                                                            |
-| `--engine-plugin` | _(empty)_ | Engine plugin source: NPM package, `cli:<path>`, or `docker:<image>`. See [Engine Plugins](../advanced-topics/engine-plugins). |
+| Flag              | Default   | Description                                                                                                                      |
+| ----------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `--engine`        | `unity`   | Game engine name (`unity`, `godot`, `unreal`, etc.)                                                                              |
+| `--engine-plugin` | _(empty)_ | Engine provider plugin source for custom or overridden engine behavior. See [Engine Plugins](../advanced-topics/engine-plugins). |
 
 ### Non-Unity Engine Example
 
 ```bash
 game-ci build \
   --engine godot \
-  --engine-plugin @game-ci/godot-engine \
   --target-platform linux \
   --custom-image my-godot-image:4.2 \
   --provider-strategy aws
 ```
+
+Add `--engine-plugin` when the engine is not covered by a built-in configuration or when you want to
+override the default engine behavior.
 
 ## Custom Build Parameters
 
@@ -141,7 +144,7 @@ provider:
 | `--provider-strategy` | `local` | Execution strategy: `local`, `k8s`, or `aws` |
 
 When set to anything other than `local`, the build is handed off to the orchestrator. See
-[Orchestrate Command](orchestrate-command) for cloud-specific options.
+[Standalone Orchestrator Command](orchestrate-command) for cloud-specific options.
 
 ## Output
 
@@ -172,5 +175,5 @@ game-ci build \
 ## See Also
 
 - [Getting Started](getting-started) - installation and first build
-- [Orchestrate Command](orchestrate-command) - run builds on cloud infrastructure
+- [Standalone Orchestrator Command](orchestrate-command) - run work on provider infrastructure
 - [API Reference](../api-reference) - full parameter reference for the GitHub Action

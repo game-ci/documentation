@@ -2,17 +2,22 @@
 sidebar_position: 3
 ---
 
-# Orchestrate Command
+# Standalone Orchestrator Command
 
-The `orchestrate` command runs Unity builds on cloud infrastructure instead of the local machine. It
-provisions a remote environment, syncs your project, runs the build, and retrieves artifacts.
+The standalone Orchestrator CLI command is named `orchestrate`. It is a lower-level provider entry
+point for running Unity work on local Docker, local system, or cloud infrastructure. For the public
+GameCI CLI, use [`game-ci remote run`](/docs/cli/remote-builds) instead.
+
+`orchestrate` provisions an execution environment, syncs your project, runs the requested workload,
+and retrieves artifacts.
 
 ```bash
 game-ci orchestrate [options]
 ```
 
-This is the CLI equivalent of using `game-ci/unity-builder` with a `providerStrategy` in GitHub
-Actions.
+This is the standalone CLI equivalent of using `game-ci/unity-builder` with a `providerStrategy` in
+GitHub Actions. It is mainly useful for provider development, debugging, and direct Orchestrator
+usage.
 
 ## Required Options
 

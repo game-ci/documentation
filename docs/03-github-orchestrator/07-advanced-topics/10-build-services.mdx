@@ -17,6 +17,42 @@ flowchart TD
   end
 ```
 
+## Custom Jobs
+
+Use `customJob` when the provider should run a job definition instead of the standard GameCI build
+workflow. This is useful for non-Unity workloads, engine-specific commands that are not represented
+by the built-in build command, smoke tests, asset processing, or fully custom automation that still
+benefits from Orchestrator providers, logs, hooks, storage, and cleanup.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    customJob: |
+      - name: godot-export
+        image: barichello/godot-ci:4.3
+        commands: |
+          godot --headless --export-release "Linux/X11" /build/output/game
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The custom job replaces the default build step. Keep provider setup, credentials, storage, and
+cleanup inputs in the normal workflow, and put only the commands that should run inside the provider
+job in `customJob`.
+
+For command-line usage, pass the same YAML as `--custom-job`:
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy local-docker \
+  --custom-job '- name: smoke
+  image: ubuntu:24.04
+  commands: |
+    ./ci/smoke-test.sh'
+```
+
 ## Submodule Profiles
 
 Selectively initialize submodules from a YAML profile instead of cloning everything. Useful for

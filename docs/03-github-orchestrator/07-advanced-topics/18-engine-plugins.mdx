@@ -4,8 +4,9 @@ sidebar_position: 18
 
 # Engine Plugins
 
-Orchestrator is game-engine agnostic. While Unity is the built-in default, you can plug in any game
-engine -Godot, Unreal, a custom engine, or anything else -without forking the orchestrator.
+Orchestrator is game-engine agnostic. Unity is the default and primary supported package, and GameCI
+also ships built-in configurations for other engines such as Godot and Unreal. For custom engines or
+custom behavior, you can plug in a new engine provider without forking the orchestrator.
 
 An **engine plugin** tells the orchestrator how to handle engine-specific concerns like cache
 folders and container lifecycle hooks. Everything else (provisioning, git sync, logging, hooks,
@@ -28,33 +29,44 @@ interface EnginePlugin {
 }
 ```
 
-## Built-in: Unity
+## Built-In Configurations
 
-Unity is the default engine plugin. When you don't specify `--engine` or `--engine-plugin`, the
-orchestrator behaves exactly as it always has -caching the `Library` folder and returning the Unity
-license on container shutdown.
+Unity is the default engine configuration. When you don't specify `--engine` or `--engine-plugin`,
+the orchestrator behaves exactly as it always has - caching the `Library` folder and returning the
+Unity license on container shutdown.
 
-No configuration needed. Existing workflows are unchanged.
+GameCI also includes built-in engine configurations for other supported engines. Use `engine` to
+select one of those configurations when the build is not a Unity build. No plugin is required unless
+you need a custom engine or want to override the built-in behavior.
 
 ## Using a Different Engine
 
-Set `engine` and `enginePlugin` to load a community or custom engine plugin:
+Set `engine` to select a built-in engine configuration, or set both `engine` and `enginePlugin` to
+load a community or custom engine provider:
 
 ```yaml
-# GitHub Actions
+# GitHub Actions with a built-in engine configuration
 - uses: game-ci/unity-builder@v4
   with:
     engine: godot
-    enginePlugin: '@game-ci/godot-engine'
     targetPlatform: StandaloneLinux64
 ```
 
 ```bash
-# CLI
+# CLI with a built-in engine configuration
 game-ci build \
   --engine godot \
-  --engine-plugin @game-ci/godot-engine \
   --target-platform linux
+```
+
+Use `enginePlugin` only when you need a custom engine provider or when you want to override the
+built-in configuration:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    engine: custom-engine
+    enginePlugin: '@your-org/custom-engine-provider'
 ```
 
 ## Plugin Sources

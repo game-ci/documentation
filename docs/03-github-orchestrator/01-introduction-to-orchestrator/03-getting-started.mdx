@@ -3,9 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started
 
-Orchestrator lets you run Unity builds on whatever machines you have: cloud, on-premise, or your
-local machine. It works as a built-in plugin for `game-ci/unity-builder` in GitHub Actions, or as a
-standalone CLI tool.
+Orchestrator lets you run engine builds through the provider target that fits your workflow: cloud,
+on-premise, local Docker, or your local machine. Unity is the primary built-in package in
+`game-ci/unity-builder`; the public `game-ci` CLI also includes built-in configurations for other
+engines, and the plugin API can add new engine providers. Orchestrator works as an optional plugin
+for `game-ci/unity-builder` in GitHub Actions and as a provider implementation for the public
+`game-ci` CLI.
 
 ## Prerequisites
 
@@ -123,14 +126,17 @@ jobs:
 
 ## Command Line
 
-### 1. Install
+For command-line builds, use the public [GameCI CLI](/docs/cli) and load Orchestrator as a provider
+plugin.
+
+### 1. Install GameCI CLI
 
 ```bash
 # Linux / macOS
-curl -fsSL https://raw.githubusercontent.com/game-ci/orchestrator/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/game-ci/cli/main/install.sh | sh
 
 # Windows (PowerShell)
-irm https://raw.githubusercontent.com/game-ci/orchestrator/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/game-ci/cli/main/install.ps1 | iex
 ```
 
 ### 2. Set credentials
@@ -144,16 +150,19 @@ export AWS_SECRET_ACCESS_KEY="..."
 ### 3. Run a build
 
 ```bash
-game-ci build \
-  --target-platform StandaloneLinux64 \
-  --provider-strategy aws
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy aws \
+  --target-platform StandaloneLinux64
 ```
 
-See the [CLI documentation](../cli/getting-started) for full details.
+The standalone Orchestrator CLI remains available for provider development and debugging. See
+[Standalone Orchestrator CLI](../cli/getting-started) for that lower-level entry point.
 
 ## Next Steps
 
 - [Provider setup guides](../providers/overview) - configure your cloud credentials
 - [API Reference](../api-reference) - full parameter documentation
 - [Examples](examples/github-actions) - more workflow examples
-- [CLI Reference](../cli/build-command) - full CLI flag reference
+- [GameCI CLI](/docs/cli) - public command-line interface

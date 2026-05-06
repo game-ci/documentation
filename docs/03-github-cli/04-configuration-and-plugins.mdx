@@ -1,0 +1,135 @@
+---
+sidebar_position: 4
+slug: /cli/configuration-and-plugins
+---
+
+# Configuration and Plugins
+
+The `game-ci` CLI can read options from `.game-ci.yml` and load plugins from command-line flags or
+config. Those plugins can add engine detection, build commands, test commands, custom commands,
+options, and remote providers.
+
+## Config File
+
+The CLI looks for `.game-ci.yml` in the current working directory. You can also pass an explicit
+config path:
+
+```bash
+game-ci --config ./ci/game-ci.yml build ./my-project
+```
+
+Options live under `cliOptions`.
+
+```yaml
+cliOptions:
+  plugin:
+    - '@game-ci/orchestrator-plugin'
+  verbose: true
+  targetPlatform: StandaloneLinux64
+  buildsPath: dist
+```
+
+The config file uses the same option names as the CLI's parsed options. In practice, that means
+camelCase names such as `targetPlatform`, `providerStrategy`, `customImage`, and `buildsPath`.
+
+## Plugin Sources
+
+Plugins can provide engine detectors, build or test command handlers, custom commands, options, and
+remote providers.
+
+| Source type      | Example                                  |
+| ---------------- | ---------------------------------------- |
+| NPM package      | `--plugin @game-ci/orchestrator-plugin`  |
+| Local file/path  | `--plugin ./plugins/my-plugin.ts`        |
+| Executable       | `--plugin executable:./my-provider`      |
+| GitHub shorthand | `--plugin github:game-ci/example-plugin` |
+
+Direct GitHub loading is reserved for future plugin loader work. Publish the plugin to npm or use a
+local path for now.
+
+## Orchestrator as a Plugin
+
+The Orchestrator ships provider implementations for the public CLI.
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy aws
+```
+
+You can also add the plugin to `.game-ci.yml`:
+
+```yaml
+cliOptions:
+  plugins:
+    - '@game-ci/orchestrator-plugin'
+  providerStrategy: local-docker
+  targetPlatform: StandaloneLinux64
+```
+
+Then run:
+
+```bash
+game-ci remote run ./my-project
+```
+
+## Built-In Engine Support
+
+The CLI includes built-in plugins for:
+
+| Engine | Detection signal                     | Built-in command surface |
+| ------ | ------------------------------------ | ------------------------ |
+| Unity  | `ProjectSettings/ProjectVersion.txt` | Engine command options   |
+| Godot  | Godot project files                  | Engine command options   |
+| Unreal | `.uproject` files                    | Engine command options   |
+
+External plugins can add new engine providers or replace command behavior without changing the CLI
+core.
+
+## Plugin API
+
+A plugin exports a `GameCIPlugin` object. It can provide any combination of engine detectors, build
+commands, test commands, option registration, providers, and an `onLoad` hook.
+
+```ts
+export default {
+  name: 'my-engine',
+  version: '1.0.0',
+  engineDetectors: [
+    {
+      name: 'my-engine',
+      detect(projectPath) {
+        return { engine: 'my-engine', engineVersion: '1.2.3' };
+      },
+    },
+  ],
+  commands: [
+    {
+      engine: 'my-engine',
+      createCommand(command, subCommands) {
+        if (command === 'build') return new MyBuildCommand(command);
+        if (command === 'test') return new MyTestCommand(command);
+        return null;
+      },
+    },
+  ],
+  providers: {
+    'my-provider': MyProvider,
+  },
+};
+```
+
+Provider plugins register provider strategy names. `game-ci remote run` then creates the provider
+selected by `--provider-strategy`. `game-ci remote build` is kept as a compatibility alias for older
+workflows.
+
+## Local Config Folder
+
+Use `config open` to open the local GameCI folder:
+
+```bash
+game-ci config open
+```
+
+The CLI stores its user-level files under `~/.game-ci`.
