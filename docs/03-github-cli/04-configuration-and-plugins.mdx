@@ -54,7 +54,7 @@ The Orchestrator ships provider implementations for the public CLI.
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote build ./my-project \
+  remote run ./my-project \
   --provider-strategy aws
 ```
 
@@ -71,7 +71,7 @@ cliOptions:
 Then run:
 
 ```bash
-game-ci remote build ./my-project
+game-ci remote run ./my-project
 ```
 
 ## Built-In Engine Support
@@ -120,8 +120,9 @@ export default {
 };
 ```
 
-Provider plugins register provider strategy names. `game-ci remote build` then creates the provider
-selected by `--provider-strategy`.
+Provider plugins register provider strategy names. `game-ci remote run` then creates the provider
+selected by `--provider-strategy`. `game-ci remote build` is kept as a compatibility alias for older
+workflows.
 
 ## Local Config Folder
 

@@ -76,7 +76,7 @@ The action can run remote jobs by loading provider plugins, the same as the term
 - uses: game-ci/cli@v0.1.0
   with:
     args: >-
-      --plugin @game-ci/orchestrator-plugin remote build . --provider-strategy local-docker
+      --plugin @game-ci/orchestrator-plugin remote run . --provider-strategy local-docker
       --target-platform StandaloneLinux64
 ```
 

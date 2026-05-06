@@ -21,7 +21,7 @@ Use this CLI when you want a stable command surface such as:
 game-ci build ./my-project
 game-ci test ./my-project
 game-ci build ./my-unity-project --build-method Company.CI.RunValidation
-game-ci --plugin @game-ci/orchestrator-plugin remote build ./my-project --provider-strategy local-docker
+game-ci --plugin @game-ci/orchestrator-plugin remote run ./my-project --provider-strategy local-docker
 game-ci config open
 ```
 
@@ -68,12 +68,12 @@ bun run start -- --help
 
 The CLI has a small core and loads engine, command, and provider behavior through plugins.
 
-| Command                | Purpose                                                            |
-| ---------------------- | ------------------------------------------------------------------ |
-| `game-ci build`        | Run the detected engine's build command.                           |
-| `game-ci test`         | Run the detected engine's test command when a plugin provides one. |
-| `game-ci remote build` | Schedule an engine job through a provider plugin.                  |
-| `game-ci config open`  | Open the local GameCI configuration folder.                        |
+| Command               | Purpose                                                            |
+| --------------------- | ------------------------------------------------------------------ |
+| `game-ci build`       | Run the detected engine's build command.                           |
+| `game-ci test`        | Run the detected engine's test command when a plugin provides one. |
+| `game-ci remote run`  | Schedule an engine job through a provider plugin.                  |
+| `game-ci config open` | Open the local GameCI configuration folder.                        |
 
 The built-in plugins provide:
 
@@ -110,13 +110,13 @@ game-ci build ./my-project --engine unity --engine-version 2022.3.20f1
 
 ## Public CLI vs Orchestrator CLI
 
-| Use case                                        | Recommended entry point                                    |
-| ----------------------------------------------- | ---------------------------------------------------------- |
-| Local or CI engine commands with a friendly API | `game-ci` from `game-ci/cli`                               |
-| Remote jobs via provider plugins                | `game-ci remote build` with `@game-ci/orchestrator-plugin` |
-| Provider protocol development                   | Standalone `@game-ci/orchestrator` CLI                     |
-| GitHub Actions workflows with the CLI           | `game-ci/cli` GitHub Action                                |
-| Unity-specific GitHub Actions workflows         | `game-ci/unity-builder` with Orchestrator inputs           |
+| Use case                                        | Recommended entry point                                  |
+| ----------------------------------------------- | -------------------------------------------------------- |
+| Local or CI engine commands with a friendly API | `game-ci` from `game-ci/cli`                             |
+| Remote jobs via provider plugins                | `game-ci remote run` with `@game-ci/orchestrator-plugin` |
+| Provider protocol development                   | Standalone `@game-ci/orchestrator` CLI                   |
+| GitHub Actions workflows with the CLI           | `game-ci/cli` GitHub Action                              |
+| Unity-specific GitHub Actions workflows         | `game-ci/unity-builder` with Orchestrator inputs         |
 
 ## Next Steps
 

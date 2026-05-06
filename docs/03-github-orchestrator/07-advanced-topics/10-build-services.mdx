@@ -45,7 +45,7 @@ For command-line usage, pass the same YAML as `--custom-job`:
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote build ./my-project \
+  remote run ./my-project \
   --provider-strategy local-docker \
   --custom-job '- name: smoke
   image: ubuntu:24.04
