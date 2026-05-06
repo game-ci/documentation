@@ -25,8 +25,9 @@ game-ci --plugin @game-ci/orchestrator-plugin remote run ./my-project --provider
 game-ci config open
 ```
 
-The Orchestrator CLI is still available for advanced or standalone provider work, but most users
-should start with `game-ci`.
+The standalone Orchestrator CLI is still available for advanced or standalone provider work, but
+most users should start with `game-ci` from this CLI. Both binaries are named `game-ci` after
+installation, so the command set you see depends on which package installed the binary.
 
 ## Install
 
@@ -117,6 +118,22 @@ game-ci build ./my-project --engine unity --engine-version 2022.3.20f1
 | Provider protocol development                   | Standalone `@game-ci/orchestrator` CLI                   |
 | GitHub Actions workflows with the CLI           | `game-ci/cli` GitHub Action                              |
 | Unity-specific GitHub Actions workflows         | `game-ci/unity-builder` with Orchestrator inputs         |
+
+## Command Names At A Glance
+
+| Command                | Where it exists             | Use it for                                                                 |
+| ---------------------- | --------------------------- | -------------------------------------------------------------------------- |
+| `game-ci build`        | Public GameCI CLI           | User-facing local or CI engine builds, including custom Unity methods.     |
+| `game-ci test`         | Public GameCI CLI           | Engine test workflows when the selected engine plugin provides test logic. |
+| `game-ci remote run`   | Public GameCI CLI           | Provider-backed jobs through Orchestrator or another provider plugin.      |
+| `game-ci remote build` | Public GameCI CLI           | Compatibility alias for `game-ci remote run`.                              |
+| `game-ci orchestrate`  | Standalone Orchestrator CLI | Direct low-level Orchestrator provider runs and provider debugging.        |
+| `game-ci build`        | Standalone Orchestrator CLI | A narrow remote Orchestrator build shortcut, not the public CLI build API. |
+| `game-ci serve`        | Standalone Orchestrator CLI | JSON provider protocol mode for executable provider plugins.               |
+
+If you are reading public CLI docs, prefer `remote run` for provider-backed work. Reach for
+standalone `orchestrate` only when you installed `@game-ci/orchestrator` directly or you are
+debugging Orchestrator/provider behavior outside the public CLI.
 
 ## Next Steps
 

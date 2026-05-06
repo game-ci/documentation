@@ -4,9 +4,9 @@ sidebar_position: 4
 
 # Other Commands
 
-Beyond `build` and the standalone `orchestrate` provider command, the CLI provides commands for
-license management, cache operations, environment diagnostics, version information, and
-self-updating.
+Beyond `build` and the standalone `orchestrate` provider command, the standalone Orchestrator CLI
+provides commands for license preflight, cache inspection, provider protocol serving, environment
+diagnostics, version information, and self-updating.
 
 ## activate
 
@@ -50,13 +50,13 @@ game-ci activate
 game-ci activate --unity-licensing-server http://license-server:8080
 ```
 
-## cache
+## orchestrate cache
 
-Manage build caches. Caches store the Unity Library folder and other intermediate artifacts to speed
-up subsequent builds.
+Manage build caches under the direct Orchestrator command. Caches store the Unity Library folder or
+engine-specific cache folders and other intermediate artifacts to speed up subsequent builds.
 
 ```bash
-game-ci cache <action> [options]
+game-ci orchestrate cache <action> [options]
 ```
 
 The `<action>` positional argument is required and must be one of: `list`, `restore`, or `clear`.
@@ -66,7 +66,7 @@ The `<action>` positional argument is required and must be one of: `list`, `rest
 List cache status, including Library folder presence and any cache archives:
 
 ```bash
-game-ci cache list
+game-ci orchestrate cache list
 ```
 
 Output includes Library folder path, entry count, last-modified timestamp, and key subdirectory
@@ -77,7 +77,7 @@ status (PackageCache, ScriptAssemblies, ShaderCache, Bee).
 Check for available cache archives to restore:
 
 ```bash
-game-ci cache restore --cache-dir ./my-cache
+game-ci orchestrate cache restore --cache-dir ./my-cache
 ```
 
 ### cache clear
@@ -85,7 +85,7 @@ game-ci cache restore --cache-dir ./my-cache
 Remove cache archive files:
 
 ```bash
-game-ci cache clear
+game-ci orchestrate cache clear
 ```
 
 ### Cache Flags
@@ -94,6 +94,31 @@ game-ci cache clear
 | ---------------- | --------- | ------------------------------------------------------------------ |
 | `--cache-dir`    | _(empty)_ | Path to the cache directory (defaults to `<project-path>/Library`) |
 | `--project-path` | `.`       | Path to the Unity project                                          |
+
+## serve
+
+Run Orchestrator as a JSON provider protocol server. This is primarily for executable provider
+integrations with the public GameCI CLI, not for day-to-day user workflows.
+
+```bash
+echo '{"command":"list-resources","params":{}}' | game-ci serve --provider-strategy aws
+```
+
+`serve` reads one JSON request from stdin, dispatches it to the selected provider, and writes one
+JSON response to stdout. Logs are written to stderr so callers can separate machine-readable
+responses from human-readable output.
+
+Supported protocol commands include:
+
+| Protocol command   | Purpose                                       |
+| ------------------ | --------------------------------------------- |
+| `setup-workflow`   | Prepare provider resources for a workflow.    |
+| `cleanup-workflow` | Clean up provider resources after a workflow. |
+| `run-task`         | Run a task in the selected provider.          |
+| `garbage-collect`  | Remove old provider/cache resources.          |
+| `list-resources`   | List provider resources.                      |
+| `list-workflow`    | List workflow state.                          |
+| `watch-workflow`   | Stream or poll workflow output.               |
 
 ## status
 
@@ -176,7 +201,8 @@ These flags are available on all commands:
 # Get help for any command
 game-ci build --help
 game-ci orchestrate --help
-game-ci cache --help
+game-ci orchestrate cache --help
+game-ci serve --help
 ```
 
 ## See Also
