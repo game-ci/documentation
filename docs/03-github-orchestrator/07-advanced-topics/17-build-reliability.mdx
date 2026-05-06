@@ -96,6 +96,22 @@ to adjust how many tar archives are retained:
 
 Lower values save disk space; higher values allow rolling back to older cache states.
 
+### Min Cache Entries
+
+When `cacheRetentionDays` is set, age-based GC removes old cache directories. Use `minCacheEntries`
+to set a floor — the GC will never remove entries below this count, even if they exceed the age
+threshold:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    cacheRetentionDays: 30
+    minCacheEntries: 1   # Always keep at least 1 cache entry per key
+```
+
+This prevents the cache from being completely emptied when all entries are older than the retention
+period.
+
 ## Git Integrity Checking
 
 Self-hosted runners with persistent workspaces accumulate state between builds. Aborted jobs, disk
