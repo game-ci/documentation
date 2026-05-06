@@ -303,12 +303,14 @@ fingerprinting pattern.
 
 ## Inputs Reference
 
-| Input                     | Description                                       |
-| ------------------------- | ------------------------------------------------- |
-| `cacheKey`                | Override the cache key used for cache isolation   |
-| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables |
-| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit    |
-| `cacheRetentionDays`      | Remove cache entries older than N days            |
-| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep        |
-| `skipCache`               | Skip cache restore entirely                       |
-| `useCompressionStrategy`  | Use LZ4 compression for cache archives            |
+| Input                     | Description                                               |
+| ------------------------- | --------------------------------------------------------- |
+| `cacheKey`                | Override the cache key used for cache isolation           |
+| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables         |
+| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit            |
+| `cacheRetentionDays`      | Remove cache entries older than N days                    |
+| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep                |
+| `maxCacheEntries`         | Max tar snapshots to retain per cache folder (default: 2) |
+| `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor) |
+| `skipCache`               | Skip cache restore entirely                               |
+| `useCompressionStrategy`  | Use LZ4 compression for cache archives                    |
