@@ -18,7 +18,7 @@ The Orchestrator is the default provider backend for remote execution. Load it a
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-unity-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
@@ -44,7 +44,7 @@ Available provider strategies from the Orchestrator plugin include:
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-unity-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
@@ -60,7 +60,7 @@ export AWS_PROFILE=my-profile
 export AWS_DEFAULT_REGION=us-east-1
 
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-unity-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
@@ -88,7 +88,7 @@ profiles, SSO sessions, and runner roles.
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-unity-project \
   --provider-strategy k8s \
   --target-platform StandaloneLinux64 \
@@ -112,7 +112,7 @@ Use `--custom-job` when the provider should run commands that do not map to a bu
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-godot-project \
   --provider-strategy local-docker \
   --custom-job '- name: godot-export
@@ -135,3 +135,24 @@ game-ci \
 
 For protocol details, see
 [CLI provider protocol](../github-orchestrator/providers/cli-provider-protocol).
+
+## Configuration Files
+
+Remote builds can load the provider plugin and common options from `.game-ci.yml`:
+
+```yaml
+cliOptions:
+  plugins:
+    - '@game-ci/orchestrator-plugin'
+  providerStrategy: local-docker
+  targetPlatform: StandaloneLinux64
+```
+
+Then the command can stay short:
+
+```bash
+game-ci remote build ./my-project
+```
+
+Provider-specific options are registered by the loaded plugin, so run with `--help` after loading
+the plugin to inspect the exact option set available in your installed version.

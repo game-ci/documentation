@@ -7,12 +7,16 @@ sidebar_label: GameCI vs Orchestrator
 Standard GameCI and Orchestrator are not competing products. They are two levels of the same build
 system.
 
-Standard GameCI is the minimal, container-focused foundation. It exposes the essential Unity build
-features clearly and keeps the CI workflow close to the platform you already use.
+Standard GameCI is the minimal, container-focused foundation. It exposes the essential build
+features clearly and keeps the CI workflow close to the platform you already use. Unity is the
+primary maintained built-in package, while other engines have built-in configurations and new
+engines can be added through the CLI and Orchestrator plugin model.
 
 Orchestrator builds on that foundation when a project needs advanced automation: richer caching,
-warm workspaces, provider abstraction, self-hosted runner coordination, load balancing, custom
-hooks, async execution, and game-specific performance features.
+warm workspaces, provider abstraction, runner coordination, load balancing, custom hooks, async
+execution, and game-specific performance features. Those benefits are not limited to multi-machine
+setups; a single host with multiple runners, multiple projects, or expensive cache reuse can also
+benefit.
 
 ```mermaid
 flowchart LR
@@ -34,13 +38,13 @@ flowchart LR
 
 ## Quick Decision
 
-| Choose this                    | When                                                                              |
-| ------------------------------ | --------------------------------------------------------------------------------- |
-| Standard GameCI                | You want the simplest reliable container build path.                              |
-| Standard GameCI on self-hosted | One owned runner is enough and you can manage its state yourself.                 |
-| Orchestrator with local Docker | You want Orchestrator behavior locally before cloud or farm rollout.              |
-| Orchestrator with self-hosting | Owned runners need locks, fallback, cleanup, warm workspaces, or shared cache.    |
-| Orchestrator with cloud or K8s | You need larger resources, elastic capacity, async jobs, or provider unification. |
+| Choose this                    | When                                                                                    |
+| ------------------------------ | --------------------------------------------------------------------------------------- |
+| Standard GameCI                | You want the simplest reliable container build path.                                    |
+| Standard GameCI on self-hosted | One simple runner is enough and you can manage its state yourself.                      |
+| Orchestrator with local Docker | You want Orchestrator behavior locally, including cache and workspace services.         |
+| Orchestrator with self-hosting | Owned runners or projects need locks, fallback, cleanup, warm workspaces, shared cache. |
+| Orchestrator with cloud or K8s | You need larger resources, elastic capacity, async jobs, or provider unification.       |
 
 ## Standard GameCI
 
@@ -48,8 +52,8 @@ Standard GameCI is deliberately clean and minimal.
 
 It gives you:
 
-- Unity editor containers maintained by GameCI
-- License activation and return behavior
+- Unity editor containers maintained by GameCI, as the primary built-in package
+- License activation and return behavior for engines that need it
 - Build target and platform setup
 - Build method and custom parameter handling
 - CI-native cache and artifact compatibility
@@ -60,7 +64,8 @@ features and essential functionality without adopting a build orchestration syst
 
 ## Orchestrator
 
-Orchestrator is for teams whose build pipeline has become an infrastructure problem.
+Orchestrator is for teams whose build pipeline has become an automation, performance, or
+infrastructure problem.
 
 It adds:
 
@@ -96,9 +101,10 @@ because every project needs orchestration by default.
 
 Self-hosted runners and Orchestrator are complementary.
 
-A self-hosted runner alone gives you owned hardware. Orchestrator adds build-farm behavior on top of
-owned hardware: workspace locking, cache services, fallback routing, cleanup, hooks, and provider
-parity with cloud builds.
+A self-hosted runner alone gives you owned hardware. Orchestrator adds coordination behavior on top
+of owned hardware: workspace locking, cache services, fallback routing, cleanup, hooks, and provider
+parity with cloud builds. That can help even when all runners are on one host or when each project
+has only one runner but the host should preserve expensive caches across builds.
 
 | Need                                     | Self-hosted runner alone | Self-hosted plus Orchestrator              |
 | ---------------------------------------- | ------------------------ | ------------------------------------------ |
@@ -116,8 +122,8 @@ parity with cloud builds.
 2. Move to [Local Docker](../providers/local-docker) if you want Orchestrator behavior without cloud
    setup.
 3. Add [caching](../advanced-topics/caching) and
-   [retained workspaces](../advanced-topics/retained-workspace) when import time becomes the
-   bottleneck.
+   [retained workspaces](../advanced-topics/caching#retained-workspaces) when import time becomes
+   the bottleneck.
 4. Add [Standalone Streaming Hot Runner](../advanced-topics/hot-runner-protocol) when warm editor
    iteration matters.
 5. Move the provider to [AWS](../providers/aws) or [Kubernetes](../providers/kubernetes) when you
@@ -129,5 +135,5 @@ parity with cloud builds.
 
 Use standard GameCI until the simple model becomes the bottleneck. Use Orchestrator when you need to
 specialize CI and automation around the realities of game development: big assets, expensive
-imports, long builds, scarce hardware, multiple providers, and teams that need consistent behavior
-across all of them.
+imports, long builds, shared caches, retained workspaces, scarce hardware, multiple runners,
+multiple providers, and teams that need consistent behavior across all of them.

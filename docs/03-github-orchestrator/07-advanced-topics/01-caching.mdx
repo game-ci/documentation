@@ -39,15 +39,6 @@ For local filesystem caches on persistent runners, see
 [Local Build Caching](build-services#local-build-caching) for fallback keys and directory-based
 cache modes.
 
-Unity Library restores are validated before being accepted. Empty Library folders and AssetDatabase
-skeletons, such as zero-byte `Library/ArtifactDB` or `Library/assetDatabase.info` files, are treated
-as cache misses. This prevents a broken or incomplete Library from being reused as if it were a warm
-cache hit.
-
-For local filesystem caches on persistent runners, see
-[Local Build Caching](build-services#local-build-caching) for fallback keys and directory-based
-cache modes.
-
 ## Build Caching
 
 Orchestrator automatically caches build output alongside the Library cache. After each successful
@@ -149,16 +140,47 @@ You can vary retention by branch:
 cacheRetentionDays: ${{ github.ref == 'refs/heads/main' && '90' || '14' }}
 ```
 
-## Retained Workspace
+## Retained Workspaces
 
-Caches the **entire project folder** between builds. Provides the fastest rebuilds but consumes more
-storage.
+Retained workspaces cache the **entire project folder** between builds. This is the fastest rebuild
+mode because the checkout, engine import cache, package cache, and other workspace-local state can
+survive from one job to the next.
 
-- Maximum build speed
-- Best for large projects with long import times
-- Higher storage cost
+Use retained workspaces when cache archive restore is still too expensive, or when one persistent
+host builds several projects and should preserve warmed workspaces safely between jobs.
 
-See [Retained Workspaces](retained-workspace) for configuration details.
+```mermaid
+flowchart LR
+  subgraph maxRetainedWorkspaces["maxRetainedWorkspaces: 3"]
+    W1["Workspace 1\nlocked\nBuild A\nFull project"]
+    W2["Workspace 2\nlocked\nBuild B\nFull project"]
+    W3["Workspace 3\nidle\nFull project"]
+  end
+  C["Build C arrives"] --> W3
+  D["Build D arrives"] -.->|all locked| FB["Falls back to\nstandard caching"]
+```
+
+Set `maxRetainedWorkspaces` to control how many full workspaces are kept:
+
+| Value | Behavior                                                                  |
+| ----- | ------------------------------------------------------------------------- |
+| `0`   | Unlimited retained workspaces.                                            |
+| `> 0` | Keep at most N workspaces. Additional jobs fall back to standard caching. |
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    maxRetainedWorkspaces: 3
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Each retained workspace is locked during use. Orchestrator handles locking through the configured
+storage provider, so concurrent builds do not write into the same workspace at the same time.
+
+Retained workspaces trade storage for speed. A 20 GB project with three retained workspaces can use
+roughly 60 GB before cache archives, build output, and provider overhead are counted.
 
 ## Storage Providers
 

@@ -9,6 +9,65 @@ persistent runners, Windows filesystem issues with cross-platform repositories, 
 management. All features are opt-in via action inputs and fail gracefully - a reliability check that
 encounters an error logs a warning rather than failing the build.
 
+This page also covers operational reliability features that keep provider runs observable and clean:
+log streaming, stale resource cleanup, and automatic garbage collection.
+
+## Logging
+
+Orchestrator streams provider logs back to the CI runner so the dispatcher job can show build
+progress without waiting for post-processing.
+
+```mermaid
+flowchart LR
+  A["Provider job\nBuild output"] --> B["Orchestrator\nLog stream"] --> C["CI runner\nConsole output"]
+```
+
+Provider transports differ:
+
+| Provider   | Log transport                                               |
+| ---------- | ----------------------------------------------------------- |
+| Kubernetes | Native Kubernetes pod logs.                                 |
+| AWS        | CloudWatch Logs with a Kinesis subscription for live reads. |
+| Local      | Direct process or Docker output on the host.                |
+
+Enable verbose diagnostics with `orchestratorDebug: true` when investigating provider setup,
+resource allocation, environment variables, disk usage, or cache behavior.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    orchestratorDebug: true
+```
+
+## Garbage Collection
+
+Orchestrator cleans up provider resources after normal builds. If a dispatcher job is cancelled, a
+provider API call fails, or a process exits before cleanup runs, stale resources can remain. Garbage
+collection removes those old resources by age.
+
+```mermaid
+flowchart LR
+  A["Create resources"] --> B["Build"]
+  B --> C["Normal cleanup"]
+  B -. interrupted .-> D["Stale resources"]
+  D --> E["garbage-collect\nremoves after garbageMaxAge"]
+```
+
+Run garbage collection from GitHub Actions:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    mode: garbage-collect
+    garbageMaxAge: 24
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+`garbageMaxAge` is measured in hours. For AWS, Orchestrator can also create a CloudFormation-based
+cleanup cron job when `useCleanupCron` is enabled.
+
 ## Git Integrity Checking
 
 Self-hosted runners with persistent workspaces accumulate state between builds. Aborted jobs, disk

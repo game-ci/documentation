@@ -7,13 +7,17 @@ slug: /cli
 
 The `game-ci` CLI is the user-facing command line for running GameCI workflows from a terminal or
 from any CI system. It gives you a high-level API for common game build tasks and loads lower-level
-execution backends, including the Orchestrator, as plugins.
+engine and provider implementations as plugins.
+
+Unity is the primary supported package in GameCI, but the CLI itself is not Unity-only. It ships
+with built-in engine detection and build command implementations for Unity, Godot, and Unreal
+Engine, and external plugins can add more engines, commands, options, and remote providers.
 
 Use this CLI when you want a stable command surface such as:
 
 ```bash
 game-ci build ./my-project
-game-ci remote build ./my-project --provider-strategy local-docker
+game-ci --plugin @game-ci/orchestrator-plugin remote build ./my-project --provider-strategy local-docker
 game-ci config open
 ```
 
@@ -60,15 +64,25 @@ bun run start -- --help
 
 The CLI has a small core and loads engine, command, and provider behavior through plugins.
 
-| Command                | Purpose                                                   |
-| ---------------------- | --------------------------------------------------------- |
-| `game-ci build`        | Build the detected project engine locally.                |
-| `game-ci test`         | Run tests for the detected project engine when available. |
-| `game-ci remote build` | Schedule a build through a provider plugin.               |
-| `game-ci config open`  | Open the local GameCI configuration folder.               |
+| Command                | Purpose                                                                 |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `game-ci build`        | Build the detected project engine with the registered engine command.   |
+| `game-ci test`         | Run tests for the detected project engine when a plugin provides tests. |
+| `game-ci remote build` | Schedule a build through a provider plugin.                             |
+| `game-ci config open`  | Open the local GameCI configuration folder.                             |
 
-Unity, Godot, and Unreal Engine detection are built in. Remote providers such as AWS, Kubernetes,
-local Docker, and GitHub Actions are provided by the Orchestrator plugin.
+The built-in plugins provide:
+
+| Engine | Detection signal                     | Built-in command        | Notes                                                                 |
+| ------ | ------------------------------------ | ----------------------- | --------------------------------------------------------------------- |
+| Unity  | `ProjectSettings/ProjectVersion.txt` | `game-ci build`         | Uses GameCI Unity editor containers on Linux/Windows and macOS setup. |
+| Godot  | Godot project files                  | `game-ci build`         | Uses `barichello/godot-ci` by default.                                |
+| Unreal | `.uproject` files                    | `game-ci build`         | Requires a licensed Unreal-capable Docker image.                      |
+| Other  | Plugin-defined                       | Plugin-defined commands | Added through the CLI plugin API.                                     |
+
+Remote providers such as local Docker, AWS, Kubernetes, GitHub Actions dispatch, and custom provider
+executables are registered by provider plugins. The Orchestrator plugin is the intended backend for
+GameCI remote execution.
 
 ## First Build
 
@@ -83,15 +97,21 @@ For Unity projects, the CLI reads `ProjectSettings/ProjectVersion.txt` to determ
 version. For Godot and Unreal Engine projects, the CLI detects the project from the engine's project
 files.
 
+You can also set the engine explicitly when detection is not enough:
+
+```bash
+game-ci build ./my-project --engine unity --engine-version 2022.3.20f1
+```
+
 ## Public CLI vs Orchestrator CLI
 
-| Use case                               | Recommended entry point                                        |
-| -------------------------------------- | -------------------------------------------------------------- |
-| Local or CI builds with a friendly API | `game-ci` from `game-ci/cli`                                   |
-| Remote builds via provider plugins     | `game-ci remote build` with `@game-ci/orchestrator/cli-plugin` |
-| Provider protocol development          | Standalone `@game-ci/orchestrator` CLI                         |
-| GitHub Actions builds with the CLI     | `game-ci/cli` GitHub Action                                    |
-| Unity-specific GitHub Actions builds   | `game-ci/unity-builder` with Orchestrator inputs               |
+| Use case                               | Recommended entry point                                    |
+| -------------------------------------- | ---------------------------------------------------------- |
+| Local or CI builds with a friendly API | `game-ci` from `game-ci/cli`                               |
+| Remote builds via provider plugins     | `game-ci remote build` with `@game-ci/orchestrator-plugin` |
+| Provider protocol development          | Standalone `@game-ci/orchestrator` CLI                     |
+| GitHub Actions builds with the CLI     | `game-ci/cli` GitHub Action                                |
+| Unity-specific GitHub Actions builds   | `game-ci/unity-builder` with Orchestrator inputs           |
 
 ## Next Steps
 

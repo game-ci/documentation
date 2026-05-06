@@ -14,6 +14,9 @@ game-ci build [projectPath] [options]
 The CLI detects the engine before registering the final command options. Built-in detection covers
 Unity, Godot, and Unreal Engine projects.
 
+You can pass options in kebab-case on the command line, for example `--target-platform`. Config
+files use the parsed camelCase option names, for example `targetPlatform`.
+
 ## Unity Builds
 
 ```bash
@@ -38,9 +41,12 @@ Common Unity options:
 | `--unity-serial`, `-s`     | empty                                     | Unity Pro or Plus serial.                     |
 | `--unity-license`, `-l`    | empty                                     | Contents of, or path to, a Unity `.ulf` file. |
 | `--unity-licensing-server` | empty                                     | Unity floating licensing server.              |
+| `--ssh-agent`              | empty                                     | SSH agent path to forward into the container. |
+| `--git-private-token`      | empty                                     | Token used for private Git dependencies.      |
+| `--chown-files-to`         | empty                                     | User or user:group for build artifact owner.  |
 
-The CLI accepts kebab-case flags in examples. Internally, config files use the same option names in
-camelCase.
+On Linux and Windows, Unity builds run through Docker. On macOS, the CLI uses the host Unity
+installation path handled by the macOS builder setup.
 
 ### Android
 
@@ -77,10 +83,13 @@ game-ci build ./my-godot-project \
   --output-path build/game
 ```
 
-| Option            | Default      | Description               |
-| ----------------- | ------------ | ------------------------- |
-| `--export-preset` | `Linux/X11`  | Godot export preset name. |
-| `--output-path`   | `build/game` | Build output path.        |
+| Option            | Default                         | Description                 |
+| ----------------- | ------------------------------- | --------------------------- |
+| `--export-preset` | `Linux/X11`                     | Godot export preset name.   |
+| `--output-path`   | `build/game`                    | Build output path.          |
+| `--custom-image`  | `barichello/godot-ci:<version>` | Godot-capable Docker image. |
+
+The default image tag uses the detected Godot version when available, otherwise `4.3`.
 
 ## Unreal Engine Builds
 
@@ -99,6 +108,10 @@ game-ci build ./MyProject.uproject \
 | `--build-config`    | `Shipping` | Unreal build configuration.  |
 | `--custom-image`    | required   | Unreal-capable Docker image. |
 
+The built-in command uses Unreal Automation Tool inside the container. The image must provide
+`/home/ue4/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh`, or you should wrap your own Unreal
+workflow through a custom job or plugin.
+
 ## Versioning
 
 Unity builds support version generation.
@@ -109,6 +122,21 @@ Unity builds support version generation.
 | `--version`              | empty      | Explicit version when using a custom strategy. |
 | `--android-version-code` | empty      | Android-specific version code override.        |
 | `--allow-dirty-build`    | `false`    | Allow a build with uncommitted changes.        |
+
+Versioning is currently implemented for Unity builds.
+
+## Engine Selection
+
+Normally the CLI detects the engine from the project files. You can override detection with global
+options:
+
+| Option             | Description                                                    |
+| ------------------ | -------------------------------------------------------------- |
+| `--engine`         | Engine name used for command selection.                        |
+| `--engine-version` | Engine version used by the command, image tag, or build setup. |
+
+Use this when a repository contains more than one engine project or when detection cannot infer the
+version.
 
 ## Global Flags
 

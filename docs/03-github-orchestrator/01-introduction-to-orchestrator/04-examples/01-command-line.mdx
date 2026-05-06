@@ -27,7 +27,7 @@ The standalone Orchestrator CLI can also be installed directly for provider deve
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
@@ -37,7 +37,7 @@ game-ci \
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
@@ -48,7 +48,7 @@ game-ci \
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-project \
   --provider-strategy k8s \
   --target-platform StandaloneLinux64 \
@@ -86,7 +86,7 @@ Avoid long CLI flags for credentials by using environment variables or the
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \

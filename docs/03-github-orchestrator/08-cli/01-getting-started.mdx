@@ -49,7 +49,7 @@ This command talks directly to the Orchestrator package. The public CLI equivale
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64
@@ -58,7 +58,7 @@ game-ci \
 ## Relationship To Unity Builder
 
 When you use `game-ci/unity-builder@v4` with `providerStrategy`, unity-builder loads Orchestrator as
-an optional build plugin. You do not need to install the standalone Orchestrator CLI in that path.
+an optional plugin. You do not need to install the standalone Orchestrator CLI in that path.
 
 ```yaml
 - uses: game-ci/unity-builder@v4

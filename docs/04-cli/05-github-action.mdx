@@ -33,6 +33,9 @@ Leave `args` empty when later workflow steps should call `game-ci` directly.
 The action adds the installed binary directory to `PATH`, so subsequent steps can run `game-ci`
 without knowing the install location.
 
+Use install-only mode when your workflow needs multiple CLI commands, custom shell setup, or more
+control over quoting than a single `args` input provides.
+
 ## Version Selection
 
 When the action ref is a version tag such as `v0.1.0`, the action installs the matching CLI release.
@@ -64,7 +67,7 @@ The action can run remote builds by loading provider plugins, the same as the te
 - uses: game-ci/cli@v0.1.0
   with:
     args: >-
-      --plugin @game-ci/orchestrator/cli-plugin remote build . --provider-strategy local-docker
+      --plugin @game-ci/orchestrator-plugin remote build . --provider-strategy local-docker
       --target-platform StandaloneLinux64
 ```
 
@@ -82,3 +85,17 @@ The action installs the released CLI binary for the current runner:
 
 Linux and macOS runners use the repository installer script. Windows runners download and verify the
 Windows release asset directly.
+
+## Working Directory
+
+Set `working-directory` when the project is not at the repository root:
+
+```yaml
+- uses: game-ci/cli@v0.1.0
+  with:
+    working-directory: ./clients/unity
+    args: build . --target-platform StandaloneLinux64
+```
+
+The working directory only applies when `args` is set. In install-only mode, set `working-directory`
+on the later `run` step instead.

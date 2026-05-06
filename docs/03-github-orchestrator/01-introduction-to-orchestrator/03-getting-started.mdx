@@ -3,9 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started
 
-Orchestrator lets you run Unity builds on whatever machines you have: cloud, on-premise, or your
-local machine. It works as an optional plugin for `game-ci/unity-builder` in GitHub Actions and as a
-provider implementation for the public `game-ci` CLI.
+Orchestrator lets you run engine builds through the provider target that fits your workflow: cloud,
+on-premise, local Docker, or your local machine. Unity is the primary built-in package in
+`game-ci/unity-builder`; the public `game-ci` CLI also includes built-in configurations for other
+engines, and the plugin API can add new engine providers. Orchestrator works as an optional plugin
+for `game-ci/unity-builder` in GitHub Actions and as a provider implementation for the public
+`game-ci` CLI.
 
 ## Prerequisites
 
@@ -148,7 +151,7 @@ export AWS_SECRET_ACCESS_KEY="..."
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator/cli-plugin \
+  --plugin @game-ci/orchestrator-plugin \
   remote build ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64
