@@ -3,17 +3,20 @@ sidebar_position: 20
 toc_max_heading_level: 4
 ---
 
-# Self-Hosted Machines
+# Self-Hosting and Orchestrator
 
-Self-hosted machines can make game CI much faster, but persistent workspaces also accumulate state
-across builds. Aborted jobs, disk errors, concurrent engine instances, cross-runner cache restores,
-and oversized local caches introduce optimization and reliability problems that ephemeral runners
-never encounter.
+Self-hosting gives you owned build machines. Orchestrator adds the coordination layer that keeps
+those machines fast, predictable, and recoverable when persistent workspaces, shared caches,
+multiple runners, and multiple projects accumulate state across builds.
 
-This page covers patterns for keeping persistent build machines fast, predictable, and recoverable
-across thousands of CI runs. The examples are Unity-heavy because Unity `Library` caching is the
-most common high-impact case, but the same principles apply to Godot import caches, Unreal
-intermediate data, custom engine providers, and lab machines running multiple projects.
+Aborted jobs, disk errors, concurrent engine instances, cross-runner cache restores, and oversized
+local caches introduce optimization and reliability problems that ephemeral runners never
+encounter. This page covers the Orchestrator patterns that address those problems across thousands
+of CI runs.
+
+The examples are Unity-heavy because Unity `Library` caching is the most common high-impact case,
+but the same principles apply to Godot import caches, Unreal intermediate data, custom engine
+providers, and lab machines running multiple projects.
 
 ## Library Cache Strategy
 
