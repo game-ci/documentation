@@ -7,7 +7,7 @@ slug: /cli/configuration-and-plugins
 
 The `game-ci` CLI can read options from `.game-ci.yml` and load plugins from command-line flags or
 config. Those plugins can add engine detection, build commands, test commands, custom commands,
-options, and remote providers.
+options, and provider-backed job execution.
 
 ## Config File
 
@@ -23,7 +23,7 @@ Options live under `cliOptions`.
 ```yaml
 cliOptions:
   plugin:
-    - '@game-ci/orchestrator-plugin'
+    - "@game-ci/orchestrator-plugin"
   verbose: true
   targetPlatform: StandaloneLinux64
   buildsPath: dist
@@ -35,7 +35,7 @@ camelCase names such as `targetPlatform`, `providerStrategy`, `customImage`, and
 ## Plugin Sources
 
 Plugins can provide engine detectors, build or test command handlers, custom commands, options, and
-remote providers.
+provider implementations.
 
 | Source type      | Example                                  |
 | ---------------- | ---------------------------------------- |
@@ -54,7 +54,7 @@ The Orchestrator ships provider implementations for the public CLI.
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy aws
 ```
 
@@ -63,7 +63,7 @@ You can also add the plugin to `.game-ci.yml`:
 ```yaml
 cliOptions:
   plugins:
-    - '@game-ci/orchestrator-plugin'
+    - "@game-ci/orchestrator-plugin"
   providerStrategy: local-docker
   targetPlatform: StandaloneLinux64
 ```
@@ -71,7 +71,7 @@ cliOptions:
 Then run:
 
 ```bash
-game-ci remote run ./my-project
+game-ci orchestrate ./my-project
 ```
 
 ## Built-In Engine Support
@@ -94,35 +94,35 @@ commands, test commands, option registration, providers, and an `onLoad` hook.
 
 ```ts
 export default {
-  name: 'my-engine',
-  version: '1.0.0',
+  name: "my-engine",
+  version: "1.0.0",
   engineDetectors: [
     {
-      name: 'my-engine',
+      name: "my-engine",
       detect(projectPath) {
-        return { engine: 'my-engine', engineVersion: '1.2.3' };
+        return { engine: "my-engine", engineVersion: "1.2.3" };
       },
     },
   ],
   commands: [
     {
-      engine: 'my-engine',
+      engine: "my-engine",
       createCommand(command, subCommands) {
-        if (command === 'build') return new MyBuildCommand(command);
-        if (command === 'test') return new MyTestCommand(command);
+        if (command === "build") return new MyBuildCommand(command);
+        if (command === "test") return new MyTestCommand(command);
         return null;
       },
     },
   ],
   providers: {
-    'my-provider': MyProvider,
+    "my-provider": MyProvider,
   },
 };
 ```
 
-Provider plugins register provider strategy names. `game-ci remote run` then creates the provider
-selected by `--provider-strategy`. `game-ci remote build` is kept as a compatibility alias for older
-workflows.
+Provider plugins register provider strategy names. `game-ci orchestrate` then creates the provider
+selected by `--provider-strategy`. `game-ci remote run` and `game-ci remote build` are kept as
+compatibility aliases for older workflows.
 
 ## Local Config Folder
 

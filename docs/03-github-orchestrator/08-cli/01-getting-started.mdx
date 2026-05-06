@@ -14,12 +14,12 @@ uses the executable name `game-ci`, but it exposes a different command surface.
 
 ## When To Use It
 
-| Use case                                   | Entry point                                       |
-| ------------------------------------------ | ------------------------------------------------- |
-| General local or CI commands               | [GameCI CLI](/docs/cli)                           |
-| Remote jobs through a friendly CLI         | `game-ci remote run` with the Orchestrator plugin |
-| GitHub Actions Unity builds                | `game-ci/unity-builder@v4`                        |
-| Provider protocol development or debugging | Standalone Orchestrator CLI                       |
+| Use case                                    | Entry point                                        |
+| ------------------------------------------- | -------------------------------------------------- |
+| General local or CI commands                | [GameCI CLI](/docs/cli)                            |
+| Provider-backed jobs through a friendly CLI | `game-ci orchestrate` with the Orchestrator plugin |
+| GitHub Actions Unity builds                 | `game-ci/unity-builder@v4`                         |
+| Provider protocol development or debugging  | Standalone Orchestrator CLI                        |
 
 ## Command Surface
 
@@ -34,8 +34,9 @@ uses the executable name `game-ci`, but it exposes a different command surface.
 | `game-ci version`           | Print standalone Orchestrator CLI version information.                      |
 | `game-ci update`            | Update the standalone Orchestrator binary.                                  |
 
-The public CLI commands `game-ci remote run` and `game-ci test` are not standalone Orchestrator
-commands. Use the public CLI when you want that higher-level command model.
+The public CLI commands `game-ci orchestrate` and `game-ci test` are not standalone Orchestrator
+commands, even though standalone Orchestrator also exposes an `orchestrate` verb. Use the public CLI
+when you want the higher-level command model and plugin loading behavior.
 
 ## Install
 
@@ -67,7 +68,7 @@ This command talks directly to the Orchestrator package. The public CLI equivale
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64
 ```
