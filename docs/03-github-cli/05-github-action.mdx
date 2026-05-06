@@ -1,0 +1,110 @@
+---
+sidebar_position: 5
+slug: /cli/github-action
+---
+
+# GitHub Action
+
+Use `game-ci/cli` as a GitHub Action when you want the public GameCI CLI available inside a
+workflow. The action installs the standalone `game-ci` binary on the runner and can optionally run
+any CLI command in the same step: build, test, custom engine method, remote job, or config command.
+
+```yaml
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: game-ci/cli@v0.1.0
+        with:
+          args: build . --target-platform StandaloneLinux64
+```
+
+Run tests the same way:
+
+```yaml
+- uses: game-ci/cli@v0.1.0
+  with:
+    args: test .
+```
+
+## Install Only
+
+Leave `args` empty when later workflow steps should call `game-ci` directly.
+
+```yaml
+- uses: game-ci/cli@v0.1.0
+
+- run: game-ci --help
+```
+
+The action adds the installed binary directory to `PATH`, so subsequent steps can run `game-ci`
+without knowing the install location.
+
+Use install-only mode when your workflow needs multiple CLI commands, custom shell setup, or more
+control over quoting than a single `args` input provides.
+
+## Version Selection
+
+When the action ref is a version tag such as `v0.1.0`, the action installs the matching CLI release.
+When the action ref is a branch, such as `main`, it installs the latest CLI release unless you pass
+`version`.
+
+```yaml
+- uses: game-ci/cli@main
+  with:
+    version: v0.1.0
+    args: --help
+```
+
+Pinning `uses: game-ci/cli@v0.1.0` is preferred for repeatable workflows.
+
+## Inputs
+
+| Input               | Default | Description                                                                   |
+| ------------------- | ------- | ----------------------------------------------------------------------------- |
+| `args`              | empty   | Arguments passed to `game-ci`. Leave empty to install only.                   |
+| `version`           | empty   | CLI release to install, for example `v0.1.0`. Overrides action-ref detection. |
+| `working-directory` | `.`     | Directory where the `game-ci` command runs when `args` is set.                |
+
+## Remote Jobs
+
+The action can run remote jobs by loading provider plugins, the same as the terminal CLI.
+
+```yaml
+- uses: game-ci/cli@v0.1.0
+  with:
+    args: >-
+      --plugin @game-ci/orchestrator-plugin remote run . --provider-strategy local-docker
+      --target-platform StandaloneLinux64
+```
+
+For provider-specific setup, see [Remote jobs](/docs/cli/remote-builds).
+
+## Platform Support
+
+The action installs the released CLI binary for the current runner:
+
+| Runner OS | Installed asset                                 |
+| --------- | ----------------------------------------------- |
+| Linux     | `game-ci-linux-x64` or compatible release asset |
+| macOS     | `game-ci-macos-x64` or `game-ci-macos-arm64`    |
+| Windows   | `game-ci-windows-x64.exe`                       |
+
+Linux and macOS runners use the repository installer script. Windows runners download and verify the
+Windows release asset directly.
+
+## Working Directory
+
+Set `working-directory` when the project is not at the repository root:
+
+```yaml
+- uses: game-ci/cli@v0.1.0
+  with:
+    working-directory: ./clients/unity
+    args: build . --build-method Company.CI.RunValidation --target-platform StandaloneLinux64
+```
+
+The working directory only applies when `args` is set. In install-only mode, set `working-directory`
+on the later `run` step instead.

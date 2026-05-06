@@ -13,7 +13,7 @@ import Layers012 from '/assets/images/k8s-layers012.drawio.png';
 
 ## Bare-Metal
 
-"Bare Metal" means that your host OS is running directly on a piece of hardware without any
+"Bare Metal" means that your host OS is running directly on a physical machine without any
 virtualisation. This reduces the complexity of deployment at the cost of increased time and effort
 for re-provisioning the host.
 
@@ -91,7 +91,7 @@ as many 5,000 per cluster.
 <br />
 
 Once installed, Kubernetes creates
-[standardised interfaces](https://matt-rickard.com/kubernetes-interfaces) to control the hardware &
+[standardised interfaces](https://matt-rickard.com/kubernetes-interfaces) to control the machines &
 software components of the underlying nodes (networking, storage, GPUs, CPU cores etc...) as well as
 a distributed key-value store which facilitates communication between all nodes in the cluster.
 
@@ -104,7 +104,7 @@ a distributed key-value store which facilitates communication between all nodes 
 </div>
 <br />
 
-With the underlying hardware abstracted into a generic pool of resources, Kubernetes is then able to
+With the underlying machines abstracted into a generic pool of resources, Kubernetes is then able to
 re-compose those assets into isolated environments called "Namespaces" where it deploys
 containerised workloads in groups called "Pods". This layer of Kubernetes is very similar to a
 typical container host but with many more features for multi-tenancy, security, and life-cycle

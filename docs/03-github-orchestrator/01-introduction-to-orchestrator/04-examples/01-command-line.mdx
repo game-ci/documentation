@@ -1,0 +1,101 @@
+# Command Line
+
+Use the public `game-ci` CLI for command-line builds. Orchestrator is loaded as a provider plugin,
+so the user-facing command remains `game-ci remote run` while provider-specific behavior stays in
+the Orchestrator package.
+
+## Install GameCI CLI
+
+### Linux / macOS
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/game-ci/cli/main/install.sh | sh
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/game-ci/cli/main/install.ps1 | iex
+```
+
+The standalone Orchestrator CLI can also be installed directly for provider development. See
+[Standalone Orchestrator CLI](../../cli/getting-started).
+
+## Examples
+
+### Local build
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy local-docker \
+  --target-platform StandaloneLinux64
+```
+
+### Cloud build (AWS)
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy aws \
+  --target-platform StandaloneLinux64 \
+  --git-private-token $GIT_TOKEN
+```
+
+### Cloud build (Kubernetes)
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy k8s \
+  --target-platform StandaloneLinux64 \
+  --git-private-token $GIT_TOKEN
+```
+
+### Standalone maintenance commands
+
+Some maintenance commands are available only on the standalone Orchestrator CLI.
+
+```bash
+game-ci list-resources --provider-strategy aws
+```
+
+### Watch a running build
+
+```bash
+game-ci watch --provider-strategy aws
+```
+
+### Clean up old resources
+
+```bash
+game-ci garbage-collect --provider-strategy aws
+```
+
+Cleans up stale cloud resources (AWS only): stops old ECS tasks, deletes job CloudFormation stacks,
+and removes old CloudWatch log groups. Resources are deleted immediately without confirmation. Use
+`--garbageMaxAge` to control the age threshold (default: 24 hours).
+
+## Keeping Commands Short
+
+Avoid long CLI flags for credentials by using environment variables or the
+[Pull Secrets](../../secrets#-pulling-secrets-from-external-sources) feature:
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy aws \
+  --target-platform StandaloneLinux64 \
+  --pull-input-list UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD \
+  --input-pull-command 'gcloud secrets versions access 1 --secret="{0}"'
+```
+
+## Further Reading
+
+- [GameCI CLI](/docs/cli) - public command-line interface
+- [Remote jobs](/docs/cli/remote-builds) - provider plugin usage
+- [Standalone Orchestrator CLI](../../cli/getting-started) - lower-level Orchestrator entry point

@@ -36,7 +36,7 @@
   --ifm-background-color: #363344;
   --ifm-navbar-link-color: #ffffff;
   --ifm-navbar-background-color: #373445;
-  --ifm-navbar-background-color-dark: #32303F;
+  --ifm-navbar-background-color-dark: #32303f;
   --brand-primary: #3dc094;
   --brand-secondary: #373445;
   --brand-tertiary: #f0f2f5;
@@ -59,7 +59,7 @@
 /* text-soft */
 @layer base {
   p {
-    opacity: .9;
+    opacity: 0.9;
   }
 }
 

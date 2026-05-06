@@ -1,0 +1,43 @@
+# Local
+
+Runs builds directly on the host machine with no container isolation. The simplest provider - useful
+for development and testing.
+
+## Requirements
+
+- Unity installed on the build machine.
+- No Docker or cloud account needed.
+
+## Example Workflow
+
+### GitHub Actions (self-hosted runner)
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Command Line
+
+```bash
+yarn run cli -m cli-build \
+  --providerStrategy local \
+  --projectPath /path/to/your/project \
+  --targetPlatform StandaloneLinux64
+```
+
+## When to Use
+
+- Local development and testing of Orchestrator workflows
+- Debugging build issues before deploying to cloud providers
+- Self-hosted runners where you want direct execution without containers
+
+## ⚠️ Notes
+
+- Builds run directly on the host with no isolation. Ensure the machine has the required Unity
+  version and dependencies installed.
+- This is the fallback provider - if a custom provider fails to load, Orchestrator falls back to
+  `local`.

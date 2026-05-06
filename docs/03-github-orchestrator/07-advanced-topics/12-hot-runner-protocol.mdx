@@ -1,0 +1,217 @@
+---
+sidebar_position: 12
+---
+
+# Standalone Streaming Hot Runner
+
+The standalone streaming hot runner is the low-latency Orchestrator path for build and test
+iteration. It keeps a runner process warm, streams only changed workspace content into that runner,
+and returns structured results without repeating the full provision, clone, cache restore, build,
+and teardown cycle for every job.
+
+This is an advanced Orchestrator capability. For normal CLI usage, start with the public
+[GameCI CLI](/docs/cli). Use this page when you are designing persistent runner infrastructure,
+custom game tooling, or provider integrations.
+
+## Why This Exists
+
+Traditional providers are optimized for reliable cold starts:
+
+1. Provision a runner
+2. Clone or sync the repository
+3. Restore cache archives
+4. Launch the engine
+5. Build or test
+6. Upload results
+7. Tear everything down
+
+That model is predictable, but expensive for large game projects. A streaming hot runner keeps the
+workspace and engine process alive between jobs. Each new job sends a small work request plus a
+workspace delta.
+
+## Core Pieces
+
+| Piece            | Responsibility                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| Runner process   | Long-lived worker that accepts build or test jobs.                                   |
+| Transport        | How jobs reach the runner: GitHub runner, WebSocket, file, local network, or custom. |
+| Warm workspace   | Existing checkout plus Library/cache state from previous jobs.                       |
+| Incremental sync | Workspace update strategy for git deltas, direct input, or storage overlays.         |
+| Output stream    | Logs, artifacts, test results, and typed metadata returned to Orchestrator.          |
+
+## Runner Transports
+
+| Transport       | Description                          | Use Case                          |
+| --------------- | ------------------------------------ | --------------------------------- |
+| `github`        | Self-hosted GitHub Actions runner    | Standard CI infrastructure        |
+| `websocket`     | WebSocket or SignalR connection      | Custom dashboards, game platforms |
+| `file`          | Shared directory watch for job files | Simple setups, NAS-based farms    |
+| `local-network` | mDNS/Bonjour discovery plus HTTP API | LAN build farms, office setups    |
+| `custom`        | User-implemented runner interface    | Any transport                     |
+
+### GitHub Runner Transport
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: github
+    runnerLabels: unity-2022,linux,hot
+    editorMode: persistent
+```
+
+### WebSocket Transport
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: websocket
+    runnerEndpoint: wss://build.example.com/runners
+    runnerLabels: unity-2022,windows,gpu
+```
+
+### File Transport
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    runnerTransport: file
+    runnerEndpoint: /mnt/shared/build-jobs/
+    runnerLabels: unity-2022,linux
+```
+
+## Editor Modes
+
+| Mode         | Behavior                                                     |
+| ------------ | ------------------------------------------------------------ |
+| `ephemeral`  | Launch the editor for each job. This matches cold providers. |
+| `persistent` | Keep the editor alive between jobs.                          |
+| `hybrid`     | Keep a warm pool and scale out with ephemeral workers.       |
+
+Persistent mode saves editor startup time, keeps the Library folder warm, and lets Unity reimport
+only changed assets when paired with incremental sync.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    editorMode: persistent
+    runnerTransport: websocket
+    syncStrategy: git-delta
+```
+
+## Incremental Sync
+
+Incremental sync is the workspace streaming layer for hot runners. Instead of restoring a complete
+cache archive, Orchestrator sends the runner enough information to update the existing workspace.
+
+| Strategy       | Source                           | Use Case                           |
+| -------------- | -------------------------------- | ---------------------------------- |
+| `full`         | Full clone plus cache restore    | Default for cold environments      |
+| `git-delta`    | Git diff since last synced SHA   | Standard CI and pull requests      |
+| `direct-input` | File content passed as job input | No-push workflows, rapid iteration |
+| `storage-pull` | Changed files from rclone remote | Large binary inputs or asset drops |
+
+### Git Delta
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    editorMode: persistent
+    syncStrategy: git-delta
+```
+
+The runner tracks its last synced commit, fetches the target commit, applies the diff, and lets the
+engine process reuse its warm state.
+
+### Direct Input
+
+Use direct input when a job should validate files that have not been pushed to git.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    editorMode: persistent
+    syncStrategy: direct-input
+    syncInputRef: storage://my-remote/inputs/changes.tar.lz4
+```
+
+This supports workflows such as:
+
+- Run tests before committing local changes
+- Build with an asset override
+- Validate a generated config bundle
+- Test a hotfix without opening a pull request
+
+### Storage Pull
+
+Large overlays can be stored through rclone and referenced by URI:
+
+```yaml
+syncStrategy: storage-pull
+syncInputRef: storage://s3:my-bucket/job-inputs/changes.tar.lz4
+```
+
+rclone keeps this provider-neutral: S3, GCS, Azure Blob, local filesystem, WebDAV, SFTP, and other
+storage backends can all carry job input.
+
+## Runner State
+
+Runners maintain enough state to calculate the next delta safely:
+
+```json
+{
+  "lastSyncCommit": "abc123def",
+  "lastSyncTimestamp": "2026-05-05T10:30:00Z",
+  "workspaceHash": "sha256:...",
+  "pendingOverlays": []
+}
+```
+
+## Protocol Messages
+
+Runners communicate through JSON messages regardless of transport.
+
+Register:
+
+```json
+{
+  "type": "register",
+  "labels": ["unity-2022", "linux", "gpu"],
+  "capabilities": {
+    "unityVersion": "2022.3.20f1",
+    "platform": "StandaloneLinux64",
+    "gpu": true
+  }
+}
+```
+
+Heartbeat:
+
+```json
+{
+  "type": "heartbeat",
+  "runnerId": "runner-abc-123",
+  "status": "idle"
+}
+```
+
+Job requests include the target engine, build or test action, sync strategy, and output contract.
+Results are returned through the [storage and output system](storage#structured-build-outputs).
+
+## Inputs Reference
+
+| Input               | Description                                                                  |
+| ------------------- | ---------------------------------------------------------------------------- |
+| `runnerTransport`   | Transport protocol: `github`, `websocket`, `file`, `local-network`, `custom` |
+| `runnerEndpoint`    | Connection endpoint for the transport                                        |
+| `runnerLabels`      | Comma-separated runner labels for job routing                                |
+| `editorMode`        | Editor lifecycle: `ephemeral`, `persistent`, `hybrid`                        |
+| `syncStrategy`      | Sync approach: `full`, `git-delta`, `direct-input`, `storage-pull`           |
+| `syncInputRef`      | URI for direct-input or storage-pull content                                 |
+| `syncStorageRemote` | rclone remote for storage-backed inputs                                      |
+| `syncRevertAfter`   | Revert overlaid changes after job                                            |
+
+## Related Pages
+
+- [Storage and outputs](storage#structured-build-outputs)
+- [Test workflow engine](test-workflow-engine)
+- [Build services](build-services)
