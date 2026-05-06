@@ -230,7 +230,7 @@ single Library archive:
 ```yaml
 - uses: game-ci/unity-builder@v4
   env:
-    UNITY_ACCELERATOR_ENDPOINT: '127.0.0.1:10080'
+    UNITY_ACCELERATOR_ENDPOINT: "127.0.0.1:10080"
   with:
     providerStrategy: aws
     containerHookFiles: accelerator-start,aws-s3-upload-build,aws-s3-upload-cache,accelerator-upload
@@ -265,14 +265,14 @@ single Library archive:
 
 ## Inputs Reference
 
-| Input                     | Description                                       |
-| ------------------------- | ------------------------------------------------- |
-| `cacheKey`                | Override the cache key used for cache isolation   |
-| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables |
-| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit    |
-| `cacheRetentionDays`      | Remove cache entries older than N days            |
-| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep        |
+| Input                     | Description                                               |
+| ------------------------- | --------------------------------------------------------- |
+| `cacheKey`                | Override the cache key used for cache isolation           |
+| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables         |
+| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit            |
+| `cacheRetentionDays`      | Remove cache entries older than N days                    |
+| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep                |
 | `maxCacheEntries`         | Max tar snapshots to retain per cache folder (default: 2) |
 | `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor) |
-| `skipCache`               | Skip cache restore entirely                       |
-| `useCompressionStrategy`  | Use LZ4 compression for cache archives            |
+| `skipCache`               | Skip cache restore entirely                               |
+| `useCompressionStrategy`  | Use LZ4 compression for cache archives                    |
