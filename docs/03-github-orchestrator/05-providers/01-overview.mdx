@@ -1,7 +1,11 @@
-# Providers
+# Provider Types
 
-A **provider** is the backend that Orchestrator uses to run your builds. You choose a provider by
-setting the `providerStrategy` parameter.
+Provider types are the execution backends Orchestrator can target. They are not the same thing as
+engine plugins: engine plugins describe how to run a Unity, Godot, Unreal, or custom-engine
+workload, while provider types describe where that workload runs.
+
+A **provider type** is the backend that Orchestrator uses to run your jobs. You choose a provider
+type by setting the `providerStrategy` parameter.
 
 ```mermaid
 graph LR
