@@ -1,16 +1,20 @@
 ---
 sidebar_position: 3
+sidebar_label: Remote Jobs
 ---
 
-# Remote Builds
+# Remote Jobs
 
-`game-ci remote build` schedules a build through a provider plugin.
+`game-ci remote build` schedules a provider-backed engine job. The command is named `remote build`
+today, but the provider can run standard builds, test workflows, custom engine commands, or a fully
+custom job definition.
 
 ```bash
 game-ci remote build [projectPath] --provider-strategy <strategy>
 ```
 
-The CLI owns the high-level command shape. Providers own the infrastructure-specific options.
+The CLI owns the high-level command shape. Providers own infrastructure-specific options and job
+execution behavior.
 
 ## Orchestrator Plugin
 
@@ -108,7 +112,8 @@ Common Kubernetes options:
 
 ## Custom Jobs
 
-Use `--custom-job` when the provider should run commands that do not map to a built-in engine build.
+Use `--custom-job` when the provider should run commands that do not map to a built-in engine build
+or test command.
 
 ```bash
 game-ci \
@@ -138,7 +143,7 @@ For protocol details, see
 
 ## Configuration Files
 
-Remote builds can load the provider plugin and common options from `.game-ci.yml`:
+Remote jobs can load the provider plugin and common options from `.game-ci.yml`:
 
 ```yaml
 cliOptions:

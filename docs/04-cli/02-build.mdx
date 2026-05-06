@@ -1,23 +1,27 @@
 ---
 sidebar_position: 2
+sidebar_label: Engine Commands
 ---
 
-# Build Command
+# Engine Commands
 
-`game-ci build` builds the project at the current directory, or the project path passed as the first
-argument.
+The CLI resolves engine commands from the project at the current directory, or the project path
+passed as the first argument. `game-ci build` is the most common command, but it is not the only
+workflow the CLI can run.
 
 ```bash
 game-ci build [projectPath] [options]
+game-ci test [projectPath] [options]
 ```
 
 The CLI detects the engine before registering the final command options. Built-in detection covers
-Unity, Godot, and Unreal Engine projects.
+Unity, Godot, and Unreal Engine projects. Plugins can add more engines, test commands, custom
+commands, and command-specific options.
 
 You can pass options in kebab-case on the command line, for example `--target-platform`. Config
 files use the parsed camelCase option names, for example `targetPlatform`.
 
-## Unity Builds
+## Unity Commands
 
 ```bash
 game-ci build ./my-unity-project \
@@ -48,6 +52,22 @@ Common Unity options:
 On Linux and Windows, Unity builds run through Docker. On macOS, the CLI uses the host Unity
 installation path handled by the macOS builder setup.
 
+### Custom Unity Methods
+
+Use `--build-method` to execute a static Unity method instead of the default GameCI builder method.
+This is useful for validation, packaging, asset processing, test bootstrap code, or project-specific
+automation that should still run inside the same GameCI environment.
+
+```bash
+game-ci build ./my-unity-project \
+  --target-platform StandaloneLinux64 \
+  --build-method Company.CI.RunValidation \
+  --custom-parameters "-suite smoke -publishReport true"
+```
+
+The method must be available to the Unity editor as a static C# method. Values passed through
+`--custom-parameters` are appended to the Unity command line for your method to parse.
+
 ### Android
 
 ```bash
@@ -73,7 +93,7 @@ Android options:
 | `--android-key-alias-password` | empty            | Keystore alias password.                                         |
 | `--android-target-sdk-version` | empty            | Android SDK version number.                                      |
 
-## Godot Builds
+## Godot Commands
 
 Godot builds use a Docker image by default.
 
@@ -91,7 +111,7 @@ game-ci build ./my-godot-project \
 
 The default image tag uses the detected Godot version when available, otherwise `4.3`.
 
-## Unreal Engine Builds
+## Unreal Engine Commands
 
 Unreal Engine builds require a Docker image that you are licensed to use.
 
@@ -111,6 +131,18 @@ game-ci build ./MyProject.uproject \
 The built-in command uses Unreal Automation Tool inside the container. The image must provide
 `/home/ue4/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh`, or you should wrap your own Unreal
 workflow through a custom job or plugin.
+
+## Test Command
+
+`game-ci test` is part of the CLI command model. The exact behavior and options are provided by the
+detected engine plugin, so test support can evolve per engine without changing the CLI core.
+
+```bash
+game-ci test ./my-project
+```
+
+For engines or projects that need a custom test runner, use a plugin-provided test command, a Unity
+custom method, or a remote custom job.
 
 ## Versioning
 
@@ -152,5 +184,5 @@ version.
 
 ## See Also
 
-- [Remote builds](/docs/cli/remote-builds)
+- [Remote jobs](/docs/cli/remote-builds)
 - [Configuration and plugins](/docs/cli/configuration-and-plugins)

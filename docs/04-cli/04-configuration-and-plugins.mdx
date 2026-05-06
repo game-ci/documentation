@@ -5,7 +5,8 @@ sidebar_position: 4
 # Configuration and Plugins
 
 The `game-ci` CLI can read options from `.game-ci.yml` and load plugins from command-line flags or
-config.
+config. Those plugins can add engine detection, build commands, test commands, custom commands,
+options, and remote providers.
 
 ## Config File
 
@@ -32,7 +33,8 @@ camelCase names such as `targetPlatform`, `providerStrategy`, `customImage`, and
 
 ## Plugin Sources
 
-Plugins can provide engine detectors, command handlers, options, and remote providers.
+Plugins can provide engine detectors, build or test command handlers, custom commands, options, and
+remote providers.
 
 | Source type      | Example                                  |
 | ---------------- | ---------------------------------------- |
@@ -75,19 +77,19 @@ game-ci remote build ./my-project
 
 The CLI includes built-in plugins for:
 
-| Engine | Detection signal                     | Built-in command |
-| ------ | ------------------------------------ | ---------------- |
-| Unity  | `ProjectSettings/ProjectVersion.txt` | `game-ci build`  |
-| Godot  | Godot project files                  | `game-ci build`  |
-| Unreal | `.uproject` files                    | `game-ci build`  |
+| Engine | Detection signal                     | Built-in command surface |
+| ------ | ------------------------------------ | ------------------------ |
+| Unity  | `ProjectSettings/ProjectVersion.txt` | Engine command options   |
+| Godot  | Godot project files                  | Engine command options   |
+| Unreal | `.uproject` files                    | Engine command options   |
 
 External plugins can add new engine providers or replace command behavior without changing the CLI
 core.
 
 ## Plugin API
 
-A plugin exports a `GameCIPlugin` object. It can provide any combination of engine detectors,
-commands, option registration, providers, and an `onLoad` hook.
+A plugin exports a `GameCIPlugin` object. It can provide any combination of engine detectors, build
+commands, test commands, option registration, providers, and an `onLoad` hook.
 
 ```ts
 export default {
@@ -105,7 +107,9 @@ export default {
     {
       engine: 'my-engine',
       createCommand(command, subCommands) {
-        return command === 'build' ? new MyBuildCommand(command) : null;
+        if (command === 'build') return new MyBuildCommand(command);
+        if (command === 'test') return new MyTestCommand(command);
+        return null;
       },
     },
   ],

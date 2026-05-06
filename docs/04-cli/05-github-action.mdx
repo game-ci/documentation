@@ -5,12 +5,12 @@ sidebar_position: 5
 # GitHub Action
 
 Use `game-ci/cli` as a GitHub Action when you want the public GameCI CLI available inside a
-workflow. The action installs the standalone `game-ci` binary on the runner and can optionally run a
-command in the same step.
+workflow. The action installs the standalone `game-ci` binary on the runner and can optionally run
+any CLI command in the same step: build, test, custom engine method, remote job, or config command.
 
 ```yaml
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,6 +18,14 @@ jobs:
       - uses: game-ci/cli@v0.1.0
         with:
           args: build . --target-platform StandaloneLinux64
+```
+
+Run tests the same way:
+
+```yaml
+- uses: game-ci/cli@v0.1.0
+  with:
+    args: test .
 ```
 
 ## Install Only
@@ -59,9 +67,9 @@ Pinning `uses: game-ci/cli@v0.1.0` is preferred for repeatable workflows.
 | `version`           | empty   | CLI release to install, for example `v0.1.0`. Overrides action-ref detection. |
 | `working-directory` | `.`     | Directory where the `game-ci` command runs when `args` is set.                |
 
-## Remote Builds
+## Remote Jobs
 
-The action can run remote builds by loading provider plugins, the same as the terminal CLI.
+The action can run remote jobs by loading provider plugins, the same as the terminal CLI.
 
 ```yaml
 - uses: game-ci/cli@v0.1.0
@@ -71,7 +79,7 @@ The action can run remote builds by loading provider plugins, the same as the te
       --target-platform StandaloneLinux64
 ```
 
-For provider-specific setup, see [Remote builds](/docs/cli/remote-builds).
+For provider-specific setup, see [Remote jobs](/docs/cli/remote-builds).
 
 ## Platform Support
 
@@ -94,7 +102,7 @@ Set `working-directory` when the project is not at the repository root:
 - uses: game-ci/cli@v0.1.0
   with:
     working-directory: ./clients/unity
-    args: build . --target-platform StandaloneLinux64
+    args: build . --build-method Company.CI.RunValidation --target-platform StandaloneLinux64
 ```
 
 The working directory only applies when `args` is set. In install-only mode, set `working-directory`
