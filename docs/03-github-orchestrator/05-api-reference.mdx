@@ -35,13 +35,13 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 
 ### Provider
 
-| Parameter              | Default                 | Description                                                                                                                                                                       |
-| ---------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `providerStrategy`     | `local`                 | Cloud provider to use. Built-in: `aws`, `k8s`, `local-docker`, `local`. Also accepts a GitHub URL, NPM package, or local path for [custom providers](providers/custom-providers). |
-| `containerCpu`         | `1024`                  | CPU units for cloud containers (`1024` = 1 vCPU). See provider setup guides for allowed values.                                                                                   |
-| `containerMemory`      | `3072`                  | Memory in MB for cloud containers (`4096` = 4 GB). See provider setup guides for allowed values.                                                                                  |
-| `orchestratorBranch`   | `main`                  | Release branch of Orchestrator for remote containers. Use `orchestrator-develop` for latest development builds.                                                                   |
-| `orchestratorRepoName` | `game-ci/unity-builder` | Repository for Orchestrator source. Override to use a fork for testing or custom builds.                                                                                          |
+| Parameter              | Default                 | Description                                                                                                                                                                                                                                                                |
+| ---------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `providerStrategy`     | `local`                 | Provider type to use. Built-in: `aws`, `k8s`, `local-docker`, `local`. Also accepts `config:<path>` for [config-defined providers](providers/config-defined-providers), plus GitHub URLs, NPM packages, or local paths for [custom providers](providers/custom-providers). |
+| `containerCpu`         | `1024`                  | CPU units for cloud containers (`1024` = 1 vCPU). See provider setup guides for allowed values.                                                                                                                                                                            |
+| `containerMemory`      | `3072`                  | Memory in MB for cloud containers (`4096` = 4 GB). See provider setup guides for allowed values.                                                                                                                                                                           |
+| `orchestratorBranch`   | `main`                  | Release branch of Orchestrator for remote containers. Use `orchestrator-develop` for latest development builds.                                                                                                                                                            |
+| `orchestratorRepoName` | `game-ci/unity-builder` | Repository for Orchestrator source. Override to use a fork for testing or custom builds.                                                                                                                                                                                   |
 
 ### Engine
 

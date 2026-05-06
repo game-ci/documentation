@@ -4,6 +4,11 @@ Write orchestrator providers in **any language** - Go, Python, Rust, shell, or a
 read stdin and write stdout. The CLI provider protocol uses JSON messages over stdin/stdout with the
 subcommand as the first argument.
 
+If your provider only needs to run fixed lifecycle commands from YAML or JSON, start with
+[Config-Defined Providers](config-defined-providers). Use the CLI provider protocol when an
+executable needs to parse structured requests, maintain more control over streaming output, or wrap
+logic that is too complex for a configuration file.
+
 ```mermaid
 graph LR
     Orch["providerExecutable<br/>./my-provider<br/>Orchestrator spawns your<br/>executable per subcommand"]
@@ -164,25 +169,27 @@ Make it executable and point `providerExecutable` at it:
     targetPlatform: StandaloneLinux64
 ```
 
-## CLI Provider vs TypeScript Provider
+## Config vs CLI vs TypeScript Providers
 
-| Feature       | CLI Provider          | TypeScript Provider     |
-| ------------- | --------------------- | ----------------------- |
-| Language      | Any                   | TypeScript/JavaScript   |
-| Setup         | `providerExecutable`  | `providerStrategy`      |
-| Communication | JSON stdin/stdout     | Direct function calls   |
-| Streaming     | stdout lines          | Native logging          |
-| Distribution  | Any executable        | GitHub, NPM, local path |
-| Dependencies  | None (self-contained) | Node.js runtime         |
+| Feature       | Config-defined provider | CLI provider          | TypeScript provider     |
+| ------------- | ----------------------- | --------------------- | ----------------------- |
+| Language      | YAML or JSON            | Any                   | TypeScript/JavaScript   |
+| Setup         | `providerStrategy`      | `providerExecutable`  | `providerStrategy`      |
+| Communication | Environment variables   | JSON stdin/stdout     | Direct function calls   |
+| Streaming     | Command stdout/stderr   | stdout lines          | Native logging          |
+| Distribution  | File in your repo       | Any executable        | GitHub, NPM, local path |
+| Dependencies  | Shell and called tools  | None (self-contained) | Node.js runtime         |
 
-Use CLI providers when you want to write in a non-TypeScript language, need to wrap an existing
-tool, or want a self-contained executable with no Node.js dependency.
+Use [config-defined providers](config-defined-providers) when shell commands are enough. Use CLI
+providers when you want to write in a non-TypeScript language, need to wrap an existing tool, or
+want a self-contained executable with no Node.js dependency.
 
 Use [TypeScript custom providers](custom-providers) when you want direct access to the
 BuildParameters object and orchestrator internals.
 
 ## Related
 
+- [Config-Defined Providers](config-defined-providers) - YAML and JSON provider definitions
 - [Custom Providers](custom-providers) - TypeScript provider plugin system
 - [Build Services](/docs/github-orchestrator/advanced-topics/build-services) - Submodule profiles,
   caching, LFS agents, hooks

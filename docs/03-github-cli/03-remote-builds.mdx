@@ -63,6 +63,7 @@ Available Orchestrator provider types include:
 | Remote PowerShell | `remote-powershell` | Run on a remote Windows host.                  |
 | Ansible           | `ansible`           | Run through an Ansible inventory and playbook. |
 | CLI protocol      | `cli`               | Delegate to a custom provider executable.      |
+| Config-defined    | `config:<path>`     | Map lifecycle commands from YAML or JSON.      |
 
 ## Local Docker
 
@@ -160,6 +161,23 @@ game-ci \
 
 For protocol details, see
 [CLI provider protocol](../github-orchestrator/providers/cli-provider-protocol).
+
+## Config-Defined Providers
+
+When the Orchestrator plugin is loaded, provider strategies can also point at YAML or JSON provider
+configuration files:
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy config:./.game-ci/providers/local-shell.yml
+```
+
+Use this when a provider can be described as lifecycle commands that call existing scripts, CLIs, or
+automation APIs. See
+[Config-defined providers](../github-orchestrator/providers/config-defined-providers) for the file
+format, runtime environment variables, and examples.
 
 ## Configuration Files
 

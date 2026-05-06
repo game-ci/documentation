@@ -74,6 +74,18 @@ Then run:
 game-ci remote run ./my-project
 ```
 
+Provider strategies loaded through the Orchestrator plugin can also be config-defined providers:
+
+```yaml
+cliOptions:
+  plugins:
+    - '@game-ci/orchestrator-plugin'
+  providerStrategy: config:./.game-ci/providers/local-shell.yml
+```
+
+Use this when YAML or JSON can describe how to call your existing provider scripts or automation
+APIs. See [Config-defined providers](/docs/github-orchestrator/providers/config-defined-providers).
+
 ## Built-In Engine Support
 
 The CLI includes built-in plugins for:
@@ -123,6 +135,11 @@ export default {
 Provider plugins register provider strategy names. `game-ci remote run` then creates the provider
 selected by `--provider-strategy`. `game-ci remote build` is kept as a compatibility alias for older
 workflows.
+
+Provider implementations can also live outside the public CLI. The Orchestrator supports
+configuration-driven providers, executable providers, and TypeScript/JavaScript provider modules.
+Use the public CLI plugin API when you are adding command surface or engine behavior to `game-ci`
+itself; use the Orchestrator provider extension points when you are changing where jobs run.
 
 ## Local Config Folder
 
