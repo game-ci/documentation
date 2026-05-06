@@ -1,0 +1,189 @@
+---
+sidebar_position: 2
+sidebar_label: Engine Commands
+slug: /cli/build
+---
+
+# Engine Commands
+
+The CLI resolves engine commands from the project at the current directory, or the project path
+passed as the first argument. `game-ci build` is the most common command, but it is not the only
+workflow the CLI can run.
+
+```bash
+game-ci build [projectPath] [options]
+game-ci test [projectPath] [options]
+```
+
+The CLI detects the engine before registering the final command options. Built-in detection covers
+Unity, Godot, and Unreal Engine projects. Plugins can add more engines, test commands, custom
+commands, and command-specific options.
+
+You can pass options in kebab-case on the command line, for example `--target-platform`. Config
+files use the parsed camelCase option names, for example `targetPlatform`.
+
+## Unity Commands
+
+```bash
+game-ci build ./my-unity-project \
+  --target-platform StandaloneLinux64 \
+  --build-name MyGame
+```
+
+Common Unity options:
+
+| Option                     | Default                                   | Description                                   |
+| -------------------------- | ----------------------------------------- | --------------------------------------------- |
+| `--target-platform`, `-t`  | `StandaloneLinux64`                       | Unity target platform.                        |
+| `--build-name`             | target platform                           | Output build name.                            |
+| `--builds-path`, `-o`      | `build`                                   | Output folder for builds.                     |
+| `--build-method`, `-m`     | `UnityBuilderAction.Builder.BuildProject` | Static build method to run.                   |
+| `--custom-image`           | GameCI Unity editor image                 | Override the Docker image.                    |
+| `--custom-parameters`      | empty                                     | Extra arguments passed to Unity.              |
+| `--docker-workspace-path`  | `/github/workspace`                       | Container mount path for the workspace.       |
+| `--unity-email`, `-u`      | empty                                     | Unity account email.                          |
+| `--unity-password`, `-p`   | empty                                     | Unity account password.                       |
+| `--unity-serial`, `-s`     | empty                                     | Unity Pro or Plus serial.                     |
+| `--unity-license`, `-l`    | empty                                     | Contents of, or path to, a Unity `.ulf` file. |
+| `--unity-licensing-server` | empty                                     | Unity floating licensing server.              |
+| `--ssh-agent`              | empty                                     | SSH agent path to forward into the container. |
+| `--git-private-token`      | empty                                     | Token used for private Git dependencies.      |
+| `--chown-files-to`         | empty                                     | User or user:group for build artifact owner.  |
+
+On Linux and Windows, Unity builds run through Docker. On macOS, the CLI uses the host Unity
+installation path handled by the macOS builder setup.
+
+### Custom Unity Methods
+
+Use `--build-method` to execute a static Unity method instead of the default GameCI builder method.
+This is useful for validation, packaging, asset processing, test bootstrap code, or project-specific
+automation that should still run inside the same GameCI environment.
+
+```bash
+game-ci build ./my-unity-project \
+  --target-platform StandaloneLinux64 \
+  --build-method Company.CI.RunValidation \
+  --custom-parameters "-suite smoke -publishReport true"
+```
+
+The method must be available to the Unity editor as a static C# method. Values passed through
+`--custom-parameters` are appended to the Unity command line for your method to parse.
+
+### Android
+
+```bash
+game-ci build ./my-unity-project \
+  --target-platform Android \
+  --android-export-type androidAppBundle \
+  --android-keystore-base64 "$ANDROID_KEYSTORE_BASE64" \
+  --android-keystore-password "$ANDROID_KEYSTORE_PASSWORD" \
+  --android-key-alias release \
+  --android-key-alias-password "$ANDROID_KEY_PASSWORD"
+```
+
+Android options:
+
+| Option                         | Default          | Description                                                      |
+| ------------------------------ | ---------------- | ---------------------------------------------------------------- |
+| `--android-export-type`        | `androidPackage` | `androidPackage`, `androidAppBundle`, or `androidStudioProject`. |
+| `--android-symbol-type`        | `none`           | `none`, `public`, or `debugging`.                                |
+| `--android-keystore-name`      | empty            | Keystore file name.                                              |
+| `--android-keystore-base64`    | empty            | Base64 encoded keystore contents.                                |
+| `--android-keystore-password`  | empty            | Keystore password.                                               |
+| `--android-key-alias`          | empty            | Keystore alias.                                                  |
+| `--android-key-alias-password` | empty            | Keystore alias password.                                         |
+| `--android-target-sdk-version` | empty            | Android SDK version number.                                      |
+
+## Godot Commands
+
+Godot builds use a Docker image by default.
+
+```bash
+game-ci build ./my-godot-project \
+  --export-preset "Linux/X11" \
+  --output-path build/game
+```
+
+| Option            | Default                         | Description                 |
+| ----------------- | ------------------------------- | --------------------------- |
+| `--export-preset` | `Linux/X11`                     | Godot export preset name.   |
+| `--output-path`   | `build/game`                    | Build output path.          |
+| `--custom-image`  | `barichello/godot-ci:<version>` | Godot-capable Docker image. |
+
+The default image tag uses the detected Godot version when available, otherwise `4.3`.
+
+## Unreal Engine Commands
+
+Unreal Engine builds require a Docker image that you are licensed to use.
+
+```bash
+game-ci build ./MyProject.uproject \
+  --target-platform Linux \
+  --build-config Shipping \
+  --custom-image ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+```
+
+| Option              | Default    | Description                  |
+| ------------------- | ---------- | ---------------------------- |
+| `--target-platform` | `Linux`    | Unreal target platform.      |
+| `--build-config`    | `Shipping` | Unreal build configuration.  |
+| `--custom-image`    | required   | Unreal-capable Docker image. |
+
+The built-in command uses Unreal Automation Tool inside the container. The image must provide
+`/home/ue4/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh`, or you should wrap your own Unreal
+workflow through a custom job or plugin.
+
+## Test Command
+
+`game-ci test` is part of the CLI command model. The exact behavior and options are provided by the
+detected engine plugin, so test support can evolve per engine without changing the CLI core.
+
+```bash
+game-ci test ./my-project
+```
+
+For engines or projects that need a custom test runner, use a plugin-provided test command, a Unity
+custom method, or a remote custom job.
+
+## Versioning
+
+Unity builds support version generation.
+
+| Option                   | Default    | Description                                    |
+| ------------------------ | ---------- | ---------------------------------------------- |
+| `--versioning-strategy`  | `Semantic` | Version strategy.                              |
+| `--version`              | empty      | Explicit version when using a custom strategy. |
+| `--android-version-code` | empty      | Android-specific version code override.        |
+| `--allow-dirty-build`    | `false`    | Allow a build with uncommitted changes.        |
+
+Versioning is currently implemented for Unity builds.
+
+## Engine Selection
+
+Normally the CLI detects the engine from the project files. You can override detection with global
+options:
+
+| Option             | Description                                                    |
+| ------------------ | -------------------------------------------------------------- |
+| `--engine`         | Engine name used for command selection.                        |
+| `--engine-version` | Engine version used by the command, image tag, or build setup. |
+
+Use this when a repository contains more than one engine project or when detection cannot infer the
+version.
+
+## Global Flags
+
+| Option                  | Description                          |
+| ----------------------- | ------------------------------------ |
+| `--config`              | Read CLI options from a config file. |
+| `--plugin`              | Load an external plugin.             |
+| `--plugins`             | Alias for plugin arrays in config.   |
+| `--quiet`, `-q`         | Suppress output.                     |
+| `--verbose`, `-v`       | Enable verbose logging.              |
+| `--veryVerbose`, `--vv` | Enable very verbose logging.         |
+| `--maxVerbose`, `--vvv` | Enable debug logging.                |
+
+## See Also
+
+- [Remote jobs](/docs/cli/remote-builds)
+- [Configuration and plugins](/docs/cli/configuration-and-plugins)

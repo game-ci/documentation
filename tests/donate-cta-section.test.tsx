@@ -1,23 +1,21 @@
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import DonateCtaSection from '../src/components/pages/home/section/donate-cta-section';
 
-jest.mock('@site/src/components/pages/home/section/section', () => {
-  const MockSection = ({ children, title }: { children: React.ReactNode; title?: string }) => (
+vi.mock('@site/src/components/pages/home/section/section', () => ({
+  default: ({ children, title }: { children: React.ReactNode; title?: string }) => (
     <section>
       {title && <h2>{title}</h2>}
       {children}
     </section>
-  );
-  MockSection.defaultProps = { title: '' };
-  return MockSection;
-});
+  ),
+}));
 
-jest.mock('@site/src/components/molecules/animations/fade-into-view', () => {
-  const MockFadeIntoView = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
-  return MockFadeIntoView;
-});
+vi.mock('@site/src/components/molecules/animations/fade-into-view', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
 
 const mockMembers = [
   {
@@ -49,86 +47,56 @@ const mockMembers = [
   },
 ];
 
-function renderToContainer(element: React.ReactElement): HTMLDivElement {
-  const container = document.createElement('div');
-  document.body.append(container);
-  act(() => {
-    ReactDOM.render(element, container);
-  });
-  return container;
-}
-
 describe('DonateCtaSection', () => {
   beforeEach(() => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({ json: () => Promise.resolve(mockMembers) } as Response),
+    globalThis.fetch = vi.fn(
+      async () => ({ json: async () => mockMembers }) as unknown as Response,
     );
   });
 
   afterEach(() => {
-    document.body.innerHTML = '';
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('renders the sponsors grid with contributor data', async () => {
-    let container: HTMLDivElement;
-    await act(async () => {
-      container = renderToContainer(<DonateCtaSection />);
-    });
+    render(<DonateCtaSection />);
+    const grid = await screen.findByTestId('sponsors-grid');
 
-    const grid = container.querySelector('[data-testid="sponsors-grid"]');
-    expect(grid).toBeTruthy();
-
-    // Should show only backers with donations (2 out of 3)
+    // Should show only backers with donations (2 out of 3 mockMembers).
     const avatars = grid.querySelectorAll('a');
     expect(avatars.length).toBe(2);
 
-    // Should show total raised
-    expect(grid.textContent).toContain('$550');
-    expect(grid.textContent).toContain('2 contributors');
+    // Total raised + contributor count.
+    await waitFor(() => {
+      expect(grid.textContent).toContain('$550');
+      expect(grid.textContent).toContain('2 contributors');
+    });
   });
 
-  it('renders contributor avatars sorted by donation amount', async () => {
-    let container: HTMLDivElement;
-    await act(async () => {
-      container = renderToContainer(<DonateCtaSection />);
-    });
-
-    const grid = container.querySelector('[data-testid="sponsors-grid"]');
+  it('renders contributor avatars sorted by donation amount (highest first)', async () => {
+    render(<DonateCtaSection />);
+    const grid = await screen.findByTestId('sponsors-grid');
     const avatars = grid.querySelectorAll('a');
 
-    // First should be highest donor
     expect(avatars[0].getAttribute('href')).toBe('https://opencollective.com/generous');
     expect(avatars[1].getAttribute('href')).toBe('https://opencollective.com/indie');
   });
 
   it('renders the sponsor CTA link to OpenCollective', async () => {
-    let container: HTMLDivElement;
-    await act(async () => {
-      container = renderToContainer(<DonateCtaSection />);
+    render(<DonateCtaSection />);
+    const sponsorLinks = await screen.findAllByRole('link', { name: /Become a sponsor/ });
+    expect(sponsorLinks.length).toBeGreaterThan(0);
+    sponsorLinks.forEach((link) => {
+      expect(link.getAttribute('href')).toBe('https://opencollective.com/game-ci');
     });
-
-    const links = Array.prototype.slice.call(
-      container.querySelectorAll('a'),
-    ) as HTMLAnchorElement[];
-    const sponsorLink = links.find((a) => a.textContent?.includes('Become a sponsor'));
-
-    expect(sponsorLink).toBeTruthy();
-    expect(sponsorLink?.getAttribute('href')).toBe('https://opencollective.com/game-ci');
   });
 
   it('renders the GitHub contribution link', async () => {
-    let container: HTMLDivElement;
-    await act(async () => {
-      container = renderToContainer(<DonateCtaSection />);
+    render(<DonateCtaSection />);
+    const githubLinks = await screen.findAllByRole('link', { name: /Contribute on GitHub/ });
+    expect(githubLinks.length).toBeGreaterThan(0);
+    githubLinks.forEach((link) => {
+      expect(link.getAttribute('href')).toBe('https://github.com/game-ci');
     });
-
-    const links = Array.prototype.slice.call(
-      container.querySelectorAll('a'),
-    ) as HTMLAnchorElement[];
-    const githubLink = links.find((a) => a.textContent?.includes('Contribute on GitHub'));
-
-    expect(githubLink).toBeTruthy();
-    expect(githubLink?.getAttribute('href')).toBe('https://github.com/game-ci');
   });
 });

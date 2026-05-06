@@ -1,0 +1,136 @@
+# Introduction
+
+GameCI has two layers that work together.
+
+**Standard GameCI** is the clean foundation: container-based builds, essential engine setup,
+predictable inputs, artifacts, and CI-friendly defaults. Unity is the primary maintained built-in
+package, including official containers, license handling, and target platform setup. GameCI also
+ships built-in configurations for other engines, and its plugin API can add new engine providers.
+The foundation stays minimal on purpose. If your project fits comfortably in one straightforward CI
+pipeline and you do not need specialized cache, workspace, routing, or automation behavior, standard
+GameCI is usually the best starting point.
+
+**Orchestrator** is the advanced automation layer. It adds provider logic, workspace and cache
+strategy, runner routing, async execution, hooks, cleanup, and coordination behavior on top of the
+same GameCI build foundation. Use it when the build is no longer just "run a container here" and
+becomes "choose the best machine, prepare the workspace efficiently, run reliably, and return
+outputs."
+
+```mermaid
+flowchart LR
+  subgraph standard["Standard GameCI"]
+    A["CI runner"] --> B["GameCI container features"]
+    B --> C["Engine build + artifacts"]
+  end
+
+  subgraph orchestrated["Orchestrator"]
+    D["CI, CLI, or automation trigger"] --> E["Orchestrator"]
+    E --> F["Provider selection"]
+    E --> G["Cache + workspace strategy"]
+    E --> H["Hooks + services"]
+    F --> I["Docker, self-hosted, cloud, K8s, custom"]
+    G --> I
+    H --> I
+  end
+```
+
+## What Standard GameCI Gives You
+
+Standard GameCI exposes the essential build functionality without forcing an infrastructure model on
+you.
+
+| Area             | Standard GameCI behavior                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------- |
+| Container builds | Uses GameCI Unity editor containers for repeatable builds.                                   |
+| License setup    | Activates, uses, and returns Unity licenses through action inputs and environment variables. |
+| Platform setup   | Prepares common Unity target platforms and build parameters.                                 |
+| Cache basics     | Works with the CI platform cache and local runner state.                                     |
+| Artifacts        | Produces build outputs that normal CI steps can upload.                                      |
+| Workflow shape   | Keeps YAML small and easy to reason about.                                                   |
+
+This is intentionally unbloated. It gives teams a stable foundation that is easy to adopt, easy to
+debug, and close to the standard CI model.
+
+## What Orchestrator Adds
+
+Orchestrator specializes CI and automation for projects where the simple runner model is no longer
+enough. That may be one machine with multiple runners, one runner that builds several projects,
+retained workspaces, shared caches, custom providers, provider fallback, or automation that needs
+consistent behavior across environments.
+
+| Area                    | What Orchestrator adds                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Provider unification    | One workflow model across Docker, local system, self-hosted runners, cloud, Kubernetes, and custom providers. |
+| Advanced caching        | S3/rclone caches, checkpoints, retained workspaces, cache fallback, and failure-aware cache saving.           |
+| Workspace optimization  | Git/LFS preparation, submodule handling, large-project paths, and streaming hot runner sync.                  |
+| Load balancing          | Provider fallback, runner checks, capacity routing, and burst behavior.                                       |
+| Async execution         | Builds can continue on provider infrastructure after the dispatcher job returns.                              |
+| Hooks and services      | Command hooks, container hooks, middleware, storage services, LFS agents, and custom jobs.                    |
+| Game-specific workflows | Hot runners, test workflow execution, engine plugins, artifact manifests, and structured outputs.             |
+| Cleanup and reliability | Locks, retries, resource cleanup, garbage collection, and provider health checks.                             |
+
+Orchestrator is not meant to replace the simple path. It exists for projects where build time,
+import cost, cache reuse, workspace size, runner availability, hardware needs, or infrastructure
+consistency have become real engineering problems.
+
+:::info Built into Unity Builder
+
+For GitHub Actions, Orchestrator is available through
+[`game-ci/unity-builder`](https://github.com/game-ci/unity-builder). It activates when you choose a
+non-local `providerStrategy` or enable Orchestrator-backed services. You do not need a separate
+standalone install for normal GitHub Actions usage.
+
+The standalone [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) CLI remains useful
+for provider development, debugging, and direct backend usage.
+
+:::
+
+## Common Starting Points
+
+| Goal                                 | Start here                                                                |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| Decide whether you need Orchestrator | [GameCI vs Orchestrator](game-ci-vs-orchestrator)                         |
+| Run an engine build on AWS or K8s    | [Getting Started](getting-started)                                        |
+| Run from a terminal                  | [GameCI CLI](/docs/cli)                                                   |
+| Choose a provider                    | [Providers](../providers/overview)                                        |
+| Tune cache behavior                  | [Caching](../advanced-topics/caching)                                     |
+| Keep whole workspaces warm           | [Retained Workspaces](../advanced-topics/caching#retained-workspaces)     |
+| Stream jobs to warm runners          | [Standalone Streaming Hot Runner](../advanced-topics/hot-runner-protocol) |
+| Route across providers               | [Load Balancing](../advanced-topics/load-balancing)                       |
+| Add custom build steps               | [Hooks](../advanced-topics/hooks/container-hooks)                         |
+| Look up inputs                       | [API Reference](../api-reference)                                         |
+
+## Providers
+
+| Provider                                  | Description                                              |
+| ----------------------------------------- | -------------------------------------------------------- |
+| [AWS Fargate](../providers/aws)           | Fully managed containers on AWS. No servers to maintain. |
+| [Kubernetes](../providers/kubernetes)     | Run jobs on any Kubernetes cluster.                      |
+| [Local Docker](../providers/local-docker) | Run the same container workflow on a local machine.      |
+| [Local](../providers/local)               | Execute directly on the host machine.                    |
+
+Additional provider integrations include [GCP Cloud Run](../providers/gcp-cloud-run),
+[Azure ACI](../providers/azure-aci), [custom providers](../providers/custom-providers), and
+[community providers](../providers/community-providers).
+
+## When It Helps Most
+
+- Engine import, cache restore, or LFS pulls dominate build time.
+- One host runs multiple runners, projects, or workspaces that should share cache safely.
+- Hosted runner CPU, memory, disk, GPU, or timeout limits are too small.
+- Self-hosted runners need shared cache, locks, fallback, or cleanup.
+- The same workflow should run on Docker locally, owned hardware, and cloud providers.
+- Builds should keep running asynchronously after the CI dispatcher exits.
+- Teams need custom hooks, storage backends, hot runners, or game-specific test workflows.
+
+If one simple pipeline on one simple runner is fast and reliable, keep using standard GameCI. Move
+to Orchestrator when cache reuse, workspace reuse, runner coordination, provider routing, or other
+automation concerns need a dedicated layer.
+
+## External Links
+
+- [Orchestrator repository](https://github.com/game-ci/orchestrator) - standalone orchestrator
+  package
+- [Releases](https://github.com/game-ci/orchestrator/releases) - orchestrator releases
+- [Issues](https://github.com/game-ci/orchestrator/issues) - bugs and feature requests
+- [Discord](https://discord.com/channels/710946343828455455/789631903157583923) - community chat

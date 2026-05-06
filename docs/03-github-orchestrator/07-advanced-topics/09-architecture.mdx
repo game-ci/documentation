@@ -1,0 +1,264 @@
+# Architecture
+
+This page describes the internal architecture of Orchestrator - how the components fit together, how
+a build flows through the system, and where to look in the source code.
+
+```mermaid
+flowchart TD
+  EP["Entry Point\nGitHub Action / CLI"]
+  EP --> O["Orchestrator\n(orchestrator.ts)\n\n- setup()\n- run()\n- Provider selection"]
+  O --> P["Provider\n(pluggable)\n\n- aws\n- k8s\n- local-docker\n- local\n- custom plugin"]
+  O --> W["Workflow\nComposition Root\n\n- Standard\n- Async\n- Custom Job"]
+  O --> S["Services\n\n- Logger\n- Hooks\n- Caching\n- Locking\n- LFS\n- GitHub Checks"]
+```
+
+## Build Lifecycle
+
+A standard Orchestrator build follows these steps:
+
+```mermaid
+flowchart LR
+  S1["1. Initialize\nParse inputs\nSelect provider\nGenerate GUID\nCreate GH check"]
+  S2["2. Setup Provider\nCreate cloud resources\n(stacks, PVCs)"]
+  S3["3. Acquire Workspace\nLock retained workspace\n(if enabled)"]
+  S4["4. Build\nClone repo + LFS\nRestore cache\nRun Unity build\nRun pre/post\ncontainer hooks"]
+  S5["5. Post-Build\nPush Library\nand build cache\nRun post hooks"]
+  S6["6. Cleanup\nRelease workspace\nDelete cloud resources\nUpdate GH check"]
+  S1 --> S2 --> S3 --> S4 --> S5 --> S6
+```
+
+### Step-by-Step
+
+1. **Initialize** - `Orchestrator.setup()` parses inputs from GitHub Action `with`, CLI flags, or
+   environment variables. It selects a provider, generates a unique build GUID, and optionally
+   creates a GitHub Check.
+
+2. **Setup Provider** - `Provider.setupWorkflow()` provisions cloud resources. For AWS this means
+   creating a CloudFormation base stack (ECS cluster, S3 bucket, Kinesis stream). For Kubernetes it
+   creates a service account. Local providers skip this step.
+
+3. **Acquire Workspace** - If `maxRetainedWorkspaces` is set, `SharedWorkspaceLocking` acquires a
+   distributed lock on a workspace via S3 or rclone. If all workspaces are locked, the build falls
+   back to standard caching.
+
+4. **Build** - The workflow composition root selects a workflow (standard, async, or custom job).
+   The standard workflow clones your repo, restores caches, runs the Unity build, and executes
+   pre/post container hooks.
+
+5. **Post-Build** - `remote-cli-post-build` archives the Unity Library folder and build output,
+   pushes them to cloud storage, and runs any post-build hooks.
+
+6. **Cleanup** - The workspace lock is released, cloud resources are torn down
+   (`Provider.cleanupWorkflow()`), and the GitHub Check is updated with the final result.
+
+## Core Components
+
+### Orchestrator (`orchestrator.ts`)
+
+The static `Orchestrator` class is the central coordinator. It holds:
+
+- `Provider` - the selected provider implementation
+- `buildParameters` - all resolved configuration
+- `buildGuid` - unique identifier for this build
+- `lockedWorkspace` - retained workspace name (if any)
+
+`Orchestrator.run()` is the main entry point that drives the full lifecycle. Provider selection
+happens in `setupSelectedBuildPlatform()`, which handles LocalStack detection, `AWS_FORCE_PROVIDER`
+overrides, and fallback to the plugin loader for custom providers.
+
+### Provider System
+
+Providers implement the `ProviderInterface`:
+
+```typescript
+interface ProviderInterface {
+  setupWorkflow(buildGuid, buildParameters, branchName, secrets): Promise<void>;
+  runTaskInWorkflow(
+    buildGuid,
+    image,
+    commands,
+    mountdir,
+    workingdir,
+    env,
+    secrets,
+  ): Promise<string>;
+  cleanupWorkflow(buildParameters, branchName, secrets): Promise<void>;
+  garbageCollect(filter, previewOnly, olderThan, fullCache, baseDependencies): Promise<string>;
+  listResources(): Promise<ProviderResource[]>;
+  listWorkflow(): Promise<ProviderWorkflow[]>;
+  watchWorkflow(): Promise<string>;
+}
+```
+
+Each provider handles `runTaskInWorkflow()` differently:
+
+| Provider       | How it runs the build                                          |
+| -------------- | -------------------------------------------------------------- |
+| `aws`          | Creates a CloudFormation job stack, starts an ECS Fargate task |
+| `k8s`          | Creates a PVC, Kubernetes Secret, and Job; streams pod logs    |
+| `local-docker` | Runs a Docker container with volume mounts                     |
+| `local`        | Executes shell commands directly on the host                   |
+
+#### Custom Provider Loading
+
+When `providerStrategy` doesn't match a built-in name, the provider loader:
+
+1. Parses the source (GitHub URL, NPM package, or local path) via `ProviderUrlParser`
+2. Clones or installs the module via `ProviderGitManager`
+3. Validates that all 7 interface methods exist
+4. Falls back to the local provider if loading fails
+
+See [Custom Providers](../providers/custom-providers) for the user-facing guide.
+
+### Workflow System
+
+The `WorkflowCompositionRoot` selects which workflow to run:
+
+```mermaid
+flowchart TD
+  Q1{"asyncOrchestrator: true?"}
+  Q1 -->|Yes| AW["AsyncWorkflow\nDispatches build to cloud container\nand returns immediately"]
+  Q1 -->|No| Q2{"customJob set?"}
+  Q2 -->|Yes| CW["CustomWorkflow\nParses YAML job definition\nand runs container steps"]
+  Q2 -->|No| BAW["BuildAutomationWorkflow\nStandard build pipeline"]
+```
+
+**BuildAutomationWorkflow** generates a shell script that runs inside the container. The script:
+
+1. Installs toolchain (Node.js, npm, yarn, git-lfs) for remote providers
+2. Clones game-ci/unity-builder into the container
+3. Runs `remote-cli-pre-build` (restores caches, clones the target repo)
+4. Executes the Unity build via the standard Game CI entrypoint
+5. Runs `remote-cli-post-build` (pushes caches)
+6. Writes log markers for collection
+
+**AsyncWorkflow** runs the entire build inside a cloud container. It installs the AWS CLI, clones
+both the builder and target repos, and executes `index.js -m async-workflow`. The calling GitHub
+Action returns immediately. Progress is reported via
+[GitHub Checks](../providers/github-integration).
+
+### Hook System
+
+Orchestrator has two hook mechanisms:
+
+**Command Hooks** - Shell commands injected before or after the setup and build steps. Defined via
+the `customCommandHooks` YAML parameter or as files in `.game-ci/command-hooks/`.
+
+**Container Hooks** - Separate Docker containers that run before or after the build. Defined via
+`containerHookFiles` (built-in names like `aws-s3-upload-build`) or `preBuildSteps` /
+`postBuildSteps` YAML. Each hook specifies an image, commands, and optional secrets.
+
+See [Hooks](hooks/container-hooks) for the full guide.
+
+### Configuration Resolution
+
+Orchestrator reads configuration from multiple sources with this priority:
+
+```mermaid
+flowchart TD
+  A["GitHub Action inputs\nwith: providerStrategy: aws"] -->|overrides| B["CLI flags\n--providerStrategy aws"]
+  B -->|overrides| C["Query overrides\nPull Secrets from external sources"]
+  C -->|overrides| D["Environment variables\nPROVIDER_STRATEGY=aws"]
+  style A fill:#4a9,color:#fff
+  style D fill:#a94,color:#fff
+```
+
+The `OrchestratorOptions` class handles this resolution. Environment variables accept both
+`camelCase` and `UPPER_SNAKE_CASE` formats.
+
+### Remote Client
+
+The remote client runs **inside** the build container (not on the CI runner). It provides two CLI
+modes:
+
+- **`remote-cli-pre-build`** - Called before the Unity build. Handles git clone, LFS pull, cache
+  restoration, retained workspace setup, large package optimization, and custom hook execution.
+- **`remote-cli-post-build`** - Called after the Unity build. Pushes the Library and build caches to
+  cloud storage.
+
+### GitHub Integration
+
+The `GitHub` class manages GitHub Checks and async workflow dispatch:
+
+- **`createGitHubCheck()`** - Creates a check run on the commit via the GitHub API.
+- **`updateGitHubCheck()`** - Updates check status. In async environments, updates are routed
+  through the `Async Checks API` workflow (since containers can't call the Checks API directly).
+- **`runUpdateAsyncChecksWorkflow()`** - Triggers a GitHub Actions workflow that updates the check
+  run on behalf of the container.
+
+### Caching and Storage
+
+Caching is split between the remote client (push/pull logic) and the storage provider (S3 or
+rclone):
+
+- **Standard caching** - Archives the `Library/` folder and LFS files as `.tar.lz4` archives.
+- **Retained workspaces** - Keeps the entire project folder. Uses distributed locking via S3 or
+  rclone to prevent concurrent access.
+
+See [Storage](storage) for the full breakdown of file categories, compression, and storage backends.
+
+## CLI Modes
+
+The CLI system uses a decorator-based registry (`@CliFunction`). Each mode maps to a static method:
+
+| Mode                    | Description                                          |
+| ----------------------- | ---------------------------------------------------- |
+| `cli-build`             | Full build workflow (default)                        |
+| `async-workflow`        | Async build execution (called from within container) |
+| `remote-cli-pre-build`  | Pre-build setup (runs inside container)              |
+| `remote-cli-post-build` | Post-build cache push (runs inside container)        |
+| `remote-cli-log-stream` | Pipe and capture build logs                          |
+| `checks-update`         | Update GitHub Checks from async container            |
+| `cache-push`            | Push a directory to cache storage                    |
+| `cache-pull`            | Pull a directory from cache storage                  |
+| `garbage-collect`       | Clean up old cloud resources                         |
+| `list-resources`        | List active cloud resources                          |
+| `list-workflow`         | List running workflows                               |
+| `watch`                 | Follow logs of a running workflow                    |
+| `hash`                  | Hash folder contents recursively                     |
+| `print-input`           | Print all resolved parameters                        |
+
+## Source Code Map
+
+```
+src/model/orchestrator/
+├── orchestrator.ts               # Main coordinator
+├── options/
+│   ├── orchestrator-options.ts   # Configuration resolution
+│   └── orchestrator-folders.ts   # Path management (/data/...)
+├── workflows/
+│   ├── workflow-composition-root.ts  # Workflow selection
+│   ├── build-automation-workflow.ts  # Standard build pipeline
+│   ├── async-workflow.ts             # Async dispatch
+│   └── custom-workflow.ts            # Custom job execution
+├── providers/
+│   ├── provider-interface.ts     # 7-method contract
+│   ├── provider-loader.ts        # Dynamic plugin loading
+│   ├── provider-url-parser.ts    # GitHub/NPM/local parsing
+│   ├── provider-git-manager.ts   # Clone and cache repos
+│   ├── aws/                      # AWS Fargate provider
+│   ├── k8s/                      # Kubernetes provider
+│   ├── docker/                   # Local Docker provider
+│   └── local/                    # Direct execution provider
+├── services/
+│   ├── core/
+│   │   ├── orchestrator-logger.ts
+│   │   ├── orchestrator-system.ts    # Shell command execution
+│   │   ├── shared-workspace-locking.ts
+│   │   └── follow-log-stream-service.ts
+│   ├── hooks/
+│   │   ├── command-hook-service.ts
+│   │   └── container-hook-service.ts
+│   └── cache/
+│       └── local-cache-service.ts
+├── remote-client/
+│   ├── index.ts                  # Pre/post build logic
+│   └── caching.ts                # Cache push/pull with LZ4
+└── tests/
+
+src/model/cli/
+├── cli.ts                        # CLI entry point
+└── cli-functions-repository.ts   # @CliFunction registry
+
+src/model/github.ts               # GitHub Checks + async dispatch
+```

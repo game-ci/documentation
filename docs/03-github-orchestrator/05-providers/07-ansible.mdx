@@ -1,0 +1,265 @@
+---
+sidebar_position: 7
+---
+
+# Ansible Provider
+
+The **Ansible** provider orchestrates Unity builds by running Ansible playbooks against managed
+infrastructure. This enables teams with existing Ansible-based infrastructure management to
+integrate Unity builds into their configuration-as-code workflows.
+
+**Category:** Infrastructure Automation - runs playbooks against managed inventory rather than
+dispatching to a CI platform.
+
+## Use Cases
+
+- **Large-scale build infrastructure** - Distribute builds across a fleet of machines managed by
+  Ansible, with automatic host selection and load distribution handled by your playbooks.
+- **Configuration-as-code** - Define build machine setup, Unity installation, and build execution as
+  versioned Ansible playbooks alongside your game source.
+- **Heterogeneous environments** - Target different machine types (Windows, Linux, macOS) from a
+  single inventory with platform-specific playbooks.
+- **Existing Ansible infrastructure** - Teams already using Ansible for server management can extend
+  their playbooks to handle Unity builds without adopting a separate CI system.
+
+## Prerequisites
+
+1. **Ansible** installed on the orchestrator runner (`ansible-playbook` must be on `PATH`).
+2. An **inventory file** or dynamic inventory script defining available build machines.
+3. A **playbook** that accepts the orchestrator's build parameters as variables and executes the
+   Unity build.
+4. SSH connectivity from the orchestrator runner to the target machines (Ansible's default
+   transport).
+
+### Installing Ansible on the Runner
+
+```yaml
+# In your GitHub Actions workflow
+- name: Install Ansible
+  run: pip install ansible
+```
+
+Or use a runner image that includes Ansible pre-installed.
+
+## Configuration
+
+Set `providerStrategy: ansible` and supply the required inputs:
+
+```yaml
+- uses: game-ci/unity-builder@main
+  with:
+    providerStrategy: ansible
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+    ansibleInventory: ./infrastructure/inventory.yml
+    ansiblePlaybook: ./infrastructure/unity-build.yml
+    ansibleExtraVars: '{"unity_version": "2022.3.0f1"}'
+    ansibleVaultPassword: ${{ secrets.ANSIBLE_VAULT_PASSWORD_FILE }}
+```
+
+## Playbook Requirements
+
+The orchestrator passes build parameters to the playbook as extra variables. Your playbook must
+accept and use these variables:
+
+| Variable         | Description                        |
+| ---------------- | ---------------------------------- |
+| `build_guid`     | Unique identifier for the build    |
+| `build_image`    | Unity Docker image (if applicable) |
+| `build_commands` | Build commands to execute          |
+| `mount_dir`      | Mount directory path               |
+| `working_dir`    | Working directory path             |
+
+Additionally, any environment variables from the orchestrator are passed as lowercase variable
+names.
+
+### Example Playbook
+
+```yaml
+# infrastructure/unity-build.yml
+---
+- name: Unity Build
+  hosts: build_machines
+  become: false
+  vars:
+    build_guid: ''
+    build_commands: ''
+    working_dir: '/builds'
+
+  tasks:
+    - name: Ensure build directory exists
+      file:
+        path: '{{ working_dir }}/{{ build_guid }}'
+        state: directory
+
+    - name: Clone repository
+      git:
+        repo: '{{ git_repo_url }}'
+        dest: '{{ working_dir }}/{{ build_guid }}/project'
+        version: "{{ git_ref | default('main') }}"
+
+    - name: Execute build commands
+      shell: '{{ build_commands }}'
+      args:
+        chdir: '{{ working_dir }}/{{ build_guid }}/project'
+      register: build_result
+
+    - name: Upload build artifacts
+      fetch:
+        src: '{{ working_dir }}/{{ build_guid }}/project/Builds/'
+        dest: './artifacts/{{ build_guid }}/'
+        flat: true
+      when: build_result.rc == 0
+
+    - name: Cleanup build directory
+      file:
+        path: '{{ working_dir }}/{{ build_guid }}'
+        state: absent
+      when: cleanup | default(true) | bool
+```
+
+### Example Inventory
+
+```yaml
+# infrastructure/inventory.yml
+all:
+  children:
+    build_machines:
+      hosts:
+        build-01:
+          ansible_host: 192.168.1.10
+          ansible_user: builder
+        build-02:
+          ansible_host: 192.168.1.11
+          ansible_user: builder
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+```
+
+## How It Works
+
+```mermaid
+sequenceDiagram
+    participant O as Orchestrator (runner)
+    participant A as Ansible / Target Machines
+    O->>O: 1. Check ansible is installed, verify inventory
+    O->>O: 2. Build extra-vars from build parameters
+    O->>A: Run ansible-playbook
+    A->>A: 3. Connect to hosts in inventory
+    A->>A: 4. Execute playbook tasks
+    A-->>O: stdout stream
+    O->>O: 5. Capture output and report
+    A->>A: 6. Complete
+```
+
+1. **Setup** - The orchestrator verifies that `ansible` is available on `PATH` and that the
+   inventory file exists.
+2. **Variable assembly** - Build parameters are assembled into a JSON extra-vars payload. User-
+   provided `ansibleExtraVars` are merged in. Orchestrator secrets are passed as environment
+   variables to the `ansible-playbook` process.
+3. **Execution** - The orchestrator runs `ansible-playbook` with the inventory, playbook, extra
+   vars, and optional vault password file. Output streams to the orchestrator in real time.
+4. **Result** - A zero exit code means success. Any non-zero exit code raises an error with the
+   playbook output.
+5. **Cleanup** - No orchestrator-side resources to clean up. Playbook cleanup tasks should handle
+   remote machine cleanup.
+
+## Ansible Vault Integration
+
+For sensitive variables (license keys, credentials), use
+[Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html):
+
+1. Create an encrypted variables file:
+
+   ```bash
+   ansible-vault create infrastructure/secrets.yml
+   ```
+
+2. Reference it in your playbook:
+
+   ```yaml
+   - name: Unity Build
+     hosts: build_machines
+     vars_files:
+       - secrets.yml
+   ```
+
+3. Pass the vault password file path to the orchestrator:
+
+   ```yaml
+   ansibleVaultPassword: /path/to/vault-password-file
+   ```
+
+   In GitHub Actions, write the vault password to a temporary file from a secret:
+
+   ```yaml
+   - name: Write vault password
+     run: echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault-pass
+   - uses: game-ci/unity-builder@main
+     with:
+       providerStrategy: ansible
+       ansibleVaultPassword: /tmp/vault-pass
+       # ... other inputs
+   ```
+
+## Full Workflow Example
+
+```yaml
+name: Build Game (Ansible)
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Install Ansible
+        run: pip install ansible
+
+      - name: Write vault password
+        run: echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault-pass
+
+      - uses: game-ci/unity-builder@main
+        with:
+          providerStrategy: ansible
+          targetPlatform: StandaloneLinux64
+          gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+          ansibleInventory: ./infrastructure/inventory.yml
+          ansiblePlaybook: ./infrastructure/unity-build.yml
+          ansibleExtraVars: '{"unity_version": "2022.3.0f1", "cleanup": true}'
+          ansibleVaultPassword: /tmp/vault-pass
+
+      - name: Clean up vault password
+        if: always()
+        run: rm -f /tmp/vault-pass
+```
+
+## Limitations and Considerations
+
+- **Playbook required** - The Ansible provider does not ship with a default playbook. You must
+  provide a playbook that handles repository checkout, Unity build execution, and artifact
+  collection for your specific infrastructure.
+- **Ansible installation** - Ansible must be installed on the runner. GitHub-hosted runners do not
+  include Ansible by default; add a `pip install ansible` step or use a custom runner image.
+- **No garbage collection** - The provider does not manage remote machine state. Build cleanup
+  (temporary files, old builds) should be handled within playbook tasks.
+- **Sequential execution** - The orchestrator runs a single `ansible-playbook` command and waits for
+  it to complete. Parallelism across hosts is managed by Ansible's built-in `forks` setting, not by
+  the orchestrator.
+- **Extra-vars JSON parsing** - The `ansibleExtraVars` input is parsed as JSON. If parsing fails,
+  the raw string is passed through, which may cause unexpected behavior. Always provide valid JSON.
+
+## Inputs Reference
+
+| Input                  | Required | Default | Description                                                |
+| ---------------------- | -------- | ------- | ---------------------------------------------------------- |
+| `providerStrategy`     | Yes      | -       | Must be `ansible`                                          |
+| `ansibleInventory`     | Yes      | -       | Path to Ansible inventory file or dynamic inventory script |
+| `ansiblePlaybook`      | Yes      | -       | Path to Ansible playbook for Unity builds                  |
+| `ansibleExtraVars`     | No       | -       | Additional Ansible variables as a JSON string              |
+| `ansibleVaultPassword` | No       | -       | Path to Ansible Vault password file                        |

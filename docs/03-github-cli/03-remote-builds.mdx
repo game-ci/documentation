@@ -1,0 +1,166 @@
+---
+sidebar_position: 3
+sidebar_label: Remote Jobs
+slug: /cli/remote-builds
+---
+
+# Remote Jobs
+
+`game-ci remote run` schedules a provider-backed engine job. Providers can run standard builds, test
+workflows, custom engine commands, or a fully custom job definition.
+
+```bash
+game-ci remote run [projectPath] --provider-strategy <strategy>
+```
+
+`game-ci remote build` remains available as a compatibility alias, but new workflows should use
+`remote run` so the command name matches the broader job model.
+
+The CLI owns the high-level command shape. Providers own infrastructure-specific options and job
+execution behavior.
+
+## Orchestrator Plugin
+
+The Orchestrator is the default provider backend for remote execution. Load it as a CLI plugin:
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-unity-project \
+  --provider-strategy local-docker \
+  --target-platform StandaloneLinux64
+```
+
+Available provider strategies from the Orchestrator plugin include:
+
+| Strategy            | Description                                    |
+| ------------------- | ---------------------------------------------- |
+| `local-docker`      | Run the job in Docker on the current machine.  |
+| `local-system`      | Run directly on the current machine.           |
+| `aws`               | Run on AWS ECS/Fargate.                        |
+| `k8s`               | Run as a Kubernetes job.                       |
+| `gcp-cloud-run`     | Run on Google Cloud Run.                       |
+| `azure-aci`         | Run on Azure Container Instances.              |
+| `github-actions`    | Dispatch to a GitHub Actions workflow.         |
+| `gitlab-ci`         | Trigger a GitLab CI pipeline.                  |
+| `remote-powershell` | Run on a remote Windows host over PowerShell.  |
+| `ansible`           | Run through an Ansible inventory and playbook. |
+| `cli`               | Delegate to a custom provider executable.      |
+
+## Local Docker
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-unity-project \
+  --provider-strategy local-docker \
+  --target-platform StandaloneLinux64
+```
+
+Use this when you want Orchestrator behavior, such as provider hooks and workspace services, without
+starting with a cloud account.
+
+## AWS
+
+```bash
+export AWS_PROFILE=my-profile
+export AWS_DEFAULT_REGION=us-east-1
+
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-unity-project \
+  --provider-strategy aws \
+  --target-platform StandaloneLinux64 \
+  --container-cpu 2048 \
+  --container-memory 8192
+```
+
+Common AWS options:
+
+| Option                         | Default     | Description                      |
+| ------------------------------ | ----------- | -------------------------------- |
+| `--region`                     | `eu-west-2` | Cloud provider region.           |
+| `--aws-stack-name`             | `game-ci`   | CloudFormation stack name.       |
+| `--container-cpu`              | `1024`      | Container CPU units.             |
+| `--container-memory`           | `3072`      | Container memory in MB.          |
+| `--aws-use-spot`               | `false`     | Use Spot capacity.               |
+| `--aws-spot-fallback`          | `true`      | Fall back to on-demand capacity. |
+| `--aws-use-ephemeral-storage`  | `false`     | Use ECS ephemeral storage.       |
+| `--aws-ephemeral-storage-size` | `25`        | Ephemeral storage size in GB.    |
+
+The AWS provider uses the standard AWS credential chain, including environment variables, shared
+profiles, SSO sessions, and runner roles.
+
+## Kubernetes
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-unity-project \
+  --provider-strategy k8s \
+  --target-platform StandaloneLinux64 \
+  --kube-config "$KUBE_CONFIG_BASE64" \
+  --kube-volume-size 25Gi
+```
+
+Common Kubernetes options:
+
+| Option                  | Default   | Description                      |
+| ----------------------- | --------- | -------------------------------- |
+| `--kube-config`         | empty     | Kubeconfig content or path.      |
+| `--kube-volume`         | empty     | Existing persistent volume name. |
+| `--kube-volume-size`    | `25Gi`    | Persistent volume size.          |
+| `--kube-storage-class`  | empty     | Kubernetes storage class.        |
+| `--container-namespace` | `default` | Kubernetes namespace.            |
+
+## Custom Jobs
+
+Use `--custom-job` when the provider should run commands that do not map to a built-in engine build
+or test command.
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-godot-project \
+  --provider-strategy local-docker \
+  --custom-job '- name: godot-export
+  image: barichello/godot-ci:4.3
+  commands: |
+    godot --headless --export-release "Linux/X11" /build/output/game'
+```
+
+## Provider Executables
+
+Custom providers can also be exposed through an executable that speaks the Orchestrator CLI provider
+protocol. Load the executable as a plugin and select the generated provider strategy:
+
+```bash
+game-ci \
+  --plugin executable:./my-provider \
+  remote run ./my-project \
+  --provider-strategy cli-protocol
+```
+
+For protocol details, see
+[CLI provider protocol](../github-orchestrator/providers/cli-provider-protocol).
+
+## Configuration Files
+
+Remote jobs can load the provider plugin and common options from `.game-ci.yml`:
+
+```yaml
+cliOptions:
+  plugins:
+    - '@game-ci/orchestrator-plugin'
+  providerStrategy: local-docker
+  targetPlatform: StandaloneLinux64
+```
+
+Then the command can stay short:
+
+```bash
+game-ci remote run ./my-project
+```
+
+Provider-specific options are registered by the loaded plugin, so run with `--help` after loading
+the plugin to inspect the exact option set available in your installed version.
