@@ -36,6 +36,20 @@ In short: public `orchestrate` is the friendly plugin-backed GameCI CLI API, sta
 `orchestrate` is the direct Orchestrator API, and standalone `build` is only a convenience shortcut
 for a standard remote build.
 
+## When To Use This Command
+
+| Situation                                                   | Recommended command                                    |
+| ----------------------------------------------------------- | ------------------------------------------------------ |
+| Public CLI remote job with a friendly command surface       | `game-ci remote run` from `game-ci/cli`                |
+| Standalone Orchestrator standard remote build shortcut      | `game-ci build --provider-strategy aws` or `k8s`       |
+| Standalone Orchestrator direct provider run                 | `game-ci orchestrate`                                  |
+| Standalone local Docker or local host Orchestrator behavior | `game-ci orchestrate --provider-strategy local-docker` |
+| Custom job YAML, pre/post steps, cache key testing          | `game-ci orchestrate`                                  |
+| Executable provider protocol serving another CLI            | `game-ci serve`                                        |
+
+In short: `remote run` is the public API, `orchestrate` is the direct Orchestrator API, and
+standalone `build` is only a convenience shortcut for a standard remote build.
+
 ## Required Options
 
 | Flag                | Description                                      |

@@ -138,6 +138,22 @@ surface and plugin behavior. Reach for standalone Orchestrator only when you ins
 `@game-ci/orchestrator` directly or you are debugging Orchestrator/provider behavior outside the
 public CLI.
 
+## Command Names At A Glance
+
+| Command                | Where it exists             | Use it for                                                                 |
+| ---------------------- | --------------------------- | -------------------------------------------------------------------------- |
+| `game-ci build`        | Public GameCI CLI           | User-facing local or CI engine builds, including custom Unity methods.     |
+| `game-ci test`         | Public GameCI CLI           | Engine test workflows when the selected engine plugin provides test logic. |
+| `game-ci remote run`   | Public GameCI CLI           | Provider-backed jobs through Orchestrator or another provider plugin.      |
+| `game-ci remote build` | Public GameCI CLI           | Compatibility alias for `game-ci remote run`.                              |
+| `game-ci orchestrate`  | Standalone Orchestrator CLI | Direct low-level Orchestrator provider runs and provider debugging.        |
+| `game-ci build`        | Standalone Orchestrator CLI | A narrow remote Orchestrator build shortcut, not the public CLI build API. |
+| `game-ci serve`        | Standalone Orchestrator CLI | JSON provider protocol mode for executable provider plugins.               |
+
+If you are reading public CLI docs, prefer `remote run` for provider-backed work. Reach for
+standalone `orchestrate` only when you installed `@game-ci/orchestrator` directly or you are
+debugging Orchestrator/provider behavior outside the public CLI.
+
 ## Next Steps
 
 - [Engine commands](/docs/cli/build) - run builds, tests, and custom engine methods

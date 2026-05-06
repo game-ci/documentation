@@ -429,6 +429,52 @@ The main contributors to payload size are:
 3. **Reduce the number of custom environment variables.** Each additional `env` variable in your
    workflow adds to the payload. Only pass what the build actually needs.
 
+## Unity CI Failure Quick Reference
+
+Unity CI builds fail in predictable patterns. Use this quick reference to identify the failure type
+and apply the correct fix. For full details, see
+[Failures and Diagnostics](/docs/github-orchestrator/advanced-topics/failures-and-diagnostics).
+
+### Unity exits -1 within seconds of launch
+
+**Category: LICENSE.** Concurrent license activation or Unity Hub in the wrong Windows session.
+
+- Retry after a 30-second delay
+- Check that Unity Hub is running in Session 1 (interactive desktop), not Session 0 (services)
+- Do **not** delete the Library — this is not a cache problem
+
+### Unity exits -1 with crash evidence in the log
+
+**Category: CRASH.** Memory pressure, ILPP crash, or asset import failure.
+
+- Clear `Library/Bee` and retry
+- If the crash repeats, restore the Library from a pre-crash backup or delete it entirely
+- Reduce `-workerCount` on machines running multiple runners
+
+### Scripts have compiler errors (exit code 1)
+
+**Category: COMPILE.** Missing assemblies, stale ScriptAssemblies, or unhydrated LFS `.dll` files.
+
+- Clear `Library/ScriptAssemblies` and retry
+- Check for LFS pointer files: any `.dll` under 200 bytes starting with `version https://git-lfs.`
+  is an unhydrated pointer
+- If building after a profile switch, clear `Library/Bee` as well
+
+### PackageCache errors (CS0246 or immutable package asset)
+
+**Category: PACKAGE.** Corrupt PackageCache.
+
+- Clear `Library/PackageCache` and retry
+- Do **not** clear ScriptAssemblies — wrong target for this failure
+
+### Unity exits 0 but no build output produced
+
+**Category: SKIP.** `InitializeOnLoad` timestamp race or SourceAssetDB mismatch.
+
+- Delete `Library/SourceAssetDB` and any known auto-generated assets, then retry
+- Check for `[InitializeOnLoad]` scripts that create or modify assets during domain reload
+- If old build artifacts from a previous run exist, verify the build actually produced new output
+
 ## General tips
 
 These are tips that are usually applicable to problems you may encounter while working with a game

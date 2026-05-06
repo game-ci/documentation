@@ -38,6 +38,22 @@ The public CLI commands `game-ci orchestrate` and `game-ci test` are not standal
 commands, even though standalone Orchestrator also exposes an `orchestrate` verb. Use the public CLI
 when you want the higher-level command model and plugin loading behavior.
 
+## Command Surface
+
+| Standalone command          | Purpose                                                                     |
+| --------------------------- | --------------------------------------------------------------------------- |
+| `game-ci orchestrate`       | Full direct Orchestrator provider command for remote, Docker, or host runs. |
+| `game-ci build`             | Narrow remote build shortcut for Orchestrator-compatible parameters.        |
+| `game-ci orchestrate cache` | Cache inspection helpers under the direct Orchestrator command.             |
+| `game-ci serve`             | JSON provider protocol mode used by executable provider integrations.       |
+| `game-ci activate`          | Unity license preflight helper.                                             |
+| `game-ci status`            | Local environment diagnostics.                                              |
+| `game-ci version`           | Print standalone Orchestrator CLI version information.                      |
+| `game-ci update`            | Update the standalone Orchestrator binary.                                  |
+
+The public CLI commands `game-ci remote run` and `game-ci test` are not standalone Orchestrator
+commands. Use the public CLI when you want that higher-level command model.
+
 ## Install
 
 ### Linux / macOS

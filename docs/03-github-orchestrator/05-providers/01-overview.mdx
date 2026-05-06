@@ -54,10 +54,18 @@ These providers are under active development. APIs and behavior may change betwe
 
 ## Custom Providers
 
-Extend Orchestrator with your own provider by pointing `providerStrategy` at a GitHub repository,
-NPM package, or local file path.
+Extend Orchestrator with your own provider when the built-in provider types do not match your
+infrastructure. Choose the smallest extension surface that fits the job:
 
-See [Custom Providers](custom-providers) for the full guide.
+| Extension path          | Use when                                                                 |
+| ----------------------- | ------------------------------------------------------------------------ |
+| Config-defined provider | YAML or JSON can call the scripts, CLIs, APIs, or lab machines you need. |
+| CLI provider protocol   | You want to write provider logic in any language as an executable.       |
+| TypeScript provider     | You want a full provider module with direct Orchestrator types.          |
+
+Start with [Config-Defined Providers](config-defined-providers) if a configuration file plus shell
+commands is enough. Use [CLI Provider Protocol](cli-provider-protocol) for a provider executable, or
+[Custom Providers](custom-providers) for TypeScript and JavaScript provider modules.
 
 ## Community Providers
 

@@ -1,0 +1,310 @@
+---
+sidebar_position: 21
+toc_max_heading_level: 4
+---
+
+# Failures and Diagnostics
+
+Orchestrator failures can come from provider setup, git synchronization, cache restore/save,
+container startup, engine execution, artifact upload, or cleanup. The right response depends on
+where the failure happened: retrying a provider API timeout is different from clearing a corrupt
+Unity `Library`, fixing an LFS pointer, or garbage-collecting stale cloud resources.
+
+This page covers the failure-handling model, diagnostic options, and remediation paths available in
+Orchestrator. Unity build diagnostics are included because Unity is the primary built-in engine
+package, but the same investigation flow applies to Godot, Unreal, custom jobs, and custom provider
+types.
+
+## Failure Layers
+
+Start by identifying the layer that failed before changing caches or retry settings.
+
+| Layer                        | Common signals                                               | First response                                                       |
+| ---------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Provider setup               | Authentication errors, missing region/cluster, quota errors  | Check provider credentials, provider-specific inputs, and IAM/RBAC.  |
+| Git sync and LFS             | Clone errors, missing files, pointer text in binary files    | Check `gitPrivateToken`, LFS hydration, submodule profile settings.  |
+| Cache restore/save           | Empty `Library`, stale assemblies, failed archive extraction | Inspect cache mode/key/root; clear only the affected cache segment.  |
+| Container or runner startup  | Docker pull failure, entrypoint errors, host path mismatch   | Verify image, runner filesystem, mounts, and provider working dir.   |
+| Engine execution             | Editor log errors, test failures, build method not invoked   | Read the engine log and apply engine-specific diagnostics.           |
+| Output and artifacts         | Build succeeded but upload failed or output path is empty    | Check `buildsPath`, artifact paths, storage provider, and retention. |
+| Cleanup and garbage collect  | Stale tasks, old pods, orphaned volumes, locked workspaces   | Run list/watch/garbage-collect commands before deleting state.       |
+| Custom provider/plugin logic | Provider method throws, protocol JSON invalid, stderr only   | Run the provider directly with debug logging and inspect stderr.     |
+
+Avoid treating every failure as cache corruption. Cache deletion is expensive and can hide the real
+root cause.
+
+## Diagnostic Controls
+
+Use these controls to increase visibility before changing behavior:
+
+| Control                   | Where used                   | What it gives you                                                   |
+| ------------------------- | ---------------------------- | ------------------------------------------------------------------- |
+| `orchestratorDebug`       | Unity Builder / Orchestrator | Verbose provider, workspace, and resolved-parameter logging.        |
+| `resourceTracking`        | Unity Builder / Orchestrator | Disk/resource summaries during provider runs.                       |
+| `githubCheck`             | GitHub Actions integrations  | GitHub Check records for Orchestrator steps.                        |
+| `watchToEnd`              | Async provider runs          | Follows provider logs until completion when supported.              |
+| `game-ci status`          | Standalone Orchestrator CLI  | Local environment diagnostics.                                      |
+| `game-ci list-resources`  | Standalone Orchestrator CLI  | Active provider resources, when supported by the selected provider. |
+| `game-ci watch`           | Standalone Orchestrator CLI  | Logs or state for an active workflow.                               |
+| `game-ci garbage-collect` | Standalone Orchestrator CLI  | Cleanup of stale provider resources and caches.                     |
+
+Provider stderr is treated as diagnostic output. Config-defined providers, CLI protocol providers,
+and TypeScript providers should write actionable setup or API details to stderr/loggers and reserve
+thrown errors for failures Orchestrator should treat as unsuccessful lifecycle operations.
+
+## Investigation Flow
+
+1. **Find the failing layer** - provider setup, sync, cache, runner startup, engine execution,
+   output, or cleanup.
+2. **Read the authoritative log** - provider API output for setup failures, git output for sync
+   failures, engine logs for build/test failures, and artifact/storage logs for upload failures.
+3. **Check whether the failure is transient** - cloud API throttling and network pulls may justify
+   retry; deterministic compile errors do not.
+4. **Apply targeted remediation** - clear only the affected cache area, retry only the failed
+   provider operation, or fix the input/configuration that caused the failure.
+5. **Escalate to full reset last** - full workspace, cache, or `Library` deletion should be the
+   final recovery step, not the default.
+
+## Provider and Infrastructure Failures
+
+Provider failures usually appear before the engine starts. Common causes include expired cloud
+credentials, missing Kubernetes context, unavailable Docker daemon, private image pull failures,
+quota limits, stale async workflows, and provider-specific resource naming conflicts.
+
+Useful commands:
+
+```bash
+game-ci list-resources --provider-strategy aws
+game-ci watch --provider-strategy aws
+game-ci garbage-collect --provider-strategy aws
+game-ci status
+```
+
+Use provider-specific docs when the failing layer is clearly infrastructure-related:
+
+- [AWS Provider](../providers/aws)
+- [Kubernetes Provider](../providers/kubernetes)
+- [GitHub Actions Dispatch](../providers/github-actions-dispatch)
+- [Config-Defined Providers](../providers/config-defined-providers)
+- [CLI Provider Protocol](../providers/cli-provider-protocol)
+
+## Cache and Workspace Failures
+
+Cache failures should be handled surgically. For Unity, clearing `Library/ScriptAssemblies`,
+`Library/Bee`, or `Library/PackageCache` is often enough. For Godot, imported asset caches such as
+`.godot/imported` may be the right target. For Unreal, Derived Data Cache and intermediate build
+folders are usually better first targets than deleting the whole workspace.
+
+See [Caching](caching), [Self-Hosting and Orchestrator](self-hosting-and-orchestrator), and
+[Build Reliability](build-reliability) for cache modes, fallback behavior, LFS pointer checks, and
+self-hosted runner cleanup options.
+
+## Unity Failure Classification
+
+Unity CI builds fail in predictable patterns. Recognizing which failure mode you are dealing with
+determines whether the correct response is a retry, a targeted cleanup, or a full cache reset.
+
+Unity engine failures fall into one of seven categories. The diagnostics service classifies failures
+by scanning the Unity Editor log for signal patterns and correlating them with the exit code and
+runtime duration.
+
+```mermaid
+flowchart LR
+    A["Unity exits"] --> B{"Exit code?"}
+    B -->|"-1"| C{"Runtime < 60s?"}
+    B -->|"1"| D["COMPILE"]
+    B -->|"0"| E{"Build method\ninvoked?"}
+    B -->|"other"| F["GENERIC"]
+    C -->|yes| G{"Licensing\nmessages?"}
+    C -->|no| H{"Crash evidence?"}
+    G -->|yes| I["LICENSE"]
+    G -->|no| H
+    H -->|yes| J["CRASH"]
+    H -->|no| F
+    E -->|yes| K["Success"]
+    E -->|no| L["SKIP"]
+```
+
+### The Seven Categories
+
+| Category      | Exit Code | Key Signals                                                                        | Typical Cause                                                |
+| ------------- | --------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **LICENSE**   | -1        | `Access token is unavailable`, `Licensing is not yet initialized`, runtime < 60s   | Concurrent license activation, Hub in wrong session          |
+| **CRASH**     | -1        | `Fatal error`, native stack trace, `Crash!!!` in log, runtime > 60s                | Memory pressure, ILPP crash, asset import failure            |
+| **COMPILE**   | 1         | `Scripts have compiler errors`, `error CS`                                         | Missing assemblies, stale ScriptAssemblies, profile mismatch |
+| **PACKAGE**   | 1 or -1   | `Could not restore immutable package asset`, `CS0246` under `Library/PackageCache` | Corrupt PackageCache                                         |
+| **SKIP**      | 0         | Build method not invoked, no build output produced                                 | `InitializeOnLoad` timestamp race, SourceAssetDB mismatch    |
+| **EXIT_NEG1** | -1        | None of the above signals, runtime > 60s                                           | Unclassified Unity failure                                   |
+| **GENERIC**   | any       | No recognized signals                                                              | Unknown failure mode                                         |
+
+### Detection Details
+
+**LICENSE** — Unity exits -1 within 60 seconds of launch. The Editor log contains licensing-related
+messages but no compilation or crash evidence. This almost always indicates a licensing startup race
+on multi-runner machines, not Library corruption.
+
+**CRASH** — Unity exits -1 after running long enough to begin asset import or compilation. The log
+contains native crash evidence: stack traces with `Unity.exe!`, `Crash!!!` markers, or crash dump
+references. The Library may be in a partially-written state.
+
+**COMPILE** — Unity exits with code 1 and the log contains C# compiler errors. Common causes:
+missing assembly definitions after a profile switch, stale `ScriptAssemblies` from a previous
+profile, or unhydrated LFS `.dll` files.
+
+**PACKAGE** — The log contains PackageCache-specific errors. `CS0246` errors that reference paths
+under `Library/PackageCache` or messages about immutable package assets indicate a corrupt
+PackageCache rather than a source code problem.
+
+**SKIP** — Unity exits with code 0 but the build method was never invoked. This is the most
+dangerous category because it masquerades as success. Old build artifacts from a previous run can
+make it appear that a build succeeded when no new output was produced.
+
+**EXIT_NEG1** — Unity exits -1 without matching any specific signal pattern. This is a catch-all for
+unclassified -1 exits that need manual investigation.
+
+**GENERIC** — Any failure that does not match the above categories. Check the Editor log directly.
+
+## Remediation Per Category
+
+Each category has a specific remediation that avoids unnecessary cache destruction:
+
+| Category      | First Response                                      | Escalation                                        | What NOT to Do                               |
+| ------------- | --------------------------------------------------- | ------------------------------------------------- | -------------------------------------------- |
+| **LICENSE**   | Retry after 30s delay                               | Check Hub session ID                              | Do not delete Library                        |
+| **CRASH**     | Clear `Library/Bee`, retry                          | Restore Library backup, retry                     | Do not immediately nuke Library              |
+| **COMPILE**   | Clear `Library/ScriptAssemblies`, retry             | Check LFS pointers, then clear Library            | Do not retry without clearing assemblies     |
+| **PACKAGE**   | Clear `Library/PackageCache`, retry                 | Full Library delete                               | Do not clear ScriptAssemblies (wrong target) |
+| **SKIP**      | Delete SourceAssetDB + auto-generated assets, retry | Two-phase recovery (import-only pass, then build) | Do not treat exit 0 as success               |
+| **EXIT_NEG1** | Read Editor log, classify manually                  | Varies                                            | Do not guess — read the log                  |
+| **GENERIC**   | Read Editor log, classify manually                  | Varies                                            | Do not retry blindly                         |
+
+### Selective Library Cleanup
+
+Full Library deletion is expensive and should be a last resort. Target the specific subdirectory
+that matches the failure:
+
+| Symptom                              | Clear This                                 | Preserves                           |
+| ------------------------------------ | ------------------------------------------ | ----------------------------------- |
+| Compiler errors after profile switch | `Library/ScriptAssemblies` + `Library/Bee` | Asset imports                       |
+| PackageCache GUID errors             | `Library/PackageCache`                     | Compiled assemblies + asset imports |
+| Exit 0 with no build output          | `Library/SourceAssetDB`                    | Everything else                     |
+| Native crash during import           | Full `Library/`                            | Nothing (last resort)               |
+
+## Multi-Phase Retry Chains
+
+The diagnostics service uses independent retry budgets per failure type. A licensing retry does not
+consume the budget for crash recovery. This prevents a single intermittent failure from exhausting
+all retry attempts.
+
+```mermaid
+flowchart TD
+    A["Unity fails"] --> B["Classify failure"]
+    B --> C{"LICENSE?"}
+    C -->|yes| D["License retry budget\n(3 attempts)"]
+    C -->|no| E{"CRASH?"}
+    E -->|yes| F["Crash retry budget\n(2 attempts)"]
+    E -->|no| G{"PACKAGE?"}
+    G -->|yes| H["Package retry budget\n(2 attempts)"]
+    G -->|no| I{"COMPILE?"}
+    I -->|yes| J["Compile retry budget\n(1 attempt)"]
+    I -->|no| K["No automatic retry"]
+    D --> L["Retry with delay"]
+    F --> M["Clear Bee, retry"]
+    H --> N["Clear PackageCache, retry"]
+    J --> O["Clear ScriptAssemblies, retry"]
+```
+
+### Retry Budget Defaults
+
+| Category | Max Retries | Cleanup Before Retry                                  | Delay |
+| -------- | ----------- | ----------------------------------------------------- | ----- |
+| LICENSE  | 3           | None (preserve Library)                               | 30s   |
+| CRASH    | 2           | Clear `Library/Bee` on first, full Library on second  | 10s   |
+| PACKAGE  | 2           | Clear `Library/PackageCache`                          | 0s    |
+| COMPILE  | 1           | Clear `Library/ScriptAssemblies` + check LFS pointers | 0s    |
+| SKIP     | 1           | Delete SourceAssetDB + auto-generated assets          | 0s    |
+
+## Circuit Breaker
+
+When a runner fails the same build repeatedly despite retry chains, the circuit breaker prevents
+infinite retry loops:
+
+1. After exhausting all category-specific retry budgets, the build is marked as a **hard failure**
+2. The failure is logged with full diagnostics (category, retry history, log excerpts)
+3. The next build on the same runner starts with a full state reset (Library delete + git integrity
+   check)
+4. If the full reset build also fails, the runner is flagged for manual investigation
+
+The circuit breaker resets after a successful build. A single success demonstrates the runner is
+healthy and clears any accumulated failure state.
+
+## GitHub Step Summary and Checks
+
+Failure diagnostics are written to the GitHub Actions Step Summary when running in a GitHub Actions
+environment and the installed integration supports summaries. The summary includes:
+
+- Failure category and confidence level
+- Key log excerpts that triggered the classification
+- Recommended remediation
+- Retry history (if retries were attempted)
+
+This provides at-a-glance failure analysis in the GitHub Actions UI without requiring log downloads.
+Enable `githubCheck` when you also want Orchestrator step status reflected as GitHub Checks.
+
+```yaml
+- name: Build
+  uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    # Diagnostics are written to Step Summary automatically
+```
+
+## Using Diagnostics in Custom Scripts
+
+The Unity diagnostics service is available as a programmatic API for custom build scripts and
+provider plugins:
+
+```ts
+import { UnityBuildDiagnosticsService, UnityRecoveryService } from '@game-ci/orchestrator';
+
+const diagnostics = UnityBuildDiagnosticsService.analyzeRun({
+  exitCode,
+  runtimeSeconds,
+  logText: editorLog,
+  projectPath,
+});
+
+// diagnostics.category: 'LICENSE' | 'CRASH' | 'COMPILE' | 'PACKAGE' | 'SKIP' | 'EXIT_NEG1' | 'GENERIC'
+// diagnostics.signals: string[]  — matched signal patterns
+// diagnostics.confidence: number — 0.0 to 1.0
+
+const decision = UnityRecoveryService.decide(
+  diagnostics,
+  UnityRecoveryService.createDefaultBudgets(),
+);
+
+// decision.action: 'retry' | 'escalate' | 'fail'
+// decision.cleanup: string[]  — paths to clear before retry
+// decision.delaySeconds: number
+```
+
+## Investigating Unclassified Failures
+
+When a failure lands in EXIT_NEG1 or GENERIC, manual investigation is required. The diagnostics
+service cannot classify what it cannot match. Follow this sequence:
+
+1. **Pull the actual Unity Editor log** — CI wrapper output is a summary. The real failure details
+   are in `Editor.log` on the runner or in the provider's build container.
+2. **Search for `error`, `Error`, `CRASH`, `Fatal`** — these keywords narrow the log to relevant
+   sections.
+3. **Check the last 100 lines before exit** — Unity often logs the proximate cause immediately
+   before shutting down.
+4. **Compare with known signal patterns** — if you find a new pattern, consider adding it to the
+   classification system.
+
+:::caution
+
+Never toggle CI features (caching, Accelerator, ILPP) to isolate an unclassified failure. Each
+toggle is a wasted CI run if the theory is wrong. Diagnose from log evidence first.
+
+:::
