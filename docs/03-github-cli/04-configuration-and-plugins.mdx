@@ -7,7 +7,7 @@ slug: /cli/configuration-and-plugins
 
 The `game-ci` CLI can read options from `.game-ci.yml` and load plugins from command-line flags or
 config. Those plugins can add engine detection, build commands, test commands, custom commands,
-options, and remote providers.
+options, and provider-backed job execution.
 
 ## Config File
 
@@ -35,7 +35,7 @@ camelCase names such as `targetPlatform`, `providerStrategy`, `customImage`, and
 ## Plugin Sources
 
 Plugins can provide engine detectors, build or test command handlers, custom commands, options, and
-remote providers.
+provider implementations.
 
 | Source type      | Example                                  |
 | ---------------- | ---------------------------------------- |
@@ -54,7 +54,7 @@ The Orchestrator ships provider implementations for the public CLI.
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy aws
 ```
 
@@ -71,8 +71,20 @@ cliOptions:
 Then run:
 
 ```bash
-game-ci remote run ./my-project
+game-ci orchestrate ./my-project
 ```
+
+Provider strategies loaded through the Orchestrator plugin can also be config-defined providers:
+
+```yaml
+cliOptions:
+  plugins:
+    - '@game-ci/orchestrator-plugin'
+  providerStrategy: config:./.game-ci/providers/local-shell.yml
+```
+
+Use this when YAML or JSON can describe how to call your existing provider scripts or automation
+APIs. See [Config-defined providers](/docs/github-orchestrator/providers/config-defined-providers).
 
 ## Built-In Engine Support
 
@@ -84,7 +96,7 @@ The CLI includes built-in plugins for:
 | Godot  | Godot project files                  | Engine command options   |
 | Unreal | `.uproject` files                    | Engine command options   |
 
-External plugins can add new engine providers or replace command behavior without changing the CLI
+External plugins can add new engine support or replace command behavior without changing the CLI
 core.
 
 ## Plugin API
@@ -120,9 +132,14 @@ export default {
 };
 ```
 
-Provider plugins register provider strategy names. `game-ci remote run` then creates the provider
-selected by `--provider-strategy`. `game-ci remote build` is kept as a compatibility alias for older
-workflows.
+Provider plugins register provider strategy names. `game-ci orchestrate` then creates the provider
+selected by `--provider-strategy`. `game-ci remote run` and `game-ci remote build` are kept as
+compatibility aliases for older workflows.
+
+Provider implementations can also live outside the public CLI. The Orchestrator supports
+configuration-driven providers, executable providers, and TypeScript/JavaScript provider modules.
+Use the public CLI plugin API when you are adding command surface or engine behavior to `game-ci`
+itself; use the Orchestrator provider extension points when you are changing where jobs run.
 
 ## Local Config Folder
 

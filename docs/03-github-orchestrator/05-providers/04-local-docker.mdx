@@ -27,6 +27,19 @@ yarn run cli -m cli-build \
   --targetPlatform StandaloneLinux64
 ```
 
+## Config File Injection
+
+Inject config files into the Docker container workspace using `configFiles`. Files are written to
+`game-ci-config/` in the workspace before the container starts:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local-docker
+    configFiles: |
+      {"settings.json": "{\"quality\": \"high\"}"}
+```
+
 ## When to Use
 
 - You have a self-hosted runner with Docker installed

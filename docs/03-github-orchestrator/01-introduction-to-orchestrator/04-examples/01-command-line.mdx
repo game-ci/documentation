@@ -1,8 +1,8 @@
 # Command Line
 
-Use the public `game-ci` CLI for command-line builds. Orchestrator is loaded as a provider plugin,
-so the user-facing command remains `game-ci remote run` while provider-specific behavior stays in
-the Orchestrator package.
+Use the public `game-ci` CLI for command-line builds and other engine automation. Orchestrator is
+loaded as a provider plugin, so the user-facing command is `game-ci orchestrate` while
+provider-specific behavior stays in the Orchestrator package.
 
 ## Install GameCI CLI
 
@@ -28,7 +28,7 @@ The standalone Orchestrator CLI can also be installed directly for provider deve
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
 ```
@@ -38,7 +38,7 @@ game-ci \
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
   --git-private-token $GIT_TOKEN
@@ -49,7 +49,7 @@ game-ci \
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy k8s \
   --target-platform StandaloneLinux64 \
   --git-private-token $GIT_TOKEN
@@ -87,7 +87,7 @@ Avoid long CLI flags for credentials by using environment variables or the
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
   --pull-input-list UNITY_EMAIL,UNITY_SERIAL,UNITY_PASSWORD \
@@ -97,5 +97,5 @@ game-ci \
 ## Further Reading
 
 - [GameCI CLI](/docs/cli) - public command-line interface
-- [Remote jobs](/docs/cli/remote-builds) - provider plugin usage
+- [Orchestrated jobs](/docs/cli/remote-builds) - provider plugin usage
 - [Standalone Orchestrator CLI](../../cli/getting-started) - lower-level Orchestrator entry point

@@ -1,11 +1,13 @@
 # Custom Providers
 
 Orchestrator uses a plugin system that lets you extend it with custom providers. A **provider** is a
-pluggable backend that controls where and how your builds run. Built-in providers include `aws`,
-`k8s`, `local-docker`, and `local`.
+pluggable backend that controls where and how jobs run. Built-in providers include `aws`, `k8s`,
+`local-docker`, and `local`.
 
-With custom providers, you can point `providerStrategy` at a GitHub repository, NPM package, or
-local path and Orchestrator will dynamically load it at runtime.
+This page covers TypeScript and JavaScript provider modules loaded from a GitHub repository, NPM
+package, or local path. If you only need a YAML or JSON file that maps lifecycle operations to shell
+commands, use [Config-Defined Providers](config-defined-providers). If you want to write provider
+logic in another language as an executable, use the [CLI Provider Protocol](cli-provider-protocol).
 
 ```mermaid
 graph LR
@@ -60,6 +62,9 @@ Set `providerStrategy` to a provider source instead of a built-in name:
 A provider is a module that exports a class implementing the `ProviderInterface`. The module must
 have an entry point at one of: `index.js`, `index.ts`, `src/index.js`, `src/index.ts`,
 `lib/index.js`, `lib/index.ts`, or `dist/index.js`.
+
+Use this approach when the provider needs direct access to `BuildParameters`, typed lifecycle
+methods, shared Node.js code, or richer state than a config-defined provider should carry.
 
 ### Required Methods
 
@@ -182,6 +187,10 @@ branch. On subsequent runs the loader checks for updates and pulls them automati
 
 ## Best Practices
 
+- **Use the smallest extension path that works** - prefer a
+  [config-defined provider](config-defined-providers) for simple command wrappers, a
+  [CLI provider](cli-provider-protocol) for executable integrations, and a TypeScript provider for
+  deeper Orchestrator integration.
 - **Pin a branch or tag** - Use `user/repo@v1.0` or a specific branch to avoid unexpected changes.
 - **Test locally first** - Use a local path during development before publishing.
 - **Handle errors gracefully** - Your provider methods should throw clear errors so Orchestrator can

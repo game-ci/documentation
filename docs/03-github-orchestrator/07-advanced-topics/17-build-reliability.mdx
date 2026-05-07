@@ -68,6 +68,50 @@ Run garbage collection from GitHub Actions:
 `garbageMaxAge` is measured in hours. For AWS, Orchestrator can also create a CloudFormation-based
 cleanup cron job when `useCleanupCron` is enabled.
 
+### GC Timeout Force
+
+When a build exceeds a configured time limit, Orchestrator can force garbage collection regardless
+of the `constantGarbageCollection` setting. This prevents resource leaks from long-running or stuck
+builds.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    gcTimeoutMinutes: 120 # Force GC if build exceeds 2 hours
+    garbageMaxAge: 24
+```
+
+Set `gcTimeoutMinutes` to `0` (default) to disable timeout-based GC.
+
+### Max Cache Entries
+
+By default, Orchestrator keeps the 2 most recent cache snapshots per folder. Use `maxCacheEntries`
+to adjust how many tar archives are retained:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    maxCacheEntries: 5 # Keep 5 most recent cache snapshots per folder
+```
+
+Lower values save disk space; higher values allow rolling back to older cache states.
+
+### Min Cache Entries
+
+When `cacheRetentionDays` is set, age-based GC removes old cache directories. Use `minCacheEntries`
+to set a floor — the GC will never remove entries below this count, even if they exceed the age
+threshold:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    cacheRetentionDays: 30
+    minCacheEntries: 1 # Always keep at least 1 cache entry per key
+```
+
+This prevents the cache from being completely emptied when all entries are older than the retention
+period.
+
 ## Git Integrity Checking
 
 Self-hosted runners with persistent workspaces accumulate state between builds. Aborted jobs, disk
@@ -197,7 +241,7 @@ Hub and `Unity.Licensing.Client` are already running without invoking Hub CLI co
 This option is intended for persistent Windows hosts. It is usually unnecessary for fresh Linux
 containers where the operating system process table is discarded after each job.
 
-## Unity Failure Diagnostics
+## Failure Diagnostics
 
 Provider plugins and custom wrappers can import Unity diagnostics from `@game-ci/orchestrator` when
 they need to route failures based on evidence from Editor.log:
@@ -225,6 +269,9 @@ DLLs.
 
 Recovery decisions use independent retry budgets per failure type. A licensing retry, for example,
 does not consume the budget for PackageCache cleanup or crash recovery.
+
+For the broader failure-handling model across providers, caches, runner startup, engine execution,
+artifacts, and cleanup, see [Failures and Diagnostics](failures-and-diagnostics).
 
 ### Selective Library Cleanup
 

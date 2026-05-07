@@ -1,58 +1,104 @@
 ---
 sidebar_position: 3
-sidebar_label: Remote Jobs
+sidebar_label: Orchestrate
 slug: /cli/remote-builds
 ---
 
-# Remote Jobs
+# Orchestrated Jobs
 
-`game-ci remote run` schedules a provider-backed engine job. Providers can run standard builds, test
+`game-ci orchestrate` schedules a provider-backed engine job. Providers can run standard builds, test
 workflows, custom engine commands, or a fully custom job definition.
 
 ```bash
-game-ci remote run [projectPath] --provider-strategy <strategy>
+game-ci orchestrate [projectPath] --provider-strategy <strategy>
 ```
 
-`game-ci remote build` remains available as a compatibility alias, but new workflows should use
-`remote run` so the command name matches the broader job model.
+`game-ci remote run` and `game-ci remote build` remain available as compatibility aliases, but new
+workflows should use `game-ci orchestrate` so the command name matches the provider-backed job
+model.
 
 The CLI owns the high-level command shape. Providers own infrastructure-specific options and job
 execution behavior.
 
+<<<<<<< HEAD
+
+## Public CLI vs Standalone Orchestrator
+
+Use `game-ci orchestrate` from the public CLI for normal provider-backed jobs. It keeps the command
+model engine-oriented and lets provider plugins add infrastructure details.
+
+The standalone Orchestrator package also installs a `game-ci orchestrate` command. That command is a
+direct, lower-level Orchestrator entry point for provider development, debugging, and environments
+that intentionally run Orchestrator without the public CLI. The verb is the same, but the installed
+package determines the command surface.
+
+| Need                                                   | Use                                  |
+| ------------------------------------------------------ | ------------------------------------ |
+| Friendly public CLI command for builds, tests, or jobs | `game-ci orchestrate`                |
+| Backwards-compatible old public CLI command names      | `game-ci remote run`, `remote build` |
+
+=======
+
+## Remote Run vs Standalone Orchestrate
+
+Use `game-ci remote run` from the public CLI for normal remote jobs. It keeps the command model
+engine-oriented and lets provider plugins add infrastructure details.
+
+The standalone Orchestrator package also installs a `game-ci orchestrate` command. That command is a
+direct, lower-level Orchestrator entry point for provider development, debugging, and environments
+that intentionally run Orchestrator without the public CLI. It is not the preferred public CLI
+command.
+
+| Need                                                   | Use                    |
+| ------------------------------------------------------ | ---------------------- |
+| Friendly public CLI command for builds, tests, or jobs | `game-ci remote run`   |
+| Backwards-compatible old remote command name           | `game-ci remote build` |
+
+> > > > > > > origin/docs/unity-reliability-guide
+> > > > > > > | Direct standalone Orchestrator provider execution | `game-ci orchestrate` |
+> > > > > > > | Executable provider protocol integration with GameCI CLI | `game-ci serve` in the provider tool |
+
 ## Orchestrator Plugin
 
-The Orchestrator is the default provider backend for remote execution. Load it as a CLI plugin:
+The Orchestrator is the default provider backend for provider-backed execution. Load it as a CLI
+plugin:
 
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-unity-project \
+  orchestrate ./my-unity-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
 ```
 
-Available provider strategies from the Orchestrator plugin include:
+Available Orchestrator provider types include:
 
-| Strategy            | Description                                    |
-| ------------------- | ---------------------------------------------- |
-| `local-docker`      | Run the job in Docker on the current machine.  |
-| `local-system`      | Run directly on the current machine.           |
-| `aws`               | Run on AWS ECS/Fargate.                        |
-| `k8s`               | Run as a Kubernetes job.                       |
-| `gcp-cloud-run`     | Run on Google Cloud Run.                       |
-| `azure-aci`         | Run on Azure Container Instances.              |
-| `github-actions`    | Dispatch to a GitHub Actions workflow.         |
-| `gitlab-ci`         | Trigger a GitLab CI pipeline.                  |
-| `remote-powershell` | Run on a remote Windows host over PowerShell.  |
-| `ansible`           | Run through an Ansible inventory and playbook. |
-| `cli`               | Delegate to a custom provider executable.      |
+| Provider type     | Strategy value      | Description                                    |
+| ----------------- | ------------------- | ---------------------------------------------- |
+| Local Docker      | `local-docker`      | Run the job in Docker on the current machine.  |
+| Local System      | `local-system`      | Run directly on the current machine.           |
+| AWS               | `aws`               | Run on AWS ECS/Fargate.                        |
+| Kubernetes        | `k8s`               | Run as a Kubernetes job.                       |
+| Google Cloud Run  | `gcp-cloud-run`     | Run on Google Cloud Run.                       |
+| Azure ACI         | `azure-aci`         | Run on Azure Container Instances.              |
+| GitHub Actions    | `github-actions`    | Dispatch to a GitHub Actions workflow.         |
+| GitLab CI         | `gitlab-ci`         | Trigger a GitLab CI pipeline.                  |
+| Remote PowerShell | `remote-powershell` | Run on a remote Windows host.                  |
+| Ansible           | `ansible`           | Run through an Ansible inventory and playbook. |
+| CLI protocol      | `cli`               | Delegate to a custom provider executable.      |
+
+# <<<<<<< HEAD
+
+| Config-defined | `config:<path>` | Map lifecycle commands from YAML or JSON. |
+
+> > > > > > > origin/docs/unity-reliability-guide
 
 ## Local Docker
 
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-unity-project \
+  orchestrate ./my-unity-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
 ```
@@ -68,7 +114,7 @@ export AWS_DEFAULT_REGION=us-east-1
 
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-unity-project \
+  orchestrate ./my-unity-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
   --container-cpu 2048 \
@@ -96,7 +142,7 @@ profiles, SSO sessions, and runner roles.
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-unity-project \
+  orchestrate ./my-unity-project \
   --provider-strategy k8s \
   --target-platform StandaloneLinux64 \
   --kube-config "$KUBE_CONFIG_BASE64" \
@@ -121,7 +167,7 @@ or test command.
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-godot-project \
+  orchestrate ./my-godot-project \
   --provider-strategy local-docker \
   --custom-job '- name: godot-export
   image: barichello/godot-ci:4.3
@@ -137,16 +183,33 @@ protocol. Load the executable as a plugin and select the generated provider stra
 ```bash
 game-ci \
   --plugin executable:./my-provider \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy cli-protocol
 ```
 
 For protocol details, see
 [CLI provider protocol](../github-orchestrator/providers/cli-provider-protocol).
 
+## Config-Defined Providers
+
+When the Orchestrator plugin is loaded, provider strategies can also point at YAML or JSON provider
+configuration files:
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  remote run ./my-project \
+  --provider-strategy config:./.game-ci/providers/local-shell.yml
+```
+
+Use this when a provider can be described as lifecycle commands that call existing scripts, CLIs, or
+automation APIs. See
+[Config-defined providers](../github-orchestrator/providers/config-defined-providers) for the file
+format, runtime environment variables, and examples.
+
 ## Configuration Files
 
-Remote jobs can load the provider plugin and common options from `.game-ci.yml`:
+Orchestrated jobs can load the provider plugin and common options from `.game-ci.yml`:
 
 ```yaml
 cliOptions:
@@ -159,7 +222,7 @@ cliOptions:
 Then the command can stay short:
 
 ```bash
-game-ci remote run ./my-project
+game-ci orchestrate ./my-project
 ```
 
 Provider-specific options are registered by the loaded plugin, so run with `--help` after loading

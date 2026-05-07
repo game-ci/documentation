@@ -58,6 +58,21 @@ A full workflow example is available in the builder source:
 - **Cloud storage required.** Kubernetes requires cloud storage for
   [caching](../advanced-topics/caching). S3 is built-in, or use rclone for other backends.
 
+## Config File Injection
+
+Inject arbitrary config files into K8s build containers using `configFiles`. Files are mounted
+read-only at `/game-ci/config/` via a Kubernetes ConfigMap:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: k8s
+    configFiles: |
+      {"settings.json": "{\"quality\": \"high\"}", "build-config.txt": "RELEASE=true"}
+```
+
+The ConfigMap is automatically created during workflow setup and cleaned up after the build.
+
 ## K8s Parameters
 
 For the full list of Kubernetes parameters (`kubeConfig`, `kubeVolume`, `kubeStorageClass`, etc.),

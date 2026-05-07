@@ -4,10 +4,19 @@ sidebar_position: 2
 
 # Build Command
 
-The standalone Orchestrator `build` command runs a local engine build with Orchestrator-compatible
-parameters. Unity is the default and primary supported package, but engine configuration is explicit
-so built-in or custom engine providers can supply cache folders and lifecycle behavior. The CLI is
-provided by the [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) package.
+The standalone Orchestrator `build` command is a narrow shortcut for running a standard
+Orchestrator-managed build through a remote provider. It exists on the
+[`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) CLI, not on the public GameCI CLI
+from `game-ci/cli`.
+
+For normal user-facing local builds, tests, and custom Unity methods, use the public
+[`game-ci build`](/docs/cli/build) and [`game-ci test`](/docs/cli/build) commands. For general
+provider-backed jobs from the public CLI, use [`game-ci orchestrate`](/docs/cli/remote-builds).
+
+Use standalone `game-ci build` only when you intentionally installed Orchestrator directly and want
+a short command for a standard remote build. Use [`game-ci orchestrate`](orchestrate-command) when
+you need local-docker, local-system, custom jobs, hooks, cache helpers, or deeper provider
+debugging.
 
 ```bash
 game-ci build [options]
@@ -136,15 +145,17 @@ game-ci build \
 
 ## Provider Strategy
 
-By default, the `build` command runs locally. You can redirect execution to a remote orchestrator
-provider:
+The `build` command must run through an Orchestrator provider. Although the flag default is `local`
+internally, standalone local builds are not handled here; the command will ask you to use
+unity-builder or the public CLI for local execution.
 
-| Flag                  | Default | Description                                  |
-| --------------------- | ------- | -------------------------------------------- |
-| `--provider-strategy` | `local` | Execution strategy: `local`, `k8s`, or `aws` |
+| Flag                  | Default | Description                                      |
+| --------------------- | ------- | ------------------------------------------------ |
+| `--provider-strategy` | `local` | Set to a remote strategy such as `aws` or `k8s`. |
 
-When set to anything other than `local`, the build is handed off to the orchestrator. See
-[Standalone Orchestrator Command](orchestrate-command) for cloud-specific options.
+For local Docker or host execution through Orchestrator, use
+`game-ci orchestrate --provider-strategy local-docker` or
+`game-ci orchestrate --provider-strategy local-system` instead.
 
 ## Output
 

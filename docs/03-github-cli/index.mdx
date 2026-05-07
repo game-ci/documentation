@@ -7,8 +7,8 @@ slug: /cli
 
 The `game-ci` CLI is the user-facing command line for running GameCI workflows from a terminal or
 from any CI system. It gives you a high-level API for game automation tasks such as builds, tests,
-custom engine methods, and remote provider jobs. Lower-level engine and provider implementations are
-loaded as plugins.
+custom engine methods, and provider-backed jobs. Lower-level engine and provider implementations
+are loaded as plugins.
 
 Unity is the primary supported package in GameCI, but the CLI itself is not Unity-only. It ships
 with built-in engine detection and engine command implementations for Unity, Godot, and Unreal
@@ -21,12 +21,13 @@ Use this CLI when you want a stable command surface such as:
 game-ci build ./my-project
 game-ci test ./my-project
 game-ci build ./my-unity-project --build-method Company.CI.RunValidation
-game-ci --plugin @game-ci/orchestrator-plugin remote run ./my-project --provider-strategy local-docker
+game-ci --plugin @game-ci/orchestrator-plugin orchestrate ./my-project --provider-strategy local-docker
 game-ci config open
 ```
 
-The Orchestrator CLI is still available for advanced or standalone provider work, but most users
-should start with `game-ci`.
+The standalone Orchestrator CLI is still available for advanced or standalone provider work, but
+most users should start with `game-ci` from this CLI. Both binaries are named `game-ci` after
+installation, so the command set you see depends on which package installed the binary.
 
 ## Install
 
@@ -72,7 +73,7 @@ The CLI has a small core and loads engine, command, and provider behavior throug
 | --------------------- | ------------------------------------------------------------------ |
 | `game-ci build`       | Run the detected engine's build command.                           |
 | `game-ci test`        | Run the detected engine's test command when a plugin provides one. |
-| `game-ci remote run`  | Schedule an engine job through a provider plugin.                  |
+| `game-ci orchestrate` | Schedule an engine job through a provider plugin.                  |
 | `game-ci config open` | Open the local GameCI configuration folder.                        |
 
 The built-in plugins provide:
@@ -84,9 +85,9 @@ The built-in plugins provide:
 | Unreal | `.uproject` files                    | Engine command options   | Requires a licensed Unreal-capable Docker image.                   |
 | Other  | Plugin-defined                       | Plugin-defined commands  | Plugins can add build, test, provider, or custom command behavior. |
 
-Remote providers such as local Docker, AWS, Kubernetes, GitHub Actions dispatch, and custom provider
-executables are registered by provider plugins. The Orchestrator plugin is the intended backend for
-GameCI remote execution.
+Provider types such as local Docker, local system, AWS, Kubernetes, GitHub Actions dispatch, and
+custom provider executables are registered by provider plugins. The Orchestrator plugin is the
+intended backend for GameCI provider-backed execution.
 
 ## First Commands
 
@@ -110,18 +111,53 @@ game-ci build ./my-project --engine unity --engine-version 2022.3.20f1
 
 ## Public CLI vs Orchestrator CLI
 
-| Use case                                        | Recommended entry point                                  |
-| ----------------------------------------------- | -------------------------------------------------------- |
-| Local or CI engine commands with a friendly API | `game-ci` from `game-ci/cli`                             |
-| Remote jobs via provider plugins                | `game-ci remote run` with `@game-ci/orchestrator-plugin` |
-| Provider protocol development                   | Standalone `@game-ci/orchestrator` CLI                   |
-| GitHub Actions workflows with the CLI           | `game-ci/cli` GitHub Action                              |
-| Unity-specific GitHub Actions workflows         | `game-ci/unity-builder` with Orchestrator inputs         |
+| Use case                                        | Recommended entry point                                   |
+| ----------------------------------------------- | --------------------------------------------------------- |
+| Local or CI engine commands with a friendly API | `game-ci` from `game-ci/cli`                              |
+| Provider-backed jobs                            | `game-ci orchestrate` with `@game-ci/orchestrator-plugin` |
+| Provider protocol development                   | Standalone `@game-ci/orchestrator` CLI                    |
+| GitHub Actions workflows with the CLI           | `game-ci/cli` GitHub Action                               |
+| Unity-specific GitHub Actions workflows         | `game-ci/unity-builder` with Orchestrator inputs          |
+
+## Command Names At A Glance
+
+| Command                | Where it exists             | Use it for                                                                 |
+| ---------------------- | --------------------------- | -------------------------------------------------------------------------- |
+| `game-ci build`        | Public GameCI CLI           | User-facing local or CI engine builds, including custom Unity methods.     |
+| `game-ci test`         | Public GameCI CLI           | Engine test workflows when the selected engine plugin provides test logic. |
+| `game-ci orchestrate`  | Public GameCI CLI           | Provider-backed jobs through Orchestrator or another provider plugin.      |
+| `game-ci remote run`   | Public GameCI CLI           | Compatibility alias for `game-ci orchestrate`.                             |
+| `game-ci remote build` | Public GameCI CLI           | Older compatibility alias for `game-ci orchestrate`.                       |
+| `game-ci orchestrate`  | Standalone Orchestrator CLI | Direct Orchestrator provider runs and provider debugging.                  |
+| `game-ci build`        | Standalone Orchestrator CLI | A narrow remote Orchestrator build shortcut, not the public CLI build API. |
+| `game-ci serve`        | Standalone Orchestrator CLI | JSON provider protocol mode for executable provider plugins.               |
+
+If you are reading public CLI docs, prefer `orchestrate` for provider-backed work. The same verb
+exists in the standalone Orchestrator package, but the package you install determines the option
+surface and plugin behavior. Reach for standalone Orchestrator only when you installed
+`@game-ci/orchestrator` directly or you are debugging Orchestrator/provider behavior outside the
+public CLI.
+
+## Command Names At A Glance
+
+| Command                | Where it exists             | Use it for                                                                 |
+| ---------------------- | --------------------------- | -------------------------------------------------------------------------- |
+| `game-ci build`        | Public GameCI CLI           | User-facing local or CI engine builds, including custom Unity methods.     |
+| `game-ci test`         | Public GameCI CLI           | Engine test workflows when the selected engine plugin provides test logic. |
+| `game-ci remote run`   | Public GameCI CLI           | Provider-backed jobs through Orchestrator or another provider plugin.      |
+| `game-ci remote build` | Public GameCI CLI           | Compatibility alias for `game-ci remote run`.                              |
+| `game-ci orchestrate`  | Standalone Orchestrator CLI | Direct low-level Orchestrator provider runs and provider debugging.        |
+| `game-ci build`        | Standalone Orchestrator CLI | A narrow remote Orchestrator build shortcut, not the public CLI build API. |
+| `game-ci serve`        | Standalone Orchestrator CLI | JSON provider protocol mode for executable provider plugins.               |
+
+If you are reading public CLI docs, prefer `remote run` for provider-backed work. Reach for
+standalone `orchestrate` only when you installed `@game-ci/orchestrator` directly or you are
+debugging Orchestrator/provider behavior outside the public CLI.
 
 ## Next Steps
 
 - [Engine commands](/docs/cli/build) - run builds, tests, and custom engine methods
-- [Remote jobs](/docs/cli/remote-builds) - load provider plugins and run remote jobs
+- [Orchestrated jobs](/docs/cli/remote-builds) - load provider plugins and run provider-backed jobs
 - [Configuration and plugins](/docs/cli/configuration-and-plugins) - configure `.game-ci.yml` and
   plugins
 - [GitHub Action](/docs/cli/github-action) - install and run the CLI in GitHub Actions

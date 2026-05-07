@@ -5,9 +5,17 @@ slug: /cli/github-action
 
 # GitHub Action
 
+:::caution Experimental
+
+The `game-ci/cli` GitHub Action is experimental. Inputs, installation behavior, and release tags may
+change while the CLI action matures.
+
+:::
+
 Use `game-ci/cli` as a GitHub Action when you want the public GameCI CLI available inside a
 workflow. The action installs the standalone `game-ci` binary on the runner and can optionally run
-any CLI command in the same step: build, test, custom engine method, remote job, or config command.
+any CLI command in the same step: build, test, custom engine method, provider-backed job, or config
+command.
 
 ```yaml
 jobs:
@@ -68,19 +76,19 @@ Pinning `uses: game-ci/cli@v0.1.0` is preferred for repeatable workflows.
 | `version`           | empty   | CLI release to install, for example `v0.1.0`. Overrides action-ref detection. |
 | `working-directory` | `.`     | Directory where the `game-ci` command runs when `args` is set.                |
 
-## Remote Jobs
+## Orchestrated Jobs
 
-The action can run remote jobs by loading provider plugins, the same as the terminal CLI.
+The action can run provider-backed jobs by loading provider plugins, the same as the terminal CLI.
 
 ```yaml
 - uses: game-ci/cli@v0.1.0
   with:
     args: >-
-      --plugin @game-ci/orchestrator-plugin remote run . --provider-strategy local-docker
+      --plugin @game-ci/orchestrator-plugin orchestrate . --provider-strategy local-docker
       --target-platform StandaloneLinux64
 ```
 
-For provider-specific setup, see [Remote jobs](/docs/cli/remote-builds).
+For provider-specific setup, see [orchestrated jobs](/docs/cli/remote-builds).
 
 ## Platform Support
 

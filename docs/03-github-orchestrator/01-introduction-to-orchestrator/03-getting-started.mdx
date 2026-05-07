@@ -84,7 +84,7 @@ See the [Local Docker provider page](../providers/local-docker) for details.
   </TabItem>
 </Tabs>
 
-See [Providers](../providers/overview) for the full list and detailed setup guides.
+See [Provider Types](../providers/overview) for the full list and detailed setup guides.
 
 ## GitHub Actions
 
@@ -152,7 +152,7 @@ export AWS_SECRET_ACCESS_KEY="..."
 ```bash
 game-ci \
   --plugin @game-ci/orchestrator-plugin \
-  remote run ./my-project \
+  orchestrate ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64
 ```
@@ -162,7 +162,7 @@ The standalone Orchestrator CLI remains available for provider development and d
 
 ## Next Steps
 
-- [Provider setup guides](../providers/overview) - configure your cloud credentials
+- [Provider type setup guides](../providers/overview) - configure your cloud credentials
 - [API Reference](../api-reference) - full parameter documentation
 - [Examples](examples/github-actions) - more workflow examples
 - [GameCI CLI](/docs/cli) - public command-line interface

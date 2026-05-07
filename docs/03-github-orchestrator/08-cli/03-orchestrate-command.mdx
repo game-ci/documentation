@@ -5,8 +5,9 @@ sidebar_position: 3
 # Standalone Orchestrator Command
 
 The standalone Orchestrator CLI command is named `orchestrate`. It is a lower-level provider entry
-point for running Unity work on local Docker, local system, or cloud infrastructure. For the public
-GameCI CLI, use [`game-ci remote run`](/docs/cli/remote-builds) instead.
+point for running engine work on local Docker, local system, or cloud infrastructure. Unity is the
+primary built-in package, and engine plugins can adapt the workload for other engines. For the
+public GameCI CLI, use [`game-ci orchestrate`](/docs/cli/remote-builds) with a provider plugin.
 
 `orchestrate` provisions an execution environment, syncs your project, runs the requested workload,
 and retrieves artifacts.
@@ -17,7 +18,37 @@ game-ci orchestrate [options]
 
 This is the standalone CLI equivalent of using `game-ci/unity-builder` with a `providerStrategy` in
 GitHub Actions. It is mainly useful for provider development, debugging, and direct Orchestrator
-usage.
+usage. The public CLI uses the same command verb, but it loads providers through the public plugin
+API and keeps the higher-level GameCI command model.
+
+## When To Use This Command
+
+| Situation                                                   | Recommended command                                    |
+| ----------------------------------------------------------- | ------------------------------------------------------ |
+| Public CLI provider-backed job with a friendly surface      | `game-ci orchestrate` from `game-ci/cli`               |
+| Standalone Orchestrator standard remote build shortcut      | `game-ci build --provider-strategy aws` or `k8s`       |
+| Standalone Orchestrator direct provider run                 | `game-ci orchestrate`                                  |
+| Standalone local Docker or local host Orchestrator behavior | `game-ci orchestrate --provider-strategy local-docker` |
+| Custom job YAML, pre/post steps, cache key testing          | `game-ci orchestrate`                                  |
+| Executable provider protocol serving another CLI            | `game-ci serve`                                        |
+
+In short: public `orchestrate` is the friendly plugin-backed GameCI CLI API, standalone
+`orchestrate` is the direct Orchestrator API, and standalone `build` is only a convenience shortcut
+for a standard remote build.
+
+## When To Use This Command
+
+| Situation                                                   | Recommended command                                    |
+| ----------------------------------------------------------- | ------------------------------------------------------ |
+| Public CLI remote job with a friendly command surface       | `game-ci remote run` from `game-ci/cli`                |
+| Standalone Orchestrator standard remote build shortcut      | `game-ci build --provider-strategy aws` or `k8s`       |
+| Standalone Orchestrator direct provider run                 | `game-ci orchestrate`                                  |
+| Standalone local Docker or local host Orchestrator behavior | `game-ci orchestrate --provider-strategy local-docker` |
+| Custom job YAML, pre/post steps, cache key testing          | `game-ci orchestrate`                                  |
+| Executable provider protocol serving another CLI            | `game-ci serve`                                        |
+
+In short: `remote run` is the public API, `orchestrate` is the direct Orchestrator API, and
+standalone `build` is only a convenience shortcut for a standard remote build.
 
 ## Required Options
 
@@ -25,9 +56,9 @@ usage.
 | ------------------- | ------------------------------------------------ |
 | `--target-platform` | Build target platform (e.g. `StandaloneLinux64`) |
 
-## Provider Selection
+## Provider Type Selection
 
-Choose where your build runs with the `--provider-strategy` flag:
+Choose where the job runs with the `--provider-strategy` flag:
 
 | Provider     | Value          | Description                            |
 | ------------ | -------------- | -------------------------------------- |
@@ -151,4 +182,4 @@ game-ci orchestrate \
 - [Getting Started](getting-started) - installation and first build
 - [Build Command](build-command) - local Docker builds
 - [API Reference](../api-reference) - full parameter reference
-- [Providers](../providers/overview) - provider-specific setup guides
+- [Provider Types](../providers/overview) - provider-specific setup guides

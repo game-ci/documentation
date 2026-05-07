@@ -263,14 +263,54 @@ single Library archive:
 - Use branch-specific `cacheKey` values so feature branch caches do not overwrite or inflate main
   branch caches.
 
+## Self-Hosted Cache Integrity
+
+When using retained workspaces or local filesystem caches on persistent runners, additional
+integrity checks prevent subtle cache corruption that ephemeral runners never encounter.
+
+### DAG File Repair
+
+Unity's Bee build system stores incremental compilation state as DAG files in `Library/Bee/`. These
+files contain absolute workspace paths. When a Library cache is restored from a different runner (or
+from a shared cache directory), the paths no longer match the current workspace.
+
+Repair DAG files after cross-runner restore by replacing the old workspace path with the current
+one. Without this, Bee either rebuilds everything from scratch (negating the cache) or produces
+incorrect incremental builds. See
+[Self-Hosting and Orchestrator](self-hosting-and-orchestrator#dag-file-repair) for implementation
+details.
+
+### LFS Pointer Poisoning
+
+Git LFS pointer files that were not hydrated can end up in the workspace as small text files (under
+200 bytes, starting with `version https://git-lfs.`). Unity treats these as valid binaries, causing
+`BadImageFormatException` or `TypeLoadException` during domain reload.
+
+Scan for unhydrated LFS pointers before Unity launches — not after a build failure. Any `.dll`,
+`.so`, or `.dylib` file under 200 bytes with an LFS header is a pointer that needs hydration. See
+[Self-Hosting and Orchestrator](self-hosting-and-orchestrator#lfs-pointer-poisoning) for detection
+scripts.
+
+### Profile Fingerprinting
+
+Monorepos that switch between build profiles on the same runner must invalidate compilation caches
+when the profile changes. Generate a fingerprint from the profile's submodule set and scripting
+defines. When the fingerprint changes, clear `Library/ScriptAssemblies` and `Library/Bee` but
+preserve asset imports (textures, meshes, shader cache), which are profile-independent.
+
+See [Self-Hosting and Orchestrator](self-hosting-and-orchestrator#profile-switching) for the
+fingerprinting pattern.
+
 ## Inputs Reference
 
-| Input                     | Description                                       |
-| ------------------------- | ------------------------------------------------- |
-| `cacheKey`                | Override the cache key used for cache isolation   |
-| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables |
-| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit    |
-| `cacheRetentionDays`      | Remove cache entries older than N days            |
-| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep        |
-| `skipCache`               | Skip cache restore entirely                       |
-| `useCompressionStrategy`  | Use LZ4 compression for cache archives            |
+| Input                     | Description                                               |
+| ------------------------- | --------------------------------------------------------- |
+| `cacheKey`                | Override the cache key used for cache isolation           |
+| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables         |
+| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit            |
+| `cacheRetentionDays`      | Remove cache entries older than N days                    |
+| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep                |
+| `maxCacheEntries`         | Max tar snapshots to retain per cache folder (default: 2) |
+| `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor) |
+| `skipCache`               | Skip cache restore entirely                               |
+| `useCompressionStrategy`  | Use LZ4 compression for cache archives                    |
