@@ -361,13 +361,13 @@ write through the hardlink to canonical bytes, corrupting the canonical store fo
 
 The default classifier targets Unity's Library structure:
 
-| Subdirectory | Strategy | Why |
-|---|---|---|
-| `PackageCache/<package>@<hash>/` | Directory junction | Unity treats packages as immutable; new version = new `@<hash>` directory |
-| `ScriptAssemblies/`, `Artifacts/`, `BurstCache/`, `Bee/artifacts/`, `MetadataGenerator/`, `ShaderCache/`, `StateCache/`, `UIBuilder/`, `HDRPLibrary/` | Hardlink | Roslyn, Bee, AssetDatabase v2 all use write-temp-then-rename |
-| `PackageManager/projectResolution.json`, `PackageManager/ProjectCache`, `Bee/*.dag`, `Bee/*.dag.outputdata`, `Bee/*-inputdata.json`, `LastSceneManagerSetup.txt` | Per-runner copy | Contain absolute workspace paths; need cross-runner repair |
-| `AnnotationManager`, `EditorOnly`, `EditorUserBuildSettings.asset`, `EditorUserSettings.asset`, `CurrentLayout-*.dwlt` | Skip | Editor session state; not part of the build cache |
-| (default) | Hardlink | Conservative default for unknown subtrees |
+| Subdirectory                                                                                                                                                     | Strategy           | Why                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------- |
+| `PackageCache/<package>@<hash>/`                                                                                                                                 | Directory junction | Unity treats packages as immutable; new version = new `@<hash>` directory |
+| `ScriptAssemblies/`, `Artifacts/`, `BurstCache/`, `Bee/artifacts/`, `MetadataGenerator/`, `ShaderCache/`, `StateCache/`, `UIBuilder/`, `HDRPLibrary/`            | Hardlink           | Roslyn, Bee, AssetDatabase v2 all use write-temp-then-rename              |
+| `PackageManager/projectResolution.json`, `PackageManager/ProjectCache`, `Bee/*.dag`, `Bee/*.dag.outputdata`, `Bee/*-inputdata.json`, `LastSceneManagerSetup.txt` | Per-runner copy    | Contain absolute workspace paths; need cross-runner repair                |
+| `AnnotationManager`, `EditorOnly`, `EditorUserBuildSettings.asset`, `EditorUserSettings.asset`, `CurrentLayout-*.dwlt`                                           | Skip               | Editor session state; not part of the build cache                         |
+| (default)                                                                                                                                                        | Hardlink           | Conservative default for unknown subtrees                                 |
 
 For non-Unity engines, override the classifier with `canonicalCacheClassifier`:
 
@@ -392,10 +392,10 @@ For non-Unity engines, override the classifier with `canonicalCacheClassifier`:
   with:
     localCacheEnabled: true
     localCacheMode: canonical-overlay
-    canonicalCacheRoot: D:/CI/Canonical    # falls back to <localCacheRoot>/canonical
-    canonicalCacheVersionRetention: 2      # keep last 2 SHA versions per key
-    cacheMaterialize: prepared             # sub-second hydration
-    cacheSentinelCanary: true              # defense-in-depth
+    canonicalCacheRoot: D:/CI/Canonical # falls back to <localCacheRoot>/canonical
+    canonicalCacheVersionRetention: 2 # keep last 2 SHA versions per key
+    cacheMaterialize: prepared # sub-second hydration
+    cacheSentinelCanary: true # defense-in-depth
 ```
 
 ### Sub-second hydration with `prepared` materialize
@@ -417,28 +417,28 @@ through to live materialize.
 
 ### Failure modes and self-heal
 
-| Scenario | Behaviour |
-|---|---|
-| Cancel during canonical publish | Orphan `<sha>-staging/` directory; existing canonical version intact. Next build cleans up. |
-| Cancel during prepared overlay build | Orphan `<overlay>-prepared/` directory; harmless. Next build falls through to live materialize. |
-| Overlay missing or corrupt | `materializeOverlay` rebuilds deterministically from canonical. Idempotent. |
+| Scenario                                    | Behaviour                                                                                                 |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Cancel during canonical publish             | Orphan `<sha>-staging/` directory; existing canonical version intact. Next build cleans up.               |
+| Cancel during prepared overlay build        | Orphan `<overlay>-prepared/` directory; harmless. Next build falls through to live materialize.           |
+| Overlay missing or corrupt                  | `materializeOverlay` rebuilds deterministically from canonical. Idempotent.                               |
 | Canonical missing (host loss, disk failure) | Next successful build re-establishes canonical via `publishCanonical`. One cold path back to clean state. |
-| Sentinel canary mismatch (when enabled) | Overlay is discarded; falls through to live materialize. |
+| Sentinel canary mismatch (when enabled)     | Overlay is discarded; falls through to live materialize.                                                  |
 
 ### Cross-platform behaviour
 
 The strategy degrades gracefully when filesystems don't support hardlinks. Build never fails
 because of strategy unavailability.
 
-| OS / Filesystem | Behaviour |
-|---|---|
-| Windows NTFS | Full implementation — hardlinks for files, directory junctions for read-only subtrees |
-| Windows ReFS | Hardlinks work; reflinks (per-file COW) documented as future stretch |
-| Linux ext4 / xfs | Hardlinks work; junctions emulated via symlinks or per-runner copy |
-| Linux btrfs / zfs | Hardlinks work; reflinks (block-level COW) documented as future stretch |
-| macOS APFS | Hardlinks work; clonefile reflinks documented as future stretch |
+| OS / Filesystem             | Behaviour                                                                                       |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| Windows NTFS                | Full implementation — hardlinks for files, directory junctions for read-only subtrees           |
+| Windows ReFS                | Hardlinks work; reflinks (per-file COW) documented as future stretch                            |
+| Linux ext4 / xfs            | Hardlinks work; junctions emulated via symlinks or per-runner copy                              |
+| Linux btrfs / zfs           | Hardlinks work; reflinks (block-level COW) documented as future stretch                         |
+| macOS APFS                  | Hardlinks work; clonefile reflinks documented as future stretch                                 |
 | Containerised runs (Docker) | Falls back to `move-directory` — canonical store doesn't make sense across container boundaries |
-| Cross-volume runners | Falls back to `move-directory` — hardlinks can't cross drive letters / mount points |
+| Cross-volume runners        | Falls back to `move-directory` — hardlinks can't cross drive letters / mount points             |
 
 When falling back, a structured warning is emitted via `OrchestratorLogger`.
 
@@ -463,15 +463,15 @@ When falling back, a structured warning is emitted via `OrchestratorLogger`.
 
 ### Performance characteristics
 
-| Configuration | Materialize time on critical path |
-|---|---|
-| `tar` | Minutes for multi-GB archive + extract |
-| `copy-directory` | Minutes for multi-GB byte copy |
-| `move-directory` | Sub-second, but consume-once across runners |
-| `canonical-overlay`, eager materialize | 15-30 s for ~200k files (hardlinks only) |
-| `canonical-overlay`, eager + PackageCache junctions | 2-8 s |
-| `canonical-overlay`, prepared overlay (steady state) | < 1 s (atomic rename) |
-| `canonical-overlay`, prepared overlay (canonical changed) | 2-8 s (live materialize fallback) |
+| Configuration                                             | Materialize time on critical path           |
+| --------------------------------------------------------- | ------------------------------------------- |
+| `tar`                                                     | Minutes for multi-GB archive + extract      |
+| `copy-directory`                                          | Minutes for multi-GB byte copy              |
+| `move-directory`                                          | Sub-second, but consume-once across runners |
+| `canonical-overlay`, eager materialize                    | 15-30 s for ~200k files (hardlinks only)    |
+| `canonical-overlay`, eager + PackageCache junctions       | 2-8 s                                       |
+| `canonical-overlay`, prepared overlay (steady state)      | < 1 s (atomic rename)                       |
+| `canonical-overlay`, prepared overlay (canonical changed) | 2-8 s (live materialize fallback)           |
 
 ### Future strategies in this taxonomy
 
@@ -542,20 +542,20 @@ caching strategies above — fewer wasted builds means less cache churn.
 
 ## Inputs Reference
 
-| Input                            | Description                                                                                                                  |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `cacheKey`                       | Override the cache key used for cache isolation                                                                              |
-| `cacheCheckpointInterval`        | Minutes between Library checkpoints; `0` disables                                                                            |
-| `cacheSaveOnFailure`             | Save a partial cache after non-zero build exit                                                                               |
-| `cacheRetentionDays`             | Remove cache entries older than N days                                                                                       |
-| `maxRetainedWorkspaces`          | Number of retained full workspaces to keep                                                                                   |
-| `maxCacheEntries`                | Max tar snapshots to retain per cache folder (default: 2)                                                                    |
-| `minCacheEntries`                | Minimum cache entries to keep during age-based GC (floor)                                                                    |
-| `skipCache`                      | Skip cache restore entirely                                                                                                  |
-| `useCompressionStrategy`         | Use LZ4 compression for cache archives                                                                                       |
-| `localCacheMode`                 | One of `tar`, `move-directory`, `copy-directory`, `canonical-overlay`                                                        |
-| `canonicalCacheRoot`             | Path for the canonical store (when `localCacheMode: canonical-overlay`); falls back to `<localCacheRoot>/canonical`          |
-| `canonicalCacheClassifier`       | JSON describing per-subdirectory hardlink/junction/copy/skip strategy; defaults target Unity Library                         |
-| `canonicalCacheVersionRetention` | How many canonical SHA versions to keep per cache key (default: 2)                                                           |
-| `cacheMaterialize`               | `eager` (live materialize) or `prepared` (atomic-rename a pre-built overlay for sub-second hydration)                        |
-| `cacheSentinelCanary`            | Defense-in-depth corruption check; writes a known-content file into the overlay and verifies on consume                      |
+| Input                            | Description                                                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `cacheKey`                       | Override the cache key used for cache isolation                                                                     |
+| `cacheCheckpointInterval`        | Minutes between Library checkpoints; `0` disables                                                                   |
+| `cacheSaveOnFailure`             | Save a partial cache after non-zero build exit                                                                      |
+| `cacheRetentionDays`             | Remove cache entries older than N days                                                                              |
+| `maxRetainedWorkspaces`          | Number of retained full workspaces to keep                                                                          |
+| `maxCacheEntries`                | Max tar snapshots to retain per cache folder (default: 2)                                                           |
+| `minCacheEntries`                | Minimum cache entries to keep during age-based GC (floor)                                                           |
+| `skipCache`                      | Skip cache restore entirely                                                                                         |
+| `useCompressionStrategy`         | Use LZ4 compression for cache archives                                                                              |
+| `localCacheMode`                 | One of `tar`, `move-directory`, `copy-directory`, `canonical-overlay`                                               |
+| `canonicalCacheRoot`             | Path for the canonical store (when `localCacheMode: canonical-overlay`); falls back to `<localCacheRoot>/canonical` |
+| `canonicalCacheClassifier`       | JSON describing per-subdirectory hardlink/junction/copy/skip strategy; defaults target Unity Library                |
+| `canonicalCacheVersionRetention` | How many canonical SHA versions to keep per cache key (default: 2)                                                  |
+| `cacheMaterialize`               | `eager` (live materialize) or `prepared` (atomic-rename a pre-built overlay for sub-second hydration)               |
+| `cacheSentinelCanary`            | Defense-in-depth corruption check; writes a known-content file into the overlay and verifies on consume             |
