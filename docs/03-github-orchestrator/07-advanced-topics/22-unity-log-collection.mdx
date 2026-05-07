@@ -45,6 +45,59 @@ Result: a `unity-diagnostics` artifact containing one folder per category, plus 
 summarising what was found, what was missing, and where each file came from. Attach the artifact
 to your Unity support ticket.
 
+## Convenient API
+
+Two surfaces are available — pick whichever matches how you're driving the build.
+
+### `game-ci logs` CLI
+
+```bash
+# Run the collector against the local host (no orchestrate ceremony)
+game-ci logs collect --unityLogsOutputDir ./unity-bundle
+
+# Pick a subset of categories
+game-ci logs collect \
+  --unityLogCategories editor-log,licensing-client,entitlements-audit,services-config \
+  --unityLogsOutputDir ./unity-bundle
+
+# Live-tail Editor.log (Ctrl+C to stop)
+game-ci logs tail
+game-ci logs tail --streamUnityLogPaths /path/to/Editor.log,/path/to/Player.log
+
+# Reserved for the upcoming remote-provider exec / retroactive fetch
+game-ci logs pull   # not yet implemented — see roadmap
+game-ci logs fetch  # not yet implemented — see roadmap
+```
+
+The same `--collectUnityLogs` / `--streamUnityLogs` flags continue to work on `game-ci build` and
+`game-ci orchestrate` for end-to-end use during a build.
+
+### `Logs` programmatic API (Node / TypeScript)
+
+```ts
+import { Logs } from '@game-ci/orchestrator';
+
+// Collect everything Unity support typically asks for
+const result = await Logs.collect({
+  outputDir: './unity-support-bundle',
+});
+console.log(`${result.collected.length} item(s), manifest at ${result.manifestPath}`);
+
+// Live-tail Editor.log
+const tail = Logs.tail({ files: ['/github/workspace/Builds/Logs/Editor.log'] });
+// ...later
+tail.stop();
+
+// Introspect available categories (e.g. to populate a UI)
+for (const definition of Logs.categories()) {
+  console.log(definition.category, definition.description, definition.sensitive ?? false);
+}
+```
+
+For finer control the underlying services are exported too — `UnityLogCollectorService`,
+`UnityLogTailService`, and the `UNITY_LOG_PATHS` registry are all reachable from
+`@game-ci/orchestrator`.
+
 ## Pulling Logs Ad-Hoc Via the Local Provider
 
 You don't have to wire `collectUnityLogs` into the build step ahead of time. The Orchestrator's
