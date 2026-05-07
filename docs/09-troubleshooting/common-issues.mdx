@@ -486,6 +486,32 @@ engine and CI/CD:
 - Try to search for error keywords in your message such as `error`, `failed`, `exception`, etc.
 - Read the error message closely to understand what's going on.
 
+## Sending logs to Unity Support
+
+When Unity Support asks for `Editor.log`, `Unity.Licensing.Client.log`,
+`Unity.Entitlements.Audit.log`, `services-config.json`, or any of the other Unity-internal log
+files, set `collectUnityLogs: true` on the `unity-builder` (or `unity-orchestrator`) step. The
+Orchestrator will gather every requested file into `Logs/UnityDiagnostics/` at the end of the
+build, regardless of platform, and emit a `manifest.json` describing what was captured.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    collectUnityLogs: true
+    streamUnityLogs: true # optional — live tail Editor.log to GHA log
+
+- if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: unity-diagnostics
+    path: ${{ github.workspace }}/Logs/UnityDiagnostics/
+```
+
+Full list of categories, the per-platform path table, the live-streaming flag, and how to
+include sensitive files (license, etc.) is in
+[Unity Log Collection](/docs/github-orchestrator/advanced-topics/unity-log-collection).
+
 ## Still having problems?
 
 You can **search for existing issues**:
