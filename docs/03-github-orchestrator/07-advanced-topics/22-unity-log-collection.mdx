@@ -45,6 +45,48 @@ Result: a `unity-diagnostics` artifact containing one folder per category, plus 
 summarising what was found, what was missing, and where each file came from. Attach the artifact
 to your Unity support ticket.
 
+## Pulling Logs Ad-Hoc Via the Local Provider
+
+You don't have to wire `collectUnityLogs` into the build step ahead of time. The Orchestrator's
+**local provider** (`providerStrategy: local`) runs the same `UnityLogCollectorService` directly
+against the host, so you can SSH (or RDP) into a self-hosted runner *after* a failing job and pull
+every log Unity asks for in a single command — no workflow changes, no re-running the build.
+
+```bash
+# on the self-hosted runner, after the failing job
+game-ci orchestrate \
+  --providerStrategy local \
+  --collectUnityLogs \
+  --unityLogsOutputDir ./unity-support-bundle
+
+# → ./unity-support-bundle/manifest.json
+# → ./unity-support-bundle/editor-log/Editor.log
+# → ./unity-support-bundle/licensing-client/Unity.Licensing.Client.log
+# → ./unity-support-bundle/entitlements-audit/Unity.Entitlements.Audit.log
+# → ./unity-support-bundle/services-config/services-config.json
+# → ...
+```
+
+The collector reads from the canonical Unity paths
+(`%LOCALAPPDATA%\Unity\…`, `~/.config/unity3d/…`, `~/Library/Logs/Unity/…`,
+`/usr/share/unity3d/config/…`), so as long as the runner still has the files Unity wrote during
+the failing build, you can grab them retroactively without re-running anything. Useful when:
+
+- A CI run failed overnight and you want a Unity-support-ready bundle before the next build
+  rotates `Editor.log` to `Editor-prev.log`.
+- You need the licensing/audit logs from a specific runner but cannot edit the workflow file
+  (e.g. central platform team owns it).
+- You're debugging a hang and need to copy the in-progress `Editor.log` plus crash dump dir from
+  the live runner.
+
+The same `--unityLogCategories`, `--unityLogsIncludeSensitive`, and `--streamUnityLogs` flags work
+in this mode — the local provider is just a thin wrapper around the collector service.
+
+For runners you don't have shell access to, the upcoming `game-ci logs pull --providerStrategy
+<aws|k8s>` command will execute the collector inside the active pod / VM via the provider
+interface and stream the bundle back; until then, this local-provider recipe is the
+no-prior-opt-in escape hatch.
+
 ## What Gets Collected
 
 The default categories cover everything Unity support has historically requested. Sensitive
