@@ -1,0 +1,318 @@
+---
+sidebar_position: 22
+toc_max_heading_level: 4
+---
+
+# Unity Log Collection
+
+Unity support frequently asks for files that live **outside** the project workspace — `Editor.log`,
+`Unity.Licensing.Client.log`, `Unity.Entitlements.Audit.log`, `services-config.json`, Unity Hub
+logs, crash dumps, build reports, the Bee build pipeline log, IL2CPP output, and more. On a CI
+runner none of those land in the workspace by default, so they never make it into the artifact
+upload, and there is no convenient way to send them to Unity when a ticket is opened.
+
+The Orchestrator includes a built-in collector that gathers all of those files into a single
+`Logs/UnityDiagnostics/` directory at the end of every build. The same flag also turns the
+directory into an artifact so it shows up alongside the build output. A separate flag streams
+`Editor.log` live to the GitHub Actions log while the build runs.
+
+These features are **opt-in** and engine-aware: the Unity collector is the built-in, but the same
+plugin model that drives Godot and Unreal cache folders can register additional engine-specific
+diagnostic paths in the future.
+
+## Quick Start
+
+Add `collectUnityLogs: true` to your existing `unity-builder` (or `unity-orchestrator`) step.
+Everything else is automatic:
+
+```yaml
+- name: Build with Unity
+  uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    collectUnityLogs: true
+    streamUnityLogs: true # optional — live tail Editor.log to GHA log
+
+- name: Upload Unity diagnostic logs
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: unity-diagnostics
+    path: ${{ github.workspace }}/Logs/UnityDiagnostics/
+```
+
+Result: a `unity-diagnostics` artifact containing one folder per category, plus a `manifest.json`
+summarising what was found, what was missing, and where each file came from. Attach the artifact
+to your Unity support ticket.
+
+## Convenient API
+
+Two surfaces are available — pick whichever matches how you're driving the build.
+
+### `game-ci logs` CLI
+
+```bash
+# Run the collector against the local host (no orchestrate ceremony)
+game-ci logs collect --unityLogsOutputDir ./unity-bundle
+
+# Pick a subset of categories
+game-ci logs collect \
+  --unityLogCategories editor-log,licensing-client,entitlements-audit,services-config \
+  --unityLogsOutputDir ./unity-bundle
+
+# Live-tail Editor.log (Ctrl+C to stop)
+game-ci logs tail
+game-ci logs tail --streamUnityLogPaths /path/to/Editor.log,/path/to/Player.log
+
+# Reserved for the upcoming remote-provider exec / retroactive fetch
+game-ci logs pull   # not yet implemented — see roadmap
+game-ci logs fetch  # not yet implemented — see roadmap
+```
+
+The same `--collectUnityLogs` / `--streamUnityLogs` flags continue to work on `game-ci build` and
+`game-ci orchestrate` for end-to-end use during a build.
+
+### `Logs` programmatic API (Node / TypeScript)
+
+```ts
+import { Logs } from '@game-ci/orchestrator';
+
+// Collect everything Unity support typically asks for
+const result = await Logs.collect({
+  outputDir: './unity-support-bundle',
+});
+console.log(`${result.collected.length} item(s), manifest at ${result.manifestPath}`);
+
+// Live-tail Editor.log
+const tail = Logs.tail({ files: ['/github/workspace/Builds/Logs/Editor.log'] });
+// ...later
+tail.stop();
+
+// Introspect available categories (e.g. to populate a UI)
+for (const definition of Logs.categories()) {
+  console.log(definition.category, definition.description, definition.sensitive ?? false);
+}
+```
+
+For finer control the underlying services are exported too — `UnityLogCollectorService`,
+`UnityLogTailService`, and the `UNITY_LOG_PATHS` registry are all reachable from
+`@game-ci/orchestrator`.
+
+## Pulling Logs Ad-Hoc Via the Local Provider
+
+You don't have to wire `collectUnityLogs` into the build step ahead of time. The Orchestrator's
+**local provider** (`providerStrategy: local`) runs the same `UnityLogCollectorService` directly
+against the host, so you can SSH (or RDP) into a self-hosted runner _after_ a failing job and pull
+every log Unity asks for in a single command — no workflow changes, no re-running the build.
+
+```bash
+# on the self-hosted runner, after the failing job
+game-ci orchestrate \
+  --providerStrategy local \
+  --collectUnityLogs \
+  --unityLogsOutputDir ./unity-support-bundle
+
+# → ./unity-support-bundle/manifest.json
+# → ./unity-support-bundle/editor-log/Editor.log
+# → ./unity-support-bundle/licensing-client/Unity.Licensing.Client.log
+# → ./unity-support-bundle/entitlements-audit/Unity.Entitlements.Audit.log
+# → ./unity-support-bundle/services-config/services-config.json
+# → ...
+```
+
+The collector reads from the canonical Unity paths
+(`%LOCALAPPDATA%\Unity\…`, `~/.config/unity3d/…`, `~/Library/Logs/Unity/…`,
+`/usr/share/unity3d/config/…`), so as long as the runner still has the files Unity wrote during
+the failing build, you can grab them retroactively without re-running anything. Useful when:
+
+- A CI run failed overnight and you want a Unity-support-ready bundle before the next build
+  rotates `Editor.log` to `Editor-prev.log`.
+- You need the licensing/audit logs from a specific runner but cannot edit the workflow file
+  (e.g. central platform team owns it).
+- You're debugging a hang and need to copy the in-progress `Editor.log` plus crash dump dir from
+  the live runner.
+
+The same `--unityLogCategories`, `--unityLogsIncludeSensitive`, and `--streamUnityLogs` flags work
+in this mode — the local provider is just a thin wrapper around the collector service.
+
+For runners you don't have shell access to, the upcoming `game-ci logs pull --providerStrategy
+<aws|k8s>` command will execute the collector inside the active pod / VM via the provider
+interface and stream the bundle back; until then, this local-provider recipe is the
+no-prior-opt-in escape hatch.
+
+## What Gets Collected
+
+The default categories cover everything Unity support has historically requested. Sensitive
+categories such as `license-file` are **excluded** unless you opt in with
+`unityLogsIncludeSensitive: true`.
+
+| Category             | Description                                                             | Default  |
+| -------------------- | ----------------------------------------------------------------------- | -------- |
+| `editor-log`         | `Editor.log` — primary build/import/compile log                         | included |
+| `editor-prev-log`    | `Editor-prev.log` — previous run, rotated on next launch                | included |
+| `licensing-client`   | `Unity.Licensing.Client.log`                                            | included |
+| `entitlements-audit` | `Unity.Entitlements.Audit.log`                                          | included |
+| `services-config`    | `services-config.json` (license server / Hub config)                    | included |
+| `unity-hub-info`     | Unity Hub `info-log.json`                                               | included |
+| `unity-hub-error`    | Unity Hub `error-log.json`                                              | included |
+| `editor-crash`       | Editor crash dump directory                                             | included |
+| `build-report`       | `Library/LastBuild.buildreport` (binary; opens in Unity Build Profiler) | included |
+| `bee-backend`        | `Library/Bee/bee_backend.log` (incremental build pipeline)              | included |
+| `player-log`         | `Player.log` for the built player (when present)                        | included |
+| `test-results`       | Unity test runner XML (`TestResults/` and `test-results/`)              | included |
+| `il2cpp-output`      | `Temp/StagingArea/Data/il2cppOutput/` (generated C++)                   | included |
+| `project-version`    | `ProjectSettings/ProjectVersion.txt`                                    | included |
+| `package-manifest`   | `Packages/manifest.json` and `packages-lock.json`                       | included |
+| `macos-crash-report` | `~/Library/Logs/DiagnosticReports/Unity-*.crash`                        | included |
+| `windows-event-log`  | `Get-WinEvent -ProviderName 'Unity'` slice (200 lines)                  | included |
+| `license-file`       | `Unity_lic.ulf` — **SENSITIVE**, only with `unityLogsIncludeSensitive`  | excluded |
+
+To collect a subset only, pass a comma-separated list to `unityLogCategories`:
+
+```yaml
+with:
+  collectUnityLogs: true
+  unityLogCategories: editor-log,licensing-client,entitlements-audit,services-config
+```
+
+## Path Resolution
+
+The collector resolves paths per-platform and per-runner. The same flag works on Linux, macOS, and
+Windows runners with no further configuration.
+
+| Category             | Linux                                                  | macOS                                                            | Windows                                             |
+| -------------------- | ------------------------------------------------------ | ---------------------------------------------------------------- | --------------------------------------------------- |
+| `editor-log`         | `~/.config/unity3d/Editor.log`                         | `~/Library/Logs/Unity/Editor.log`                                | `%LOCALAPPDATA%\Unity\Editor\Editor.log`            |
+| `licensing-client`   | `~/.config/unity3d/Unity/Unity.Licensing.Client.log`   | `~/Library/Logs/Unity/Unity.Licensing.Client.log`                | `%LOCALAPPDATA%\Unity\Unity.Licensing.Client.log`   |
+| `entitlements-audit` | `~/.config/unity3d/Unity/Unity.Entitlements.Audit.log` | `~/Library/Logs/Unity/Unity.Entitlements.Audit.log`              | `%LOCALAPPDATA%\Unity\Unity.Entitlements.Audit.log` |
+| `services-config`    | `/usr/share/unity3d/config/services-config.json`       | `/Library/Application Support/Unity/config/services-config.json` | `%PROGRAMDATA%\Unity\config\services-config.json`   |
+| `unity-hub-*`        | `~/.config/UnityHub/logs/*.json`                       | `~/Library/Application Support/UnityHub/logs/*.json`             | `%APPDATA%\UnityHub\logs\*.json`                    |
+| `editor-crash`       | `~/.config/unity3d/Crashes`                            | `~/Library/Logs/Unity/Crashes`                                   | `%LOCALAPPDATA%\Unity\Editor\Crash`                 |
+| `build-report`       | `<project>/Library/LastBuild.buildreport`              | _same_                                                           | _same_                                              |
+| `bee-backend`        | `<project>/Library/Bee/bee_backend.log`                | _same_                                                           | _same_                                              |
+| `project-version`    | `<project>/ProjectSettings/ProjectVersion.txt`         | _same_                                                           | _same_                                              |
+| `package-manifest`   | `<project>/Packages/manifest.json`                     | _same_                                                           | _same_                                              |
+| `windows-event-log`  | _n/a_                                                  | _n/a_                                                            | `Get-WinEvent -ProviderName 'Unity'`                |
+| `macos-crash-report` | _n/a_                                                  | `~/Library/Logs/DiagnosticReports/Unity-*.crash`                 | _n/a_                                               |
+
+For Linux **container** builds, the workspace-relative paths (`build-report`, `bee-backend`,
+`project-version`, `package-manifest`, `test-results`, `il2cpp-output`) are always available
+because they live inside the mounted project directory. For the host-side categories that live
+under `/root/.config/unity3d/` inside the container, the container exit script copies them to
+`<workspace>/Logs/UnityDiagnostics/<category>/` before the container exits, so they are available
+on the host for the artifact upload step.
+
+## Live Log Streaming
+
+`streamUnityLogs: true` tails Unity's `-logFile` output during the build and forwards each new
+line to the GHA log. This is useful for long builds where you want to watch compile progress
+without waiting for the build to finish, and for debugging hangs where the build never produces a
+final log dump.
+
+```yaml
+with:
+  collectUnityLogs: true
+  streamUnityLogs: true
+  streamUnityLogPaths: '' # optional comma-separated override
+```
+
+By default the orchestrator tails:
+
+- `<project>/Builds/Logs/Editor.log` — what `unity-builder` configures via `-logFile`
+- `<project>/Logs/UnityDiagnostics/editor-log/Editor.log` — once the post-build copy lands
+
+A 5 MB per-file cap prevents runaway log spam in pathological cases. Each emitted line is prefixed
+with `[UnityLogs] Editor.log:` so the streamed lines stay greppable in a busy GHA log.
+
+## Inputs
+
+These inputs are accepted by `game-ci/unity-builder` (which forwards to the Orchestrator plugin)
+and by `game-ci/unity-orchestrator` directly. They also work as `--collectUnityLogs` etc. flags on
+the standalone `game-ci` CLI.
+
+| Input                       | Default | Description                                              |
+| --------------------------- | ------- | -------------------------------------------------------- |
+| `collectUnityLogs`          | `false` | Enable post-build collection.                            |
+| `collectUnityLogsOnSuccess` | `true`  | When false, only collect on non-zero exit codes.         |
+| `unityLogCategories`        | _all_   | Comma-separated subset of categories.                    |
+| `unityLogsIncludeSensitive` | `false` | Include sensitive categories such as `license-file`.     |
+| `unityLogsOutputDir`        | _auto_  | Override the artifact directory.                         |
+| `streamUnityLogs`           | `false` | Live-tail Unity log files during the build.              |
+| `streamUnityLogPaths`       | _auto_  | Comma-separated files to live-tail (overrides defaults). |
+
+## Outputs
+
+After the build, the Orchestrator emits two GitHub Actions outputs:
+
+| Output              | Description                                                        |
+| ------------------- | ------------------------------------------------------------------ |
+| `unityLogsPath`     | Absolute path to the collected directory.                          |
+| `unityLogsManifest` | Path to the manifest JSON describing every collected/missing item. |
+
+```yaml
+- id: build
+  uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    collectUnityLogs: true
+
+- name: Print log path
+  run: echo "Logs at ${{ steps.build.outputs.unityLogsPath }}"
+```
+
+A typical `manifest.json`:
+
+```json
+{
+  "generatedAt": "2026-05-07T18:42:13.014Z",
+  "platform": "linux",
+  "workspace": "/github/workspace",
+  "projectPath": "/github/workspace/MyProject",
+  "includeSensitive": false,
+  "collected": [
+    {
+      "category": "editor-log",
+      "description": "Unity Editor.log — primary build/import/compile log",
+      "source": "/github/workspace/Logs/UnityDiagnostics/editor-log/Editor.log",
+      "destination": "editor-log/Editor.log",
+      "bytes": 1843291,
+      "isDirectory": false
+    }
+  ],
+  "missing": [{ "category": "macos-crash-report", "expectedPaths": [] }],
+  "totalBytes": 2148102
+}
+```
+
+## Sending Logs to Unity Support
+
+1. Enable `collectUnityLogs: true` (and optionally `streamUnityLogs: true`) on the failing run.
+2. Re-run the workflow.
+3. Download the `unity-diagnostics` artifact from the run summary page.
+4. Attach the **whole zip** to the Unity ticket. The `manifest.json` tells the support engineer
+   which files were captured and which categories were unavailable on that runner.
+
+## Sensitive Files
+
+The default list explicitly excludes the `Unity_lic.ulf` license file and any other category
+marked `sensitive`. License files contain the activation token for your seat — uploading them to a
+public CI artifact is equivalent to publishing your license. The collector logs a warning and
+skips the category unless you set `unityLogsIncludeSensitive: true`.
+
+If you must collect a license file (for a private support escalation), set the flag, run the
+workflow, **download the artifact, delete it from GitHub immediately**, then disable the flag
+again. Treat the artifact like a credential.
+
+## Multi-Engine Note
+
+Engine plugins for Godot, Unreal, and custom engines plug into the same lifecycle. Today only the
+Unity collector ships in-tree; the path registry is engine-scoped, so a future Unreal plugin can
+register `Saved/Logs/<project>.log`, `Intermediate/BuildRules/`, and similar in the same way. The
+flags (`collectUnityLogs`, `streamUnityLogs`) keep their Unity-prefixed names for backwards
+compatibility — engine-agnostic equivalents will be added when a second engine collector lands.
+
+## See Also
+
+- [Failures and Diagnostics](./21-failures-and-diagnostics.mdx) — the wider failure-handling model
+- [Build Reliability](./17-build-reliability.mdx) — retry, recovery, and crash classification
+- [Engine Plugins](./18-engine-plugins.mdx) — how non-Unity engines plug in
