@@ -25,6 +25,10 @@ game-ci build-unity-image ubuntu windows-mono,linux-il2cpp \
   --unity-version 2022.3.20f1 \
   --tag ghcr.io/my-org/unity-editor:desktop \
   --push
+
+# Build a Windows-based editor image
+game-ci build-unity-image windows windows-mono,mac-mono \
+  --unity-version 2022.3.20f1
 ```
 
 ## Usage
@@ -50,6 +54,9 @@ game-ci build-unity-image [baseOs] [modules] [options]
 | `--push`          | `false`            | Push image to registry after building     |
 | `--hub-image`     | `unityci/hub`      | Hub base image                            |
 | `--base-image`    | `unityci/base`     | Editor base image                         |
+
+The CLI also supports `baseOs=windows`. When you select `windows`, the command uses the Windows
+Hub and base image defaults unless you override them with `--hub-image` and `--base-image`.
 
 ### Available Modules
 
@@ -133,6 +140,7 @@ Then in your build workflow:
 | Name              | Modules                              | Use case                         |
 | ----------------- | ------------------------------------ | -------------------------------- |
 | Desktop           | `windows-mono,linux-il2cpp,mac-mono` | Wwise/FMOD, Steam multi-platform |
+| Windows desktop   | `windows-mono,mac-mono`              | Windows-hosted plugin workflows  |
 | Desktop + Android | `windows-mono,linux-il2cpp,android`  | Meta Quest + PC VR               |
 | Mobile            | `android,ios`                        | Multi-platform mobile            |
 
