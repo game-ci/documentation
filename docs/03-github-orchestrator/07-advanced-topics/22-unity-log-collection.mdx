@@ -102,7 +102,7 @@ For finer control the underlying services are exported too — `UnityLogCollecto
 
 You don't have to wire `collectUnityLogs` into the build step ahead of time. The Orchestrator's
 **local provider** (`providerStrategy: local`) runs the same `UnityLogCollectorService` directly
-against the host, so you can SSH (or RDP) into a self-hosted runner *after* a failing job and pull
+against the host, so you can SSH (or RDP) into a self-hosted runner _after_ a failing job and pull
 every log Unity asks for in a single command — no workflow changes, no re-running the build.
 
 ```bash
@@ -146,26 +146,26 @@ The default categories cover everything Unity support has historically requested
 categories such as `license-file` are **excluded** unless you opt in with
 `unityLogsIncludeSensitive: true`.
 
-| Category              | Description                                            | Default   |
-| --------------------- | ------------------------------------------------------ | --------- |
-| `editor-log`          | `Editor.log` — primary build/import/compile log        | included  |
-| `editor-prev-log`     | `Editor-prev.log` — previous run, rotated on next launch | included  |
-| `licensing-client`    | `Unity.Licensing.Client.log`                           | included  |
-| `entitlements-audit`  | `Unity.Entitlements.Audit.log`                         | included  |
-| `services-config`     | `services-config.json` (license server / Hub config)   | included  |
-| `unity-hub-info`      | Unity Hub `info-log.json`                              | included  |
-| `unity-hub-error`     | Unity Hub `error-log.json`                             | included  |
-| `editor-crash`        | Editor crash dump directory                            | included  |
-| `build-report`        | `Library/LastBuild.buildreport` (binary; opens in Unity Build Profiler) | included |
-| `bee-backend`         | `Library/Bee/bee_backend.log` (incremental build pipeline) | included  |
-| `player-log`          | `Player.log` for the built player (when present)       | included  |
-| `test-results`        | Unity test runner XML (`TestResults/` and `test-results/`) | included |
-| `il2cpp-output`       | `Temp/StagingArea/Data/il2cppOutput/` (generated C++)  | included  |
-| `project-version`     | `ProjectSettings/ProjectVersion.txt`                   | included  |
-| `package-manifest`    | `Packages/manifest.json` and `packages-lock.json`      | included  |
-| `macos-crash-report`  | `~/Library/Logs/DiagnosticReports/Unity-*.crash`       | included  |
-| `windows-event-log`   | `Get-WinEvent -ProviderName 'Unity'` slice (200 lines) | included  |
-| `license-file`        | `Unity_lic.ulf` — **SENSITIVE**, only with `unityLogsIncludeSensitive` | excluded |
+| Category             | Description                                                             | Default  |
+| -------------------- | ----------------------------------------------------------------------- | -------- |
+| `editor-log`         | `Editor.log` — primary build/import/compile log                         | included |
+| `editor-prev-log`    | `Editor-prev.log` — previous run, rotated on next launch                | included |
+| `licensing-client`   | `Unity.Licensing.Client.log`                                            | included |
+| `entitlements-audit` | `Unity.Entitlements.Audit.log`                                          | included |
+| `services-config`    | `services-config.json` (license server / Hub config)                    | included |
+| `unity-hub-info`     | Unity Hub `info-log.json`                                               | included |
+| `unity-hub-error`    | Unity Hub `error-log.json`                                              | included |
+| `editor-crash`       | Editor crash dump directory                                             | included |
+| `build-report`       | `Library/LastBuild.buildreport` (binary; opens in Unity Build Profiler) | included |
+| `bee-backend`        | `Library/Bee/bee_backend.log` (incremental build pipeline)              | included |
+| `player-log`         | `Player.log` for the built player (when present)                        | included |
+| `test-results`       | Unity test runner XML (`TestResults/` and `test-results/`)              | included |
+| `il2cpp-output`      | `Temp/StagingArea/Data/il2cppOutput/` (generated C++)                   | included |
+| `project-version`    | `ProjectSettings/ProjectVersion.txt`                                    | included |
+| `package-manifest`   | `Packages/manifest.json` and `packages-lock.json`                       | included |
+| `macos-crash-report` | `~/Library/Logs/DiagnosticReports/Unity-*.crash`                        | included |
+| `windows-event-log`  | `Get-WinEvent -ProviderName 'Unity'` slice (200 lines)                  | included |
+| `license-file`       | `Unity_lic.ulf` — **SENSITIVE**, only with `unityLogsIncludeSensitive`  | excluded |
 
 To collect a subset only, pass a comma-separated list to `unityLogCategories`:
 
@@ -180,20 +180,20 @@ with:
 The collector resolves paths per-platform and per-runner. The same flag works on Linux, macOS, and
 Windows runners with no further configuration.
 
-| Category             | Linux                                              | macOS                                                       | Windows                                       |
-| -------------------- | -------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------- |
-| `editor-log`         | `~/.config/unity3d/Editor.log`                     | `~/Library/Logs/Unity/Editor.log`                            | `%LOCALAPPDATA%\Unity\Editor\Editor.log`      |
-| `licensing-client`   | `~/.config/unity3d/Unity/Unity.Licensing.Client.log` | `~/Library/Logs/Unity/Unity.Licensing.Client.log`          | `%LOCALAPPDATA%\Unity\Unity.Licensing.Client.log` |
-| `entitlements-audit` | `~/.config/unity3d/Unity/Unity.Entitlements.Audit.log` | `~/Library/Logs/Unity/Unity.Entitlements.Audit.log`     | `%LOCALAPPDATA%\Unity\Unity.Entitlements.Audit.log` |
-| `services-config`    | `/usr/share/unity3d/config/services-config.json`   | `/Library/Application Support/Unity/config/services-config.json` | `%PROGRAMDATA%\Unity\config\services-config.json` |
-| `unity-hub-*`        | `~/.config/UnityHub/logs/*.json`                   | `~/Library/Application Support/UnityHub/logs/*.json`        | `%APPDATA%\UnityHub\logs\*.json`              |
-| `editor-crash`       | `~/.config/unity3d/Crashes`                        | `~/Library/Logs/Unity/Crashes`                              | `%LOCALAPPDATA%\Unity\Editor\Crash`           |
-| `build-report`       | `<project>/Library/LastBuild.buildreport`          | _same_                                                      | _same_                                         |
-| `bee-backend`        | `<project>/Library/Bee/bee_backend.log`            | _same_                                                      | _same_                                         |
-| `project-version`    | `<project>/ProjectSettings/ProjectVersion.txt`     | _same_                                                      | _same_                                         |
-| `package-manifest`   | `<project>/Packages/manifest.json`                 | _same_                                                      | _same_                                         |
-| `windows-event-log`  | _n/a_                                              | _n/a_                                                       | `Get-WinEvent -ProviderName 'Unity'`          |
-| `macos-crash-report` | _n/a_                                              | `~/Library/Logs/DiagnosticReports/Unity-*.crash`            | _n/a_                                          |
+| Category             | Linux                                                  | macOS                                                            | Windows                                             |
+| -------------------- | ------------------------------------------------------ | ---------------------------------------------------------------- | --------------------------------------------------- |
+| `editor-log`         | `~/.config/unity3d/Editor.log`                         | `~/Library/Logs/Unity/Editor.log`                                | `%LOCALAPPDATA%\Unity\Editor\Editor.log`            |
+| `licensing-client`   | `~/.config/unity3d/Unity/Unity.Licensing.Client.log`   | `~/Library/Logs/Unity/Unity.Licensing.Client.log`                | `%LOCALAPPDATA%\Unity\Unity.Licensing.Client.log`   |
+| `entitlements-audit` | `~/.config/unity3d/Unity/Unity.Entitlements.Audit.log` | `~/Library/Logs/Unity/Unity.Entitlements.Audit.log`              | `%LOCALAPPDATA%\Unity\Unity.Entitlements.Audit.log` |
+| `services-config`    | `/usr/share/unity3d/config/services-config.json`       | `/Library/Application Support/Unity/config/services-config.json` | `%PROGRAMDATA%\Unity\config\services-config.json`   |
+| `unity-hub-*`        | `~/.config/UnityHub/logs/*.json`                       | `~/Library/Application Support/UnityHub/logs/*.json`             | `%APPDATA%\UnityHub\logs\*.json`                    |
+| `editor-crash`       | `~/.config/unity3d/Crashes`                            | `~/Library/Logs/Unity/Crashes`                                   | `%LOCALAPPDATA%\Unity\Editor\Crash`                 |
+| `build-report`       | `<project>/Library/LastBuild.buildreport`              | _same_                                                           | _same_                                              |
+| `bee-backend`        | `<project>/Library/Bee/bee_backend.log`                | _same_                                                           | _same_                                              |
+| `project-version`    | `<project>/ProjectSettings/ProjectVersion.txt`         | _same_                                                           | _same_                                              |
+| `package-manifest`   | `<project>/Packages/manifest.json`                     | _same_                                                           | _same_                                              |
+| `windows-event-log`  | _n/a_                                                  | _n/a_                                                            | `Get-WinEvent -ProviderName 'Unity'`                |
+| `macos-crash-report` | _n/a_                                                  | `~/Library/Logs/DiagnosticReports/Unity-*.crash`                 | _n/a_                                               |
 
 For Linux **container** builds, the workspace-relative paths (`build-report`, `bee-backend`,
 `project-version`, `package-manifest`, `test-results`, `il2cpp-output`) are always available
@@ -230,24 +230,24 @@ These inputs are accepted by `game-ci/unity-builder` (which forwards to the Orch
 and by `game-ci/unity-orchestrator` directly. They also work as `--collectUnityLogs` etc. flags on
 the standalone `game-ci` CLI.
 
-| Input                       | Default | Description                                                   |
-| --------------------------- | ------- | ------------------------------------------------------------- |
-| `collectUnityLogs`          | `false` | Enable post-build collection.                                 |
-| `collectUnityLogsOnSuccess` | `true`  | When false, only collect on non-zero exit codes.              |
-| `unityLogCategories`        | _all_   | Comma-separated subset of categories.                         |
-| `unityLogsIncludeSensitive` | `false` | Include sensitive categories such as `license-file`.          |
-| `unityLogsOutputDir`        | _auto_  | Override the artifact directory.                              |
-| `streamUnityLogs`           | `false` | Live-tail Unity log files during the build.                   |
-| `streamUnityLogPaths`       | _auto_  | Comma-separated files to live-tail (overrides defaults).      |
+| Input                       | Default | Description                                              |
+| --------------------------- | ------- | -------------------------------------------------------- |
+| `collectUnityLogs`          | `false` | Enable post-build collection.                            |
+| `collectUnityLogsOnSuccess` | `true`  | When false, only collect on non-zero exit codes.         |
+| `unityLogCategories`        | _all_   | Comma-separated subset of categories.                    |
+| `unityLogsIncludeSensitive` | `false` | Include sensitive categories such as `license-file`.     |
+| `unityLogsOutputDir`        | _auto_  | Override the artifact directory.                         |
+| `streamUnityLogs`           | `false` | Live-tail Unity log files during the build.              |
+| `streamUnityLogPaths`       | _auto_  | Comma-separated files to live-tail (overrides defaults). |
 
 ## Outputs
 
 After the build, the Orchestrator emits two GitHub Actions outputs:
 
-| Output                | Description                                                        |
-| --------------------- | ------------------------------------------------------------------ |
-| `unityLogsPath`       | Absolute path to the collected directory.                          |
-| `unityLogsManifest`   | Path to the manifest JSON describing every collected/missing item. |
+| Output              | Description                                                        |
+| ------------------- | ------------------------------------------------------------------ |
+| `unityLogsPath`     | Absolute path to the collected directory.                          |
+| `unityLogsManifest` | Path to the manifest JSON describing every collected/missing item. |
 
 ```yaml
 - id: build
@@ -279,9 +279,7 @@ A typical `manifest.json`:
       "isDirectory": false
     }
   ],
-  "missing": [
-    { "category": "macos-crash-report", "expectedPaths": [] }
-  ],
+  "missing": [{ "category": "macos-crash-report", "expectedPaths": [] }],
   "totalBytes": 2148102
 }
 ```
