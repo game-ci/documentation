@@ -27,9 +27,13 @@ deploy software without having to manually intervene each time there is a change
 
 ## What game engines are supported?
 
-Right now, GameCI only supports **[Unity](https://unity3d.com/)**. We see a bright future with
-GameCI's integration with other game engines or simply put, building a community of people who are
-interested in automation around game development.
+GameCI's primary, maintained built-in package is for **[Unity](https://unity3d.com/)**. That is the
+most mature path today, with official containers, GitHub Actions, licensing flows, build targets,
+and documentation.
+
+The broader GameCI CLI and Orchestrator architecture is game-engine agnostic. It includes built-in
+engine configurations beyond Unity, and the plugin API can integrate additional game engines as
+providers without changing the core workflow model.
 
 ### Recommendations for other game engines
 
@@ -91,8 +95,9 @@ but we might not have official support for it. Your best bet is to translate the
 desired CI/CD service provider. Caution: if this is your first time using GameCI, you might want to
 try officially supported services first. The easiest one is Github Actions.
 
-We are also working on a **GameCI for Unity CLI** which will make it easier to integrate with any
-CI/CD service. See our [Roadmap v3.0.0](https://github.com/orgs/game-ci/projects/4).
+The **GameCI CLI** also makes it easier to integrate game builds with any CI/CD service. Unity is
+the primary built-in package, with built-in configurations for other engines and a plugin API for
+adding new engine providers. See our [Roadmap v3.0.0](https://github.com/orgs/game-ci/projects/4).
 
 ### Azure devOps
 
@@ -292,10 +297,10 @@ practice and automation. You can find a list of our contributors on
 
 The core maintainers of GameCI are:
 
-- [Gabriel "GabLeRoux" Le Breton](https://gableroux.com), founder of GameCI, Co-owner at
-  [Totema Studio](https://totemastudio.com), full time dev at [TLM](https://tlmgo.com/) and lecturer
-  at [UQAC](https://uqac.ca/).
-- [Dick "Webber" Webbink](https://takken.io/), founder of GameCI and Senior Software Engineer at
+- [Gabriel "GabLeRoux" Le Breton](https://gableroux.com), founder of GameCI, President at
+  [Tobafeu Studio](https://tobafeustudio.com), full time dev at [TLM](https://tlmgo.com/) and former
+  lecturer at [UQAC](https://uqac.ca/).
+- [Webber Webbink](https://takken.io/), founder of GameCI and Senior Software Engineer at
   [Just Eat Takeaway.com](https://www.justeattakeaway.com/).
 - [Markus "Fisher" Dugdale](https://www.linkedin.com/in/markus-dugdale-136112136/) Lead game
   developer [@bossastudios](https://www.bossastudios.com/), former product manager @unity3d, arma

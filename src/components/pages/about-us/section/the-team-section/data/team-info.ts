@@ -7,7 +7,7 @@ import { Continent } from './continent';
 
 export const webber = {
   nick: 'Webber',
-  name: 'Dick Webbink',
+  name: 'Webber Webbink',
   title: 'Founder',
   image: webberPicture,
   continent: Continent.Europe,

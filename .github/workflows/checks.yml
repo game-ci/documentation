@@ -1,4 +1,4 @@
-name: 👩‍💻
+name: "\U0001F469‍\U0001F4BB"
 
 on:
   push: { branches: [main] }
@@ -10,45 +10,201 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read Node version from mise.toml
+        id: node
+        run: echo "version=$(grep -E '^node\\s*=' mise.toml | sed -E 's/.*"([^"]+)".*/\\1/')" >>
+          "$GITHUB_OUTPUT"
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'yarn'
-      - run: yarn
-      - run: yarn verify:formatting
+          node-version: ${{ steps.node.outputs.version }}
+      - name: Resolve yarn cache folder
+        id: yarn-config
+        run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+      - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+          restore-keys: |
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-
+      - name: Install deps
+        env:
+          YARN_ENABLE_HARDENED_MODE: 'false'
+        run: |
+          case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
+          yarn install --immutable
+      - run: yarn format:check
   codeStyles:
     name: Code styles
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read Node version from mise.toml
+        id: node
+        run: echo "version=$(grep -E '^node\\s*=' mise.toml | sed -E 's/.*"([^"]+)".*/\\1/')" >>
+          "$GITHUB_OUTPUT"
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'yarn'
-      - run: yarn
-      - run: yarn verify:code-styles
+          node-version: ${{ steps.node.outputs.version }}
+      - name: Resolve yarn cache folder
+        id: yarn-config
+        run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+      - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+          restore-keys: |
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-
+      - name: Install deps
+        env:
+          YARN_ENABLE_HARDENED_MODE: 'false'
+        run: |
+          case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
+          yarn install --immutable
+      - run: yarn lint
   types:
     name: Types check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read Node version from mise.toml
+        id: node
+        run: echo "version=$(grep -E '^node\\s*=' mise.toml | sed -E 's/.*"([^"]+)".*/\\1/')" >>
+          "$GITHUB_OUTPUT"
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'yarn'
-      - run: yarn
+          node-version: ${{ steps.node.outputs.version }}
+      - name: Resolve yarn cache folder
+        id: yarn-config
+        run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+      - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+          restore-keys: |
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-
+      - name: Install deps
+        env:
+          YARN_ENABLE_HARDENED_MODE: 'false'
+        run: |
+          case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
+          yarn install --immutable
       - run: yarn typecheck
   tests:
     name: Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read Node version from mise.toml
+        id: node
+        run: echo "version=$(grep -E '^node\\s*=' mise.toml | sed -E 's/.*"([^"]+)".*/\\1/')" >>
+          "$GITHUB_OUTPUT"
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'yarn'
-      - run: yarn
+          node-version: ${{ steps.node.outputs.version }}
+      - name: Resolve yarn cache folder
+        id: yarn-config
+        run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+      - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+          restore-keys: |
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-
+      - name: Install deps
+        env:
+          YARN_ENABLE_HARDENED_MODE: 'false'
+        run: |
+          case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
+          yarn install --immutable
       - run: yarn test --coverage
       - run: bash <(curl -s https://codecov.io/bash)
         env:
           CODECOV_TOKEN: '2f2eb890-30e2-4724-83eb-7633832cf0de'
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Node version from mise.toml
+        id: node
+        run: echo "version=$(grep -E '^node\\s*=' mise.toml | sed -E 's/.*"([^"]+)".*/\\1/')" >>
+          "$GITHUB_OUTPUT"
+      - name: Install package manager (from package.json)
+        run: |
+          corepack enable
+          corepack install
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node.outputs.version }}
+      - name: Resolve yarn cache folder
+        id: yarn-config
+        run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+      - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+          restore-keys: |
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-
+      - name: Install deps
+        env:
+          YARN_ENABLE_HARDENED_MODE: 'false'
+        run: |
+          case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
+          yarn install --immutable
+      - run: yarn build
+      - run: npx playwright install --with-deps chromium
+      - run: yarn test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14

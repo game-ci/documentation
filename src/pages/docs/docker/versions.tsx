@@ -5,7 +5,6 @@ import { useColorMode } from '@docusaurus/theme-common';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Versions from '@site/src/components/docs/versions/versions';
 import Section from '@site/src/components/pages/home/section/section';
-import styles from '@site/src/components/pages/home/section/section.module.scss';
 
 function VersionsAntdWrapper() {
   const antdCss = 'https://unpkg.com/antd/dist/antd.css';
@@ -50,7 +49,7 @@ export default function VersionsPage(): React.JSX.Element {
       description="Docker images versions"
     >
       <main style={{ minHeight: '100vh' }}>
-        <Section className={styles.versionsSection}>
+        <Section className="!min-h-screen !justify-start">
           <BrowserOnly fallback={<div>Loading...</div>}>
             {() => <VersionsAntdWrapper />}
           </BrowserOnly>

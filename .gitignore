@@ -3,10 +3,19 @@
 # Dependencies
 /node_modules
 /.pnp
-.pnp.js
+.pnp.*
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/sdks
+!**/.yarn/versions
 
 # Testing
 /coverage
+/test-results
+/playwright-report
+**/*-snapshots/
 
 # Production
 /build

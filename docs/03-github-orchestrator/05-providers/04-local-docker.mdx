@@ -1,0 +1,47 @@
+# Local Docker
+
+Runs the build workflow inside a Docker container on the local machine. No cloud account required.
+
+## Requirements
+
+- Docker installed and running on the build machine.
+
+## Example Workflow
+
+### GitHub Actions (self-hosted runner)
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local-docker
+    targetPlatform: StandaloneLinux64
+    gitPrivateToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Command Line
+
+```bash
+yarn run cli -m cli-build \
+  --providerStrategy local-docker \
+  --projectPath /path/to/your/project \
+  --targetPlatform StandaloneLinux64
+```
+
+## Config File Injection
+
+Inject config files into the Docker container workspace using `configFiles`. Files are written to
+`game-ci-config/` in the workspace before the container starts:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: local-docker
+    configFiles: |
+      {"settings.json": "{\"quality\": \"high\"}"}
+```
+
+## When to Use
+
+- You have a self-hosted runner with Docker installed
+- You want container isolation without cloud infrastructure
+- Testing builds locally before deploying to AWS or Kubernetes

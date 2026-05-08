@@ -1,0 +1,92 @@
+# Custom LFS Agents
+
+Orchestrator supports custom Git LFS transfer agents - external executables that handle LFS upload
+and download instead of the default HTTPS transport.
+
+## elastic-git-storage (Built-in)
+
+[elastic-git-storage](https://github.com/frostebite/elastic-git-storage) is a custom Git LFS
+transfer agent with first-class support in Orchestrator. It supports multiple storage backends:
+local filesystem, WebDAV, and rclone remotes.
+
+When you set `lfsTransferAgent: elastic-git-storage`, Orchestrator will:
+
+1. Search PATH and known locations for an existing installation
+2. If not found, download the correct platform binary from GitHub releases
+3. Configure it as the standalone LFS transfer agent via `git config`
+
+### Basic Usage
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+    lfsTransferAgent: elastic-git-storage
+    lfsStoragePaths: '/mnt/lfs-cache'
+```
+
+### Version Pinning
+
+Append `@version` to pin a specific release:
+
+```yaml
+lfsTransferAgent: elastic-git-storage@v1.0.0
+```
+
+Without a version suffix, the latest release is downloaded.
+
+### Multiple Storage Backends
+
+`lfsStoragePaths` accepts semicolon-separated paths. The agent tries each in order:
+
+```yaml
+lfsStoragePaths: '/mnt/fast-ssd;webdav://lfs.example.com/storage;rclone://remote:lfs-bucket'
+```
+
+### Agent Arguments
+
+Pass additional flags via `lfsTransferAgentArgs`:
+
+```yaml
+lfsTransferAgent: elastic-git-storage
+lfsTransferAgentArgs: '--verbose --concurrency 4'
+lfsStoragePaths: '/mnt/lfs-cache'
+```
+
+## Custom Agents
+
+Any Git LFS custom transfer agent can be used. Provide the path to the executable:
+
+```yaml
+lfsTransferAgent: /usr/local/bin/lfs-folderstore
+lfsTransferAgentArgs: '-dir /mnt/lfs-store'
+```
+
+Orchestrator configures the agent via:
+
+```
+git config lfs.customtransfer.<name>.path <executable>
+git config lfs.customtransfer.<name>.args <args>
+git config lfs.standalonetransferagent <name>
+```
+
+The agent name is derived from the executable filename (without extension).
+
+## Storage Paths
+
+The `lfsStoragePaths` input sets the `LFS_STORAGE_PATHS` environment variable. How these paths are
+interpreted depends on the agent:
+
+| Agent               | Path format                                        |
+| ------------------- | -------------------------------------------------- |
+| elastic-git-storage | Local paths, `webdav://` URLs, `rclone://` remotes |
+| lfs-folderstore     | Local directory paths                              |
+| Custom              | Agent-specific                                     |
+
+## Inputs Reference
+
+| Input                  | Description                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| `lfsTransferAgent`     | Agent name (e.g., `elastic-git-storage`) or path to executable. Append `@version` for release pinning. |
+| `lfsTransferAgentArgs` | Additional arguments passed to the agent                                                               |
+| `lfsStoragePaths`      | Semicolon-separated storage paths (set as `LFS_STORAGE_PATHS` env var)                                 |

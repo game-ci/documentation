@@ -6,6 +6,11 @@ with blender assets. Sometimes, you'll need some specific command lines or runti
 unity in a _postprocess_ step. This documentation will guide you into building your own images on
 top of the existing ones to add your desired tools.
 
+If you only need multiple Unity modules in one editor image, prefer
+[`game-ci build-unity-image`](/docs/docker/custom-images) instead of maintaining a custom
+Dockerfile. Keep this guide for extra operating-system tools or project-specific dependencies that
+are not part of Unity's module installer.
+
 ## Example: Add Ruby to existing images
 
 In the following example, we will be adding `Ruby` on top of the existing docker images (all unity

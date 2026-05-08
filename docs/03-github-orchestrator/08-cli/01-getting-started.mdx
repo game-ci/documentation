@@ -1,0 +1,108 @@
+---
+sidebar_position: 1
+---
+
+# Standalone Orchestrator CLI
+
+The standalone Orchestrator CLI is an advanced entry point for running Orchestrator directly. It is
+useful for provider development, debugging, and environments that need the orchestration backend
+without installing the public `game-ci` CLI.
+
+Most users should use the public [GameCI CLI](/docs/cli). The public CLI exposes the higher-level
+user API and can load Orchestrator as a provider plugin. The standalone Orchestrator binary also
+uses the executable name `game-ci`, but it exposes a different command surface.
+
+## When To Use It
+
+| Use case                                    | Entry point                                        |
+| ------------------------------------------- | -------------------------------------------------- |
+| General local or CI commands                | [GameCI CLI](/docs/cli)                            |
+| Provider-backed jobs through a friendly CLI | `game-ci orchestrate` with the Orchestrator plugin |
+| GitHub Actions Unity builds                 | `game-ci/unity-builder@v4`                         |
+| Provider protocol development or debugging  | Standalone Orchestrator CLI                        |
+
+## Command Surface
+
+| Standalone command          | Purpose                                                                     |
+| --------------------------- | --------------------------------------------------------------------------- |
+| `game-ci orchestrate`       | Full direct Orchestrator provider command for remote, Docker, or host runs. |
+| `game-ci build`             | Narrow remote build shortcut for Orchestrator-compatible parameters.        |
+| `game-ci orchestrate cache` | Cache inspection helpers under the direct Orchestrator command.             |
+| `game-ci serve`             | JSON provider protocol mode used by executable provider integrations.       |
+| `game-ci activate`          | Unity license preflight helper.                                             |
+| `game-ci status`            | Local environment diagnostics.                                              |
+| `game-ci version`           | Print standalone Orchestrator CLI version information.                      |
+| `game-ci update`            | Update the standalone Orchestrator binary.                                  |
+
+The public CLI commands `game-ci orchestrate` and `game-ci test` are not standalone Orchestrator
+commands, even though standalone Orchestrator also exposes an `orchestrate` verb. Use the public CLI
+when you want the higher-level command model and plugin loading behavior.
+
+## Command Surface
+
+| Standalone command          | Purpose                                                                     |
+| --------------------------- | --------------------------------------------------------------------------- |
+| `game-ci orchestrate`       | Full direct Orchestrator provider command for remote, Docker, or host runs. |
+| `game-ci build`             | Narrow remote build shortcut for Orchestrator-compatible parameters.        |
+| `game-ci orchestrate cache` | Cache inspection helpers under the direct Orchestrator command.             |
+| `game-ci serve`             | JSON provider protocol mode used by executable provider integrations.       |
+| `game-ci activate`          | Unity license preflight helper.                                             |
+| `game-ci status`            | Local environment diagnostics.                                              |
+| `game-ci version`           | Print standalone Orchestrator CLI version information.                      |
+| `game-ci update`            | Update the standalone Orchestrator binary.                                  |
+
+The public CLI commands `game-ci remote run` and `game-ci test` are not standalone Orchestrator
+commands. Use the public CLI when you want that higher-level command model.
+
+## Install
+
+### Linux / macOS
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/game-ci/orchestrator/main/install.sh | sh
+```
+
+### Windows PowerShell
+
+```powershell
+irm https://raw.githubusercontent.com/game-ci/orchestrator/main/install.ps1 | iex
+```
+
+Pre-built binaries are available on the
+[Orchestrator releases](https://github.com/game-ci/orchestrator/releases) page.
+
+## Example
+
+```bash
+game-ci orchestrate \
+  --target-platform StandaloneLinux64 \
+  --provider-strategy aws
+```
+
+This command talks directly to the Orchestrator package. The public CLI equivalent is:
+
+```bash
+game-ci \
+  --plugin @game-ci/orchestrator-plugin \
+  orchestrate ./my-project \
+  --provider-strategy aws \
+  --target-platform StandaloneLinux64
+```
+
+## Relationship To Unity Builder
+
+When you use `game-ci/unity-builder@v4` with `providerStrategy`, unity-builder loads Orchestrator as
+an optional plugin. You do not need to install the standalone Orchestrator CLI in that path.
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    providerStrategy: aws
+    targetPlatform: StandaloneLinux64
+```
+
+## Next Steps
+
+- [Public GameCI CLI](/docs/cli)
+- [Provider Types](../providers/overview)
+- [CLI provider protocol](../providers/cli-provider-protocol)

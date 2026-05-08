@@ -1,0 +1,181 @@
+---
+sidebar_position: 5
+---
+
+# Custom Images
+
+Build Unity editor Docker images with custom module combinations using the GameCI CLI.
+
+## Why Custom Images?
+
+The pre-built `unityci/editor` images ship with a single module per image (e.g. `android`, `windows-mono`, `linux-il2cpp`). Some projects need multiple modules installed together — for example, when third-party packages like **Wwise** or **FMOD** include native plugins for multiple platforms that Unity resolves during the import phase.
+
+## Quick Start
+
+```bash
+# Install the CLI
+curl -fsSL https://raw.githubusercontent.com/game-ci/cli/main/install.sh | sh
+
+# Build a desktop combo image (Windows + Linux IL2CPP + Mac)
+game-ci build-unity-image ubuntu windows-mono,linux-il2cpp,mac-mono \
+  --unity-version 2022.3.20f1
+
+# Build and push to your registry
+game-ci build-unity-image ubuntu windows-mono,linux-il2cpp \
+  --unity-version 2022.3.20f1 \
+  --tag ghcr.io/my-org/unity-editor:desktop \
+  --push
+
+# Build a Windows-based editor image
+game-ci build-unity-image windows windows-mono,mac-mono \
+  --unity-version 2022.3.20f1
+```
+
+## Usage
+
+```
+game-ci build-unity-image [baseOs] [modules] [options]
+```
+
+### Positional Arguments
+
+| Argument  | Default  | Description                                   |
+| --------- | -------- | --------------------------------------------- |
+| `baseOs`  | `ubuntu` | Base operating system (`ubuntu` or `windows`) |
+| `modules` | `base`   | Comma-separated Unity modules to install      |
+
+### Options
+
+| Flag              | Default            | Description                               |
+| ----------------- | ------------------ | ----------------------------------------- |
+| `--unity-version` | _(required)_       | Unity editor version (e.g. `2022.3.20f1`) |
+| `--changeset`     | _(auto-resolved)_  | Unity changeset hash                      |
+| `--tag`           | _(auto-generated)_ | Docker image tag                          |
+| `--push`          | `false`            | Push image to registry after building     |
+| `--hub-image`     | `unityci/hub`      | Hub base image                            |
+| `--base-image`    | `unityci/base`     | Editor base image                         |
+
+The CLI also supports `baseOs=windows`. When you select `windows`, the command uses the Windows
+Hub and base image defaults unless you override them with `--hub-image` and `--base-image`.
+
+### Available Modules
+
+| Module         | Description                       |
+| -------------- | --------------------------------- |
+| `base`         | Editor only (Linux Mono built-in) |
+| `linux-il2cpp` | Linux IL2CPP build support        |
+| `windows-mono` | Windows Mono build support        |
+| `mac-mono`     | macOS Mono build support          |
+| `ios`          | iOS build support                 |
+| `android`      | Android build support             |
+| `webgl`        | WebGL build support               |
+
+## GitHub Actions Example
+
+### Build-and-use locally (no registry needed)
+
+Most projects don't need to publish their Unity editor image — build it as a CI step, tag
+it locally, and reference that local tag in the same job. The image lives only in the
+runner's Docker daemon for the lifetime of the job:
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GameCI CLI
+        run: curl -fsSL https://raw.githubusercontent.com/game-ci/cli/main/install.sh | sh
+
+      - name: Build custom Unity image
+        run: |
+          game-ci build-unity-image ubuntu windows-mono,linux-il2cpp \
+            --unity-version 2022.3.20f1 \
+            --tag unity-editor:desktop
+
+      - uses: game-ci/unity-builder@v4
+        with:
+          customImage: unity-editor:desktop
+          targetPlatform: StandaloneWindows64
+```
+
+No GHCR account, no `docker login`, no pushed bytes. The image never leaves the runner.
+
+#### Build cost and caching
+
+The CLI invokes `docker build` directly. Image build time is dominated by Unity Hub
+installing the editor and modules — expect 15-30 minutes for typical desktop combos. On
+GitHub-hosted runners that work is repeated every job because the runner (and its Docker
+daemon) is destroyed at the end of each run.
+
+If that rebuild cost is acceptable for your cadence, you're done. Otherwise pick one of:
+
+| Strategy                       | What you set up                                                                | Best for                                         |
+| ------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------ |
+| **Self-hosted runner**         | A persistent runner whose Docker daemon retains layers between jobs            | Teams already running self-hosted infrastructure |
+| **Push once, pull thereafter** | Build the image in a scheduled workflow, push to GHCR, pull in build workflows | Stable module combos used by many runs           |
+| **Buildx + GHA cache backend** | Wrap the build with `docker/setup-buildx-action` and a cache-aware build step  | Frequent module/version churn on hosted runners  |
+
+The push-once strategy is covered below. For self-hosted runner caching, see the
+[orchestrator caching guide](/docs/github-orchestrator/advanced-topics/caching).
+
+### Pre-built (push once, pull forever)
+
+When the same image is used across many workflows, repos, or runs, push it to a registry
+once and reference it everywhere:
+
+```yaml
+# Run once (or on a schedule)
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install GameCI CLI
+        run: curl -fsSL https://raw.githubusercontent.com/game-ci/cli/main/install.sh | sh
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        run: |
+          game-ci build-unity-image ubuntu windows-mono,linux-il2cpp \
+            --unity-version 2022.3.20f1 \
+            --tag ghcr.io/${{ github.repository_owner }}/unity-editor:desktop \
+            --push
+```
+
+Then in your build workflow:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    customImage: ghcr.io/my-org/unity-editor:desktop
+    targetPlatform: StandaloneWindows64
+```
+
+## Common Combinations
+
+| Name              | Modules                              | Use case                         |
+| ----------------- | ------------------------------------ | -------------------------------- |
+| Desktop           | `windows-mono,linux-il2cpp,mac-mono` | Wwise/FMOD, Steam multi-platform |
+| Windows desktop   | `windows-mono,mac-mono`              | Windows-hosted plugin workflows  |
+| Desktop + Android | `windows-mono,linux-il2cpp,android`  | Meta Quest + PC VR               |
+| Mobile            | `android,ios`                        | Multi-platform mobile            |
+
+## How It Works
+
+The CLI generates a Dockerfile that mirrors the [game-ci/docker](https://github.com/game-ci/docker)
+build pipeline, including all version-specific patches:
+
+- Android SDK setup (2018.x legacy through 6000+)
+- IL2CPP build tool fixes (2019.3.x)
+- WebGL dependencies (python2, ffmpeg, brotli, build-essential)
+- Mac-mono symlink fixes (2021-2022)
+- Server module auto-installation (2021.2.5+)
+
+The generated image is identical to what `game-ci/docker` CI produces.

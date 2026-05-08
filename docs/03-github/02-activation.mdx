@@ -37,7 +37,6 @@ Follow these steps if you are using the free version of Unity.
 2. **Log in to Unity Hub**: Use the Unity account linked to your CI setup to log in. Ensure you're
    using the correct account to activate the intended license.
 3. **Activate Your License**: Manually activate by navigating to:
-
    - `Unity Hub` > `Preferences` > `Licenses` and click the `Add` button
    - Select **Get a free personal license**.
 
@@ -54,13 +53,11 @@ Follow these steps if you are using the free version of Unity.
 
 4. **Locate the `.ulf` file**: Depending on your operating system, the Unity license file will be
    located in one of these paths:
-
    - Windows: `C:\ProgramData\Unity\Unity_lic.ulf`
    - Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
    - Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
 
    If you have trouble locating the `.ulf` file, follow these steps:
-
    - **Check activation**: Ensure you’ve logged into Unity Hub and completed the step "3. Activate
      Your License".
    - **Reveal hidden files**: These folders may be hidden by default, so enable the option to view
@@ -72,7 +69,6 @@ Follow these steps if you are using the free version of Unity.
 
 5. **Add Secrets to GitHub**: Navigate to `GitHub` > `<Your repository>` > `Settings` >
    `Secrets and Variables` > `Actions`. Then, create the following secrets:
-
    - **`UNITY_LICENSE`**: Copy and paste the contents of your `.ulf` license file
    - **`UNITY_EMAIL`**: Enter the email address associated with your Unity account
    - **`UNITY_PASSWORD`**: Enter the password for your Unity account
