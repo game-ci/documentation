@@ -98,7 +98,7 @@ const buildDiagnosticsPrompt = (
     `Investigate GameCI queue blockage for Docker repo version ${selectedRepoVersion}.`,
     '',
     'Scope notes:',
-    '- Job counts below are GLOBAL — queueStatus returns jobs across all repo versions.',
+    '- Job counts below are GLOBAL - queueStatus returns jobs across all repo versions.',
     `- Build counts below are SCOPED to repo version ${selectedRepoVersion}.`,
     '',
     'Summary:',
@@ -114,7 +114,10 @@ const buildDiagnosticsPrompt = (
 
   if (diagnostics.staleFailedJobs.length > 0) {
     const total = diagnostics.staleFailedJobs.length;
-    const label = total > 10 ? `Older-version failed jobs: (showing first 10 of ${total})` : 'Older-version failed jobs:';
+    const label =
+      total > 10
+        ? `Older-version failed jobs: (showing first 10 of ${total})`
+        : 'Older-version failed jobs:';
     lines.push('', label);
     diagnostics.staleFailedJobs.slice(0, 10).forEach((job) => {
       lines.push(`- ${job.jobId} (repo ${job.jobRepoVersion})`);
@@ -123,7 +126,10 @@ const buildDiagnosticsPrompt = (
 
   if (diagnostics.staleCreatedJobs.length > 0) {
     const total = diagnostics.staleCreatedJobs.length;
-    const label = total > 10 ? `Older-version created jobs: (showing first 10 of ${total})` : 'Older-version created jobs:';
+    const label =
+      total > 10
+        ? `Older-version created jobs: (showing first 10 of ${total})`
+        : 'Older-version created jobs:';
     lines.push('', label);
     diagnostics.staleCreatedJobs.slice(0, 10).forEach((job) => {
       lines.push(`- ${job.jobId} (repo ${job.jobRepoVersion})`);
@@ -132,7 +138,10 @@ const buildDiagnosticsPrompt = (
 
   if (diagnostics.repoDriftBuilds.length > 0) {
     const total = diagnostics.repoDriftBuilds.length;
-    const label = total > 10 ? `Repo-version drift builds: (showing first 10 of ${total})` : 'Repo-version drift builds:';
+    const label =
+      total > 10
+        ? `Repo-version drift builds: (showing first 10 of ${total})`
+        : 'Repo-version drift builds:';
     lines.push('', label);
     diagnostics.repoDriftBuilds.slice(0, 10).forEach((build) => {
       lines.push(
@@ -143,7 +152,10 @@ const buildDiagnosticsPrompt = (
 
   if (diagnostics.failedWithDockerInfo.length > 0) {
     const total = diagnostics.failedWithDockerInfo.length;
-    const label = total > 10 ? `Failed builds that already have Docker metadata: (showing first 10 of ${total})` : 'Failed builds that already have Docker metadata:';
+    const label =
+      total > 10
+        ? `Failed builds that already have Docker metadata: (showing first 10 of ${total})`
+        : 'Failed builds that already have Docker metadata:';
     lines.push('', label);
     diagnostics.failedWithDockerInfo.slice(0, 10).forEach((build) => {
       lines.push(`- ${build.buildId} (digest ${build.dockerInfo?.digest || 'n/a'})`);
