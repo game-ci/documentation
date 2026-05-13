@@ -97,33 +97,43 @@ const buildDiagnosticsPrompt = (
   const lines = [
     `Investigate GameCI queue blockage for Docker repo version ${selectedRepoVersion}.`,
     '',
+    'Scope notes:',
+    '- Job counts below are GLOBAL — queueStatus returns jobs across all repo versions.',
+    `- Build counts below are SCOPED to repo version ${selectedRepoVersion}.`,
+    '',
     'Summary:',
-    `- Total jobs returned: ${diagnostics.totals.jobs}`,
-    `- Total builds returned for selected repo version: ${diagnostics.totals.builds}`,
-    `- Failed editor jobs: ${diagnostics.totals.failedJobs}`,
-    `- Created editor jobs: ${diagnostics.totals.createdJobs}`,
+    `- Total jobs returned (global): ${diagnostics.totals.jobs}`,
+    `- Total builds returned (repo ${selectedRepoVersion}): ${diagnostics.totals.builds}`,
+    `- Failed editor jobs (global): ${diagnostics.totals.failedJobs}`,
+    `- Created editor jobs (global): ${diagnostics.totals.createdJobs}`,
     `- Older-version failed jobs: ${diagnostics.staleFailedJobs.length}`,
     `- Older-version created jobs: ${diagnostics.staleCreatedJobs.length}`,
-    `- Repo-version drift builds: ${diagnostics.repoDriftBuilds.length}`,
+    `- Repo-version drift builds (build repo == ${selectedRepoVersion}, job repo != ${selectedRepoVersion}): ${diagnostics.repoDriftBuilds.length}`,
     `- Failed builds with Docker metadata: ${diagnostics.failedWithDockerInfo.length}`,
   ];
 
   if (diagnostics.staleFailedJobs.length > 0) {
-    lines.push('', 'Older-version failed jobs:');
+    const total = diagnostics.staleFailedJobs.length;
+    const label = total > 10 ? `Older-version failed jobs: (showing first 10 of ${total})` : 'Older-version failed jobs:';
+    lines.push('', label);
     diagnostics.staleFailedJobs.slice(0, 10).forEach((job) => {
       lines.push(`- ${job.jobId} (repo ${job.jobRepoVersion})`);
     });
   }
 
   if (diagnostics.staleCreatedJobs.length > 0) {
-    lines.push('', 'Older-version created jobs:');
+    const total = diagnostics.staleCreatedJobs.length;
+    const label = total > 10 ? `Older-version created jobs: (showing first 10 of ${total})` : 'Older-version created jobs:';
+    lines.push('', label);
     diagnostics.staleCreatedJobs.slice(0, 10).forEach((job) => {
       lines.push(`- ${job.jobId} (repo ${job.jobRepoVersion})`);
     });
   }
 
   if (diagnostics.repoDriftBuilds.length > 0) {
-    lines.push('', 'Repo-version drift builds:');
+    const total = diagnostics.repoDriftBuilds.length;
+    const label = total > 10 ? `Repo-version drift builds: (showing first 10 of ${total})` : 'Repo-version drift builds:';
+    lines.push('', label);
     diagnostics.repoDriftBuilds.slice(0, 10).forEach((build) => {
       lines.push(
         `- ${build.buildId} linked to ${build.relatedJobId} (job repo ${build.jobRepoVersion}, build repo ${build.buildInfo.repoVersion})`,
@@ -132,7 +142,9 @@ const buildDiagnosticsPrompt = (
   }
 
   if (diagnostics.failedWithDockerInfo.length > 0) {
-    lines.push('', 'Failed builds that already have Docker metadata:');
+    const total = diagnostics.failedWithDockerInfo.length;
+    const label = total > 10 ? `Failed builds that already have Docker metadata: (showing first 10 of ${total})` : 'Failed builds that already have Docker metadata:';
+    lines.push('', label);
     diagnostics.failedWithDockerInfo.slice(0, 10).forEach((build) => {
       lines.push(`- ${build.buildId} (digest ${build.dockerInfo?.digest || 'n/a'})`);
     });
