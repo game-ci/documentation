@@ -301,16 +301,261 @@ preserve asset imports (textures, meshes, shader cache), which are profile-indep
 See [Self-Hosting and Orchestrator](self-hosting-and-orchestrator#profile-switching) for the
 fingerprinting pattern.
 
+## Canonical Cache + Overlay (Advanced)
+
+For studios running multiple self-hosted runners on the same physical host with multi-GB Library
+folders, the existing `localCacheMode` values trade off in known ways:
+
+- `tar` — pays archive + extract on every restore.
+- `move-directory` — instant atomic same-volume rename, but **consume-once**: only one runner
+  takes the cache; the next runner cold-starts.
+- `copy-directory` — multi-runner-safe, but pays full byte-copy cost on every restore. For a
+  30 GB Library folder this is minutes per build.
+
+The opt-in `canonical-overlay` mode combines the multi-runner safety of `copy-directory` with the
+zero-copy speed of `move-directory`. The pattern is well-known from VFSForGit, Scalar, the Nix
+store, and Bazel CAS: write the cache **once** to a content-addressed canonical store, and per-
+runner overlays consume it via OS-native hardlinks (NTFS on Windows, ext4/xfs/btrfs/zfs on Linux).
+
+### When to use it
+
+- Multiple self-hosted runners share the same physical host and filesystem.
+- Library folder is multi-GB; per-restore copy or extract is unacceptably slow.
+- Cancel-in-progress is foundational (CI cancels mid-flight pushes regularly), so the cache must
+  survive SIGKILL of the publishing job without corruption.
+
+### Architecture
+
+```
+<canonicalRoot>/<cacheKey>/
+    Library/
+        <sha-A>/             # canonical version A (hardlinked into runner overlays)
+        <sha-B>/             # canonical version B (current)
+        latest -> <sha-B>    # directory junction / symlink
+
+<runner workspace>/Library/
+    <files>                  # hardlinks pointing at canonical bytes
+```
+
+The canonical store is written **atomically** by `Publish-Canonical`:
+
+1. Walk the runner's freshly-built Library; hardlink files into `<sha-B>-staging/`.
+2. Write `.cache_complete` marker into the staging directory.
+3. Atomic rename `<sha-B>-staging/` → `<sha-B>/`. This is the publish moment.
+4. Atomic update of the `latest` pointer.
+
+If PostUnityJob is cancelled mid-publish (SIGKILL during the staging walk), the rename never
+happens. The orphan staging directory is harmless and gets cleaned up by the next build. The
+existing canonical version and `latest` pointer are intact.
+
+When PreUnityJob runs on any runner, `Materialize-Overlay` reads the `latest` pointer and creates
+hardlinks from canonical into a per-runner overlay directory. Hardlink creation is one syscall per
+file (~0.1 ms on Windows). For a Library with 200,000 files, materialization is ~20 s — orders of
+magnitude faster than copying multi-GB content.
+
+### Hardlink safety contract
+
+Not every Library subdirectory is safe to hardlink. The invariant: hardlink is safe only if the
+writer uses **write-temp-then-rename**, not in-place modification. In-place modification would
+write through the hardlink to canonical bytes, corrupting the canonical store for every consumer.
+
+The default classifier targets Unity's Library structure:
+
+| Subdirectory                                                                                                                                                     | Strategy           | Why                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------- |
+| `PackageCache/<package>@<hash>/`                                                                                                                                 | Directory junction | Unity treats packages as immutable; new version = new `@<hash>` directory |
+| `ScriptAssemblies/`, `Artifacts/`, `BurstCache/`, `Bee/artifacts/`, `MetadataGenerator/`, `ShaderCache/`, `StateCache/`, `UIBuilder/`, `HDRPLibrary/`            | Hardlink           | Roslyn, Bee, AssetDatabase v2 all use write-temp-then-rename              |
+| `PackageManager/projectResolution.json`, `PackageManager/ProjectCache`, `Bee/*.dag`, `Bee/*.dag.outputdata`, `Bee/*-inputdata.json`, `LastSceneManagerSetup.txt` | Per-runner copy    | Contain absolute workspace paths; need cross-runner repair                |
+| `AnnotationManager`, `EditorOnly`, `EditorUserBuildSettings.asset`, `EditorUserSettings.asset`, `CurrentLayout-*.dwlt`                                           | Skip               | Editor session state; not part of the build cache                         |
+| (default)                                                                                                                                                        | Hardlink           | Conservative default for unknown subtrees                                 |
+
+For non-Unity engines, override the classifier with `canonicalCacheClassifier`:
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    localCacheMode: canonical-overlay
+    canonicalCacheClassifier: |
+      {
+        "default": "hardlink",
+        "rules": [
+          { "pattern": "imported/**", "strategy": "junction" },
+          { "pattern": "session/**", "strategy": "skip" }
+        ]
+      }
+```
+
+### Configuration
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    localCacheEnabled: true
+    localCacheMode: canonical-overlay
+    canonicalCacheRoot: D:/CI/Canonical # falls back to <localCacheRoot>/canonical
+    canonicalCacheVersionRetention: 2 # keep last 2 SHA versions per key
+    cacheMaterialize: prepared # sub-second hydration
+    cacheSentinelCanary: true # defense-in-depth
+```
+
+### Sub-second hydration with `prepared` materialize
+
+Eager materialize (the default for `canonical-overlay`) creates the overlay during PreUnityJob,
+on the build's critical path. For a 200k-file Library this is ~20 s.
+
+`cacheMaterialize: prepared` shifts the overlay creation off the critical path entirely. After a
+successful build:
+
+1. PostUnityJob publishes the canonical version.
+2. PostUnityJob then hardlink-clones the canonical into `<overlay>-prepared/`.
+3. The next PreUnityJob detects the prepared overlay, atomic-renames it into place, and starts
+   the build immediately.
+
+Sub-second hydration in the steady state. If the prepared overlay's SHA doesn't match the current
+canonical's `latest` SHA (a different runner published a newer version in between), it falls
+through to live materialize.
+
+### Failure modes and self-heal
+
+| Scenario                                    | Behaviour                                                                                                 |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Cancel during canonical publish             | Orphan `<sha>-staging/` directory; existing canonical version intact. Next build cleans up.               |
+| Cancel during prepared overlay build        | Orphan `<overlay>-prepared/` directory; harmless. Next build falls through to live materialize.           |
+| Overlay missing or corrupt                  | `materializeOverlay` rebuilds deterministically from canonical. Idempotent.                               |
+| Canonical missing (host loss, disk failure) | Next successful build re-establishes canonical via `publishCanonical`. One cold path back to clean state. |
+| Sentinel canary mismatch (when enabled)     | Overlay is discarded; falls through to live materialize.                                                  |
+
+### Cross-platform behaviour
+
+The strategy degrades gracefully when filesystems don't support hardlinks. Build never fails
+because of strategy unavailability.
+
+| OS / Filesystem             | Behaviour                                                                                       |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| Windows NTFS                | Full implementation — hardlinks for files, directory junctions for read-only subtrees           |
+| Windows ReFS                | Hardlinks work; reflinks (per-file COW) documented as future stretch                            |
+| Linux ext4 / xfs            | Hardlinks work; junctions emulated via symlinks or per-runner copy                              |
+| Linux btrfs / zfs           | Hardlinks work; reflinks (block-level COW) documented as future stretch                         |
+| macOS APFS                  | Hardlinks work; clonefile reflinks documented as future stretch                                 |
+| Containerised runs (Docker) | Falls back to `move-directory` — canonical store doesn't make sense across container boundaries |
+| Cross-volume runners        | Falls back to `move-directory` — hardlinks can't cross drive letters / mount points             |
+
+When falling back, a structured warning is emitted via `OrchestratorLogger`.
+
+### Limitations
+
+1. **Single-host topology only.** All runners must share one filesystem. Multi-host CI farms need
+   different infrastructure (S3/MinIO via the existing `storageProvider` rclone path, or planned
+   future strategies — see "Future strategies" below).
+2. **NTFS, ext4, xfs needed for full benefit.** ReFS, btrfs, zfs, APFS work via hardlinks but
+   reflink-aware variants (per-file copy-on-write — strictly better) are documented as future
+   stretch options.
+3. **`Remove-Item -Recurse` on junctions has historically been unsafe in some PowerShell
+   versions.** The implementation uses `cmd /c rmdir /s /q` for junction-safe directory removal
+   on Windows.
+4. **1023 hardlinks per inode on NTFS.** Not a practical constraint at typical fleet sizes;
+   `canonicalCacheVersionRetention: 2` (default) limits inode-link count.
+5. **Modify-in-place writes propagate to canonical bytes.** Mitigated by the classifier audit
+   above. Unknown subtrees default to hardlink (conservative for read-mostly use); the
+   `cacheSentinelCanary` flag provides defense-in-depth.
+6. **Tested at scale on Windows NTFS in a 10-runner farm.** The Linux hardlink path lands with
+   platform-gated tests but has not been validated at multi-GB scale yet.
+
+### Performance characteristics
+
+| Configuration                                             | Materialize time on critical path           |
+| --------------------------------------------------------- | ------------------------------------------- |
+| `tar`                                                     | Minutes for multi-GB archive + extract      |
+| `copy-directory`                                          | Minutes for multi-GB byte copy              |
+| `move-directory`                                          | Sub-second, but consume-once across runners |
+| `canonical-overlay`, eager materialize                    | 15-30 s for ~200k files (hardlinks only)    |
+| `canonical-overlay`, eager + PackageCache junctions       | 2-8 s                                       |
+| `canonical-overlay`, prepared overlay (steady state)      | < 1 s (atomic rename)                       |
+| `canonical-overlay`, prepared overlay (canonical changed) | 2-8 s (live materialize fallback)           |
+
+### Future strategies in this taxonomy
+
+The `localCacheMode` value space is extensible. Future strategies expected to follow the same
+shape (none implemented yet — RFC welcome):
+
+- **`reflink-overlay`** — block-level copy-on-write via Linux btrfs/xfs/zfs reflinks, macOS
+  APFS clonefile, or Windows ReFS. Equivalent to `canonical-overlay` but per-file COW (no
+  modify-in-place footgun).
+- **`bind-mount`** — read-only bind mount of canonical with overlayfs (Linux) or junction-based
+  Windows variants for filesystems that don't support fine-grained hardlinks.
+- **`nfs-passthrough`** — single-source-of-truth pattern; treat a network mount as canonical and
+  skip the publish step entirely. Trades network read latency for zero local disk usage.
+
+## Self-Hosted Operational Lessons
+
+The following operational lessons apply when running orchestrator on long-lived self-hosted
+runners. They surface symptoms that ephemeral runners never encounter.
+
+### PackageCache subtree corruption from cross-runner restore
+
+When `Library/PackageCache/<package>@<hash>/` is partially populated (an interrupted copy or
+extract), the directory may contain `.meta` files with no associated content files. Unity treats
+this as a hard error and aborts the import.
+
+Detect orphan-meta directories before Unity launches. Quarantine the affected package
+directories and let Unity re-extract them from the package's source on the next import.
+
+### PowerShell forward-reference bug masking real test failures
+
+In PowerShell scripts orchestrating Unity (a common pattern for `remote-powershell` provider
+jobs), calling a function before its definition silently fails in non-strict mode. The
+downstream error surfaces as the failure, hiding the real cause.
+
+Either set `Set-StrictMode -Version Latest` at the top of build scripts, or order helper
+function definitions before any code that calls them. This is especially important when scripts
+grow over time and developers add new top-level orchestration that calls helpers defined later
+in the same file.
+
+### GitHub Actions runner `_runner_file_commands` race
+
+When multiple steps in the same job emit `core.setOutput` concurrently (fan-out steps merging
+results back into the runner-level outputs file), they race on the shared
+`_runner_file_commands` runner-temp file. Symptom: outputs appear empty or corrupted, with no
+clear error.
+
+Serialise output-emitting steps. If a job needs to emit several outputs from parallel
+sub-jobs, collect them into a single output-emitting step at the end.
+
+### Path-filter on the workflow entrypoint to skip docs-only commits
+
+Docs-only pushes (markdown changes, README updates) shouldn't trigger Unity CI runs. A
+`paths-ignore` block on the workflow entrypoint prevents the orchestrator pipeline from
+spending build minutes on commits that can't change build output:
+
+```yaml
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.txt'
+```
+
+This is a workflow-level concern, not an orchestrator setting, but it pairs naturally with the
+caching strategies above — fewer wasted builds means less cache churn.
+
 ## Inputs Reference
 
-| Input                     | Description                                               |
-| ------------------------- | --------------------------------------------------------- |
-| `cacheKey`                | Override the cache key used for cache isolation           |
-| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables         |
-| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit            |
-| `cacheRetentionDays`      | Remove cache entries older than N days                    |
-| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep                |
-| `maxCacheEntries`         | Max tar snapshots to retain per cache folder (default: 2) |
-| `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor) |
-| `skipCache`               | Skip cache restore entirely                               |
-| `useCompressionStrategy`  | Use LZ4 compression for cache archives                    |
+| Input                            | Description                                                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `cacheKey`                       | Override the cache key used for cache isolation                                                                     |
+| `cacheCheckpointInterval`        | Minutes between Library checkpoints; `0` disables                                                                   |
+| `cacheSaveOnFailure`             | Save a partial cache after non-zero build exit                                                                      |
+| `cacheRetentionDays`             | Remove cache entries older than N days                                                                              |
+| `maxRetainedWorkspaces`          | Number of retained full workspaces to keep                                                                          |
+| `maxCacheEntries`                | Max tar snapshots to retain per cache folder (default: 2)                                                           |
+| `minCacheEntries`                | Minimum cache entries to keep during age-based GC (floor)                                                           |
+| `skipCache`                      | Skip cache restore entirely                                                                                         |
+| `useCompressionStrategy`         | Use LZ4 compression for cache archives                                                                              |
+| `localCacheMode`                 | One of `tar`, `move-directory`, `copy-directory`, `canonical-overlay`                                               |
+| `canonicalCacheRoot`             | Path for the canonical store (when `localCacheMode: canonical-overlay`); falls back to `<localCacheRoot>/canonical` |
+| `canonicalCacheClassifier`       | JSON describing per-subdirectory hardlink/junction/copy/skip strategy; defaults target Unity Library                |
+| `canonicalCacheVersionRetention` | How many canonical SHA versions to keep per cache key (default: 2)                                                  |
+| `cacheMaterialize`               | `eager` (live materialize) or `prepared` (atomic-rename a pre-built overlay for sub-second hydration)               |
+| `cacheSentinelCanary`            | Defense-in-depth corruption check; writes a known-content file into the overlay and verifies on consume             |

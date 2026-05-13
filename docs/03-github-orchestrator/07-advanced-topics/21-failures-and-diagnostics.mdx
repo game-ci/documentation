@@ -294,7 +294,11 @@ When a failure lands in EXIT_NEG1 or GENERIC, manual investigation is required. 
 service cannot classify what it cannot match. Follow this sequence:
 
 1. **Pull the actual Unity Editor log** — CI wrapper output is a summary. The real failure details
-   are in `Editor.log` on the runner or in the provider's build container.
+   are in `Editor.log` on the runner or in the provider's build container. The
+   [Unity Log Collection](./22-unity-log-collection.mdx) feature pulls `Editor.log`,
+   `Unity.Licensing.Client.log`, `Unity.Entitlements.Audit.log`, `services-config.json`, the build
+   report, and `bee_backend.log` into a single artifact directory — set `collectUnityLogs: true`
+   on the failing run, re-run, and download the `unity-diagnostics` artifact.
 2. **Search for `error`, `Error`, `CRASH`, `Fatal`** — these keywords narrow the log to relevant
    sections.
 3. **Check the last 100 lines before exit** — Unity often logs the proximate cause immediately
