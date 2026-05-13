@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import config from '@site/src/core/config';
 import Spinner from '@site/src/components/molecules/spinner';
+import { useClipboard } from '@site/src/core/hooks/use-clipboard';
+import { useNotification } from '@site/src/core/hooks/use-notification';
 
 type QueueJob = {
   NO_ID_FIELD?: string;
@@ -72,10 +74,84 @@ const cellStyle: React.CSSProperties = {
 const getJobRepoVersion = (job: QueueJob | undefined): string =>
   job?.repoVersionInfo?.version || '';
 
+const buildDiagnosticsPrompt = (
+  selectedRepoVersion: string,
+  diagnostics: {
+    staleFailedJobs: Array<{ jobId?: string; jobRepoVersion?: string }>;
+    staleCreatedJobs: Array<{ jobId?: string; jobRepoVersion?: string }>;
+    repoDriftBuilds: Array<{
+      buildId: string;
+      relatedJobId: string;
+      jobRepoVersion?: string;
+      buildInfo: { repoVersion: string };
+    }>;
+    failedWithDockerInfo: Array<{ buildId: string; dockerInfo?: { digest?: string } | null }>;
+    totals: {
+      jobs: number;
+      builds: number;
+      failedJobs: number;
+      createdJobs: number;
+    };
+  },
+) => {
+  const lines = [
+    `Investigate GameCI queue blockage for Docker repo version ${selectedRepoVersion}.`,
+    '',
+    'Summary:',
+    `- Total jobs returned: ${diagnostics.totals.jobs}`,
+    `- Total builds returned for selected repo version: ${diagnostics.totals.builds}`,
+    `- Failed editor jobs: ${diagnostics.totals.failedJobs}`,
+    `- Created editor jobs: ${diagnostics.totals.createdJobs}`,
+    `- Older-version failed jobs: ${diagnostics.staleFailedJobs.length}`,
+    `- Older-version created jobs: ${diagnostics.staleCreatedJobs.length}`,
+    `- Repo-version drift builds: ${diagnostics.repoDriftBuilds.length}`,
+    `- Failed builds with Docker metadata: ${diagnostics.failedWithDockerInfo.length}`,
+  ];
+
+  if (diagnostics.staleFailedJobs.length > 0) {
+    lines.push('', 'Older-version failed jobs:');
+    diagnostics.staleFailedJobs.slice(0, 10).forEach((job) => {
+      lines.push(`- ${job.jobId} (repo ${job.jobRepoVersion})`);
+    });
+  }
+
+  if (diagnostics.staleCreatedJobs.length > 0) {
+    lines.push('', 'Older-version created jobs:');
+    diagnostics.staleCreatedJobs.slice(0, 10).forEach((job) => {
+      lines.push(`- ${job.jobId} (repo ${job.jobRepoVersion})`);
+    });
+  }
+
+  if (diagnostics.repoDriftBuilds.length > 0) {
+    lines.push('', 'Repo-version drift builds:');
+    diagnostics.repoDriftBuilds.slice(0, 10).forEach((build) => {
+      lines.push(
+        `- ${build.buildId} linked to ${build.relatedJobId} (job repo ${build.jobRepoVersion}, build repo ${build.buildInfo.repoVersion})`,
+      );
+    });
+  }
+
+  if (diagnostics.failedWithDockerInfo.length > 0) {
+    lines.push('', 'Failed builds that already have Docker metadata:');
+    diagnostics.failedWithDockerInfo.slice(0, 10).forEach((build) => {
+      lines.push(`- ${build.buildId} (digest ${build.dockerInfo?.digest || 'n/a'})`);
+    });
+  }
+
+  lines.push(
+    '',
+    'Determine whether failed jobs are blocking created jobs, whether maxed-out failed builds need automatic reset/retry, and whether any builds should be reconciled as published from DockerHub state.',
+  );
+
+  return lines.join('\n');
+};
+
 const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
   const [data, setData] = useState<QueueStatusResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const clipboard = useClipboard();
+  const notify = useNotification();
 
   const fetchQueueStatus = useCallback(async () => {
     setLoading(true);
@@ -184,6 +260,17 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
     };
   }, [data, selectedRepoVersion]);
 
+  const copyDiagnosticsPrompt = useCallback(async () => {
+    await notify.promise(
+      clipboard.write(buildDiagnosticsPrompt(selectedRepoVersion, diagnostics)),
+      {
+        loading: <Spinner type="spin" />,
+        success: 'Copied diagnostics prompt to clipboard',
+        error: 'Your browser does not support copying to clipboard',
+      },
+    );
+  }, [clipboard, diagnostics, notify, selectedRepoVersion]);
+
   return (
     <section style={{ ...sectionStyle, marginBottom: 16 }}>
       <div
@@ -199,6 +286,23 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
         <span style={{ opacity: 0.65, fontSize: '0.85em' }}>
           Global queue diagnostics for the selected repo version `{selectedRepoVersion}`
         </span>
+        <button
+          type="button"
+          onClick={() => {
+            copyDiagnosticsPrompt();
+          }}
+          disabled={loading || !!error}
+          style={{
+            padding: '4px 8px',
+            borderRadius: 4,
+            border: '1px solid #ccc',
+            background: 'transparent',
+            cursor: loading || error ? 'not-allowed' : 'pointer',
+            fontSize: '0.85em',
+          }}
+        >
+          Copy diagnostics prompt
+        </button>
         <button
           type="button"
           onClick={() => {
