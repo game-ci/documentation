@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import config from '@site/src/core/config';
 import Spinner from '@site/src/components/molecules/spinner';
 
 type QueueJob = {
+  NO_ID_FIELD?: string;
+  id?: string;
   status: string;
   imageType: string;
   repoVersionInfo?: {
@@ -75,11 +77,16 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fetchQueueStatus = async () => {
+  const fetchQueueStatus = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(`${config.backendUrl}/queueStatus`);
+      const url = new URL(`${config.backendUrl}/queueStatus`);
+      if (selectedRepoVersion) {
+        url.searchParams.set('repoVersion', selectedRepoVersion);
+      }
+
+      const response = await fetch(url.toString());
       if (!response.ok) {
         let message = `Request failed (${response.status})`;
         try {
@@ -92,16 +99,18 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
       }
       const body = await response.json();
       setData(body);
-    } catch (fetchError: any) {
-      setError(fetchError.message || 'Failed to load queue status');
+    } catch (fetchError: unknown) {
+      const message =
+        fetchError instanceof Error ? fetchError.message : 'Failed to load queue status';
+      setError(message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedRepoVersion]);
 
   useEffect(() => {
     fetchQueueStatus();
-  }, []);
+  }, [fetchQueueStatus]);
 
   const diagnostics = useMemo(() => {
     const jobs = data?.jobs || [];
@@ -109,7 +118,7 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
     const jobMap = new Map<string, QueueJob>();
 
     for (const job of jobs) {
-      const id = (job as any).NO_ID_FIELD || (job as any).id;
+      const id = job.NO_ID_FIELD || job.id;
       if (id) {
         jobMap.set(id, job);
       }
@@ -118,12 +127,12 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
     const editorJobs = jobs.filter((job) => job.imageType === 'editor');
     const staleFailedJobs = editorJobs
       .filter(
-        (job: any) =>
+        (job) =>
           job.status === 'failed' &&
           getJobRepoVersion(job) &&
           getJobRepoVersion(job) !== selectedRepoVersion,
       )
-      .map((job: any) => ({
+      .map((job) => ({
         jobId: job.NO_ID_FIELD || job.id,
         jobRepoVersion: getJobRepoVersion(job),
         status: job.status,
@@ -131,12 +140,12 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
 
     const staleCreatedJobs = editorJobs
       .filter(
-        (job: any) =>
+        (job) =>
           job.status === 'created' &&
           getJobRepoVersion(job) &&
           getJobRepoVersion(job) !== selectedRepoVersion,
       )
-      .map((job: any) => ({
+      .map((job) => ({
         jobId: job.NO_ID_FIELD || job.id,
         jobRepoVersion: getJobRepoVersion(job),
         status: job.status,
@@ -146,10 +155,9 @@ const QueueManagementPanel = ({ selectedRepoVersion }: Props) => {
       .filter((build) => build.imageType === 'editor')
       .map((build) => {
         const job = jobMap.get(build.relatedJobId);
-        return {
-          ...build,
+        return Object.assign({}, build, {
           jobRepoVersion: getJobRepoVersion(job),
-        };
+        });
       })
       .filter(
         (build) =>
