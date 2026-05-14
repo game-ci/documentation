@@ -135,6 +135,17 @@ Set the mode to control what Orchestrator does. Default: `cli-build`.
 | `useCompressionStrategy` | `true`  | Use LZ4 compression for cache and build artifacts.                                                                       |
 | `useCleanupCron`         | `true`  | Create an AWS CloudFormation cron job to automatically clean up old resources.                                           |
 
+### Test Workflow
+
+| Parameter                 | Default            | Description                                                                                  |
+| ------------------------- | ------------------ | -------------------------------------------------------------------------------------------- |
+| `testSuitePath`           | -                  | Path to YAML test suite definition file.                                                     |
+| `testFilterRefs`          | -                  | Comma-separated test filter preset names injected into every run in the suite.               |
+| `testFilterInjection`     | -                  | Inline YAML or JSON test filter overlay injected into every run.                             |
+| `testFilterInjectionPath` | -                  | Path to a YAML or JSON test filter overlay file injected into every run.                     |
+| `testResultFormat`        | `junit`            | Structured result output format: `junit`, `json`, or `both`.                                 |
+| `testResultPath`          | `./test-results`   | Output directory for structured test results.                                                |
+
 ### Garbage Collection
 
 | Parameter       | Default | Description                                           |
