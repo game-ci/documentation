@@ -76,53 +76,53 @@ Orchestrator ships with 13 built-in checks covering four categories.
 
 Validate configuration files before the pipeline commits to using them.
 
-| ID | Name | Description |
-| --- | --- | --- |
-| `pipeline-contract` | Pipeline Contract Validation | Validates CI workflow YAML structure and required fields |
-| `build-profiles` | Build Profile Validation | Validates build profile configs are well-formed |
-| `submodule-profiles` | Submodule Profile Validation | Validates submodule profile configs and dependencies |
-| `config-validation` | Config Validation | Validates `.game-ci` configuration files |
-| `framework-suite-config` | Framework & Suite Config | Validates framework and test suite YAML configs |
+| ID                       | Name                         | Description                                              |
+| ------------------------ | ---------------------------- | -------------------------------------------------------- |
+| `pipeline-contract`      | Pipeline Contract Validation | Validates CI workflow YAML structure and required fields |
+| `build-profiles`         | Build Profile Validation     | Validates build profile configs are well-formed          |
+| `submodule-profiles`     | Submodule Profile Validation | Validates submodule profile configs and dependencies     |
+| `config-validation`      | Config Validation            | Validates `.game-ci` configuration files                 |
+| `framework-suite-config` | Framework & Suite Config     | Validates framework and test suite YAML configs          |
 
 ### Environment
 
 Confirm the runner can support the build before the build starts.
 
-| ID | Name | Description |
-| --- | --- | --- |
+| ID              | Name                | Description                                                 |
+| --------------- | ------------------- | ----------------------------------------------------------- |
 | `runner-health` | Runner Health Check | Checks disk space, required tools, and network connectivity |
-| `lfs-health` | LFS Health Check | Validates Git LFS config, connectivity, and hydration |
+| `lfs-health`    | LFS Health Check    | Validates Git LFS config, connectivity, and hydration       |
 
 ### Integrity
 
 Verify that the repository and its supporting scripts are internally consistent.
 
-| ID | Name | Description |
-| --- | --- | --- |
-| `preunityjob-dry-run` | PreUnityJob Dry Run | Runs the PreUnityJob script in dry-run mode |
-| `script-integrity` | Script & Manifest Integrity | Checks scripts for syntax errors and manifests for consistency |
-| `health-test-discovery` | Health Test Discovery | Discovers health test classes and validates wiring |
+| ID                      | Name                        | Description                                                    |
+| ----------------------- | --------------------------- | -------------------------------------------------------------- |
+| `preunityjob-dry-run`   | PreUnityJob Dry Run         | Runs the PreUnityJob script in dry-run mode                    |
+| `script-integrity`      | Script & Manifest Integrity | Checks scripts for syntax errors and manifests for consistency |
+| `health-test-discovery` | Health Test Discovery       | Discovers health test classes and validates wiring             |
 
 ### Compilation
 
 Catch C# problems without invoking Unity.
 
-| ID | Name | Description |
-| --- | --- | --- |
-| `csharp-heuristics` | C# Heuristics (Changed) | Lightweight C# analysis on changed files only |
+| ID                       | Name                      | Description                                                 |
+| ------------------------ | ------------------------- | ----------------------------------------------------------- |
+| `csharp-heuristics`      | C# Heuristics (Changed)   | Lightweight C# analysis on changed files only               |
 | `csharp-heuristics-full` | C# Heuristics (Full Repo) | Full-repo C# heuristic analysis, scoped to relevant changes |
-| `cross-profile-compile` | Cross-Profile Compile | Verifies the project compiles across all active profiles |
+| `cross-profile-compile`  | Cross-Profile Compile     | Verifies the project compiles across all active profiles    |
 
 ### Check Categories
 
 Each category has a different cost profile:
 
-| Category | Typical duration | Unity required | When to run |
-| --- | --- | --- | --- |
-| Config | < 5s | No | Always |
-| Environment | 5–30s | No | Always on persistent runners |
-| Integrity | 10–60s | No | Always |
-| Compilation | 30–60s | No | On changed C# or profile changes |
+| Category    | Typical duration | Unity required | When to run                      |
+| ----------- | ---------------- | -------------- | -------------------------------- |
+| Config      | < 5s             | No             | Always                           |
+| Environment | 5–30s            | No             | Always on persistent runners     |
+| Integrity   | 10–60s           | No             | Always                           |
+| Compilation | 30–60s           | No             | On changed C# or profile changes |
 
 Order your suite to run cheaper checks first. A config check that fails in two seconds prevents the
 compilation check from running unnecessarily.
@@ -165,13 +165,13 @@ checks:
 
 Custom check fields:
 
-| Field | Description | Default |
-| --- | --- | --- |
-| `id` | Unique identifier for this check | Required |
-| `name` | Human-readable label shown in CI output | `id` |
-| `category` | `config`, `environment`, `integrity`, or `compilation` | `integrity` |
-| `run` | Shell script to execute (PowerShell on Windows, bash elsewhere) | Required |
-| `timeout` | Maximum seconds before the check is aborted and fails | `60` |
+| Field      | Description                                                     | Default     |
+| ---------- | --------------------------------------------------------------- | ----------- |
+| `id`       | Unique identifier for this check                                | Required    |
+| `name`     | Human-readable label shown in CI output                         | `id`        |
+| `category` | `config`, `environment`, `integrity`, or `compilation`          | `integrity` |
+| `run`      | Shell script to execute (PowerShell on Windows, bash elsewhere) | Required    |
+| `timeout`  | Maximum seconds before the check is aborted and fails           | `60`        |
 
 A check passes when its `run` script exits `0`. Any non-zero exit code is a failure, and preflight
 aborts.
@@ -220,11 +220,11 @@ checks:
 
 `runCondition` accepts:
 
-| Value | Behaviour |
-| --- | --- |
-| `always` | Run on every execution (default) |
+| Value     | Behaviour                                                             |
+| --------- | --------------------------------------------------------------------- |
+| `always`  | Run on every execution (default)                                      |
 | `changed` | Run only when scoped paths have changed since the last successful run |
-| `never` | Disable the check without removing it from the suite |
+| `never`   | Disable the check without removing it from the suite                  |
 
 Use `never` to temporarily disable a check during active investigation without losing its
 configuration.
@@ -288,16 +288,16 @@ never fired and address conditions that cannot arise should be removed.
 
 ## When to Use Preflight vs. Other Gates
 
-| Validation type | Where it belongs |
-| --- | --- |
-| Config file structure, required fields | Preflight (`config-validation`, `pipeline-contract`) |
-| Environment readiness (disk, tools, network) | Preflight (`runner-health`, `lfs-health`) |
-| Script syntax, manifest consistency | Preflight (`script-integrity`) |
-| Lightweight C# heuristics on changed files | Preflight (`csharp-heuristics`) |
-| Unity EditMode / PlayMode tests | Test suite |
-| Full compilation across all platforms | Build stage or preflight (`cross-profile-compile`) |
-| End-to-end product validation | Test suite (built-client runs) |
-| Profiling, performance benchmarks | Post-build validation stage |
+| Validation type                              | Where it belongs                                     |
+| -------------------------------------------- | ---------------------------------------------------- |
+| Config file structure, required fields       | Preflight (`config-validation`, `pipeline-contract`) |
+| Environment readiness (disk, tools, network) | Preflight (`runner-health`, `lfs-health`)            |
+| Script syntax, manifest consistency          | Preflight (`script-integrity`)                       |
+| Lightweight C# heuristics on changed files   | Preflight (`csharp-heuristics`)                      |
+| Unity EditMode / PlayMode tests              | Test suite                                           |
+| Full compilation across all platforms        | Build stage or preflight (`cross-profile-compile`)   |
+| End-to-end product validation                | Test suite (built-client runs)                       |
+| Profiling, performance benchmarks            | Post-build validation stage                          |
 
 If a check requires Unity to be running, it is a test suite item. If it requires a built artifact,
 it is a post-build validation item. Everything else that can be validated cheaply and quickly
@@ -305,9 +305,9 @@ belongs in preflight.
 
 ## Inputs Reference
 
-| Input | Description | Default |
-| --- | --- | --- |
-| `preflightSuite` | Path to preflight suite YAML file | `''` |
-| `preflightEnabled` | Enable the preflight stage | `'true'` when suite is set |
-| `preflightFailFast` | Abort on first check failure | `'true'` |
-| `preflightTimeout` | Maximum total preflight duration in seconds | `300` |
+| Input               | Description                                 | Default                    |
+| ------------------- | ------------------------------------------- | -------------------------- |
+| `preflightSuite`    | Path to preflight suite YAML file           | `''`                       |
+| `preflightEnabled`  | Enable the preflight stage                  | `'true'` when suite is set |
+| `preflightFailFast` | Abort on first check failure                | `'true'`                   |
+| `preflightTimeout`  | Maximum total preflight duration in seconds | `300`                      |
