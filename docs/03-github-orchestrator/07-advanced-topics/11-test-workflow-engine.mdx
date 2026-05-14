@@ -78,17 +78,17 @@ runs:
 
 ### Run Fields
 
-| Field           | Description                                       |
-| --------------- | ------------------------------------------------- |
-| `name`          | Run identifier                                    |
-| `needs`         | List of run names that must complete first        |
-| `editMode`      | Run Unity EditMode tests (default: false)         |
-| `playMode`      | Run Unity PlayMode tests (default: false)         |
-| `builtClient`   | Run tests against a built client (default: false) |
-| `filterRefs`    | Preset names to apply before run-local filters    |
-| `filters`       | Run-local filter definition                       |
+| Field             | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| `name`            | Run identifier                                    |
+| `needs`           | List of run names that must complete first        |
+| `editMode`        | Run Unity EditMode tests (default: false)         |
+| `playMode`        | Run Unity PlayMode tests (default: false)         |
+| `builtClient`     | Run tests against a built client (default: false) |
+| `filterRefs`      | Preset names to apply before run-local filters    |
+| `filters`         | Run-local filter definition                       |
 | `builtClientPath` | Path to the built player when `builtClient: true` |
-| `timeout`       | Maximum run duration in seconds                   |
+| `timeout`         | Maximum run duration in seconds                   |
 
 ## Filter Model
 
@@ -259,21 +259,21 @@ for PR workflows, quarantines, branch-specific smoke tests, or community-maintai
 
 The injected document supports the same fields as a suite filter definition plus:
 
-| Field        | Description                                              |
-| ------------ | -------------------------------------------------------- |
-| `refs`       | Suite or injected preset names to apply to every run     |
-| `filters`    | Inline filter overlay applied to every run               |
-| `filterSets` | Additional named presets defined only in the overlay     |
+| Field        | Description                                          |
+| ------------ | ---------------------------------------------------- |
+| `refs`       | Suite or injected preset names to apply to every run |
+| `filters`    | Inline filter overlay applied to every run           |
+| `filterSets` | Additional named presets defined only in the overlay |
 
 ## Inputs Reference
 
-| Input                     | Description                                                       |
-| ------------------------- | ----------------------------------------------------------------- |
-| `testSuitePath`           | Path to YAML test suite definition file                           |
-| `testSuiteEvent`          | CI event name for suite selection (pr, push, release)             |
-| `testFilterRefs`          | Comma-separated preset names injected into every run              |
-| `testFilterInjection`     | Inline YAML/JSON filter overlay injected into every run           |
-| `testFilterInjectionPath` | Path to a YAML/JSON filter overlay file injected into every run   |
-| `testTaxonomyPath`        | Path to custom taxonomy definition YAML                           |
-| `testResultFormat`        | Output format: `junit`, `json`, or `both`                         |
-| `testResultPath`          | Directory for structured result output                            |
+| Input                     | Description                                                     |
+| ------------------------- | --------------------------------------------------------------- |
+| `testSuitePath`           | Path to YAML test suite definition file                         |
+| `testSuiteEvent`          | CI event name for suite selection (pr, push, release)           |
+| `testFilterRefs`          | Comma-separated preset names injected into every run            |
+| `testFilterInjection`     | Inline YAML/JSON filter overlay injected into every run         |
+| `testFilterInjectionPath` | Path to a YAML/JSON filter overlay file injected into every run |
+| `testTaxonomyPath`        | Path to custom taxonomy definition YAML                         |
+| `testResultFormat`        | Output format: `junit`, `json`, or `both`                       |
+| `testResultPath`          | Directory for structured result output                          |
