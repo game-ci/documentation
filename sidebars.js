@@ -7,6 +7,23 @@ module.exports = {
     { type: 'doc', id: 'getting-started/index', label: 'Getting started' },
     {
       type: 'category',
+      label: 'CLI',
+      collapsible: true,
+      collapsed: true,
+      link: { type: 'doc', id: 'github-cli/index' },
+      items: [
+        { type: 'doc', id: 'github-cli/build', label: 'Engine Commands' },
+        { type: 'doc', id: 'github-cli/remote-builds', label: 'Orchestrate' },
+        {
+          type: 'doc',
+          id: 'github-cli/configuration-and-plugins',
+          label: 'Configuration and Plugins',
+        },
+        { type: 'doc', id: 'github-cli/github-action', label: 'GitHub Action' },
+      ],
+    },
+    {
+      type: 'category',
       label: 'CI Platforms',
       collapsed: false,
       collapsible: true,
@@ -175,23 +192,6 @@ module.exports = {
             },
           ],
         },
-      ],
-    },
-    {
-      type: 'category',
-      label: 'CLI',
-      collapsible: true,
-      collapsed: true,
-      link: { type: 'doc', id: 'github-cli/index' },
-      items: [
-        { type: 'doc', id: 'github-cli/build', label: 'Engine Commands' },
-        { type: 'doc', id: 'github-cli/remote-builds', label: 'Orchestrate' },
-        {
-          type: 'doc',
-          id: 'github-cli/configuration-and-plugins',
-          label: 'Configuration and Plugins',
-        },
-        { type: 'doc', id: 'github-cli/github-action', label: 'GitHub Action' },
       ],
     },
     {
