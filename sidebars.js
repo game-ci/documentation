@@ -181,7 +181,7 @@ module.exports = {
       type: 'category',
       label: 'CLI',
       collapsible: true,
-      collapsed: false,
+      collapsed: true,
       link: { type: 'doc', id: 'github-cli/index' },
       items: [
         { type: 'doc', id: 'github-cli/build', label: 'Engine Commands' },
@@ -192,6 +192,23 @@ module.exports = {
           label: 'Configuration and Plugins',
         },
         { type: 'doc', id: 'github-cli/github-action', label: 'GitHub Action' },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Docker',
+      collapsible: true,
+      collapsed: true,
+      items: [
+        { type: 'doc', id: 'docker/docker-images', label: 'GameCI Docker images for Unity' },
+        { type: 'doc', id: 'docker/windows-docker-images', label: 'Windows docker images' },
+        {
+          type: 'doc',
+          id: 'docker/customize-docker-images',
+          label: 'Customize GameCI Unity Docker images',
+        },
+        { type: 'doc', id: 'docker/versions', label: 'Versions' },
+        { type: 'doc', id: 'docker/custom-images', label: 'Custom Images' },
       ],
     },
     {
@@ -467,23 +484,6 @@ module.exports = {
             },
           ],
         },
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Docker',
-      collapsible: true,
-      collapsed: true,
-      items: [
-        { type: 'doc', id: 'docker/docker-images', label: 'GameCI Docker images for Unity' },
-        { type: 'doc', id: 'docker/windows-docker-images', label: 'Windows docker images' },
-        {
-          type: 'doc',
-          id: 'docker/customize-docker-images',
-          label: 'Customize GameCI Unity Docker images',
-        },
-        { type: 'doc', id: 'docker/versions', label: 'Versions' },
-        { type: 'doc', id: 'docker/custom-images', label: 'Custom Images' },
       ],
     },
     {
