@@ -5,28 +5,41 @@ sidebar_position: 11
 # Test Workflow Engine
 
 Orchestrator includes a test workflow engine that supports YAML-based test suite definitions,
-multi-dimensional taxonomy filtering, and structured test result reporting.
+reusable filter presets, injected filter overlays, and structured test result reporting.
 
 ## Overview
 
 Instead of running tests via a single `buildMethod`, the test workflow engine lets you define test
-suites as YAML configurations - specifying exactly which tests run for each CI event, filtered by
-taxonomy metadata, with sequential execution dependencies.
+suites as YAML configurations: specifying exactly which tests run for each CI event, filtered by
+Unity categories and test names, with sequential execution dependencies.
 
 ## Test Suite Definitions
 
-Test suites are YAML files that define ordered runs with filters:
+Test suites are YAML files that define ordered runs with reusable filters:
 
 ```yaml
 name: pull-request
 description: Fast feedback for pull requests
+
+filterSets:
+  smoke:
+    categories:
+      include: [Smoke]
+      exclude: [Quarantined]
+      taxonomy:
+        Maturity: [Trusted]
+        Scope: [Unit, Integration]
+    names:
+      regex: ['^Gameplay\\.']
+
 runs:
   - name: fast
     editMode: true
+    filterRefs: [smoke]
     filters:
-      Maturity: Trusted
-      FeedbackSpeed: Fast,Moderate
-      Scope: Unit,Integration
+      categories:
+        taxonomy:
+          FeedbackSpeed: [Fast, Moderate]
     timeout: 300
 
   - name: basic
@@ -34,16 +47,23 @@ runs:
     editMode: true
     playMode: true
     filters:
-      Maturity: Trusted,Stable
-      Scope: Unit,Integration,System
+      categories:
+        taxonomy:
+          Maturity: [Trusted, Stable]
+          Scope: [Unit, Integration, System]
     timeout: 600
 
   - name: extended
     needs: [basic]
     playMode: true
     filters:
-      Rigor: Strict
-      Scope: End To End
+      categories:
+        taxonomy:
+          Rigor: [Strict]
+          Scope: ['End To End']
+      names:
+        include:
+          - Gameplay.FullRegression
     timeout: 1200
 ```
 
@@ -53,24 +73,76 @@ runs:
 | ------------- | --------------------------------------------------- |
 | `name`        | Suite identifier, used for cache keys and reporting |
 | `description` | Human-readable description                          |
+| `filterSets`  | Reusable named filter presets                       |
 | `runs`        | Ordered list of test runs                           |
 
 ### Run Fields
 
-| Field         | Description                                       |
-| ------------- | ------------------------------------------------- |
-| `name`        | Run identifier                                    |
-| `needs`       | List of run names that must complete first        |
-| `editMode`    | Run Unity EditMode tests (default: false)         |
-| `playMode`    | Run Unity PlayMode tests (default: false)         |
-| `builtClient` | Run tests against a built client (default: false) |
-| `filters`     | Taxonomy filters to select tests                  |
-| `timeout`     | Maximum run duration in seconds                   |
+| Field             | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| `name`            | Run identifier                                    |
+| `needs`           | List of run names that must complete first        |
+| `editMode`        | Run Unity EditMode tests (default: false)         |
+| `playMode`        | Run Unity PlayMode tests (default: false)         |
+| `builtClient`     | Run tests against a built client (default: false) |
+| `filterRefs`      | Preset names to apply before run-local filters    |
+| `filters`         | Run-local filter definition                       |
+| `builtClientPath` | Path to the built player when `builtClient: true` |
+| `timeout`         | Maximum run duration in seconds                   |
 
-## Taxonomy Filters
+## Filter Model
 
-Tests are categorized by multi-dimensional taxonomy metadata. Filters select tests by matching
-against these dimensions:
+The orchestrator now separates **category filters** from **name filters**:
+
+- `categories` compile to Unity `-testCategory`
+- `names` compile to Unity `-testFilter`
+
+This matters because Unity treats them as different filtering primitives. Use categories for
+taxonomy-style metadata and names for specific fixtures, namespaces, or regex-based test selection.
+
+### Extended Filter Syntax
+
+```yaml
+filters:
+  categories:
+    include: [Smoke]
+    exclude: [Quarantined]
+    taxonomy:
+      Scope: [Unit, Integration]
+      Maturity: [Trusted]
+  names:
+    include:
+      - Gameplay.FastSuite
+    regex:
+      - '^Gameplay\\.Combat\\.'
+    exclude:
+      - Gameplay.FlakySuite
+```
+
+### Backward-Compatible Shorthand
+
+The legacy shorthand still works and is normalized into category entries:
+
+```yaml
+filters:
+  Scope: Unit,Integration
+  Maturity: Trusted
+```
+
+This becomes category filters equivalent to:
+
+```yaml
+filters:
+  categories:
+    taxonomy:
+      Scope: [Unit, Integration]
+      Maturity: [Trusted]
+```
+
+## Taxonomy Categories
+
+Tests can still be categorized by multi-dimensional taxonomy metadata. Filters select tests by
+matching against these dimensions:
 
 ### Example Dimensions
 
@@ -86,17 +158,6 @@ of these, and add entirely new dimensions -the taxonomy system is fully extensib
 | Rigor          | Strict, Normal, Relaxed               | Assertion strictness          |
 | Determinism    | Deterministic, NonDeterministic       | Repeatability                 |
 | IsolationLevel | Full, Partial, None                   | External dependency isolation |
-
-### Filter Syntax
-
-Filters accept comma-separated values, regex patterns, and hierarchical dot-notation:
-
-```yaml
-filters:
-  Scope: Unit,Integration # Match any of these values
-  Maturity: /Trusted|Stable/ # Regex pattern
-  Domain: Combat.Melee # Hierarchical match
-```
 
 ### Defining Your Own Dimensions
 
@@ -122,7 +183,8 @@ Standard Unity Test Framework tests that run in the editor without entering play
 - uses: game-ci/unity-builder@v4
   with:
     testSuitePath: .game-ci/test-suites/pr-suite.yml
-    testSuiteEvent: pr
+    testFilterRefs: smoke,ci
+    testFilterInjectionPath: .game-ci/test-filters/pr-overlay.yml
     targetPlatform: StandaloneLinux64
 ```
 
@@ -165,12 +227,53 @@ Test results are output in machine-readable formats:
 
 Results integrate with GitHub Checks for inline failure reporting on pull requests.
 
+## Injected Filters
+
+The orchestrator can inject filters into **every run** without editing the suite file. This is useful
+for PR workflows, quarantines, branch-specific smoke tests, or community-maintained filter packs.
+
+### Inline injection
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    testSuitePath: .game-ci/test-suites/pr-suite.yml
+    testFilterRefs: smoke
+    testFilterInjection: |
+      filters:
+        categories:
+          exclude: [Quarantined, Flaky]
+        names:
+          regex:
+            - '^Gameplay\\.'
+```
+
+### File-based injection
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    testSuitePath: .game-ci/test-suites/pr-suite.yml
+    testFilterInjectionPath: .game-ci/test-filters/nightly.yml
+```
+
+The injected document supports the same fields as a suite filter definition plus:
+
+| Field        | Description                                          |
+| ------------ | ---------------------------------------------------- |
+| `refs`       | Suite or injected preset names to apply to every run |
+| `filters`    | Inline filter overlay applied to every run           |
+| `filterSets` | Additional named presets defined only in the overlay |
+
 ## Inputs Reference
 
-| Input              | Description                                           |
-| ------------------ | ----------------------------------------------------- |
-| `testSuitePath`    | Path to YAML test suite definition file               |
-| `testSuiteEvent`   | CI event name for suite selection (pr, push, release) |
-| `testTaxonomyPath` | Path to custom taxonomy definition YAML               |
-| `testResultFormat` | Output format: `junit`, `json`, or `both`             |
-| `testResultPath`   | Directory for structured result output                |
+| Input                     | Description                                                     |
+| ------------------------- | --------------------------------------------------------------- |
+| `testSuitePath`           | Path to YAML test suite definition file                         |
+| `testSuiteEvent`          | CI event name for suite selection (pr, push, release)           |
+| `testFilterRefs`          | Comma-separated preset names injected into every run            |
+| `testFilterInjection`     | Inline YAML/JSON filter overlay injected into every run         |
+| `testFilterInjectionPath` | Path to a YAML/JSON filter overlay file injected into every run |
+| `testTaxonomyPath`        | Path to custom taxonomy definition YAML                         |
+| `testResultFormat`        | Output format: `junit`, `json`, or `both`                       |
+| `testResultPath`          | Directory for structured result output                          |
