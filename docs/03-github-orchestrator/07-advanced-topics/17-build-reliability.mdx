@@ -9,6 +9,9 @@ persistent runners, Windows filesystem issues with cross-platform repositories, 
 management. All features are opt-in via action inputs and fail gracefully - a reliability check that
 encounters an error logs a warning rather than failing the build.
 
+Preflight tests catch many common failures before expensive builds run — see
+[Preflight Tests](./13-preflight-tests.mdx).
+
 This page also covers operational reliability features that keep provider runs observable and clean:
 log streaming, stale resource cleanup, and automatic garbage collection.
 
