@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import Builds from '@site/src/components/docs/versions/builds/builds';
 import DateTime from '@site/src/components/docs/versions/date-time';
+import ImageJobAdminActions from '@site/src/components/docs/versions/image-job-admin-actions';
 import ShowAndCopyChangeSetHashButton from '@site/src/components/docs/versions/show-and-copy-change-set-hash-button';
 import Spinner from '@site/src/components/molecules/spinner';
 import styles from './unity-version.module.scss';
@@ -65,6 +66,7 @@ const UnityVersion = ({ data }: Props) => {
             {ciJobStatusToIconMap[status]}
           </div>
           <span>{id}</span>
+          <ImageJobAdminActions ciJobId={id} status={status} />
           <ShowAndCopyChangeSetHashButton changeSet={editorVersionInfo.changeSet} />
           <span>
             <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}> - Last updated: </span>

@@ -6,6 +6,24 @@ interface Props {
   selectedRepoVersion: string | undefined;
 }
 
+const minutesSinceTimestamp = (
+  timestamp?: {
+    seconds?: number;
+  } | null,
+): number | null => {
+  if (!timestamp?.seconds) return null;
+  const diffMs = Date.now() - timestamp.seconds * 1000;
+  return diffMs < 0 ? 0 : Math.floor(diffMs / 60000);
+};
+
+const formatAgeMinutes = (minutes: number | null): string => {
+  if (minutes === null) return 'n/a';
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes === 0 ? `${hours}h` : `${hours}h ${remainingMinutes}m`;
+};
+
 const BuildStatusDashboard = ({ selectedRepoVersion }: Props) => {
   const firestore = useFirestore();
   const ciBuilds = firestore
@@ -31,6 +49,12 @@ const BuildStatusDashboard = ({ selectedRepoVersion }: Props) => {
   const maxedOut = builds.filter(
     (b) => b.status === 'failed' && (b.meta?.failureCount || 0) >= 15,
   ).length;
+  const startedAges = builds
+    .filter((b) => b.status === 'started')
+    .map((b) => minutesSinceTimestamp(b.meta?.lastBuildStart))
+    .filter((minutes): minutes is number => minutes !== null);
+  const staleStarted = startedAges.filter((minutes) => minutes >= 45).length;
+  const oldestStarted = startedAges.length > 0 ? Math.max(...startedAges) : null;
   const total = builds.length;
 
   const statStyle = (color: string): React.CSSProperties => ({
@@ -74,6 +98,14 @@ const BuildStatusDashboard = ({ selectedRepoVersion }: Props) => {
             Stuck (15+): <strong>{maxedOut}</strong>
           </span>
         )}
+        {staleStarted > 0 && (
+          <span style={statStyle('#92400e')}>
+            Started 45m+: <strong>{staleStarted}</strong>
+          </span>
+        )}
+        <span style={statStyle('#475569')}>
+          Oldest started: <strong>{formatAgeMinutes(oldestStarted)}</strong>
+        </span>
         <span
           style={{
             marginLeft: 'auto',

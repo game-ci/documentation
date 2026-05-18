@@ -40,29 +40,62 @@ const ImageVersions = ({ versions }: Props) => {
     minWidth: 220,
   };
 
+  const headerCardStyle: React.CSSProperties = {
+    display: 'grid',
+    gap: 12,
+    padding: '14px 16px',
+    borderRadius: 10,
+    border: '1px solid #33333322',
+    background: '#fafafa08',
+    marginBottom: 12,
+  };
+
+  const toolbarStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  };
+
   return (
     <main className={styles.versionsPanel}>
       <h1>Supported Editor Versions</h1>
 
-      <div>
-        <span>Docker repo version: </span>
+      <div style={headerCardStyle}>
+        <div style={toolbarStyle}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <strong>Docker repo version</strong>
+            <select
+              value={selectedVersion}
+              onChange={(event) => setSelectedVersion(event.target.value)}
+              style={selectStyle}
+            >
+              {versions.map((version) => {
+                const { NO_ID_FIELD: id } = version;
 
-        <select onChange={(event) => setSelectedVersion(event.target.value)}>
-          {versions.map((version) => {
-            const { NO_ID_FIELD: id } = version;
+                return (
+                  <option key={id} value={id}>
+                    {id}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
 
-            return (
-              <option key={id} value={id}>
-                {id}
-              </option>
-            );
-          })}
-        </select>
-        <span style={{ float: 'right', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <ResetAllFailedBuildsButton />
-          <CleanUpStuckBuildsButton />
-          <SignInSignOutButton />
-        </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <SimpleAuthCheck fallback={<span />} requiredClaims={{ admin: true }}>
+              <ResetAllFailedBuildsButton />
+              <CleanUpStuckBuildsButton />
+            </SimpleAuthCheck>
+            <SignInSignOutButton />
+          </div>
+        </div>
+
+        <p style={{ margin: 0, opacity: 0.7, fontSize: '0.85em' }}>
+          Admin controls for queue recovery, retry management, and selected-repo diagnostics live
+          below. Use the dashboard first, then the queue panel for root-cause detail.
+        </p>
       </div>
 
       <BuildStatusDashboard selectedRepoVersion={selectedVersion} />
