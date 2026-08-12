@@ -8,6 +8,73 @@ GitHub [Actions for Unity](https://github.com/game-ci/unity-actions) provide the
 There are a few parts to setting up a workflow. Steps may slightly differ depending on each license
 type.
 
+## Quick start
+
+Copy this into `.github/workflows/main.yml` to test and build a WebGL project on every push. It's
+the same [Simple Example](#simple-example) shown again further down this page — this copy exists
+so there's something to paste before reading the rest of the page.
+
+```yaml
+name: Actions 😎
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build my project ✨
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # Cache
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Test
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+
+      # Output
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build
+          path: build
+```
+
+:::info Need `UNITY_LICENSE`, `UNITY_EMAIL`, or `UNITY_PASSWORD`?
+This example assumes you already have Unity activation secrets configured. If you don't yet, see
+[Activation](/docs/github/activation) first — it walks through personal, professional, and floating license
+setup.
+:::
+
+This example assumes your Unity project is in the root of your repository, and builds a single
+target (WebGL). More variations — Git LFS caching, parallel builds, multi-platform matrices — are
+in [Workflow examples](#workflow-examples) below.
+
 ## Mental model
 
 #### Overall steps
