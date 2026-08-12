@@ -133,6 +133,25 @@ The built-in command uses Unreal Automation Tool inside the container. The image
 `/home/ue4/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh`, or you should wrap your own Unreal
 workflow through a custom job or plugin.
 
+### Choosing an image and a runner
+
+Real Unreal Engine images are large, which affects where you can practically run this:
+
+| Image | Size | Notes |
+| --- | --- | --- |
+| `ghcr.io/epicgames/unreal-engine:dev-slim-5.4` | ~35 GB | Requires Epic GitHub org access |
+| Community UE5 images (e.g. [ue5-docker](https://github.com/evoverses/ue5-docker)) | ~40 GB (from ~120 GB) | Self-built from your own UE license |
+| Full UE dev image | 50-120 GB | Rarely practical for CI |
+
+GitHub-hosted runners have ~22GB free space by default (up to ~52GB with a disk-reclaim step like
+[jlumbroso/free-disk-space](https://github.com/jlumbroso/free-disk-space), or up to 150GB on paid
+larger runners) — even the smallest realistic UE image is tight or won't fit, and pulling a 35GB+
+image alone can take 10-20+ minutes. For anything beyond a quick smoke test, a **self-hosted
+runner** with local image caching (so you're not re-pulling the image every run) is the practical
+choice. [unrealcontainers](https://unrealcontainers.com) is a good resource for building and
+sizing your own image. See [Orchestrator's provider docs](/docs/github-orchestrator/providers/overview)
+for self-hosted and cloud provider options beyond plain GitHub-hosted runners.
+
 ## Test Command
 
 `game-ci test` is part of the CLI command model. The exact behavior and options are provided by the

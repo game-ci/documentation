@@ -37,14 +37,20 @@ providers without changing the core workflow model.
 
 ### Recommendations for other game engines
 
-For **[Unreal Engine](https://unrealengine.com/)** users, it's worth checking out
-[unrealcontainers](https://unrealcontainers.com), a great resource created by our friend
-[Adam Rehn](https://adamrehn.com/).
+For **[Unreal Engine](https://unrealengine.com/)** and **[Godot](https://godotengine.org/)**, the
+[`game-ci` CLI](/docs/cli) has built-in engine detection and build/test commands for both — see
+[CLI Build Command](/docs/cli/build) for concrete examples (Unreal requires a Docker image you're
+licensed to use; Godot works out of the box against the community `barichello/godot-ci` image).
+Both also plug into [Orchestrator's engine-plugin interface](/docs/github-orchestrator/advanced-topics/engine-plugins)
+alongside Unity, for provider-backed builds across AWS/K8s/local/etc.
 
-For **[Godot](https://godotengine.org/)** developers, there are several options to consider. We
-recommend both [abarichello/godot-ci](https://github.com/abarichello/godot-ci) by
-[Artur Barichello](https://barichello.me/) and
-[firebelley/godot-export](https://github.com/firebelley/godot-export).
+For Unreal specifically, since real UE Docker images are large (30GB+) and typically require Epic
+org access or a self-built image from your own license, [unrealcontainers](https://unrealcontainers.com)
+(by our friend [Adam Rehn](https://adamrehn.com/)) is a great resource for building and sizing your
+own image before pointing `--custom-image` at it.
+
+For Godot, besides GameCI's own built-in support, [firebelley/godot-export](https://github.com/firebelley/godot-export)
+is also worth a look for GitHub Actions-native export workflows.
 
 **[MonoGame](https://www.monogame.net/)** enthusiasts should look at
 [Lean MonoGame - Automate Release](https://learn-monogame.github.io/how-to/automate-release/), an
