@@ -137,11 +137,11 @@ workflow through a custom job or plugin.
 
 Real Unreal Engine images are large, which affects where you can practically run this:
 
-| Image | Size | Notes |
-| --- | --- | --- |
-| `ghcr.io/epicgames/unreal-engine:dev-slim-5.4` | ~35 GB | Requires Epic GitHub org access |
+| Image                                                                             | Size                  | Notes                               |
+| --------------------------------------------------------------------------------- | --------------------- | ----------------------------------- |
+| `ghcr.io/epicgames/unreal-engine:dev-slim-5.4`                                    | ~35 GB                | Requires Epic GitHub org access     |
 | Community UE5 images (e.g. [ue5-docker](https://github.com/evoverses/ue5-docker)) | ~40 GB (from ~120 GB) | Self-built from your own UE license |
-| Full UE dev image | 50-120 GB | Rarely practical for CI |
+| Full UE dev image                                                                 | 50-120 GB             | Rarely practical for CI             |
 
 GitHub-hosted runners have ~22GB free space by default (up to ~52GB with a disk-reclaim step like
 [jlumbroso/free-disk-space](https://github.com/jlumbroso/free-disk-space), or up to 150GB on paid
