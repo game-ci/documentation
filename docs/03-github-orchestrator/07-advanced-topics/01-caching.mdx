@@ -316,7 +316,7 @@ of silently doing something else. Use `move-directory` (default as of
 [game-ci/orchestrator#41](https://github.com/game-ci/orchestrator/pull/41); same-volume, O(1)
 rename, with an automatic copy fallback across filesystem volumes) or `tar` (works everywhere,
 including for distributing cache entries via the rclone/S3
-[built-in container hooks](05-hooks/05-built-in-hooks) below) instead.
+[built-in container hooks](/docs/github-orchestrator/advanced-topics/hooks/built-in-hooks) below) instead.
 
 See [game-ci/roadmap#11](https://github.com/game-ci/roadmap/issues/11) for the full audit and
 rationale, including remaining follow-up work: a `CacheBackend` design that unifies the local disk
@@ -379,15 +379,15 @@ caching strategies above — fewer wasted builds means less cache churn.
 
 ## Inputs Reference
 
-| Input                            | Description                                                                                                         |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `cacheKey`                       | Override the cache key used for cache isolation                                                                     |
-| `cacheCheckpointInterval`        | Minutes between Library checkpoints; `0` disables                                                                   |
-| `cacheSaveOnFailure`             | Save a partial cache after non-zero build exit                                                                      |
-| `cacheRetentionDays`             | Remove cache entries older than N days                                                                              |
-| `maxRetainedWorkspaces`          | Number of retained full workspaces to keep                                                                          |
-| `maxCacheEntries`                | Max tar snapshots to retain per cache folder (default: 2)                                                           |
-| `minCacheEntries`                | Minimum cache entries to keep during age-based GC (floor)                                                           |
-| `skipCache`                      | Skip cache restore entirely                                                                                         |
-| `useCompressionStrategy`         | Use LZ4 compression for cache archives                                                                              |
-| `localCacheMode`                 | One of `move-directory` (default), `copy-directory`, `tar` (canonical-overlay removed, see above)                   |
+| Input                     | Description                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
+| `cacheKey`                | Override the cache key used for cache isolation                                                   |
+| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables                                                 |
+| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit                                                    |
+| `cacheRetentionDays`      | Remove cache entries older than N days                                                            |
+| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep                                                        |
+| `maxCacheEntries`         | Max tar snapshots to retain per cache folder (default: 2)                                         |
+| `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor)                                         |
+| `skipCache`               | Skip cache restore entirely                                                                       |
+| `useCompressionStrategy`  | Use LZ4 compression for cache archives                                                            |
+| `localCacheMode`          | One of `move-directory` (default), `copy-directory`, `tar` (canonical-overlay removed, see above) |
