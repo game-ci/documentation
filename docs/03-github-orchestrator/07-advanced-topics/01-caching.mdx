@@ -301,28 +301,6 @@ preserve asset imports (textures, meshes, shader cache), which are profile-indep
 See [Self-Hosting and Orchestrator](self-hosting-and-orchestrator#profile-switching) for the
 fingerprinting pattern.
 
-## Canonical Cache + Overlay (Removed)
-
-The `canonical-overlay` local cache mode described in earlier versions of this page has been
-**removed** as of [game-ci/orchestrator#40](https://github.com/game-ci/orchestrator/pull/40). It
-combined the multi-runner safety of `copy-directory` with hardlink-based zero-copy speed, but in
-practice added significant per-file syscall overhead on large Library trees, doubled peak disk
-usage (the source `Library/` was never cleaned up after publish), and had a fully silent
-performance cliff when hardlinks weren't available (cross-volume `EXDEV` fell back to a full copy
-with no logging at any level).
-
-Setting `localCacheMode: canonical-overlay` now throws a clear error at config-read time instead
-of silently doing something else. Use `move-directory` (default as of
-[game-ci/orchestrator#41](https://github.com/game-ci/orchestrator/pull/41); same-volume, O(1)
-rename, with an automatic copy fallback across filesystem volumes) or `tar` (works everywhere,
-including for distributing cache entries via the rclone/S3
-[built-in container hooks](/docs/github-orchestrator/advanced-topics/hooks/built-in-hooks) below) instead.
-
-See [game-ci/roadmap#11](https://github.com/game-ci/roadmap/issues/11) for the full audit and
-rationale, including remaining follow-up work: a `CacheBackend` design that unifies the local disk
-modes with the existing rclone/S3 distributed cache hooks, and a scheduled/rule-based cache warm
-command built on top of it.
-
 ## Self-Hosted Operational Lessons
 
 The following operational lessons apply when running orchestrator on long-lived self-hosted
@@ -379,15 +357,15 @@ caching strategies above — fewer wasted builds means less cache churn.
 
 ## Inputs Reference
 
-| Input                     | Description                                                                                       |
-| ------------------------- | ------------------------------------------------------------------------------------------------- |
-| `cacheKey`                | Override the cache key used for cache isolation                                                   |
-| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables                                                 |
-| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit                                                    |
-| `cacheRetentionDays`      | Remove cache entries older than N days                                                            |
-| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep                                                        |
-| `maxCacheEntries`         | Max tar snapshots to retain per cache folder (default: 2)                                         |
-| `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor)                                         |
-| `skipCache`               | Skip cache restore entirely                                                                       |
-| `useCompressionStrategy`  | Use LZ4 compression for cache archives                                                            |
-| `localCacheMode`          | One of `move-directory` (default), `copy-directory`, `tar` (canonical-overlay removed, see above) |
+| Input                     | Description                                                |
+| ------------------------- | ---------------------------------------------------------- |
+| `cacheKey`                | Override the cache key used for cache isolation            |
+| `cacheCheckpointInterval` | Minutes between Library checkpoints; `0` disables          |
+| `cacheSaveOnFailure`      | Save a partial cache after non-zero build exit             |
+| `cacheRetentionDays`      | Remove cache entries older than N days                     |
+| `maxRetainedWorkspaces`   | Number of retained full workspaces to keep                 |
+| `maxCacheEntries`         | Max tar snapshots to retain per cache folder (default: 2)  |
+| `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor)  |
+| `skipCache`               | Skip cache restore entirely                                |
+| `useCompressionStrategy`  | Use LZ4 compression for cache archives                     |
+| `localCacheMode`          | One of `move-directory` (default), `copy-directory`, `tar` |
