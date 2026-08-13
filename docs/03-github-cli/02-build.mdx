@@ -143,12 +143,15 @@ Real Unreal Engine images are large, which affects where you can practically run
 | Community UE5 images (e.g. [ue5-docker](https://github.com/evoverses/ue5-docker)) | ~40 GB (from ~120 GB) | Self-built from your own UE license |
 | Full UE dev image                                                                 | 50-120 GB             | Rarely practical for CI             |
 
-GitHub-hosted runners have ~22GB free space by default (up to ~52GB with a disk-reclaim step like
-[jlumbroso/free-disk-space](https://github.com/jlumbroso/free-disk-space), or up to 150GB on paid
-larger runners) — even the smallest realistic UE image is tight or won't fit, and pulling a 35GB+
-image alone can take 10-20+ minutes. For anything beyond a quick smoke test, a **self-hosted
+Standard GitHub-hosted runners have ~22GB free space by default (up to ~52GB with a disk-reclaim
+step like [jlumbroso/free-disk-space](https://github.com/jlumbroso/free-disk-space)) — even the
+smallest realistic UE image is tight or won't fit there, and pulling a 35GB+ image alone can take
+10-20+ minutes. [Larger GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners)
+(a paid tier) scale storage with core count — from ~75GB on the smallest (2-core) size up to
+~2TB on the largest (64-core) — so they're a real option for UE images if you don't want to manage
+a self-hosted runner. For anything beyond a quick smoke test on a standard runner, a **self-hosted
 runner** with local image caching (so you're not re-pulling the image every run) is the practical
-choice. [unrealcontainers](https://unrealcontainers.com) is a good resource for building and
+default choice. [unrealcontainers](https://unrealcontainers.com) is a good resource for building and
 sizing your own image. See [Orchestrator's provider docs](/docs/github-orchestrator/providers/overview)
 for self-hosted and cloud provider options beyond plain GitHub-hosted runners.
 
