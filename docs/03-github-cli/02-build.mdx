@@ -112,6 +112,14 @@ game-ci build ./my-godot-project \
 
 The default image tag uses the detected Godot version when available, otherwise `4.3`.
 
+### Choosing an image and a runner
+
+Unlike Unreal Engine (below), the default `barichello/godot-ci` image is small — an Ubuntu base
+plus standard build tooling, with Godot's editor and export templates fetched at build time rather
+than baked into a multi-GB image. Standard GitHub-hosted runners (~22GB free space by default)
+handle it comfortably; there's no need for a self-hosted runner or a larger-runner tier purely for
+image size the way there is for Unreal.
+
 ## Unreal Engine Commands
 
 Unreal Engine builds require a Docker image that you are licensed to use.
