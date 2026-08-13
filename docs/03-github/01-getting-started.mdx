@@ -1,4 +1,6 @@
 import Video from '../../src/components/video/video';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Getting started
 
@@ -7,6 +9,14 @@ GitHub [Actions for Unity](https://github.com/game-ci/unity-actions) provide the
 
 There are a few parts to setting up a workflow. Steps may slightly differ depending on each license
 type.
+
+## Prerequisites
+
+- A Unity project, checked into a GitHub repository
+- A Unity license — personal, plus, pro, or a Unity Personal serial (see
+  [Activation](/docs/github/activation) for how to obtain and configure one)
+- Familiarity with [GitHub Actions](https://docs.github.com/en/actions) basics (a `.github/workflows`
+  YAML file, jobs, and steps) — if this is new to you, read the note below first
 
 ## Quick start
 
@@ -114,13 +124,57 @@ Any subsequent steps assume you have read the above.
 Unity Actions are using [game-ci/docker](https://github.com/game-ci/docker/) since `unity-builder`
 version 2. Any version in this [list](/docs/docker/versions) can be used.
 
-## Video Tutorial
+### Something not working?
 
-<Video url="https://www.youtube-nocookie.com/embed/M2BZr02uai0" />
+- Check [Common issues](/docs/troubleshooting/common-issues) — activation failures, license errors,
+  and other problems reported most often.
+- Check the [FAQ](/docs/faq) for answers to general questions about GameCI.
 
-_Note: The video tutorial was created using an earlier version of the GameCI GitHub Actions for
-Unity. While it provides a helpful visual guide to understanding the process, please refer to the
-current documentation on this website for the most up-to-date information._
+## Choosing a target platform
+
+The examples below default to `WebGL`, but `targetPlatform` accepts any value from the
+[supported platforms list](/docs/github/builder#targetplatform). A few common ones:
+
+<Tabs>
+  <TabItem value="webgl" label="WebGL" default>
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: WebGL
+```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneWindows64
+```
+
+  </TabItem>
+  <TabItem value="linux" label="Linux">
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: StandaloneLinux64
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    targetPlatform: Android
+```
+
+  </TabItem>
+</Tabs>
+
+Swap the `targetPlatform` line into any of the full examples below.
 
 ## Workflow examples
 
@@ -508,3 +562,12 @@ jobs:
           name: Build
           path: build
 ```
+
+## Video Tutorial
+
+<Video url="https://www.youtube-nocookie.com/embed/M2BZr02uai0" />
+
+_This video was recorded using an earlier version of the GameCI GitHub Actions for Unity — some
+details (action versions, `Cache` step syntax) are outdated. Treat it as a conceptual walkthrough
+of the overall flow, not a copy-paste reference; the [Simple example](#simple-example) above and
+the [Activation](/docs/github/activation) page reflect the current setup._
