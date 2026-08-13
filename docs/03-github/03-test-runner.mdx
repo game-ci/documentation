@@ -371,6 +371,17 @@ In this folder a folder will be created for every test mode.
 
 _**required:** `false`_ _**default:** `artifacts`_
 
+#### coverageEnabled
+
+Whether to pass `-enableCodeCoverage` to the Unity editor at all. Code coverage instrumentation is
+on by default, matching earlier behavior, but it has been the root cause of crashes and compile
+errors on some Unity versions (obsolete-API-as-error issues in `com.unity.testtools.codecoverage`,
+and a PlayMode SIGSEGV on Unity 6). If your tests hang, crash, or fail to compile only when coverage
+is enabled, set this to `false` to isolate the issue - the run will still complete, just without
+coverage results.
+
+_**required:** `false`_ _**default:** `true`_
+
 #### coverageOptions
 
 Options for configuring code coverage, this configures the `-coverageOptions` parameter described

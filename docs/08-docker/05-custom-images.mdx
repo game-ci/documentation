@@ -54,9 +54,45 @@ game-ci build-unity-image [baseOs] [modules] [options]
 | `--push`          | `false`            | Push image to registry after building     |
 | `--hub-image`     | `unityci/hub`      | Hub base image                            |
 | `--base-image`    | `unityci/base`     | Editor base image                         |
+| `--recipe`        | empty               | Path to a YAML recipe file (see below)   |
 
 The CLI also supports `baseOs=windows`. When you select `windows`, the command uses the Windows
 Hub and base image defaults unless you override them with `--hub-image` and `--base-image`.
+
+### Recipe Files
+
+Instead of passing every setting as a CLI flag, you can check a declarative, diffable recipe file
+into your repository and pass it with `--recipe`:
+
+```yaml
+# recipe.yml
+unityVersion: 2022.3.20f1
+baseOs: ubuntu
+modules:
+  - windows-mono
+  - linux-il2cpp
+changeset: abc123
+tag: ghcr.io/my-org/unity-editor:desktop
+```
+
+```bash
+game-ci build-unity-image --recipe recipe.yml
+```
+
+**Recipe fields take priority over CLI flags for the same setting when both are given** - the
+recipe file is meant to be the committed, reviewed source of truth for a build; flags are treated
+as one-off overrides layered on top of whatever the recipe doesn't specify.
+
+| Field          | Maps to           |
+| --------------- | ------------------ |
+| `unityVersion`  | `--unity-version`  |
+| `baseOs`        | positional `baseOs` argument |
+| `modules`       | positional `modules` argument (list instead of comma-separated string) |
+| `changeset`     | `--changeset`      |
+| `hubImage`      | `--hub-image`      |
+| `baseImage`     | `--base-image`     |
+| `tag`           | `--tag`            |
+| `engine`        | must be `unity` or omitted |
 
 ### Available Modules
 
