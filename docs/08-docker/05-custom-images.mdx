@@ -94,6 +94,10 @@ as one-off overrides layered on top of whatever the recipe doesn't specify.
 | `tag`          | `--tag`                                                                |
 | `engine`       | must be `unity` or omitted                                             |
 
+`--push` is not a recipe field - whether to push after building is a per-invocation decision, not
+a property of the build itself, so it must be passed as a CLI flag on every invocation regardless
+of whether you're using a recipe.
+
 ### Available Modules
 
 | Module         | Description                       |

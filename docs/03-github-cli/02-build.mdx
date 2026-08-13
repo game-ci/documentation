@@ -152,22 +152,25 @@ game-ci test ./my-project
 ### Unity
 
 For Unity projects, `game-ci test` runs Unity's own official test runner (part of the
-[Unity CLI](https://docs.unity.com/en-us/unity-cli), released by Unity in 2025 and still marked
-experimental) directly against the installed editor - it is not a reimplementation and does not
-replace `game-ci/unity-test-runner`'s custom NUnit harness (package-mode testing, code coverage,
-scoped registries).
+[Unity CLI](https://docs.unity.com/en-us/unity-cli), first released by Unity in April 2026 and
+still marked experimental) directly against the installed editor - it is not a reimplementation
+and does not replace `game-ci/unity-test-runner`'s custom NUnit harness (package-mode testing,
+code coverage, scoped registries).
 
 | Option             | Default | Description                                            |
 | ------------------ | ------- | ------------------------------------------------------ |
 | `--unity-cli-args` | empty   | Raw arguments passed straight through to `unity test`. |
 
 `--unity-cli-args` is a raw pass-through rather than typed flags, because Unity's own CLI reference
-documents `test` with a one-line description and no published flag table - `unity test --help` on
-the installed binary is the only authoritative reference, per Unity's own docs. Hardcoding guessed
-flag names would mean shipping unverified assumptions.
+page documents `test` with a one-line description and no formal parameter table, pointing to
+`unity test --help` on the installed binary as the authoritative source instead. Hardcoding guessed
+flag names would mean shipping unverified assumptions. Unity's release notes do name specific flags
+added to `test` over time (`--mode`, `--output`, `--filter`, `--editor-version`, `--editor-path`,
+`--architecture`, `--allow-install`, `--timeout` as of CLI `0.1.0-beta.7`) - treat these as a
+starting point, not a guarantee for your installed version; confirm with `--help`.
 
 ```bash
-game-ci test ./my-unity-project --unity-cli-args "--platform editmode --report results.xml"
+game-ci test ./my-unity-project --unity-cli-args "--mode editmode --output results.xml"
 ```
 
 For engines or projects that need a different test runner, use a plugin-provided test command, a
