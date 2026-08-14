@@ -119,6 +119,14 @@ game-ci build ./my-godot-project \
 
 The default image tag uses the detected Godot version when available, otherwise `4.3`.
 
+### Choosing an image and a runner
+
+Unlike Unreal Engine (below), the default `barichello/godot-ci` image is small — an Ubuntu base
+plus standard build tooling, with Godot's editor and export templates fetched at build time rather
+than baked into a multi-GB image. Standard GitHub-hosted runners (~22GB free space by default)
+handle it comfortably; there's no need for a self-hosted runner or a larger-runner tier purely for
+image size the way there is for Unreal.
+
 ## Unreal Engine Commands
 
 Unreal Engine builds require a Docker image that you are licensed to use.
@@ -139,6 +147,28 @@ game-ci build ./MyProject.uproject \
 The built-in command uses Unreal Automation Tool inside the container. The image must provide
 `/home/ue4/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh`, or you should wrap your own Unreal
 workflow through a custom job or plugin.
+
+### Choosing an image and a runner
+
+Real Unreal Engine images are large, which affects where you can practically run this:
+
+| Image                                                                             | Size                  | Notes                               |
+| --------------------------------------------------------------------------------- | --------------------- | ----------------------------------- |
+| `ghcr.io/epicgames/unreal-engine:dev-slim-5.4`                                    | ~35 GB                | Requires Epic GitHub org access     |
+| Community UE5 images (e.g. [ue5-docker](https://github.com/evoverses/ue5-docker)) | ~40 GB (from ~120 GB) | Self-built from your own UE license |
+| Full UE dev image                                                                 | 50-120 GB             | Rarely practical for CI             |
+
+Standard GitHub-hosted runners have ~22GB free space by default (up to ~52GB with a disk-reclaim
+step like [jlumbroso/free-disk-space](https://github.com/jlumbroso/free-disk-space)) — even the
+smallest realistic UE image is tight or won't fit there, and pulling a 35GB+ image alone can take
+10-20+ minutes. [Larger GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners)
+(a paid tier) scale storage with core count — from ~75GB on the smallest (2-core) size up to
+~2TB on the largest (64-core) — so they're a real option for UE images if you don't want to manage
+a self-hosted runner. For anything beyond a quick smoke test on a standard runner, a **self-hosted
+runner** with local image caching (so you're not re-pulling the image every run) is the practical
+default choice. [unrealcontainers](https://unrealcontainers.com) is a good resource for building and
+sizing your own image. See [Orchestrator's provider docs](/docs/github-orchestrator/providers/overview)
+for self-hosted and cloud provider options beyond plain GitHub-hosted runners.
 
 ## Test Command
 
