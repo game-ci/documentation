@@ -32,26 +32,33 @@ game-ci build ./my-unity-project \
 
 Common Unity options:
 
-| Option                     | Default                                   | Description                                   |
-| -------------------------- | ----------------------------------------- | --------------------------------------------- |
-| `--target-platform`, `-t`  | `StandaloneLinux64`                       | Unity target platform.                        |
-| `--build-name`             | target platform                           | Output build name.                            |
-| `--builds-path`, `-o`      | `build`                                   | Output folder for builds.                     |
-| `--build-method`, `-m`     | `UnityBuilderAction.Builder.BuildProject` | Static build method to run.                   |
-| `--custom-image`           | GameCI Unity editor image                 | Override the Docker image.                    |
-| `--custom-parameters`      | empty                                     | Extra arguments passed to Unity.              |
-| `--docker-workspace-path`  | `/github/workspace`                       | Container mount path for the workspace.       |
-| `--unity-email`, `-u`      | empty                                     | Unity account email.                          |
-| `--unity-password`, `-p`   | empty                                     | Unity account password.                       |
-| `--unity-serial`, `-s`     | empty                                     | Unity Pro or Plus serial.                     |
-| `--unity-license`, `-l`    | empty                                     | Contents of, or path to, a Unity `.ulf` file. |
-| `--unity-licensing-server` | empty                                     | Unity floating licensing server.              |
-| `--ssh-agent`              | empty                                     | SSH agent path to forward into the container. |
-| `--git-private-token`      | empty                                     | Token used for private Git dependencies.      |
-| `--chown-files-to`         | empty                                     | User or user:group for build artifact owner.  |
+| Option                     | Default                                   | Description                                                                                                                                                                                                                                                               |
+| -------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--target-platform`, `-t`  | `StandaloneLinux64`                       | Unity target platform.                                                                                                                                                                                                                                                    |
+| `--build-name`             | target platform                           | Output build name.                                                                                                                                                                                                                                                        |
+| `--builds-path`, `-o`      | `build`                                   | Output folder for builds.                                                                                                                                                                                                                                                 |
+| `--build-method`, `-m`     | `UnityBuilderAction.Builder.BuildProject` | Static build method to run.                                                                                                                                                                                                                                               |
+| `--custom-image`           | GameCI Unity editor image                 | Override the Docker image.                                                                                                                                                                                                                                                |
+| `--custom-parameters`      | empty                                     | Extra arguments passed to Unity.                                                                                                                                                                                                                                          |
+| `--docker-workspace-path`  | `/github/workspace`                       | Container mount path for the workspace.                                                                                                                                                                                                                                   |
+| `--unity-email`, `-u`      | empty                                     | Unity account email.                                                                                                                                                                                                                                                      |
+| `--unity-password`, `-p`   | empty                                     | Unity account password.                                                                                                                                                                                                                                                   |
+| `--unity-serial`, `-s`     | empty                                     | Unity Pro or Plus serial.                                                                                                                                                                                                                                                 |
+| `--unity-license`, `-l`    | empty                                     | Contents of, or path to, a Unity `.ulf` file.                                                                                                                                                                                                                             |
+| `--unity-licensing-server` | empty                                     | Unity floating licensing server.                                                                                                                                                                                                                                          |
+| `--ssh-agent`              | empty                                     | SSH agent path to forward into the container.                                                                                                                                                                                                                             |
+| `--git-private-token`      | empty                                     | Token used for private Git dependencies.                                                                                                                                                                                                                                  |
+| `--chown-files-to`         | empty                                     | User or user:group for build artifact owner.                                                                                                                                                                                                                              |
+| `--build-profile`          | empty                                     | Path to a Unity 6 Build Profile asset (relative to the project). When set, this determines the build's target instead of `--target-platform`.                                                                                                                             |
+| `--manual-exit`            | `false`                                   | Skip passing `-quit` to the editor, so it stays open after the build method returns. Your build method must call `EditorApplication.Exit(0)` itself, otherwise the build hangs until it times out. Use this if your build method needs to enter play mode before exiting. |
+| `--skip-activation`        | `false`                                   | Skip the license activation and return-license steps entirely. Useful when a license is already active in a long-lived container.                                                                                                                                         |
+| `--run-as-host-user`       | `false`                                   | Linux only. Run the build as a user matching the host's UID/GID instead of the container's default root user, so build artifacts aren't left root-owned on the host.                                                                                                      |
+| `--enable-gpu`             | `false`                                   | Windows only. Installs a Mesa llvmpipe software graphics driver before the build, for GPU-less compute-shader/graphics testing.                                                                                                                                           |
+| `--git-config-extensions`  | empty                                     | Linux only. Newline-separated list of extra git config entries in `key=value` form (e.g. for LFS/submodule auth setups `--git-private-token` doesn't cover).                                                                                                              |
 
 On Linux and Windows, Unity builds run through Docker. On macOS, the CLI uses the host Unity
-installation path handled by the macOS builder setup.
+installation path handled by the macOS builder setup. `--run-as-host-user` and
+`--git-config-extensions` are Linux-only; `--enable-gpu` is Windows-only.
 
 ### Custom Unity Methods
 
@@ -172,8 +179,32 @@ detected engine plugin, so test support can evolve per engine without changing t
 game-ci test ./my-project
 ```
 
-For engines or projects that need a custom test runner, use a plugin-provided test command, a Unity
-custom method, or a remote custom job.
+### Unity
+
+For Unity projects, `game-ci test` runs Unity's own official test runner (part of the
+[Unity CLI](https://docs.unity.com/en-us/unity-cli), first released by Unity in April 2026 and
+still marked experimental) directly against the installed editor - it is not a reimplementation
+and does not replace `game-ci/unity-test-runner`'s custom NUnit harness (package-mode testing,
+code coverage, scoped registries).
+
+| Option             | Default | Description                                            |
+| ------------------ | ------- | ------------------------------------------------------ |
+| `--unity-cli-args` | empty   | Raw arguments passed straight through to `unity test`. |
+
+`--unity-cli-args` is a raw pass-through rather than typed flags, because Unity's own CLI reference
+page documents `test` with a one-line description and no formal parameter table, pointing to
+`unity test --help` on the installed binary as the authoritative source instead. Hardcoding guessed
+flag names would mean shipping unverified assumptions. Unity's release notes do name specific flags
+added to `test` over time (`--mode`, `--output`, `--filter`, `--editor-version`, `--editor-path`,
+`--architecture`, `--allow-install`, `--timeout` as of CLI `0.1.0-beta.7`) - treat these as a
+starting point, not a guarantee for your installed version; confirm with `--help`.
+
+```bash
+game-ci test ./my-unity-project --unity-cli-args "--mode editmode --output results.xml"
+```
+
+For engines or projects that need a different test runner, use a plugin-provided test command, a
+Unity custom method via `game-ci build --build-method`, or a remote custom job.
 
 ## Versioning
 
