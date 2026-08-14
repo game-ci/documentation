@@ -116,7 +116,7 @@ the [`packageMode`](#packagemode) configuration option to `true`.
 
 When testing a Unity package that has dependencies inside a scoped registry, you can set the
 [`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) to ensure those
-depedencies can be resolved.
+dependencies can be resolved.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v4
@@ -128,7 +128,7 @@ depedencies can be resolved.
 #### Authentication with a private scoped registry
 
 If your package has dependencies that are hosted in a private UPM registry, then testing it is
-similar to tesing a project. Setup the [`scopedRegistryUrl`](#scopedRegistryUrl) and
+similar to testing a project. Setup the [`scopedRegistryUrl`](#scopedRegistryUrl) and
 [`registryScopes`](#registryScopes) as usual, but also include a `UPM_REGISTRY_TOKEN` when defining
 your Unity License.
 
