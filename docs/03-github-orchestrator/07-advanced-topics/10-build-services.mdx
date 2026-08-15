@@ -166,29 +166,31 @@ You can also provide explicit fallback keys with `localCacheFallbackKeys`.
 
 `localCacheMode` controls how the local cache stores and restores the Unity Library:
 
-| Mode             | Behavior                 | Best for                                                      |
-| ---------------- | ------------------------ | ------------------------------------------------------------- |
-| `tar`            | Portable tar archive     | Default; works across platforms and filesystems               |
-| `copy-directory` | Recursive directory copy | Shared seed caches that must remain available to other builds |
-| `move-directory` | Directory move / rename  | Same-volume Windows self-hosted runners with large Libraries  |
+| Mode             | Behavior                 | Best for                                                              |
+| ---------------- | ------------------------ | --------------------------------------------------------------------- |
+| `move-directory` | Directory move / rename  | Default; O(1) atomic rename, fastest for large Libraries              |
+| `copy-directory` | Recursive directory copy | Shared seed caches that must remain available to other builds         |
+| `tar`            | Portable tar archive     | Distributing cache entries via the rclone/S3 built-in container hooks |
 
-`move-directory` can be much faster than tar extraction for very large Libraries because NTFS can
-rename a directory on the same volume without copying file contents. Use it only when the cache root
-and workspace are on the same volume and the workflow saves the Library back after the build. If
-`localCacheFallback` restores a fallback key while `localCacheMode` is `move-directory`, the
-fallback is copied instead of moved so the shared fallback seed remains available to other branches.
+`move-directory` (the default since [game-ci/orchestrator#41](https://github.com/game-ci/orchestrator/pull/41))
+is much faster than tar extraction for very large Libraries because it renames a directory rather
+than copying file contents. It works best when the cache root and workspace are on the same
+volume; if a rename fails across filesystem/volume boundaries (`EXDEV`), it automatically falls
+back to a copy instead of failing the build. If `localCacheFallback` restores a fallback key while
+`localCacheMode` is `move-directory`, the fallback is copied instead of moved so the shared
+fallback seed remains available to other branches.
 
 ### Inputs
 
-| Input                    | Default | Description                                              |
-| ------------------------ | ------- | -------------------------------------------------------- |
-| `localCacheEnabled`      | `false` | Enable filesystem caching                                |
-| `localCacheRoot`         | -       | Cache directory override                                 |
-| `localCacheLibrary`      | `true`  | Cache Unity Library folder                               |
-| `localCacheLfs`          | `true`  | Cache LFS objects                                        |
-| `localCacheFallback`     | `false` | Try compatible local cache keys after exact-key miss     |
-| `localCacheFallbackKeys` | -       | Comma-separated explicit fallback keys                   |
-| `localCacheMode`         | `tar`   | Cache mode: `tar`, `copy-directory`, or `move-directory` |
+| Input                    | Default          | Description                                              |
+| ------------------------ | ---------------- | -------------------------------------------------------- |
+| `localCacheEnabled`      | `false`          | Enable filesystem caching                                |
+| `localCacheRoot`         | -                | Cache directory override                                 |
+| `localCacheLibrary`      | `true`           | Cache Unity Library folder                               |
+| `localCacheLfs`          | `true`           | Cache LFS objects                                        |
+| `localCacheFallback`     | `false`          | Try compatible local cache keys after exact-key miss     |
+| `localCacheFallbackKeys` | -                | Comma-separated explicit fallback keys                   |
+| `localCacheMode`         | `move-directory` | Cache mode: `move-directory`, `copy-directory`, or `tar` |
 
 ### Example
 
