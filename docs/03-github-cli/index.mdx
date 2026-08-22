@@ -21,7 +21,7 @@ Use this CLI when you want a stable command surface such as:
 game-ci build ./my-project
 game-ci test ./my-project
 game-ci build ./my-unity-project --build-method Company.CI.RunValidation
-game-ci --plugin @game-ci/orchestrator-plugin orchestrate ./my-project --provider-strategy local-docker
+game-ci orchestrate ./my-project --provider-strategy local-docker
 game-ci config open
 ```
 
@@ -86,8 +86,8 @@ The built-in plugins provide:
 | Other  | Plugin-defined                       | Plugin-defined commands  | Plugins can add build, test, provider, or custom command behavior. |
 
 Provider types such as local Docker, local system, AWS, Kubernetes, GitHub Actions dispatch, and
-custom provider executables are registered by provider plugins. The Orchestrator plugin is the
-intended backend for GameCI provider-backed execution.
+custom provider executables are registered by provider plugins. The Orchestrator is the built-in,
+default backend for GameCI provider-backed execution — no `--plugin` flag needed.
 
 ## First Commands
 
@@ -111,13 +111,13 @@ game-ci build ./my-project --engine unity --engine-version 2022.3.20f1
 
 ## Public CLI vs Orchestrator CLI
 
-| Use case                                        | Recommended entry point                                   |
-| ----------------------------------------------- | --------------------------------------------------------- |
-| Local or CI engine commands with a friendly API | `game-ci` from `game-ci/cli`                              |
-| Provider-backed jobs                            | `game-ci orchestrate` with `@game-ci/orchestrator-plugin` |
-| Provider protocol development                   | Standalone `@game-ci/orchestrator` CLI                    |
-| GitHub Actions workflows with the CLI           | `game-ci/cli` GitHub Action                               |
-| Unity-specific GitHub Actions workflows         | `game-ci/unity-builder` with Orchestrator inputs          |
+| Use case                                        | Recommended entry point                               |
+| ----------------------------------------------- | ----------------------------------------------------- |
+| Local or CI engine commands with a friendly API | `game-ci` from `game-ci/cli`                          |
+| Provider-backed jobs                            | `game-ci orchestrate` (built-in Orchestrator backend) |
+| Provider protocol development                   | Standalone `@game-ci/orchestrator` CLI                |
+| GitHub Actions workflows with the CLI           | `game-ci/cli` GitHub Action                           |
+| Unity-specific GitHub Actions workflows         | `game-ci/unity-builder` with Orchestrator inputs      |
 
 ## Command Names At A Glance
 

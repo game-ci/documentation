@@ -206,6 +206,40 @@ game-ci test ./my-unity-project --unity-cli-args "--mode editmode --output resul
 For engines or projects that need a different test runner, use a plugin-provided test command, a
 Unity custom method via `game-ci build --build-method`, or a remote custom job.
 
+#### Classic Docker Test Flow
+
+Pass `--docker` to run the classic Docker/Hub-image-driven batchmode test flow (`-runTests`)
+instead of Unity's own `unity test` CLI — this is the same flow `game-ci/unity-test-runner`'s action
+uses: editmode/playmode/standalone/package-mode testing, coverage, and artifact collection.
+
+```bash
+game-ci test ./my-unity-project --docker --test-platforms "playmode;editmode"
+```
+
+Add `--local` to run that same batchmode flow directly on this machine instead of inside a
+container — for a self-hosted runner with Unity already installed and licensed, no Docker required.
+This runs through the same host-mode step-script chain (`runsteps` → `activate` → `test` →
+`return_license`) that Orchestrator's `local`/`local-system` provider strategy uses:
+
+```bash
+game-ci test ./my-unity-project --docker --local --test-platforms "playmode;editmode"
+```
+
+`--docker --local` works natively on both Linux and Windows self-hosted runners. On Windows, Unity's
+install location is resolved automatically from Unity Hub's default install directory
+(`C:\Program Files\Unity\Hub\Editor\<version>`), or you can point at a non-default install with the
+`UNITY_PATH` environment variable.
+
+Known limits of `--docker --local` on Windows: standalone-player tests (`--test-platforms standalone`)
+have no headless/no-display equivalent to Linux's `xvfb-run`, so they are not supported on a
+headless Windows Server runner. Without `--local`, `--docker` is currently only supported on Linux
+hosts — Windows' container-side scripts only implement the build flow, not the classic test flow.
+
+| Option     | Default | Description                                                                                                            |
+| ---------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `--docker` | `false` | Run the classic Docker/Hub-image-driven batchmode test flow instead of Unity's own `unity test` CLI.                   |
+| `--local`  | `false` | Only meaningful with `--docker`. Run the same batchmode test flow directly on this host instead of inside a container. |
+
 ## Versioning
 
 Unity builds support version generation.

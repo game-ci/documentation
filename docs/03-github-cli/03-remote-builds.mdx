@@ -37,42 +37,40 @@ package determines the command surface.
 | Direct standalone Orchestrator provider execution      | `game-ci orchestrate`                |
 | Executable provider protocol integration               | `game-ci serve` in the provider tool |
 
-## Orchestrator Plugin
+## Built-In Orchestrator
 
-The Orchestrator is the default provider backend for provider-backed execution. Load it as a CLI
-plugin:
+The Orchestrator is the default provider backend for provider-backed execution, and it ships as a
+built-in plugin — `game-ci` registers it automatically, the same way it registers the built-in
+Unity, Godot, and Unreal engine plugins. You do not need to pass `--plugin` to use
+`game-ci orchestrate` or any `--provider-strategy`:
 
 ```bash
-game-ci \
-  --plugin @game-ci/orchestrator-plugin \
-  orchestrate ./my-unity-project \
+game-ci orchestrate ./my-unity-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
 ```
 
 Available Orchestrator provider types include:
 
-| Provider type     | Strategy value      | Description                                    |
-| ----------------- | ------------------- | ---------------------------------------------- |
-| Local Docker      | `local-docker`      | Run the job in Docker on the current machine.  |
-| Local System      | `local-system`      | Run directly on the current machine.           |
-| AWS               | `aws`               | Run on AWS ECS/Fargate.                        |
-| Kubernetes        | `k8s`               | Run as a Kubernetes job.                       |
-| Google Cloud Run  | `gcp-cloud-run`     | Run on Google Cloud Run.                       |
-| Azure ACI         | `azure-aci`         | Run on Azure Container Instances.              |
-| GitHub Actions    | `github-actions`    | Dispatch to a GitHub Actions workflow.         |
-| GitLab CI         | `gitlab-ci`         | Trigger a GitLab CI pipeline.                  |
-| Remote PowerShell | `remote-powershell` | Run on a remote Windows host.                  |
-| Ansible           | `ansible`           | Run through an Ansible inventory and playbook. |
-| CLI protocol      | `cli`               | Delegate to a custom provider executable.      |
-| Config-defined    | `config:<path>`     | Map lifecycle commands from YAML or JSON.      |
+| Provider type     | Strategy value          | Description                                                                              |
+| ----------------- | ----------------------- | ---------------------------------------------------------------------------------------- |
+| Local Docker      | `local-docker`          | Run the job in Docker on the current machine.                                            |
+| Local System      | `local`, `local-system` | Run directly on the current machine, no Docker. See [Local System](#local-system) below. |
+| AWS               | `aws`                   | Run on AWS ECS/Fargate.                                                                  |
+| Kubernetes        | `k8s`                   | Run as a Kubernetes job.                                                                 |
+| Google Cloud Run  | `gcp-cloud-run`         | Run on Google Cloud Run.                                                                 |
+| Azure ACI         | `azure-aci`             | Run on Azure Container Instances.                                                        |
+| GitHub Actions    | `github-actions`        | Dispatch to a GitHub Actions workflow.                                                   |
+| GitLab CI         | `gitlab-ci`             | Trigger a GitLab CI pipeline.                                                            |
+| Remote PowerShell | `remote-powershell`     | Run on a remote Windows host.                                                            |
+| Ansible           | `ansible`               | Run through an Ansible inventory and playbook.                                           |
+| CLI protocol      | `cli`                   | Delegate to a custom provider executable.                                                |
+| Config-defined    | `config:<path>`         | Map lifecycle commands from YAML or JSON.                                                |
 
 ## Local Docker
 
 ```bash
-game-ci \
-  --plugin @game-ci/orchestrator-plugin \
-  orchestrate ./my-unity-project \
+game-ci orchestrate ./my-unity-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
 ```
@@ -80,15 +78,57 @@ game-ci \
 Use this when you want Orchestrator behavior, such as provider hooks and workspace services, without
 starting with a cloud account.
 
+## Local System
+
+`--provider-strategy local` (the alias `local-system` resolves to the same provider) runs the build
+directly on this machine — no Docker, no cloud account:
+
+```bash
+game-ci orchestrate ./my-unity-project \
+  --provider-strategy local \
+  --target-platform StandaloneLinux64
+```
+
+This drives the same activate → build/test → return-license step-script chain that
+`game-ci build`/`game-ci test --docker --local` use, sourced from the Orchestrator's own build
+parameters rather than CLI options. Unlike `local-docker` (and the cloud providers above), the
+`local` strategy does not clone the repository or pull Git LFS content for you — it assumes the
+project at the invocation directory is already checked out and hydrated. That's the point of the
+strategy: it targets a persistent, self-hosted runner where the workspace already exists between
+runs, rather than a fresh container or VM.
+
+Common Local System options:
+
+| Option              | Default | Description                                                                                                                                                                                           |
+| ------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--skip-activation` | `false` | Skip the per-run Unity license activation/return steps. For a self-hosted runner with an already-licensed, long-lived Unity Hub session, rather than one that activates and deactivates on every run. |
+
+### Local Caching
+
+The `local`/`local-system` strategy has its own filesystem-based cache for the Unity `Library`
+folder and Git LFS objects, separate from the cache path used by the `aws`/`k8s`/`local-docker`
+providers:
+
+| Option                        | Default | Description                                                                                      |
+| ----------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `--local-cache-enabled`       | `false` | Enable local filesystem caching for the `local`/`local-system` strategy.                         |
+| `--local-cache-library`       | `true`  | Cache the Unity `Library` folder locally (requires `--local-cache-enabled`).                     |
+| `--local-cache-lfs`           | `false` | Cache `.git/lfs` locally (requires `--local-cache-enabled`).                                     |
+| `--local-cache-root`          | empty   | Root directory for the local cache. Defaults to `RUNNER_TEMP/game-ci-cache` or `.game-ci/cache`. |
+| `--local-cache-fallback`      | `false` | Allow restoring from a fallback cache key when the exact key misses.                             |
+| `--local-cache-fallback-keys` | empty   | Comma-separated explicit fallback cache keys to try, in order.                                   |
+| `--local-cache-mode`          | `tar`   | Local cache save/restore mode: `tar`, `move-directory`, or `copy-directory`.                     |
+
+These options only affect the `local`/`local-system` provider strategy. The `aws`, `k8s`, and
+`local-docker` strategies use their own separate Library/LFS caching path and ignore them.
+
 ## AWS
 
 ```bash
 export AWS_PROFILE=my-profile
 export AWS_DEFAULT_REGION=us-east-1
 
-game-ci \
-  --plugin @game-ci/orchestrator-plugin \
-  orchestrate ./my-unity-project \
+game-ci orchestrate ./my-unity-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
   --container-cpu 2048 \
@@ -114,9 +154,7 @@ profiles, SSO sessions, and runner roles.
 ## Kubernetes
 
 ```bash
-game-ci \
-  --plugin @game-ci/orchestrator-plugin \
-  orchestrate ./my-unity-project \
+game-ci orchestrate ./my-unity-project \
   --provider-strategy k8s \
   --target-platform StandaloneLinux64 \
   --kube-config "$KUBE_CONFIG_BASE64" \
@@ -139,9 +177,7 @@ Use `--custom-job` when the provider should run commands that do not map to a bu
 or test command.
 
 ```bash
-game-ci \
-  --plugin @game-ci/orchestrator-plugin \
-  orchestrate ./my-godot-project \
+game-ci orchestrate ./my-godot-project \
   --provider-strategy local-docker \
   --custom-job '- name: godot-export
   image: barichello/godot-ci:4.3
@@ -166,13 +202,11 @@ For protocol details, see
 
 ## Config-Defined Providers
 
-When the Orchestrator plugin is loaded, provider strategies can also point at YAML or JSON provider
-configuration files:
+Because the Orchestrator is a built-in plugin, provider strategies can also point at YAML or JSON
+provider configuration files without any extra setup:
 
 ```bash
-game-ci \
-  --plugin @game-ci/orchestrator-plugin \
-  orchestrate ./my-project \
+game-ci orchestrate ./my-project \
   --provider-strategy config:./.game-ci/providers/local-shell.yml
 ```
 
@@ -183,12 +217,10 @@ format, runtime environment variables, and examples.
 
 ## Configuration Files
 
-Orchestrated jobs can load the provider plugin and common options from `.game-ci.yml`:
+Orchestrated jobs can load common options from `.game-ci.yml`:
 
 ```yaml
 cliOptions:
-  plugins:
-    - '@game-ci/orchestrator-plugin'
   providerStrategy: local-docker
   targetPlatform: StandaloneLinux64
 ```
@@ -199,5 +231,5 @@ Then the command can stay short:
 game-ci orchestrate ./my-project
 ```
 
-Provider-specific options are registered by the loaded plugin, so run with `--help` after loading
-the plugin to inspect the exact option set available in your installed version.
+Provider-specific options are registered by the built-in Orchestrator plugin, so run with `--help`
+to inspect the exact option set available in your installed version.

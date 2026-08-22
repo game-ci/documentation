@@ -22,8 +22,6 @@ Options live under `cliOptions`.
 
 ```yaml
 cliOptions:
-  plugin:
-    - '@game-ci/orchestrator-plugin'
   verbose: true
   targetPlatform: StandaloneLinux64
   buildsPath: dist
@@ -39,7 +37,7 @@ provider implementations.
 
 | Source type      | Example                                  |
 | ---------------- | ---------------------------------------- |
-| NPM package      | `--plugin @game-ci/orchestrator-plugin`  |
+| NPM package      | `--plugin @game-ci/example-plugin`       |
 | Local file/path  | `--plugin ./plugins/my-plugin.ts`        |
 | Executable       | `--plugin executable:./my-provider`      |
 | GitHub shorthand | `--plugin github:game-ci/example-plugin` |
@@ -47,23 +45,21 @@ provider implementations.
 Direct GitHub loading is reserved for future plugin loader work. Publish the plugin to npm or use a
 local path for now.
 
-## Orchestrator as a Plugin
+## Orchestrator (Built-In)
 
-The Orchestrator ships provider implementations for the public CLI.
+The Orchestrator ships provider implementations for the public CLI, and it is registered as a
+built-in plugin — the same way the built-in Unity, Godot, and Unreal engine plugins are. You don't
+need to load it with `--plugin`; it's already available:
 
 ```bash
-game-ci \
-  --plugin @game-ci/orchestrator-plugin \
-  orchestrate ./my-project \
+game-ci orchestrate ./my-project \
   --provider-strategy aws
 ```
 
-You can also add the plugin to `.game-ci.yml`:
+You can set the provider strategy in `.game-ci.yml` too:
 
 ```yaml
 cliOptions:
-  plugins:
-    - '@game-ci/orchestrator-plugin'
   providerStrategy: local-docker
   targetPlatform: StandaloneLinux64
 ```
@@ -74,12 +70,10 @@ Then run:
 game-ci orchestrate ./my-project
 ```
 
-Provider strategies loaded through the Orchestrator plugin can also be config-defined providers:
+Provider strategies can also be config-defined providers:
 
 ```yaml
 cliOptions:
-  plugins:
-    - '@game-ci/orchestrator-plugin'
   providerStrategy: config:./.game-ci/providers/local-shell.yml
 ```
 
