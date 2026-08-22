@@ -50,19 +50,19 @@ allowFailure: true
 
 ## Middleware Schema
 
-| Field                | Type                     | Default     | Description                                                                 |
-| --------------------- | ------------------------ | ----------- | ----------------------------------------------------------------------------- |
-| `name`                | string                   | `unnamed`   | Identifies the middleware in logs and generated hook names.                  |
-| `description`         | string                   | —           | Free-text, informational only.                                               |
-| `type`                | `command` \| `container` | `command`   | Resolves to a command hook or a container hook.                              |
-| `priority`            | number                   | `100`       | Ordering — see [Priority Ordering](#priority-ordering) below.                |
-| `trigger`             | object                   | —           | See [Triggers](#triggers) below. Required.                                   |
-| `image`               | string                   | `ubuntu`    | Default container image for `type: container`, overridable per-phase.        |
-| `before`              | string or object         | —           | Commands to run before the phase. Shorthand string, or `{ commands, image }`. |
-| `after`               | string or object         | —           | Commands to run after the phase. Same shape as `before`.                     |
-| `allowFailure`        | boolean                  | `false`     | If `true`, a failing container hook does not fail the build.                 |
-| `secrets`             | array                    | `[]`        | Named secrets to resolve into environment variables for the hook.            |
-| `outputs`             | string[]                 | —           | Reserved for future output capture.                                          |
+| Field          | Type                     | Default   | Description                                                                   |
+| -------------- | ------------------------ | --------- | ----------------------------------------------------------------------------- |
+| `name`         | string                   | `unnamed` | Identifies the middleware in logs and generated hook names.                   |
+| `description`  | string                   | —         | Free-text, informational only.                                                |
+| `type`         | `command` \| `container` | `command` | Resolves to a command hook or a container hook.                               |
+| `priority`     | number                   | `100`     | Ordering — see [Priority Ordering](#priority-ordering) below.                 |
+| `trigger`      | object                   | —         | See [Triggers](#triggers) below. Required.                                    |
+| `image`        | string                   | `ubuntu`  | Default container image for `type: container`, overridable per-phase.         |
+| `before`       | string or object         | —         | Commands to run before the phase. Shorthand string, or `{ commands, image }`. |
+| `after`        | string or object         | —         | Commands to run after the phase. Same shape as `before`.                      |
+| `allowFailure` | boolean                  | `false`   | If `true`, a failing container hook does not fail the build.                  |
+| `secrets`      | array                    | `[]`      | Named secrets to resolve into environment variables for the hook.             |
+| `outputs`      | string[]                 | —         | Reserved for future output capture.                                           |
 
 At least one of `before`/`after` is expected — a middleware with neither has nothing to resolve to
 a hook.
@@ -71,12 +71,12 @@ a hook.
 
 Middleware can trigger on four pipeline phases:
 
-| Phase         | Hook kind        | Wired into                                                          |
-| ------------- | ----------------- | -------------------------------------------------------------------- |
-| `setup`       | command hooks      | Before/after the provider's environment setup step.                  |
-| `build`       | command hooks      | Before/after the actual engine build/test invocation.                |
-| `pre-build`   | container hooks    | Before/after, run as a container step ahead of the build container.  |
-| `post-build`  | container hooks    | Before/after, run as a container step following the build container. |
+| Phase        | Hook kind       | Wired into                                                           |
+| ------------ | --------------- | -------------------------------------------------------------------- |
+| `setup`      | command hooks   | Before/after the provider's environment setup step.                  |
+| `build`      | command hooks   | Before/after the actual engine build/test invocation.                |
+| `pre-build`  | container hooks | Before/after, run as a container step ahead of the build container.  |
+| `post-build` | container hooks | Before/after, run as a container step following the build container. |
 
 `setup`/`build` middleware always resolves to command hooks (`type: command`); `pre-build`/
 `post-build` middleware always resolves to container hooks (`type: container`). List multiple
@@ -91,7 +91,7 @@ Middleware executes in a "wrapping" pattern around the phase it targets:
 - **`after` hooks run in descending priority order** — the reverse: the `priority: 100`
   middleware's `after` runs before the `priority: 10` middleware's `after`.
 
-The net effect: the *outermost* middleware (lowest priority number) has its `before` run first and
+The net effect: the _outermost_ middleware (lowest priority number) has its `before` run first and
 its `after` run last, exactly like nested wrapping. Middleware definitions across inline YAML and
 files are all merged and sorted together by priority before any phase runs.
 
@@ -114,12 +114,12 @@ as "matches anything."
 `when` supports a small, deliberately limited expression grammar evaluated against `process.env` —
 not a general expression language:
 
-| Form                    | Meaning                                                             |
-| ------------------------ | --------------------------------------------------------------------- |
-| `env.VAR == 'value'`     | True when the environment variable equals the quoted value.          |
-| `env.VAR != 'value'`     | True when the environment variable does not equal the quoted value.  |
-| `env.VAR`                | Truthy check — true when set, non-empty, and not the literal `false`. |
-| `!env.VAR`               | Falsy check — true when unset, empty, or the literal `false`.         |
+| Form                 | Meaning                                                               |
+| -------------------- | --------------------------------------------------------------------- |
+| `env.VAR == 'value'` | True when the environment variable equals the quoted value.           |
+| `env.VAR != 'value'` | True when the environment variable does not equal the quoted value.   |
+| `env.VAR`            | Truthy check — true when set, non-empty, and not the literal `false`. |
+| `!env.VAR`           | Falsy check — true when unset, empty, or the literal `false`.         |
 
 An expression that matches none of these forms logs a warning and defaults to `true`.
 

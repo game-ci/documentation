@@ -15,9 +15,9 @@ game-ci orchestrate ./my-unity-project \
   --enable-build-retry
 ```
 
-| Option                  | Default | Description                                                                                      |
-| ------------------------ | ------- | --------------------------------------------------------------------------------------------------- |
-| `--enable-build-retry`  | `false` | Enable automatic classify/decide/retry recovery for failed Unity builds on `local`/`local-system`.  |
+| Option                 | Default | Description                                                                                        |
+| ---------------------- | ------- | -------------------------------------------------------------------------------------------------- |
+| `--enable-build-retry` | `false` | Enable automatic classify/decide/retry recovery for failed Unity builds on `local`/`local-system`. |
 
 ## Why It Is Off By Default
 
@@ -42,15 +42,15 @@ Three cooperating services drive the loop:
 
 ### Recognized Failure Classes
 
-| Failure class                     | Recovery action                                              |
-| ----------------------------------- | ---------------------------------------------------------------- |
-| LFS pointer files instead of real DLLs | Hydrate LFS objects, then retry — `Library` untouched.         |
-| Unity licensing startup race        | Wait, then retry — `Library` untouched.                        |
-| `PackageCache` GUID / immutable-asset corruption | Clear `Library/PackageCache`, then retry.        |
-| Unity API updater ran mid-build     | Retry against the already-updated `Library`.                   |
-| Crash before import completed       | Retry with an import-only pass, then build.                    |
-| Unity exited `0` without invoking the build method | Clear `Library/SourceAssetDB`, then retry.       |
-| Crash evidence found after import completed | Back up/nuke the whole `Library` folder, then retry.   |
+| Failure class                                      | Recovery action                                        |
+| -------------------------------------------------- | ------------------------------------------------------ |
+| LFS pointer files instead of real DLLs             | Hydrate LFS objects, then retry — `Library` untouched. |
+| Unity licensing startup race                       | Wait, then retry — `Library` untouched.                |
+| `PackageCache` GUID / immutable-asset corruption   | Clear `Library/PackageCache`, then retry.              |
+| Unity API updater ran mid-build                    | Retry against the already-updated `Library`.           |
+| Crash before import completed                      | Retry with an import-only pass, then build.            |
+| Unity exited `0` without invoking the build method | Clear `Library/SourceAssetDB`, then retry.             |
+| Crash evidence found after import completed        | Back up/nuke the whole `Library` folder, then retry.   |
 
 Each failure class has its own **retry budget** (most allow 1 retry; the licensing race allows 2)
 using built-in defaults — there is no CLI surface yet for configuring these budgets per-project.

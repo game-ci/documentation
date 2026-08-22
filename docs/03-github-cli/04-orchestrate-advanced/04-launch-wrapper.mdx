@@ -16,9 +16,9 @@ game-ci orchestrate ./my-unity-project \
   --engine-launch-wrapper "flock /tmp/unity-launch.lock --"
 ```
 
-| Option                        | Default | Description                                                                 |
-| -------------------------------- | ------- | -------------------------------------------------------------------------------- |
-| `--engine-launch-wrapper`     | empty   | Command to prefix the engine's process invocation with. Only meaningful for `providerStrategy=local`/`local-system`. |
+| Option                    | Default | Description                                                                                                          |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `--engine-launch-wrapper` | empty   | Command to prefix the engine's process invocation with. Only meaningful for `providerStrategy=local`/`local-system`. |
 
 ## Scope: The Engine Launch, Not The Build Step
 
