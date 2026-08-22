@@ -1,0 +1,65 @@
+---
+sidebar_position: 3
+slug: /cli/orchestrate-advanced/build-retry
+---
+
+# Build Retry And Recovery
+
+`--enable-build-retry` (default **off**) wraps the `local`/`local-system` provider's engine build in
+a classify → decide → retry loop for known-transient Unity failures.
+
+```bash
+game-ci orchestrate ./my-unity-project \
+  --provider-strategy local \
+  --target-platform StandaloneLinux64 \
+  --enable-build-retry
+```
+
+| Option                  | Default | Description                                                                                      |
+| ------------------------ | ------- | --------------------------------------------------------------------------------------------------- |
+| `--enable-build-retry`  | `false` | Enable automatic classify/decide/retry recovery for failed Unity builds on `local`/`local-system`.  |
+
+## Why It Is Off By Default
+
+A single failed attempt behaves exactly as it always has — it throws — unless you opt in. That is
+deliberate: the recovery path this feature drives can back up or **delete** the project's `Library`
+folder, or clear specific subfolders inside it, as part of recovering from a failure class it
+recognizes. Mutating `Library` automatically is a real behavior change from "a build either succeeds
+or fails" to "a build may retry itself and modify local state along the way," so existing users have
+to turn it on explicitly rather than inherit it from an upgrade.
+
+## How It Works
+
+Three cooperating services drive the loop:
+
+- **`UnityBuildDiagnosticsService`** classifies a failed run's output/exit behavior into a known
+  failure class (or none).
+- **`UnityRecoveryService`** decides the recovery action for that class: whether to retry, whether
+  to preserve or nuke `Library`, which subfolders (if any) to clear first, and how long to delay
+  before retrying.
+- **`UnityRetryService`** drives the loop itself, executing the decided recovery action and
+  re-running the build up to that failure class's retry budget.
+
+### Recognized Failure Classes
+
+| Failure class                     | Recovery action                                              |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| LFS pointer files instead of real DLLs | Hydrate LFS objects, then retry — `Library` untouched.         |
+| Unity licensing startup race        | Wait, then retry — `Library` untouched.                        |
+| `PackageCache` GUID / immutable-asset corruption | Clear `Library/PackageCache`, then retry.        |
+| Unity API updater ran mid-build     | Retry against the already-updated `Library`.                   |
+| Crash before import completed       | Retry with an import-only pass, then build.                    |
+| Unity exited `0` without invoking the build method | Clear `Library/SourceAssetDB`, then retry.       |
+| Crash evidence found after import completed | Back up/nuke the whole `Library` folder, then retry.   |
+
+Each failure class has its own **retry budget** (most allow 1 retry; the licensing race allows 2)
+using built-in defaults — there is no CLI surface yet for configuring these budgets per-project.
+Once a class's budget is exhausted, the run fails rather than retrying again.
+
+## When To Use It
+
+Turn this on for a self-hosted `local`/`local-system` runner that has a track record of the specific
+transient failures above — most commonly licensing races on a runner that activates/returns a
+license every run, or `PackageCache`/`Library` corruption after an interrupted prior build. It is not
+a general-purpose "retry on any failure" switch, and it does not apply to `aws`, `k8s`,
+`local-docker`, or core `game-ci build`/`test`.

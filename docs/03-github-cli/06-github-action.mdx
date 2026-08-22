@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 slug: /cli/github-action
 ---
 
@@ -78,13 +78,14 @@ Pinning `uses: game-ci/cli@v0.1.0` is preferred for repeatable workflows.
 
 ## Orchestrated Jobs
 
-The action can run provider-backed jobs by loading provider plugins, the same as the terminal CLI.
+The action can run provider-backed jobs the same as the terminal CLI. The Orchestrator is a built-in
+plugin, so no `--plugin` flag is needed.
 
 ```yaml
 - uses: game-ci/cli@v0.1.0
   with:
     args: >-
-      --plugin @game-ci/orchestrator-plugin orchestrate . --provider-strategy local-docker
+      orchestrate . --provider-strategy local-docker
       --target-platform StandaloneLinux64
 ```
 
