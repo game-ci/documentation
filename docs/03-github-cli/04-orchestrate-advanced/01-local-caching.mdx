@@ -1,0 +1,66 @@
+---
+sidebar_position: 1
+slug: /cli/orchestrate-advanced/local-caching
+---
+
+# Local Caching
+
+The `local`/`local-system` provider strategy has its own filesystem-based cache for the Unity
+`Library` folder and Git LFS objects. It is separate from the cache path used by the `aws`, `k8s`,
+and `local-docker` provider strategies, which have their own pre-existing S3/rclone-backed caching
+and ignore all of the options below.
+
+```bash
+game-ci orchestrate ./my-unity-project \
+  --provider-strategy local \
+  --target-platform StandaloneLinux64 \
+  --local-cache-enabled \
+  --local-cache-mode move-directory
+```
+
+| Option                         | Default | Description                                                                              |
+| ------------------------------ | ------- | ------------------------------------------------------------------------------------------ |
+| `--local-cache-enabled`        | `false` | Enable local filesystem Library/LFS caching for the `local`/`local-system` provider.       |
+| `--local-cache-library`        | `true`  | Cache the engine `Library` folder locally (requires `--local-cache-enabled`).              |
+| `--local-cache-lfs`            | `false` | Cache `.git/lfs` locally (requires `--local-cache-enabled`).                                |
+| `--local-cache-root`           | empty   | Root directory for the local cache. Defaults to `RUNNER_TEMP/game-ci-cache` or `.game-ci/cache`. |
+| `--local-cache-fallback`       | `false` | Allow restoring from a fallback cache key when the exact key misses.                       |
+| `--local-cache-fallback-keys`  | empty   | Comma-separated explicit fallback cache keys to try, in order.                              |
+| `--local-cache-mode`           | `tar`   | Local cache save/restore mode: `tar`, `move-directory`, or `copy-directory`.                |
+
+These options only affect the `local`/`local-system` provider strategy. `aws`, `k8s`, and
+`local-docker` use a separate, pre-existing Library/LFS caching path and ignore them entirely.
+
+## Choosing A Cache Mode
+
+| Mode              | Behavior                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| `tar`             | Archive/extract the `Library` folder (and LFS objects, if enabled) to/from a tarball. Portable, but pays a compress/decompress cost every run. |
+| `move-directory`  | An O(1) same-volume move/rename swap of a per-runner `Library` backup into place. No copy, no compression — just a rename. |
+| `copy-directory`  | Plain recursive directory copy, no archive step. Simpler than `tar`, still pays a full-copy cost. |
+
+`move-directory` is the mode with genuine real-world production parity: it matches how a real
+external studio actually runs this in practice — an O(1) same-volume `Move-Item`/rename swap of a
+per-runner `Library` backup, rather than a copy or an archive round-trip. It requires the cache root
+and the project's `Library` folder to live on the same filesystem/volume (a rename across volumes
+degrades to a copy), which is the normal case for a dedicated self-hosted runner with a fixed cache
+root.
+
+Hardlinking the `Library` folder into place was evaluated and explicitly rejected as an approach —
+it does not reflect how this is done in production and is not one of the supported modes. If you
+see `move-directory` described as a hardlink strategy anywhere, that description is wrong; treat it
+as a same-volume move/rename, not a hardlink.
+
+## Fallback Keys
+
+`--local-cache-fallback` (with optional `--local-cache-fallback-keys`) lets a run restore from a
+prior, non-exact cache key when the exact key misses — for example falling back to yesterday's
+`Library` cache on the first build of a new branch, rather than starting from an empty `Library` and
+paying a full reimport.
+
+## Cache Root
+
+`--local-cache-root` defaults to `RUNNER_TEMP/game-ci-cache` when `RUNNER_TEMP` is set (matching
+GitHub Actions self-hosted runner conventions), otherwise `.game-ci/cache` relative to the working
+directory. Set it explicitly when your self-hosted runner's persistent cache volume lives somewhere
+else, or when `move-directory` mode needs to share a volume with the project checkout.

@@ -6,6 +6,15 @@ slug: /cli/remote-builds
 
 # Orchestrated Jobs
 
+:::info Core stays lean — advanced capability lives here
+`game-ci build`, `game-ci test`, and `game-ci activate` are deliberately thin, engine-invocation
+wrappers and stay that way on purpose. Caching, retry/recovery, extensibility hooks, and wrapping
+the engine's own process launch are `orchestrate`'s job, not core's — see
+[Orchestrate: advanced topics](./orchestrate-advanced) for [local caching](./orchestrate-advanced/local-caching),
+[middleware/hooks](./orchestrate-advanced/middleware), [build retry](./orchestrate-advanced/build-retry),
+and the [engine launch wrapper](./orchestrate-advanced/launch-wrapper).
+:::
+
 `game-ci orchestrate` schedules a provider-backed engine job. Providers can run standard builds, test
 workflows, custom engine commands, or a fully custom job definition.
 
@@ -103,24 +112,17 @@ Common Local System options:
 | ------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--skip-activation` | `false` | Skip the per-run Unity license activation/return steps. For a self-hosted runner with an already-licensed, long-lived Unity Hub session, rather than one that activates and deactivates on every run. |
 
-### Local Caching
+The `local`/`local-system` strategy is also where the rest of the advanced, self-hosted-runner
+surface lives:
 
-The `local`/`local-system` strategy has its own filesystem-based cache for the Unity `Library`
-folder and Git LFS objects, separate from the cache path used by the `aws`/`k8s`/`local-docker`
-providers:
-
-| Option                        | Default | Description                                                                                      |
-| ----------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
-| `--local-cache-enabled`       | `false` | Enable local filesystem caching for the `local`/`local-system` strategy.                         |
-| `--local-cache-library`       | `true`  | Cache the Unity `Library` folder locally (requires `--local-cache-enabled`).                     |
-| `--local-cache-lfs`           | `false` | Cache `.git/lfs` locally (requires `--local-cache-enabled`).                                     |
-| `--local-cache-root`          | empty   | Root directory for the local cache. Defaults to `RUNNER_TEMP/game-ci-cache` or `.game-ci/cache`. |
-| `--local-cache-fallback`      | `false` | Allow restoring from a fallback cache key when the exact key misses.                             |
-| `--local-cache-fallback-keys` | empty   | Comma-separated explicit fallback cache keys to try, in order.                                   |
-| `--local-cache-mode`          | `tar`   | Local cache save/restore mode: `tar`, `move-directory`, or `copy-directory`.                     |
-
-These options only affect the `local`/`local-system` provider strategy. The `aws`, `k8s`, and
-`local-docker` strategies use their own separate Library/LFS caching path and ignore them.
+- **[Local caching](./orchestrate-advanced/local-caching)** — persist the Unity `Library` folder and
+  Git LFS objects across runs (`--local-cache-enabled` and friends).
+- **[Middleware and hooks](./orchestrate-advanced/middleware)** — run your own commands/containers
+  around pipeline phases (`--middleware-pipeline`, `--middleware-files`).
+- **[Build retry and recovery](./orchestrate-advanced/build-retry)** — opt-in classify/decide/retry
+  recovery for known-transient Unity build failures (`--enable-build-retry`).
+- **[Engine launch wrapper](./orchestrate-advanced/launch-wrapper)** — wrap the engine's own process
+  launch, e.g. with a launch-serialization lock (`--engine-launch-wrapper`).
 
 ## AWS
 
@@ -233,3 +235,10 @@ game-ci orchestrate ./my-project
 
 Provider-specific options are registered by the built-in Orchestrator plugin, so run with `--help`
 to inspect the exact option set available in your installed version.
+
+## See Also
+
+- [Orchestrate: advanced topics](./orchestrate-advanced) — caching, middleware/hooks, build retry,
+  and the engine launch wrapper
+- [Engine commands](/docs/cli/build) — core `build`/`test`/`activate`
+- [Configuration and plugins](/docs/cli/configuration-and-plugins)

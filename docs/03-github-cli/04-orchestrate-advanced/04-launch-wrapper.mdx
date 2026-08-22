@@ -1,0 +1,51 @@
+---
+sidebar_position: 4
+slug: /cli/orchestrate-advanced/launch-wrapper
+---
+
+# Engine Launch Wrapper
+
+`--engine-launch-wrapper` prefixes the engine's own process invocation with a command of your
+choice — for example a self-hosted runner's own launch-serialization lock, so only one Unity Editor
+process launches at a time on a machine that runs multiple runners.
+
+```bash
+game-ci orchestrate ./my-unity-project \
+  --provider-strategy local \
+  --target-platform StandaloneLinux64 \
+  --engine-launch-wrapper "flock /tmp/unity-launch.lock --"
+```
+
+| Option                        | Default | Description                                                                 |
+| -------------------------------- | ------- | -------------------------------------------------------------------------------- |
+| `--engine-launch-wrapper`     | empty   | Command to prefix the engine's process invocation with. Only meaningful for `providerStrategy=local`/`local-system`. |
+
+## Scope: The Engine Launch, Not The Build Step
+
+This wraps precisely the point where the engine process itself is spawned — not the surrounding
+build step, and not the whole pipeline phase the way a [middleware](./middleware) hook does. That
+distinction matters: a middleware `before`/`after` hook runs adjacent to a phase (setup, build,
+pre-build, post-build), while the launch wrapper is applied at the single call site that actually
+invokes the engine binary, inside the host-mode step scripts.
+
+Use middleware when you want to run something before/after a whole phase (uploading logs, notifying
+a webhook, warming a cache). Use the launch wrapper when you need something wrapped tightly around
+the engine process launch itself — a lock, a resource limiter, or a process-level instrumentation
+tool that needs to see the engine's own exit code directly.
+
+## Only Meaningful For `local`/`local-system`
+
+The launch wrapper only affects the bare-host `local`/`local-system` provider strategy's step
+scripts. Providers that run inside containers/cloud infrastructure (`local-docker`, `aws`, `k8s`,
+and the rest) don't invoke the engine through this call site the same way, so the option has no
+effect there.
+
+## Internal Mechanism
+
+Under the hood this is passed through an `ENGINE_LAUNCH_WRAPPER` environment variable that the
+engine environment setup and the Docker/host command builders read. That mechanism also exists to
+serve engines like Godot and Unreal that have no Orchestrator-owned build script chain of their own
+to hook into — but `--engine-launch-wrapper` is deliberately **only** exposed as a flag on
+`game-ci orchestrate`. Core `game-ci build`/`test`/`activate` do not register this option; wrapping
+the engine's process launch is orchestration-level behavior, not something every core build
+invocation should carry.

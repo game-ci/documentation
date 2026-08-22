@@ -6,6 +6,14 @@ slug: /cli/build
 
 # Engine Commands
 
+:::info Looking for caching, retry, or hooks?
+`build`, `test`, and `activate` are deliberately thin, engine-invocation wrappers, and stay that way
+on purpose. Caching, build retry/recovery, middleware/hooks, and wrapping the engine's own process
+launch are not core capabilities — they live under
+[`game-ci orchestrate`](/docs/cli/remote-builds), specifically its
+[advanced topics](/docs/cli/orchestrate-advanced).
+:::
+
 The CLI resolves engine commands from the project at the current directory, or the project path
 passed as the first argument. `game-ci build` is the most common command, but it is not the only
 workflow the CLI can run.
@@ -55,10 +63,26 @@ Common Unity options:
 | `--run-as-host-user`       | `false`                                   | Linux only. Run the build as a user matching the host's UID/GID instead of the container's default root user, so build artifacts aren't left root-owned on the host.                                                                                                      |
 | `--enable-gpu`             | `false`                                   | Windows only. Installs a Mesa llvmpipe software graphics driver before the build, for GPU-less compute-shader/graphics testing.                                                                                                                                           |
 | `--git-config-extensions`  | empty                                     | Linux only. Newline-separated list of extra git config entries in `key=value` form (e.g. for LFS/submodule auth setups `--git-private-token` doesn't cover).                                                                                                              |
+| `--skip-native-plugin-check` | `false`                                 | Skip the Windows-only-Editor native plugin scan (see below) before a Linux container build.                                                                                                                                                                              |
 
 On Linux and Windows, Unity builds run through Docker. On macOS, the CLI uses the host Unity
 installation path handled by the macOS builder setup. `--run-as-host-user` and
 `--git-config-extensions` are Linux-only; `--enable-gpu` is Windows-only.
+
+### Windows-Only-Editor Native Plugin Warning
+
+Before a Unity build that runs inside a Linux Docker container, `game-ci build` scans the project's
+`Assets` folder for `.dll.meta` files whose `PluginImporter` restricts **Editor** availability to
+Windows hosts only. Such a plugin isn't just excluded from the built player the way you'd expect
+from a platform-scoped native plugin — it becomes invisible to the Editor entirely on a Linux host,
+which can silently break compilation of any code that references it unconditionally.
+
+When the scan finds one or more matches, the build logs a warning naming the affected `.dll` paths
+and continues — it never fails the build on its own. Pass `--skip-native-plugin-check` to skip the
+scan entirely, for example if you've already accounted for the plugin's availability in your project
+setup. The scan only runs for Unity builds targeting the Linux container path; it does not run for
+the Windows container path or for the macOS host build path, since neither of those hosts the Editor
+on Linux.
 
 ### Custom Unity Methods
 
@@ -273,12 +297,54 @@ version.
 | `--config`              | Read CLI options from a config file. |
 | `--plugin`              | Load an external plugin.             |
 | `--plugins`             | Alias for plugin arrays in config.   |
+| `--profile`             | Select a named profile from the config file. See [Named Profiles](#named-profiles) below. |
 | `--quiet`, `-q`         | Suppress output.                     |
 | `--verbose`, `-v`       | Enable verbose logging.              |
 | `--veryVerbose`, `--vv` | Enable very verbose logging.         |
 | `--maxVerbose`, `--vvv` | Enable debug logging.                |
 
+## Named Profiles
+
+`.game-ci.yml` can define a `profiles` map alongside its base `cliOptions`, and `--profile <name>`
+selects one:
+
+```yaml
+cliOptions:
+  targetPlatform: StandaloneLinux64
+  buildsPath: build
+
+profiles:
+  android-release:
+    targetPlatform: Android
+    androidExportType: androidAppBundle
+    buildsPath: build/android
+  ios-debug:
+    targetPlatform: iOS
+    buildsPath: build/ios
+```
+
+```bash
+game-ci build ./my-project --profile android-release
+```
+
+Precedence, highest first:
+
+1. Explicit CLI flags (e.g. `--target-platform` passed directly on the command line)
+2. The selected profile's options (`profiles.<name>`)
+3. The base `cliOptions` block
+
+The profile's options are merged over the base `cliOptions` before either is compared against
+explicit flags, so a profile only needs to specify what's different from the base — it does not
+need to repeat every option.
+
+Requesting a profile name that isn't defined fails loudly, listing the profiles that are available:
+
+```
+Unknown profile "android-relese" passed via --profile. Available profiles in .game-ci.yml: android-release, ios-debug
+```
+
 ## See Also
 
 - [Orchestrated jobs](/docs/cli/remote-builds)
+- [Orchestrate: advanced topics](/docs/cli/orchestrate-advanced)
 - [Configuration and plugins](/docs/cli/configuration-and-plugins)

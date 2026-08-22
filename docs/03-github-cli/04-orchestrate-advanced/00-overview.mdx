@@ -1,0 +1,28 @@
+---
+sidebar_position: 0
+sidebar_label: Why This Lives Here
+slug: /cli/orchestrate-advanced
+---
+
+# Orchestrate: Advanced Topics
+
+`game-ci build`, `game-ci test`, and `game-ci activate` stay deliberately thin: resolve the engine,
+set up the environment, run it once, activate/return a license when needed. That is a structural
+choice, not a temporary gap. It keeps the core command surface small enough to read in one sitting
+and safe to depend on.
+
+Everything on this page and its sub-pages is capability that goes beyond invoking the engine once:
+
+- **[Local caching](./local-caching)** — persisting the Unity `Library` folder and Git LFS objects
+  across runs on a self-hosted runner.
+- **[Middleware and hooks](./middleware)** — trigger-aware commands and containers wrapped around
+  pipeline phases, for extensibility without forking a provider.
+- **[Build retry and recovery](./build-retry)** — opt-in classify/decide/retry recovery for known
+  transient Unity build failures.
+- **[Engine launch wrapper](./launch-wrapper)** — wrapping the engine's own process launch, not the
+  whole build step.
+
+All of it lives under `game-ci orchestrate` (`--provider-strategy local` / `local-system`, unless
+noted otherwise) rather than on `build`/`test`/`activate`, because each one is a real behavior
+change or a standing infrastructure concern — the kind of thing you opt into deliberately for a
+specific runner or pipeline, not something every `game-ci build` invocation should carry implicitly.

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 slug: /cli/configuration-and-plugins
 ---
 
@@ -29,6 +29,10 @@ cliOptions:
 
 The config file uses the same option names as the CLI's parsed options. In practice, that means
 camelCase names such as `targetPlatform`, `providerStrategy`, `customImage`, and `buildsPath`.
+
+The file can also define a `profiles` map alongside `cliOptions`, selected with `--profile <name>`
+to layer profile-specific overrides on top of the base options. See
+[Named Profiles](/docs/cli/build#named-profiles) for the merge order and an example.
 
 ## Plugin Sources
 
