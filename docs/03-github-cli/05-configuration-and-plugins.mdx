@@ -39,15 +39,11 @@ to layer profile-specific overrides on top of the base options. See
 Plugins can provide engine detectors, build or test command handlers, custom commands, options, and
 provider implementations.
 
-| Source type      | Example                                  |
-| ---------------- | ---------------------------------------- |
-| NPM package      | `--plugin @game-ci/example-plugin`       |
-| Local file/path  | `--plugin ./plugins/my-plugin.ts`        |
-| Executable       | `--plugin executable:./my-provider`      |
-| GitHub shorthand | `--plugin github:game-ci/example-plugin` |
-
-Direct GitHub loading is reserved for future plugin loader work. Publish the plugin to npm or use a
-local path for now.
+| Source type     | Example                             |
+| --------------- | ----------------------------------- |
+| NPM package     | `--plugin @game-ci/example-plugin`  |
+| Local file/path | `--plugin ./plugins/my-plugin.ts`   |
+| Executable      | `--plugin executable:./my-provider` |
 
 ## Orchestrator (Built-In)
 

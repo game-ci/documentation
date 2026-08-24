@@ -46,7 +46,7 @@ load a community or custom engine provider:
 
 ```yaml
 # GitHub Actions with a built-in engine configuration
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     engine: godot
     targetPlatform: StandaloneLinux64
@@ -63,7 +63,7 @@ Use `enginePlugin` only when you need a custom engine provider or when you want 
 built-in configuration:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     engine: custom-engine
     enginePlugin: '@your-org/custom-engine-provider'

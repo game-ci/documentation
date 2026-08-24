@@ -101,7 +101,7 @@ overridden; all others inherit from the base.
 Specify profiles and variants as action inputs:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     submoduleProfilePath: config/submodule-profiles/my-game/ci/profile.yml
     submoduleVariantPath: config/submodule-profiles/my-game/ci/server.yml
@@ -142,7 +142,7 @@ jobs:
             buildMethod: MyOtherGame.BuildScripts.BuildGame
             targetPlatform: StandaloneWindows64
     steps:
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           submoduleProfilePath: ${{ matrix.profile }}
           submoduleVariantPath: ${{ matrix.variant }}

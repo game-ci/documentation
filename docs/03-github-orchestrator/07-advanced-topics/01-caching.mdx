@@ -80,7 +80,7 @@ flowchart LR
 Set `cacheCheckpointInterval` to save the Library folder periodically while Unity is running:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -94,7 +94,7 @@ on the configured cache upload hook to push them after the build container stops
 Use `cacheSaveOnFailure` for builds that may exit non-zero because of OOMs, crashes, or assertions:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -121,7 +121,7 @@ Library folder is tens of gigabytes and checkpoint archives consume too much I/O
 Use `cacheRetentionDays` to automatically remove old cache entries from storage:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     cacheRetentionDays: 30
@@ -173,7 +173,7 @@ Set `maxRetainedWorkspaces` to control how many full workspaces are kept:
 | `> 0` | Keep at most N workspaces. Additional jobs fall back to standard caching. |
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     maxRetainedWorkspaces: 3
@@ -233,7 +233,7 @@ Use both when interrupted imports are common and import results need to survive 
 single Library archive:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   env:
     UNITY_ACCELERATOR_ENDPOINT: '127.0.0.1:10080'
   with:
@@ -363,8 +363,9 @@ cache key this run doesn't touch, so that lock can outlive the process that crea
 
 Sweep lock files proactively at the start of a build, across every cache key under the cache root,
 not only the one this run is about to use. Treat a lock as stale when the PID it names is no longer
-alive (or the file can't be parsed) — a plain existence check on the marker file, without a liveness
-check on the process it names, cannot tell a genuinely in-progress save from an orphaned one.
+alive. An incomplete or unparseable marker is kept for a five-minute grace period because the
+writer briefly stores `pending` before it can record the child PID. Permission errors during PID
+liveness checks are not treated as proof that the process is dead.
 
 ### Path-filter on the workflow entrypoint to skip docs-only commits
 
@@ -398,4 +399,4 @@ caching strategies above — fewer wasted builds means less cache churn.
 | `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor)  |
 | `skipCache`               | Skip cache restore entirely                                |
 | `useCompressionStrategy`  | Use LZ4 compression for cache archives                     |
-| `localCacheMode`          | One of `move-directory` (default), `copy-directory`, `tar` |
+| `localCacheMode`          | One of `tar` (default), `move-directory`, `copy-directory` |

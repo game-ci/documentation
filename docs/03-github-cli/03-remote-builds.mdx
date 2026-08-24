@@ -98,9 +98,10 @@ game-ci orchestrate ./my-unity-project \
   --target-platform StandaloneLinux64
 ```
 
-This drives the same activate → build/test → return-license step-script chain that
-`game-ci build`/`game-ci test --docker --local` use, sourced from the Orchestrator's own build
-parameters rather than CLI options. Unlike `local-docker` (and the cloud providers above), the
+This drives the host activate → build/test → return-license step-script chain. It is comparable to
+the public CLI's classic `game-ci test --docker --local` host path, but is sourced from
+Orchestrator build parameters. The core `game-ci build` command uses Docker on Linux and Windows.
+Unlike `local-docker` (and the cloud providers above), the
 `local` strategy does not clone the repository or pull Git LFS content for you — it assumes the
 project at the invocation directory is already checked out and hydrated. That's the point of the
 strategy: it targets a persistent, self-hosted runner where the workspace already exists between
@@ -108,9 +109,10 @@ runs, rather than a fresh container or VM.
 
 Common Local System options:
 
-| Option              | Default | Description                                                                                                                                                                                           |
-| ------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--skip-activation` | `false` | Skip the per-run Unity license activation/return steps. For a self-hosted runner with an already-licensed, long-lived Unity Hub session, rather than one that activates and deactivates on every run. |
+| Option                    | Default | Description                                                                                                                                                                                           |
+| ------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--skip-activation`       | `false` | Skip the per-run Unity license activation/return steps. For a self-hosted runner with an already-licensed, long-lived Unity Hub session, rather than one that activates and deactivates on every run. |
+| `--engine-launch-wrapper` | empty   | Prefix the engine process with a host command such as `flock`. See [Engine launch wrapper](./orchestrate-advanced/launch-wrapper).                                                                    |
 
 The `local`/`local-system` strategy is also where the rest of the advanced, self-hosted-runner
 surface lives:

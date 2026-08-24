@@ -33,23 +33,19 @@ These options only affect the `local`/`local-system` provider strategy. `aws`, `
 
 ## Choosing A Cache Mode
 
-| Mode             | Behavior                                                                                                                                       |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tar`            | Archive/extract the `Library` folder (and LFS objects, if enabled) to/from a tarball. Portable, but pays a compress/decompress cost every run. |
-| `move-directory` | An O(1) same-volume move/rename swap of a per-runner `Library` backup into place. No copy, no compression — just a rename.                     |
-| `copy-directory` | Plain recursive directory copy, no archive step. Simpler than `tar`, still pays a full-copy cost.                                              |
+| Mode             | Behavior                                                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `tar`            | Archive/extract the engine cache folder (`Library` for Unity). Portable, but pays an archive/extract cost every run.       |
+| `move-directory` | An O(1) same-volume move/rename swap of a per-runner `Library` backup into place. No copy, no compression — just a rename. |
+| `copy-directory` | Plain recursive directory copy, no archive step. Simpler than `tar`, still pays a full-copy cost.                          |
 
-`move-directory` is the mode with genuine real-world production parity: it matches how a real
-external studio actually runs this in practice — an O(1) same-volume `Move-Item`/rename swap of a
-per-runner `Library` backup, rather than a copy or an archive round-trip. It requires the cache root
-and the project's `Library` folder to live on the same filesystem/volume (a rename across volumes
-degrades to a copy), which is the normal case for a dedicated self-hosted runner with a fixed cache
-root.
+`move-directory` is a destructive transfer rather than a shared cache copy: restore moves the
+cached directory into the workspace, and save moves it back. It requires the cache root and the
+project's `Library` folder to be on the same filesystem volume. A cross-volume rename fails; there
+is no automatic copy fallback. Use `copy-directory` when the paths may be on different volumes or
+when multiple builds need the same cache entry concurrently.
 
-Hardlinking the `Library` folder into place was evaluated and explicitly rejected as an approach —
-it does not reflect how this is done in production and is not one of the supported modes. If you
-see `move-directory` described as a hardlink strategy anywhere, that description is wrong; treat it
-as a same-volume move/rename, not a hardlink.
+Git LFS caching is independent of this mode and uses a tar archive when enabled.
 
 ## Fallback Keys
 
@@ -57,6 +53,12 @@ as a same-volume move/rename, not a hardlink.
 prior, non-exact cache key when the exact key misses — for example falling back to yesterday's
 `Library` cache on the first build of a new branch, rather than starting from an empty `Library` and
 paying a full reimport.
+
+The exact key is `{targetPlatform}-{unityVersion}-{branch}` with unsupported filename characters
+replaced by underscores. Explicit fallback keys are tried first in the order supplied. Automatic
+candidates then prefer the same platform and Unity version, followed by the same platform, then the
+same Unity version. Fallback restores are copied even in `move-directory` mode so the seed remains
+available.
 
 ## Cache Root
 
@@ -69,8 +71,8 @@ else, or when `move-directory` mode needs to share a volume with the project che
 
 By default, a failed build/test leaves the local cache untouched — only a successful run saves a
 new cache. `--local-cache-save-on-failure` opts into a more forgiving policy, based on a pattern
-used in production by a real external studio: if asset import completed before a later,
-unrelated failure (a crash, a license error, a nonzero exit from something downstream of import),
+designed to preserve useful import work: if asset import completed before a later,
+non-corruption failure (a crash, a license error, or a nonzero exit downstream of import),
 the `Library` the import produced is still valuable and gets banked as a cache "floor" — so the
 next run starts from a warm `Library` instead of an empty one, even though this run failed.
 
@@ -104,8 +106,7 @@ shouldBankAsFloor = importCompleted && !isCorruptionSpecificCategory(failureCate
 ```
 
 - **Generic, process-level failures** (`CRASH`, `LICENSE`, `EXIT_NEG1`, `GENERIC`) — bankable if
-  import completed. The process died after the `Library` was already in a good state; there's no
-  reason to discard it.
+  import completed. This preserves the imported `Library`, subject to the diagnostic heuristic.
 - **Corruption-specific failures** (`COMPILE`, `PACKAGE` by default) — blocked unconditionally,
   even if import completed. These indicate the `Library`/`PackageCache` content itself may be
   broken, not just that something crashed after a clean import.

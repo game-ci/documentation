@@ -104,7 +104,7 @@ Create two files in your repository under `game-ci/container-hooks/`:
 ### 2. Configure the workflow
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   env:
     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -166,7 +166,7 @@ Ensure the security group allows inbound TCP 10080 from your Fargate task securi
 Pass the accelerator's private IP or DNS name as an environment variable:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   env:
     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}

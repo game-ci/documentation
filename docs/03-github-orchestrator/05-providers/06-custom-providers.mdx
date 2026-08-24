@@ -23,19 +23,19 @@ Set `providerStrategy` to a provider source instead of a built-in name:
 
 ```yaml
 # GitHub repository
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: 'https://github.com/your-org/my-provider'
     targetPlatform: StandaloneLinux64
 
 # GitHub shorthand
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: 'your-org/my-provider'
     targetPlatform: StandaloneLinux64
 
 # Specific branch
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: 'your-org/my-provider@develop'
     targetPlatform: StandaloneLinux64

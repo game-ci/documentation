@@ -40,12 +40,9 @@ scripts. Providers that run inside containers/cloud infrastructure (`local-docke
 and the rest) don't invoke the engine through this call site the same way, so the option has no
 effect there.
 
-## Internal Mechanism
+The wrapper is passed to the local host step scripts through `ENGINE_LAUNCH_WRAPPER`. Quote it as a
+single CLI value, and test the command on the runner's shell: Linux host steps invoke it through
+their shell, while Windows host steps use PowerShell command semantics.
 
-Under the hood this is passed through an `ENGINE_LAUNCH_WRAPPER` environment variable that the
-engine environment setup and the Docker/host command builders read. That mechanism also exists to
-serve engines like Godot and Unreal that have no Orchestrator-owned build script chain of their own
-to hook into — but `--engine-launch-wrapper` is deliberately **only** exposed as a flag on
-`game-ci orchestrate`. Core `game-ci build`/`test`/`activate` do not register this option; wrapping
-the engine's process launch is orchestration-level behavior, not something every core build
-invocation should carry.
+`--engine-launch-wrapper` is deliberately exposed only by `game-ci orchestrate`. Core
+`game-ci build`/`test`/`activate` do not register this option.

@@ -22,20 +22,18 @@ Standard CI assumptions break down at this scale:
 - **CI timeouts** - Default job timeouts of 6 hours are insufficient for cold clones followed by
   full imports on large projects.
 
-Orchestrator addresses each of these with a two-level workspace architecture, move-centric caching,
-selective LFS hydration, and submodule profile filtering.
+Orchestrator addresses these costs with child workspaces, optional move-centric local caching,
+custom LFS transfer-agent integration, incremental sync, and submodule profile filtering.
 
 ## Two-Level Workspace Architecture
 
 Orchestrator manages workspaces at two levels:
 
-**Root workspace** - A lean, long-lived clone of the repository. It contains the full git history
-and index, a minimal set of LFS objects (only those needed for compilation), and no Unity Library
-folder. The root workspace is cached across builds and updated incrementally.
+**Root workspace** - A long-lived source workspace used to derive cached children. Its exact Git LFS
+contents depend on the configured Git/LFS workflow and transfer agent.
 
-**Child workspaces** - Per-build-target workspaces derived from the root. Each child is LFS-hydrated
-for its specific asset paths, contains the Library folder for its platform target, and is retained
-between builds of the same target.
+**Child workspaces** - Named workspaces derived from the root. A child can retain its own engine
+cache folder and be reused by subsequent builds assigned the same name.
 
 ```
 root-workspace/
@@ -55,13 +53,13 @@ child-workspaces/
     Library/
 ```
 
-The orchestrator manages this layout automatically when `childWorkspacesEnabled: true` is set.
-Child workspaces are named per build target and cached under `childWorkspaceCacheRoot`. Each is
-created on first build and reused on subsequent builds of the same target. Only changed files from
-git delta sync are applied to each child.
+The orchestrator manages this layout when `childWorkspacesEnabled: true` is set. You must provide a
+stable `childWorkspaceName`; using the matrix target keeps platforms isolated. Children are cached
+under `childWorkspaceCacheRoot`, created on first use, and reused by later builds with the same
+name. Only `syncStrategy: git-delta` limits synchronization to Git changes.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     childWorkspacesEnabled: true
     childWorkspaceName: ${{ matrix.targetPlatform }}
@@ -85,7 +83,7 @@ is an O(1) metadata operation regardless of how many files it contains. A 50 GB 
 in milliseconds.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     localCacheEnabled: true
     localCacheRoot: /mnt/build-storage/cache
@@ -105,9 +103,9 @@ storage. Remote cache fallback (S3, GCS, Azure Blob via rclone) is a separate me
 
 | `localCacheMode` | Library Restore/Save Time         | Suitable For                                        |
 | ---------------- | --------------------------------- | --------------------------------------------------- |
-| `move-directory` | Milliseconds (same-volume rename) | Retained storage, build farms (default)             |
+| `move-directory` | Milliseconds (same-volume rename) | Retained storage and one build at a time per key    |
 | `copy-directory` | Seconds-minutes (size-dependent)  | Cache root on a different volume than the workspace |
-| `tar`            | Minutes (archive + extract)       | Cache needs to be transferred off-box afterward     |
+| `tar`            | Minutes (archive + extract)       | Portable default                                    |
 
 `move-directory` requires the cache root and the workspace to be on the same filesystem volume — a
 same-volume rename is what makes the move O(1). A cross-volume rename fails at the OS level, so
@@ -118,38 +116,26 @@ that cannot be guaranteed. Fallback-key restores (see
 
 ## Custom LFS Transfer Agents
 
-Standard Git LFS transfers every object through a single HTTP endpoint. For large projects this
-creates a bottleneck, especially when only a subset of assets is needed for a given build.
-
 Orchestrator supports alternative LFS transfer agents via the `lfsTransferAgent` input. A transfer
-agent is a binary that Git invokes in place of the standard LFS client. Agents can implement partial
-transfer, parallel streams, resumable downloads, and custom storage backends.
+agent is a binary that Git invokes in place of the standard LFS client. The agent — not
+Orchestrator — defines its transfer, filtering, and storage behavior.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     lfsTransferAgent: elastic-git-storage
     lfsTransferAgentArgs: '--verbose'
-    lfsStoragePaths: 'Assets/LargeAssets,Assets/Cinematics'
+    lfsStoragePaths: '/mnt/fast-lfs;/mnt/archive-lfs'
 ```
 
-`lfsStoragePaths` limits LFS hydration to the specified asset directories. Files outside these paths
-are not downloaded, reducing transfer volume to only what the build target needs.
-
-**elastic-git-storage** is the recommended agent for large projects. It supports:
-
-- Parallel multi-stream transfers
-- Resumable downloads after network interruption
-- Content-addressed deduplication across workspaces
-- Direct object storage access (S3, GCS, Azure Blob) without a relay server
-
-**rclone-based agents** are an alternative when the LFS server cannot be replaced. They proxy
-transfers through any rclone-supported backend, enabling caching and bandwidth throttling.
+`lfsStoragePaths` is a semicolon-separated list passed to the agent as the
+`LFS_STORAGE_PATHS` environment variable. Orchestrator does not interpret these values as repository
+path filters; consult the selected agent's documentation for their meaning.
 
 To use a custom agent, provide the agent binary path:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     lfsTransferAgent: /usr/local/bin/my-lfs-agent
     lfsTransferAgentArgs: '--threads 8 --cache /mnt/lfs-cache'
@@ -199,7 +185,7 @@ pipeline), the runner pulls only the changed files from a generic storage remote
 git-delta so that code changes and asset changes are both handled incrementally.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     syncStrategy: git-delta
     childWorkspacesEnabled: true
@@ -226,9 +212,9 @@ strategy:
 target platform during off-hours. Retained workspaces mean subsequent PR builds start with warm
 Library folders.
 
-**Use LFS partial clone patterns.** Structure the repository so assets are grouped by build target
-under predictable paths (`Assets/Platforms/Linux/`, `Assets/Platforms/WebGL/`). This makes
-`lfsStoragePaths` filtering straightforward and predictable.
+**Design LFS layout for the selected agent.** Grouping assets by build target can help agents that
+support selective hydration, but that filtering is agent-specific rather than an Orchestrator
+guarantee.
 
 **Reserve timeouts generously.** There is no orchestrator-level build timeout input — set
 `timeout-minutes` on the GitHub Actions job itself to account for cold-start scenarios, even when
@@ -241,7 +227,7 @@ jobs:
   build:
     timeout-minutes: 360
     steps:
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           targetPlatform: StandaloneLinux64
 ```
@@ -259,9 +245,9 @@ mid-sprint when a runner's Library becomes stale.
 | `childWorkspaceCacheRoot`       | Base path for cached child workspaces                                 |
 | `childWorkspacePreserveGit`     | Keep `.git` in the cached child workspace (default `true`)            |
 | `childWorkspaceSeparateLibrary` | Cache each engine cache folder independently (default `true`)         |
-| `localCacheEnabled`             | Enable the local move-centric Library/LFS cache (`true` / `false`)    |
+| `localCacheEnabled`             | Enable the local filesystem cache (`true` / `false`)                  |
 | `localCacheRoot`                | Local filesystem path for the move-centric Library cache              |
-| `localCacheMode`                | Restore/save strategy: `move-directory`, `copy-directory`, `tar`      |
+| `localCacheMode`                | Restore/save strategy; `tar` is the default                           |
 | `lfsTransferAgent`              | Name or path of a custom LFS transfer agent binary                    |
 | `lfsTransferAgentArgs`          | Additional arguments passed to the LFS transfer agent                 |
-| `lfsStoragePaths`               | Comma-separated asset paths to limit LFS hydration                    |
+| `lfsStoragePaths`               | Semicolon-separated storage values passed to the custom LFS agent     |

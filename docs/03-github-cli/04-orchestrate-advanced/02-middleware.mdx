@@ -45,7 +45,6 @@ before:
 after:
   commands: |
     curl -s -X POST "$DISCORD_WEBHOOK_URL" -d '{"content":"Build finished."}'
-allowFailure: true
 ```
 
 ## Middleware Schema
@@ -60,7 +59,7 @@ allowFailure: true
 | `image`        | string                   | `ubuntu`  | Default container image for `type: container`, overridable per-phase.         |
 | `before`       | string or object         | —         | Commands to run before the phase. Shorthand string, or `{ commands, image }`. |
 | `after`        | string or object         | —         | Commands to run after the phase. Same shape as `before`.                      |
-| `allowFailure` | boolean                  | `false`   | If `true`, a failing container hook does not fail the build.                  |
+| `allowFailure` | boolean                  | `false`   | Container middleware only. If `true`, a failing container hook is tolerated.  |
 | `secrets`      | array                    | `[]`      | Named secrets to resolve into environment variables for the hook.             |
 | `outputs`      | string[]                 | —         | Reserved for future output capture.                                           |
 
@@ -78,9 +77,11 @@ Middleware can trigger on four pipeline phases:
 | `pre-build`  | container hooks | Before/after, run as a container step ahead of the build container.  |
 | `post-build` | container hooks | Before/after, run as a container step following the build container. |
 
-`setup`/`build` middleware always resolves to command hooks (`type: command`); `pre-build`/
-`post-build` middleware always resolves to container hooks (`type: container`). List multiple
-phases in `trigger.phase` if the same middleware should activate at more than one point.
+The supported type/phase pairs are `type: command` with `setup` or `build`, and `type: container`
+with `pre-build` or `post-build`. The `type` field is authoritative. A mismatched pair, an unknown
+phase, or one definition that mixes command and container phases is rejected with a configuration
+error rather than being silently omitted. List multiple compatible phases in `trigger.phase` if the
+same middleware should activate at more than one point.
 
 ## Priority Ordering
 
@@ -126,10 +127,11 @@ An expression that matches none of these forms logs a warning and defaults to `t
 ## Command Vs Container Middleware
 
 - `type: command` middleware runs its `before`/`after` `commands` as shell commands on the host
-  running the pipeline step — appropriate for `setup`/`build` phase hooks.
+  running the pipeline step. Use it with `setup`/`build` phase hooks. Setting `allowFailure: true`
+  on command middleware is rejected because command hooks do not support that failure mode.
 - `type: container` middleware runs its `before`/`after` `commands` inside a container using
-  `image` (top-level default, or overridden per-phase) — appropriate for `pre-build`/`post-build`
-  phase hooks, and lets you use tooling that doesn't need to exist on the host itself.
+  `image` (top-level default, or overridden per-phase). Use it with `pre-build`/`post-build` phase
+  hooks. Container hooks support `allowFailure` and can use tooling that is absent from the host.
 
 ## Secrets
 
@@ -140,4 +142,14 @@ secrets:
 
 Each entry resolves its value from an explicit `value`, or falls back to `process.env[name]` /
 `process.env[UPPER_SNAKE_CASE(name)]`, and is exposed to the hook's commands as an environment
-variable.
+variable. The normalized uppercase name is used for the environment variable when `name` is not
+already in environment-variable form.
+
+The `trigger.when` expression is evaluated against the process environment before these secret
+entries are hydrated. An explicit YAML `value` therefore cannot make a `when` condition true unless
+the same variable is already present in the process environment.
+
+Avoid placing secret values directly in middleware YAML: they remain plaintext in the config, and
+this middleware path does not automatically register them with GitHub Actions log masking. Prefer
+injecting values through your CI secret store or the runner environment, and never echo them from a
+hook.

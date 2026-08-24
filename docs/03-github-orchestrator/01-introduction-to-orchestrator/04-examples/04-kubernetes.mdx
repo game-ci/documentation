@@ -23,7 +23,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: k8s
           targetPlatform: StandaloneLinux64
@@ -61,7 +61,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         id: build
         with:
           providerStrategy: k8s
@@ -80,7 +80,7 @@ jobs:
 Specify CPU/memory and persistent volume size for the build workspace.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   id: k8s-build
   with:
     providerStrategy: k8s
@@ -113,7 +113,7 @@ Kubernetes uses the same unit format as AWS (`1024 = 1 vCPU`, memory in MB):
 Use S3-backed caching for the Library folder to speed up rebuilds.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: k8s
     targetPlatform: StandaloneLinux64
@@ -133,7 +133,7 @@ Hook execution order matters - `aws-s3-pull-cache` restores the cache before the
 Keep the build workspace persistent between builds for large projects.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: k8s
     targetPlatform: StandaloneLinux64

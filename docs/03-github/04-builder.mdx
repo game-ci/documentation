@@ -140,29 +140,21 @@ listed in the Unity scripting manual.
 
 _**required:** `true`_ _**example:** `StandaloneWindows64`_
 
-**`targetPlatform` determines which `runs-on` OS you need.** The Docker image `unity-builder`
-uses is Linux-only, so any target that isn't natively buildable from Linux runs on that target's
-own OS instead. There's no way to build, say, `StandaloneWindows64` from an `ubuntu-latest`
-runner - use the table below to pick the right `runs-on` for the platform(s) you're building.
+`targetPlatform` selects the Unity build target; it does not by itself prescribe `runs-on`.
+`unity-builder` supports Linux and Windows editor containers and the macOS host path. Many Mono
+targets can be cross-compiled — for example, a Linux runner can produce a Windows Mono player —
+while targets that need a platform SDK or native IL2CPP toolchain require a compatible host.
 
-| `runs-on`       | `targetPlatform` values it supports                             |
-| --------------- | --------------------------------------------------------------- |
-| `ubuntu-latest` | `StandaloneLinux64`, `iOS`, `Android`, `WebGL`                  |
-| `windows-2022`  | `StandaloneWindows`, `StandaloneWindows64`, `tvOS`, `WSAPlayer` |
-| `macos-latest`  | `StandaloneOSX`                                                 |
+Choose the runner OS together with the project's scripting backend and target requirements. A
+multi-platform workflow can use separate jobs or a matrix whose `runs-on` value matches each
+target/toolchain combination; see the
+[Advanced IL2CPP example](/docs/github/getting-started#advanced-il2cpp-example).
 
-Building for multiple platforms in one workflow means multiple jobs (or a matrix with an
-OS-appropriate `runs-on`) - see the
-[Advanced IL2CPP example](/docs/github/getting-started#advanced-il2cpp-example), which is really a
-multi-platform, multi-OS matrix example (IL2CPP is incidental to it - see the note below).
-
-**Mono vs IL2CPP** isn't a `unity-builder` input at all - there's no `scriptingBackend` field.
-It's a Unity Player Settings choice (`Project Settings > Player > Other Settings > Scripting
-Backend`), baked into your project before the build ever runs, the same way it would be for a
-local build in the Editor. `unity-builder` just builds whatever your project is already
-configured to build. The one thing that _is_ project-adjacent to this action: IL2CPP builds
-require the base OS to match the build target (same table as above) - there's no cross-compiling
-IL2CPP for Windows from a Linux runner, for example.
+**Mono vs IL2CPP** is configured in Unity Player Settings (`Project Settings > Player > Other
+Settings > Scripting Backend`), not through a `unity-builder` `scriptingBackend` input. The action
+uses the runner OS, target platform, Unity version, and project configuration to select an
+appropriate editor image/module. If a target's required toolchain is unavailable on the chosen
+runner, move that matrix entry to a compatible OS.
 
 #### unityVersion
 
