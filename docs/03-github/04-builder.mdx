@@ -138,12 +138,46 @@ Platform that the build should target.
 Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html)
 listed in the Unity scripting manual.
 
-_**required:** `true`_
+_**required:** `true`_ _**example:** `StandaloneWindows64`_
+
+**`targetPlatform` determines which `runs-on` OS you need.** The Docker image `unity-builder`
+uses is Linux-only, so any target that isn't natively buildable from Linux runs on that target's
+own OS instead. There's no way to build, say, `StandaloneWindows64` from an `ubuntu-latest`
+runner - use the table below to pick the right `runs-on` for the platform(s) you're building.
+
+| `runs-on`       | `targetPlatform` values it supports                             |
+| --------------- | --------------------------------------------------------------- |
+| `ubuntu-latest` | `StandaloneLinux64`, `iOS`, `Android`, `WebGL`                  |
+| `windows-2022`  | `StandaloneWindows`, `StandaloneWindows64`, `tvOS`, `WSAPlayer` |
+| `macos-latest`  | `StandaloneOSX`                                                 |
+
+Building for multiple platforms in one workflow means multiple jobs (or a matrix with an
+OS-appropriate `runs-on`) - see the
+[Advanced IL2CPP example](/docs/github/getting-started#advanced-il2cpp-example), which is really a
+multi-platform, multi-OS matrix example (IL2CPP is incidental to it - see the note below).
+
+**Mono vs IL2CPP** isn't a `unity-builder` input at all - there's no `scriptingBackend` field.
+It's a Unity Player Settings choice (`Project Settings > Player > Other Settings > Scripting
+Backend`), baked into your project before the build ever runs, the same way it would be for a
+local build in the Editor. `unity-builder` just builds whatever your project is already
+configured to build. The one thing that _is_ project-adjacent to this action: IL2CPP builds
+require the base OS to match the build target (same table as above) - there's no cross-compiling
+IL2CPP for Windows from a Linux runner, for example.
 
 #### unityVersion
 
 Version of Unity to use for building the project. Use "auto" to get from your
 ProjectSettings/ProjectVersion.txt
+
+The exact string from Unity Hub/the editor's own version display, including the release tag
+letter and build number - e.g. `2021.3.16f1`, `2022.3.7f1`, `6000.0.23f1`. Not just the numeric
+part (`2021.3.16` alone will not resolve).
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    unityVersion: 2021.3.16f1
+```
 
 _**required:** `false`_ _**default:** `auto`_
 
