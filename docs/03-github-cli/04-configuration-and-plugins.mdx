@@ -141,6 +141,37 @@ configuration-driven providers, executable providers, and TypeScript/JavaScript 
 Use the public CLI plugin API when you are adding command surface or engine behavior to `game-ci`
 itself; use the Orchestrator provider extension points when you are changing where jobs run.
 
+## Plugin Catalog
+
+Beyond the built-in Unity/Godot/Unreal engine plugins and the built-in Orchestrator, a growing set
+of plugins add engine support and cross-cutting capabilities. Load any of them with
+`--plugin @game-ci/<name>` (or a `plugins:` entry in `.game-ci.yml`) - none of the plugins below are
+in the CLI's default load list.
+
+| Plugin                                   | Kind           | Status                                                                                             |
+| ---------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------- |
+| `@game-ci/steam-deploy`                  | Deploy command | **Shipped.** `game-ci deploy steam <buildPath>` - VDF generation, local/Docker SteamCMD execution. |
+| `@game-ci/gamemaker`                     | Engine         | Draft - registration shape only, build logic not yet implemented.                                  |
+| `@game-ci/rpg-maker`                     | Engine         | Draft.                                                                                             |
+| `@game-ci/renpy`                         | Engine         | Draft.                                                                                             |
+| `@game-ci/itch-deploy`                   | Deploy command | Draft - mirrors `steam-deploy`'s shape.                                                            |
+| `@game-ci/crash-symbol-upload`           | Command        | Draft - command not yet registered in core either.                                                 |
+| `@game-ci/runtime-test-framework`        | Command        | Draft - command not yet registered in core either.                                                 |
+| `@game-ci/screen-capture`                | Command, GPU   | Draft - command not yet registered in core either.                                                 |
+| `@game-ci/live-show`                     | Command        | Draft - command not yet registered in core either.                                                 |
+| `@game-ci/dedicated-server-provisioning` | Command        | Draft - command not yet registered in core either.                                                 |
+| `@game-ci/anti-cheat`                    | Options        | Draft - hooks into an existing build, not a new command.                                           |
+| `@game-ci/pseudo-localization`           | Command        | Draft - command not yet registered in core either.                                                 |
+| `@game-ci/save-data-compat`              | Command        | Draft - command not yet registered in core either.                                                 |
+| `@game-ci/dev-tunnel`                    | Command        | Draft - command not yet registered in core either.                                                 |
+
+"Draft" means a real, correctly-typed plugin skeleton exists (conforming to the plugin interface
+above), but its actual domain logic is a documented TODO rather than an implementation - see each
+plugin's own `README.md` under `plugins/<name>/` in the `game-ci/cli` repo for exactly what's real
+versus planned. Several of the command-based drafts also need a small core change to register their
+command name with the CLI at all (the same kind of change `deploy` itself needed - see the PR that
+added `steam-deploy`) before they can be invoked even once their logic is implemented.
+
 ## Local Config Folder
 
 Use `config open` to open the local GameCI folder:
