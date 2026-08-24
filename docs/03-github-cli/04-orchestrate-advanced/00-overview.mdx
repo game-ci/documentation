@@ -13,14 +13,14 @@ and safe to depend on.
 
 Everything on this page and its sub-pages is capability that goes beyond invoking the engine once:
 
-- **[Local caching](./local-caching)** — persisting the Unity `Library` folder and Git LFS objects
-  across runs on a self-hosted runner.
-- **[Middleware and hooks](./middleware)** — trigger-aware commands and containers wrapped around
-  pipeline phases, for extensibility without forking a provider.
-- **[Build retry and recovery](./build-retry)** — opt-in classify/decide/retry recovery for known
-  transient Unity build failures.
-- **[Engine launch wrapper](./launch-wrapper)** — wrapping the engine's own process launch, not the
-  whole build step.
+- **[Local caching](/docs/cli/orchestrate-advanced/local-caching)** — persisting the Unity `Library`
+  folder and Git LFS objects across runs on a self-hosted runner.
+- **[Middleware and hooks](/docs/cli/orchestrate-advanced/middleware)** — trigger-aware commands and
+  containers wrapped around pipeline phases, for extensibility without forking a provider.
+- **[Build retry and recovery](/docs/cli/orchestrate-advanced/build-retry)** — opt-in
+  classify/decide/retry recovery for known transient Unity build failures.
+- **[Engine launch wrapper](/docs/cli/orchestrate-advanced/launch-wrapper)** — wrapping the engine's
+  own process launch, not the whole build step.
 
 All of it lives under `game-ci orchestrate` (`--provider-strategy local` / `local-system`, unless
 noted otherwise) rather than on `build`/`test`/`activate`, because each one is a real behavior
