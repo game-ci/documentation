@@ -144,26 +144,27 @@ itself; use the Orchestrator provider extension points when you are changing whe
 ## Plugin Catalog
 
 Beyond the built-in Unity/Godot/Unreal engine plugins and the built-in Orchestrator, a growing set
-of plugins add engine support and cross-cutting capabilities. Load any of them with
-`--plugin @game-ci/<name>` (or a `plugins:` entry in `.game-ci.yml`) - none of the plugins below are
-in the CLI's default load list.
+of plugins add engine support and cross-cutting capabilities. `steam-deploy` and
+`runtime-test-framework` are shipped and in the CLI's default load list, the same way Orchestrator
+is. Everything else below is a draft - load it explicitly with `--plugin @game-ci/<name>` (or a
+`plugins:` entry in `.game-ci.yml`) once it's real.
 
-| Plugin                                   | Kind           | Status                                                                                             |
-| ---------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------- |
-| `@game-ci/steam-deploy`                  | Deploy command | **Shipped.** `game-ci deploy steam <buildPath>` - VDF generation, local/Docker SteamCMD execution. |
-| `@game-ci/gamemaker`                     | Engine         | Draft - registration shape only, build logic not yet implemented.                                  |
-| `@game-ci/rpg-maker`                     | Engine         | Draft.                                                                                             |
-| `@game-ci/renpy`                         | Engine         | Draft.                                                                                             |
-| `@game-ci/itch-deploy`                   | Deploy command | Draft - mirrors `steam-deploy`'s shape.                                                            |
-| `@game-ci/crash-symbol-upload`           | Command        | Draft - command not yet registered in core either.                                                 |
-| `@game-ci/runtime-test-framework`        | Command        | Draft - command not yet registered in core either.                                                 |
-| `@game-ci/screen-capture`                | Command, GPU   | Draft - command not yet registered in core either.                                                 |
-| `@game-ci/live-show`                     | Command        | Draft - command not yet registered in core either.                                                 |
-| `@game-ci/dedicated-server-provisioning` | Command        | Draft - command not yet registered in core either.                                                 |
-| `@game-ci/anti-cheat`                    | Options        | Draft - hooks into an existing build, not a new command.                                           |
-| `@game-ci/pseudo-localization`           | Command        | Draft - command not yet registered in core either.                                                 |
-| `@game-ci/save-data-compat`              | Command        | Draft - command not yet registered in core either.                                                 |
-| `@game-ci/dev-tunnel`                    | Command        | Draft - command not yet registered in core either.                                                 |
+| Plugin                                   | Kind           | Status                                                                                                           |
+| ---------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `@game-ci/steam-deploy`                  | Deploy command | **Shipped.** `game-ci deploy steam <buildPath>` - VDF generation, local/Docker SteamCMD execution.               |
+| `@game-ci/runtime-test-framework`        | Command        | **Shipped.** `game-ci test-runtime <buildPath>` - see [below](#runtime-test-framework) for the results contract. |
+| `@game-ci/gamemaker`                     | Engine         | Draft - registration shape only, build logic not yet implemented.                                                |
+| `@game-ci/rpg-maker`                     | Engine         | Draft.                                                                                                           |
+| `@game-ci/renpy`                         | Engine         | Draft.                                                                                                           |
+| `@game-ci/itch-deploy`                   | Deploy command | Draft - mirrors `steam-deploy`'s shape.                                                                          |
+| `@game-ci/crash-symbol-upload`           | Command        | Draft - command not yet registered in core either.                                                               |
+| `@game-ci/screen-capture`                | Command, GPU   | Draft - command not yet registered in core either.                                                               |
+| `@game-ci/live-show`                     | Command        | Draft - command not yet registered in core either.                                                               |
+| `@game-ci/dedicated-server-provisioning` | Command        | Draft - command not yet registered in core either.                                                               |
+| `@game-ci/anti-cheat`                    | Options        | Draft - hooks into an existing build, not a new command.                                                         |
+| `@game-ci/pseudo-localization`           | Command        | Draft - command not yet registered in core either.                                                               |
+| `@game-ci/save-data-compat`              | Command        | Draft - command not yet registered in core either.                                                               |
+| `@game-ci/dev-tunnel`                    | Command        | Draft - command not yet registered in core either.                                                               |
 
 "Draft" means a real, correctly-typed plugin skeleton exists (conforming to the plugin interface
 above), but its actual domain logic is a documented TODO rather than an implementation - see each
@@ -171,6 +172,51 @@ plugin's own `README.md` under `plugins/<name>/` in the `game-ci/cli` repo for e
 versus planned. Several of the command-based drafts also need a small core change to register their
 command name with the CLI at all (the same kind of change `deploy` itself needed - see the PR that
 added `steam-deploy`) before they can be invoked even once their logic is implemented.
+
+### Runtime Test Framework
+
+`game-ci test-runtime <buildPath>` is a real, distinct capability from `game-ci test`: it launches
+the actual _built player_ your build step produced (not the Editor, and not Unity's own Test
+Framework's specialized test player, which `game-ci test`'s `-runTests` path uses) and reports on
+whatever tests its own in-game harness ran.
+
+```bash
+game-ci test-runtime ./build/StandaloneLinux64 --timeout 60000
+```
+
+`buildPath` can point directly at the executable, or at a directory containing it - the plugin looks
+for the single matching candidate (one `.exe` on Windows, one `.app` bundle on macOS, one
+executable-bit file on Linux) and errors clearly if it finds none or more than one, rather than
+guessing.
+
+**This plugin never runs test code itself.** A game project's own in-game test harness does, against
+a small results contract:
+
+1. The plugin launches the player with `GAME_CI_RUNTIME_TEST_MODE=1` and
+   `GAME_CI_RUNTIME_TEST_RESULTS_PATH=<path>` set.
+2. Your in-game harness checks for `GAME_CI_RUNTIME_TEST_MODE`, runs whatever tests it wants, and
+   writes a JSON file to `GAME_CI_RUNTIME_TEST_RESULTS_PATH` before exiting:
+
+   ```json
+   {
+     "schemaVersion": 1,
+     "tests": [
+       { "name": "player spawns at origin", "passed": true, "durationMs": 12 },
+       {
+         "name": "inventory persists across scene load",
+         "passed": false,
+         "message": "expected 3 items, got 2"
+       }
+     ]
+   }
+   ```
+
+3. The plugin reads that file after the process exits (or kills it and fails the run if it doesn't
+   exit within `--timeout`) and fails the CI step on any `passed: false` entry, or if the file was
+   never written at all.
+
+The results file, not the process exit code, is authoritative - a player that writes valid results
+but happens to exit non-zero for an unrelated reason still has its real test results honored.
 
 ## Local Config Folder
 
