@@ -104,10 +104,10 @@ storage. Remote cache fallback (S3, GCS, Azure Blob via rclone) is a separate me
 [Storage](storage)) for cold runners that do not have local cache access.
 
 | `localCacheMode` | Library Restore/Save Time         | Suitable For                                        |
-| ----------------- | ---------------------------------- | ----------------------------------------------------- |
-| `move-directory`  | Milliseconds (same-volume rename)  | Retained storage, build farms (default)               |
-| `copy-directory`  | Seconds-minutes (size-dependent)   | Cache root on a different volume than the workspace   |
-| `tar`              | Minutes (archive + extract)        | Cache needs to be transferred off-box afterward       |
+| ---------------- | --------------------------------- | --------------------------------------------------- |
+| `move-directory` | Milliseconds (same-volume rename) | Retained storage, build farms (default)             |
+| `copy-directory` | Seconds-minutes (size-dependent)  | Cache root on a different volume than the workspace |
+| `tar`            | Minutes (archive + extract)       | Cache needs to be transferred off-box afterward     |
 
 `move-directory` requires the cache root and the workspace to be on the same filesystem volume — a
 same-volume rename is what makes the move O(1). A cross-volume rename fails at the OS level, so
@@ -252,16 +252,16 @@ mid-sprint when a runner's Library becomes stale.
 
 ## Inputs Reference
 
-| Input                        | Description                                                     |
-| ----------------------------- | ----------------------------------------------------------------- |
-| `childWorkspacesEnabled`     | Enable per-build-target child workspaces (`true` / `false`)     |
-| `childWorkspaceName`         | Cache slot name for this child workspace, usually the target platform |
-| `childWorkspaceCacheRoot`    | Base path for cached child workspaces                           |
-| `childWorkspacePreserveGit`  | Keep `.git` in the cached child workspace (default `true`)      |
-| `childWorkspaceSeparateLibrary` | Cache each engine cache folder independently (default `true`) |
-| `localCacheEnabled`          | Enable the local move-centric Library/LFS cache (`true` / `false`) |
-| `localCacheRoot`             | Local filesystem path for the move-centric Library cache        |
-| `localCacheMode`             | Restore/save strategy: `move-directory`, `copy-directory`, `tar` |
-| `lfsTransferAgent`           | Name or path of a custom LFS transfer agent binary               |
-| `lfsTransferAgentArgs`       | Additional arguments passed to the LFS transfer agent            |
-| `lfsStoragePaths`            | Comma-separated asset paths to limit LFS hydration                |
+| Input                           | Description                                                           |
+| ------------------------------- | --------------------------------------------------------------------- |
+| `childWorkspacesEnabled`        | Enable per-build-target child workspaces (`true` / `false`)           |
+| `childWorkspaceName`            | Cache slot name for this child workspace, usually the target platform |
+| `childWorkspaceCacheRoot`       | Base path for cached child workspaces                                 |
+| `childWorkspacePreserveGit`     | Keep `.git` in the cached child workspace (default `true`)            |
+| `childWorkspaceSeparateLibrary` | Cache each engine cache folder independently (default `true`)         |
+| `localCacheEnabled`             | Enable the local move-centric Library/LFS cache (`true` / `false`)    |
+| `localCacheRoot`                | Local filesystem path for the move-centric Library cache              |
+| `localCacheMode`                | Restore/save strategy: `move-directory`, `copy-directory`, `tar`      |
+| `lfsTransferAgent`              | Name or path of a custom LFS transfer agent binary                    |
+| `lfsTransferAgentArgs`          | Additional arguments passed to the LFS transfer agent                 |
+| `lfsStoragePaths`               | Comma-separated asset paths to limit LFS hydration                    |
