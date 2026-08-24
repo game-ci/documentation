@@ -55,17 +55,25 @@ child-workspaces/
     Library/
 ```
 
-The orchestrator manages this layout automatically when `retainedWorkspaces: true` is set. Child
-workspaces are created on first build and reused on subsequent builds of the same target. Only
-changed files from git delta sync are applied to each child.
+The orchestrator manages this layout automatically when `childWorkspacesEnabled: true` is set.
+Child workspaces are named per build target and cached under `childWorkspaceCacheRoot`. Each is
+created on first build and reused on subsequent builds of the same target. Only changed files from
+git delta sync are applied to each child.
 
 ```yaml
 - uses: game-ci/unity-builder@v4
   with:
-    retainedWorkspaces: true
-    workspaceRoot: /mnt/build-storage/my-game
+    childWorkspacesEnabled: true
+    childWorkspaceName: ${{ matrix.targetPlatform }}
+    childWorkspaceCacheRoot: /mnt/build-storage/my-game/workspaces
     targetPlatform: StandaloneLinux64
 ```
+
+`childWorkspacePreserveGit` (default `true`) keeps `.git` in the cached child workspace so
+incremental sync strategies (see [Incremental Sync](#incremental-sync) below) keep working across
+builds. `childWorkspaceSeparateLibrary` (default `true`) caches each engine cache folder (e.g.
+`Library`) independently from the rest of the workspace, so it restores and saves on its own move
+rather than moving with the whole workspace.
 
 ## Move-Centric Caching
 
@@ -79,8 +87,9 @@ in milliseconds.
 ```yaml
 - uses: game-ci/unity-builder@v4
   with:
+    localCacheEnabled: true
     localCacheRoot: /mnt/build-storage/cache
-    cacheStrategy: move
+    localCacheMode: move-directory
 ```
 
 The cache lifecycle for a Library folder:
@@ -91,14 +100,21 @@ The cache lifecycle for a Library folder:
 4. Next build - Library is already warm at cache location
 
 This eliminates the archive/upload/download/extract cycle entirely for builds running on retained
-storage. Remote cache fallback (S3, GCS, Azure Blob via rclone) is still available for cold runners
-that do not have local cache access.
+storage. Remote cache fallback (S3, GCS, Azure Blob via rclone) is a separate mechanism (see
+[Storage](storage)) for cold runners that do not have local cache access.
 
-| Cache Strategy | Library Move Time        | Suitable For                    |
-| -------------- | ------------------------ | ------------------------------- |
-| `move`         | Milliseconds             | Retained storage, build farms   |
-| `rclone`       | Minutes (size-dependent) | Remote cache, ephemeral runners |
-| `github-cache` | Minutes (10 GB limit)    | Small projects only             |
+| `localCacheMode` | Library Restore/Save Time         | Suitable For                                        |
+| ----------------- | ---------------------------------- | ----------------------------------------------------- |
+| `move-directory`  | Milliseconds (same-volume rename)  | Retained storage, build farms (default)               |
+| `copy-directory`  | Seconds-minutes (size-dependent)   | Cache root on a different volume than the workspace   |
+| `tar`              | Minutes (archive + extract)        | Cache needs to be transferred off-box afterward       |
+
+`move-directory` requires the cache root and the workspace to be on the same filesystem volume — a
+same-volume rename is what makes the move O(1). A cross-volume rename fails at the OS level, so
+point `localCacheRoot` at a path on the same drive as the workspace, or use `copy-directory` when
+that cannot be guaranteed. Fallback-key restores (see
+[Fallback Keys](build-services#fallback-keys)) are always copied rather than moved, regardless of
+`localCacheMode`, so the original cache entry is left intact for other builds.
 
 ## Custom LFS Transfer Agents
 
@@ -186,11 +202,11 @@ git-delta so that code changes and asset changes are both handled incrementally.
 - uses: game-ci/unity-builder@v4
   with:
     syncStrategy: git-delta
-    retainedWorkspaces: true
+    childWorkspacesEnabled: true
 ```
 
-Together, retained workspaces and git-delta sync deliver the minimal possible import work on every
-build: Unity sees only the files that actually changed.
+Together, retained child workspaces and git-delta sync deliver the minimal possible import work on
+every build: Unity sees only the files that actually changed.
 
 ## Build Performance Tips
 
@@ -214,13 +230,20 @@ Library folders.
 under predictable paths (`Assets/Platforms/Linux/`, `Assets/Platforms/WebGL/`). This makes
 `lfsStoragePaths` filtering straightforward and predictable.
 
-**Reserve timeouts generously.** Set `buildTimeout` to account for cold-start scenarios, even when
-warm builds are expected. The first build after a runner restart will be cold.
+**Reserve timeouts generously.** There is no orchestrator-level build timeout input — set
+`timeout-minutes` on the GitHub Actions job itself to account for cold-start scenarios, even when
+warm builds are expected. The first build after a runner restart will be cold. Separately,
+`gcTimeoutMinutes` forces a garbage-collection pass if a build overruns that many minutes (see
+[Build Reliability](build-reliability)) — it is a cache-hygiene safety net, not a job timeout.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
-  with:
-    buildTimeout: 360 # minutes
+jobs:
+  build:
+    timeout-minutes: 360
+    steps:
+      - uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: StandaloneLinux64
 ```
 
 **Monitor Library folder health.** Occasional full reimports are necessary when Unity upgrades or
@@ -229,13 +252,16 @@ mid-sprint when a runner's Library becomes stale.
 
 ## Inputs Reference
 
-| Input                  | Description                                             |
-| ---------------------- | ------------------------------------------------------- |
-| `retainedWorkspaces`   | Keep child workspaces between builds (`true` / `false`) |
-| `workspaceRoot`        | Base path for root and child workspace storage          |
-| `localCacheRoot`       | Local filesystem path for move-centric Library cache    |
-| `cacheStrategy`        | Cache approach: `move`, `rclone`, `github-cache`        |
-| `lfsTransferAgent`     | Name or path of a custom LFS transfer agent binary      |
-| `lfsTransferAgentArgs` | Additional arguments passed to the LFS transfer agent   |
-| `lfsStoragePaths`      | Comma-separated asset paths to limit LFS hydration      |
-| `buildTimeout`         | Maximum build duration in minutes                       |
+| Input                        | Description                                                     |
+| ----------------------------- | ----------------------------------------------------------------- |
+| `childWorkspacesEnabled`     | Enable per-build-target child workspaces (`true` / `false`)     |
+| `childWorkspaceName`         | Cache slot name for this child workspace, usually the target platform |
+| `childWorkspaceCacheRoot`    | Base path for cached child workspaces                           |
+| `childWorkspacePreserveGit`  | Keep `.git` in the cached child workspace (default `true`)      |
+| `childWorkspaceSeparateLibrary` | Cache each engine cache folder independently (default `true`) |
+| `localCacheEnabled`          | Enable the local move-centric Library/LFS cache (`true` / `false`) |
+| `localCacheRoot`             | Local filesystem path for the move-centric Library cache        |
+| `localCacheMode`             | Restore/save strategy: `move-directory`, `copy-directory`, `tar` |
+| `lfsTransferAgent`           | Name or path of a custom LFS transfer agent binary               |
+| `lfsTransferAgentArgs`       | Additional arguments passed to the LFS transfer agent            |
+| `lfsStoragePaths`            | Comma-separated asset paths to limit LFS hydration                |

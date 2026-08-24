@@ -134,6 +134,11 @@ Use `cacheRetentionDays` to automatically remove old cache entries from storage:
 | `30`          | Main and develop branch caches          |
 | `90`          | Release branch caches                   |
 
+When `childWorkspacesEnabled` is set, `cacheRetentionDays` also age-sweeps cached child workspaces
+under `childWorkspaceCacheRoot` — a cached child workspace is the same kind of disk-space liability
+as a local Library cache entry, so it shares the same retention setting rather than needing a
+separate one.
+
 You can vary retention by branch:
 
 ```yaml
@@ -335,6 +340,31 @@ clear error.
 
 Serialise output-emitting steps. If a job needs to emit several outputs from parallel
 sub-jobs, collect them into a single output-emitting step at the end.
+
+### Retained-workspace lock outliving a failed build
+
+`maxRetainedWorkspaces` locks are plain marker objects in the storage backend (S3 or rclone remote)
+with no TTL or liveness check — a lock is considered held for as long as the marker object exists,
+regardless of whether the process that created it is still running. A build that throws before it
+reaches its own cleanup step used to leave that marker behind permanently, shrinking the retained
+workspace pool by one on every crash until someone deleted the object by hand.
+
+Release the lock on every exit path, not just the success path — including the one a thrown error
+takes. Releasing an already-released (or never-acquired) lock should be a no-op, so the release call
+is safe to make unconditionally rather than only after confirming a lock is actually held.
+
+### Orphaned background cache-save lock from a killed process
+
+A background (detached, `copy-directory`) cache save writes a PID-stamped lock file before it starts
+and removes it on completion. If the process saving the cache is killed mid-copy (OOM, runner
+crash, forced job cancellation), the lock file survives it. A lock check that only runs reactively —
+triggered by a later save/restore call that happens to target the same cache key — never revisits a
+cache key this run doesn't touch, so that lock can outlive the process that created it indefinitely.
+
+Sweep lock files proactively at the start of a build, across every cache key under the cache root,
+not only the one this run is about to use. Treat a lock as stale when the PID it names is no longer
+alive (or the file can't be parsed) — a plain existence check on the marker file, without a liveness
+check on the process it names, cannot tell a genuinely in-progress save from an orphaned one.
 
 ### Path-filter on the workflow entrypoint to skip docs-only commits
 
