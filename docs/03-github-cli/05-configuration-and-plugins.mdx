@@ -163,26 +163,24 @@ with an explicit `--plugin @game-ci/<name>` (or a `plugins:` entry in `.game-ci.
 | `@game-ci/code-signing`          | Command        | Draft - command not yet registered in core either.                                            |
 | `@game-ci/pseudo-localization`   | Command        | Draft - command not yet registered in core either.                                            |
 | `@game-ci/save-data-compat`      | Command        | Draft - command not yet registered in core either.                                            |
+| `@game-ci/screen-capture`        | Command, GPU   | Draft - visual-regression comparison is real and tested (digest-based, not perceptual), the `capture` command is not. |
+| `@game-ci/dedicated-server-provisioning` | Command | Draft - docker-compose/systemd/firewall generation is real and tested, the `provision-server` command is not. |
+| `@game-ci/dev-tunnel`            | Command        | Draft - the exposed-service directory (with public/private disclosure rules) is real and tested, the `tunnel` command is not. |
+| `@game-ci/anti-cheat`            | Options        | Draft - hooks into an existing build rather than adding a command; no vendor SDK integration written yet. |
 
 Several of the command-based drafts also need a small core change to register their command name
 with the CLI at all (the same change `deploy` itself once needed) before they can be invoked, even
 once their logic exists. Each plugin's own `README.md` under `plugins/<name>/` in the `game-ci/cli`
 repo states exactly what is real versus planned.
 
-### Not plugins: build-lifecycle capabilities
+### Not a plugin: crash-symbol collection
 
-A plugin exists to add **command surface** - a new verb, engine, or deploy target. Things that
-happen _to_ a build or a running job belong to the Orchestrator instead, which already owns where
-jobs run plus caching, hooks, output collection, preflight and secrets. These capabilities live
-there rather than as plugins:
-
-| Capability                       | Where it lives                                                          |
-| -------------------------------- | ----------------------------------------------------------------------- |
-| Crash-symbol collection          | `symbols` output type + symbol collector (dSYM, PDB, Breakpad, IL2CPP maps) |
-| Visual-regression comparison     | `visual-baseline` output type + digest comparison against a reference set |
-| Dedicated-server provisioning    | docker-compose / systemd / firewall generation                          |
-| Exposed-service directory        | Registry for job endpoints, with public/private disclosure rules         |
-| Anti-cheat / build integrity     | A `post-build` middleware preset                                        |
+Debug symbols have to be captured at build time or they are gone for good - once the build machine
+is torn down, every future crash report from that build is unsymbolicatable. That makes symbol
+collection an output-collection concern rather than new command surface, so it lives in the
+Orchestrator as the `symbols` output type, alongside the built-in `coverage`/`logs`/`metrics` types
+- not as a plugin. It finds dSYM bundles, PDB, Breakpad and IL2CPP maps under a build; uploading is
+handled by the Orchestrator's existing artifact upload path.
 
 ### Runtime Test Framework
 
