@@ -173,14 +173,10 @@ with the CLI at all (the same change `deploy` itself once needed) before they ca
 once their logic exists. Each plugin's own `README.md` under `plugins/<name>/` in the `game-ci/cli`
 repo states exactly what is real versus planned.
 
-### Not a plugin: crash-symbol collection
-
-Debug symbols have to be captured at build time or they are gone for good - once the build machine
-is torn down, every future crash report from that build is unsymbolicatable. That makes symbol
-collection an output-collection concern rather than new command surface, so it lives in the
-Orchestrator as the `symbols` output type, alongside the built-in `coverage`/`logs`/`metrics` types
-- not as a plugin. It finds dSYM bundles, PDB, Breakpad and IL2CPP maps under a build; uploading is
-handled by the Orchestrator's existing artifact upload path.
+Crash-symbol collection is not on this list - unlike the plugins above, it lives in the
+Orchestrator itself as a built-in output type, since debug symbols have to be captured at build
+time or they're gone for good. See
+[Output Collection](/docs/github-orchestrator/advanced-topics/output-collection).
 
 ### Runtime Test Framework
 

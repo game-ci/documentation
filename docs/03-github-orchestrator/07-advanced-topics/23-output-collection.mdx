@@ -1,0 +1,91 @@
+---
+sidebar_position: 23
+---
+
+# Output Collection
+
+The Orchestrator classifies everything a build produces - the player itself, test results,
+coverage reports, logs, crash symbols - into **output types**, each with a default path and a
+description. Requesting an output type by name means you don't have to remember where a given
+kind of file lands; the Orchestrator does.
+
+## Built-in types
+
+| Type            | Default path              | What it is                                        |
+| --------------- | -------------------------- | -------------------------------------------------- |
+| `build`         | `./Builds/{platform}/`     | Standard game build artifact                        |
+| `test-results`  | `./TestResults/`           | NUnit/JUnit XML test results                        |
+| `server-build`  | `./Builds/{platform}-server/` | Dedicated server build artifact                  |
+| `data-export`   | `./Exports/`                | Exported data files (CSV, JSON, binary)             |
+| `images`        | `./Captures/`               | Screenshots, render captures, atlas previews        |
+| `logs`          | `./Logs/`                   | Structured build and test logs                      |
+| `metrics`       | `./Metrics/`                | Build performance metrics and asset statistics      |
+| `coverage`      | `./Coverage/`               | Code coverage reports                                |
+| `symbols`       | `./Symbols/`                | Debug symbols for crash symbolication                |
+
+Request one or more types with the `artifactOutputTypes` Action input - a comma-separated list,
+defaulting to `build,logs,test-results`:
+
+```yaml
+- uses: game-ci/orchestrator@vX
+  with:
+    artifactOutputTypes: build,test-results,coverage
+```
+
+Unknown type names are skipped with a warning rather than failing the run - a typo in this list
+should not fail an otherwise-successful build.
+
+Related inputs: `artifactUploadTarget` (`github-artifacts` by default, or `storage`/`local`/`none`),
+`artifactUploadPath`, `artifactCompression`, `artifactRetentionDays`, and `artifactCustomTypes` for
+registering a custom type inline (a JSON array of `{ name, defaultPath, description }`) without
+writing TypeScript.
+
+## Crash-symbol collection
+
+Debug symbols have to be captured **at build time** or they are gone for good - once the build
+machine is torn down, every future crash report from that build is unsymbolicatable. That makes
+symbol collection an output-collection concern rather than a build step you opt into separately.
+
+Requesting `symbols` finds:
+
+- `.dSYM` bundles (macOS/iOS) - reported as a single bundle entry, never descended into, since
+  the symbolicator needs the bundle structure intact
+- `.pdb` (Windows)
+- `.sym` (Breakpad-format, used by most third-party crash reporters)
+- `.so.dbg` / `.dbg` (Linux DWARF)
+- Unity's `.symbols.json` (IL2CPP method-name maps)
+
+```yaml
+- uses: game-ci/orchestrator@vX
+  with:
+    artifactOutputTypes: build,symbols
+```
+
+The collector only finds and classifies symbol files; it does not upload them anywhere
+crash-reporter-specific. Uploading uses the same artifact upload path as every other output type
+(see below) - there is deliberately no vendor-specific (Sentry/Backtrace/Crashlytics) upload
+logic baked in, since that step is a plain file upload once the symbols are located.
+
+## Custom output types
+
+Register a type the built-ins don't cover:
+
+```ts
+import { OutputTypeRegistry } from '@game-ci/orchestrator';
+
+OutputTypeRegistry.registerType({
+  name: 'replays',
+  defaultPath: './Replays/',
+  description: 'Recorded gameplay sessions for QA review',
+  builtIn: false,
+});
+```
+
+A custom type cannot override a built-in name - `registerType` logs a warning and leaves the
+built-in definition in place, rather than silently shadowing it.
+
+## Uploading
+
+Collected outputs are uploaded through `ArtifactUploadHandler`, which supports GitHub Artifacts,
+generic storage, or a local path - the same destination options regardless of which output types
+were collected.
