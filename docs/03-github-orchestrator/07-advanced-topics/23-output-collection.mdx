@@ -11,17 +11,17 @@ kind of file lands; the Orchestrator does.
 
 ## Built-in types
 
-| Type            | Default path              | What it is                                        |
-| --------------- | -------------------------- | -------------------------------------------------- |
-| `build`         | `./Builds/{platform}/`     | Standard game build artifact                        |
-| `test-results`  | `./TestResults/`           | NUnit/JUnit XML test results                        |
-| `server-build`  | `./Builds/{platform}-server/` | Dedicated server build artifact                  |
-| `data-export`   | `./Exports/`                | Exported data files (CSV, JSON, binary)             |
-| `images`        | `./Captures/`               | Screenshots, render captures, atlas previews        |
-| `logs`          | `./Logs/`                   | Structured build and test logs                      |
-| `metrics`       | `./Metrics/`                | Build performance metrics and asset statistics      |
-| `coverage`      | `./Coverage/`               | Code coverage reports                                |
-| `symbols`       | `./Symbols/`                | Debug symbols for crash symbolication                |
+| Type           | Default path                  | What it is                                     |
+| -------------- | ----------------------------- | ---------------------------------------------- |
+| `build`        | `./Builds/{platform}/`        | Standard game build artifact                   |
+| `test-results` | `./TestResults/`              | NUnit/JUnit XML test results                   |
+| `server-build` | `./Builds/{platform}-server/` | Dedicated server build artifact                |
+| `data-export`  | `./Exports/`                  | Exported data files (CSV, JSON, binary)        |
+| `images`       | `./Captures/`                 | Screenshots, render captures, atlas previews   |
+| `logs`         | `./Logs/`                     | Structured build and test logs                 |
+| `metrics`      | `./Metrics/`                  | Build performance metrics and asset statistics |
+| `coverage`     | `./Coverage/`                 | Code coverage reports                          |
+| `symbols`      | `./Symbols/`                  | Debug symbols for crash symbolication          |
 
 Request one or more types with the `artifactOutputTypes` Action input - a comma-separated list,
 defaulting to `build,logs,test-results`:

@@ -150,23 +150,23 @@ with an explicit `--plugin @game-ci/<name>` (or a `plugins:` entry in `.game-ci.
 
 :::
 
-| Plugin                           | Kind           | Status                                                                                       |
-| -------------------------------- | -------------- | -------------------------------------------------------------------------------------------- |
-| `@game-ci/steam-deploy`          | Deploy command | **Implemented**, loaded by default. `game-ci deploy steam <buildPath>` - VDF generation, local/Docker SteamCMD. |
-| `@game-ci/runtime-test-framework`| Command        | **Implemented**, loaded by default. `game-ci test-runtime <buildPath>` - see [below](#runtime-test-framework). |
-| `@game-ci/gamemaker`             | Engine         | Draft - registration shape only, build logic not implemented.                                 |
-| `@game-ci/rpg-maker`             | Engine         | Draft.                                                                                        |
-| `@game-ci/renpy`                 | Engine         | Draft.                                                                                        |
-| `@game-ci/itch-deploy`           | Deploy command | Draft - mirrors `steam-deploy`'s shape.                                                       |
-| `@game-ci/steam-workshop`        | Deploy command | Draft - mods/maps via `workshop_build_item.vdf`, distinct from a full-game upload.             |
-| `@game-ci/github-release-deploy` | Deploy command | Draft - attaches artifacts to a GitHub/GitLab Release.                                         |
-| `@game-ci/code-signing`          | Command        | Draft - command not yet registered in core either.                                            |
-| `@game-ci/pseudo-localization`   | Command        | Draft - command not yet registered in core either.                                            |
-| `@game-ci/save-data-compat`      | Command        | Draft - command not yet registered in core either.                                            |
-| `@game-ci/screen-capture`        | Command, GPU   | Draft - visual-regression comparison is real and tested (digest-based, not perceptual), the `capture` command is not. |
-| `@game-ci/dedicated-server-provisioning` | Command | Draft - docker-compose/systemd/firewall generation is real and tested, the `provision-server` command is not. |
-| `@game-ci/dev-tunnel`            | Command        | Draft - the exposed-service directory (with public/private disclosure rules) is real and tested, the `tunnel` command is not. |
-| `@game-ci/anti-cheat`            | Options        | Draft - hooks into an existing build rather than adding a command; no vendor SDK integration written yet. |
+| Plugin                                   | Kind           | Status                                                                                                                        |
+| ---------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `@game-ci/steam-deploy`                  | Deploy command | **Implemented**, loaded by default. `game-ci deploy steam <buildPath>` - VDF generation, local/Docker SteamCMD.               |
+| `@game-ci/runtime-test-framework`        | Command        | **Implemented**, loaded by default. `game-ci test-runtime <buildPath>` - see [below](#runtime-test-framework).                |
+| `@game-ci/gamemaker`                     | Engine         | Draft - registration shape only, build logic not implemented.                                                                 |
+| `@game-ci/rpg-maker`                     | Engine         | Draft.                                                                                                                        |
+| `@game-ci/renpy`                         | Engine         | Draft.                                                                                                                        |
+| `@game-ci/itch-deploy`                   | Deploy command | Draft - mirrors `steam-deploy`'s shape.                                                                                       |
+| `@game-ci/steam-workshop`                | Deploy command | Draft - mods/maps via `workshop_build_item.vdf`, distinct from a full-game upload.                                            |
+| `@game-ci/github-release-deploy`         | Deploy command | Draft - attaches artifacts to a GitHub/GitLab Release.                                                                        |
+| `@game-ci/code-signing`                  | Command        | Draft - command not yet registered in core either.                                                                            |
+| `@game-ci/pseudo-localization`           | Command        | Draft - command not yet registered in core either.                                                                            |
+| `@game-ci/save-data-compat`              | Command        | Draft - command not yet registered in core either.                                                                            |
+| `@game-ci/screen-capture`                | Command, GPU   | Draft - visual-regression comparison is real and tested (digest-based, not perceptual), the `capture` command is not.         |
+| `@game-ci/dedicated-server-provisioning` | Command        | Draft - docker-compose/systemd/firewall generation is real and tested, the `provision-server` command is not.                 |
+| `@game-ci/dev-tunnel`                    | Command        | Draft - the exposed-service directory (with public/private disclosure rules) is real and tested, the `tunnel` command is not. |
+| `@game-ci/anti-cheat`                    | Options        | Draft - hooks into an existing build rather than adding a command; no vendor SDK integration written yet.                     |
 
 Several of the command-based drafts also need a small core change to register their command name
 with the CLI at all (the same change `deploy` itself once needed) before they can be invoked, even
