@@ -24,15 +24,15 @@ directory - every top-level file inside it is uploaded as a separate asset, name
 Re-running against the same tag is idempotent: an existing release for that tag is reused, and an
 asset that already exists on it is replaced rather than failing.
 
-| Option              | Description                                                         |
-| -------------------- | -------------------------------------------------------------------- |
-| `--repo`             | `owner/repo`. Defaults to `$GITHUB_REPOSITORY`.                     |
-| `--tag`              | Release tag. Required.                                              |
-| `--releaseNotes`     | Release body/description.                                           |
-| `--draft`            | Create the release as a draft.                                      |
-| `--prerelease`       | Mark the release as a prerelease.                                   |
-| `--assetName`        | Override the uploaded asset's file name (single-file buildPath only). |
-| `--targetCommitish`  | Commit/branch to create the tag from, if it doesn't already exist.  |
+| Option              | Description                                                           |
+| ------------------- | --------------------------------------------------------------------- |
+| `--repo`            | `owner/repo`. Defaults to `$GITHUB_REPOSITORY`.                       |
+| `--tag`             | Release tag. Required.                                                |
+| `--releaseNotes`    | Release body/description.                                             |
+| `--draft`           | Create the release as a draft.                                        |
+| `--prerelease`      | Mark the release as a prerelease.                                     |
+| `--assetName`       | Override the uploaded asset's file name (single-file buildPath only). |
+| `--targetCommitish` | Commit/branch to create the tag from, if it doesn't already exist.    |
 
 GitLab Release support isn't included in this first version.
 
@@ -49,14 +49,14 @@ BUTLER_API_KEY=... game-ci \
 Requires `butler` already installed and on `PATH` (or pass `--butlerPath` explicitly - recommended
 for CI determinism). This plugin doesn't install butler for you.
 
-| Option          | Description                                                                 |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `--user`         | itch.io username or organization. Required.                                 |
-| `--game`         | itch.io game slug. Required.                                                |
-| `--channel`      | Channel to push to, e.g. `windows`, `linux`, `web`. Required.               |
-| `--butlerPath`   | Explicit path to the butler executable.                                     |
-| `--userVersion`  | Custom version string shown in itch.io's build history.                     |
-| `--ignore`       | Comma-separated glob patterns excluded from the push.                       |
+| Option          | Description                                                   |
+| --------------- | ------------------------------------------------------------- |
+| `--user`        | itch.io username or organization. Required.                   |
+| `--game`        | itch.io game slug. Required.                                  |
+| `--channel`     | Channel to push to, e.g. `windows`, `linux`, `web`. Required. |
+| `--butlerPath`  | Explicit path to the butler executable.                       |
+| `--userVersion` | Custom version string shown in itch.io's build history.       |
+| `--ignore`      | Comma-separated glob patterns excluded from the push.         |
 
 ## Pseudo-localization QA
 
@@ -78,8 +78,8 @@ the pipeline stands out), length expansion (`--expansionFactor`, default `1.3` -
 Format placeholders (`{0}`, `%s`) and simple markup (`<b>...</b>`) are left untouched.
 
 | Option              | Description                                                          |
-| -------------------- | ---------------------------------------------------------------------- |
-| `--sourceLocale`     | Source locale to read. Default `en`.                                  |
-| `--outputLocale`     | Locale code the output table is written under. Default `qps-ploc`.    |
-| `--expansionFactor`  | Length multiplier applied to each string. Default `1.3`.              |
-| `--outputPath`       | Directory to write the output table into. Defaults to `projectPath`.  |
+| ------------------- | -------------------------------------------------------------------- |
+| `--sourceLocale`    | Source locale to read. Default `en`.                                 |
+| `--outputLocale`    | Locale code the output table is written under. Default `qps-ploc`.   |
+| `--expansionFactor` | Length multiplier applied to each string. Default `1.3`.             |
+| `--outputPath`      | Directory to write the output table into. Defaults to `projectPath`. |
