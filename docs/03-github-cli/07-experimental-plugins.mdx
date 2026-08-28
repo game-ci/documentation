@@ -1,0 +1,108 @@
+---
+sidebar_position: 7
+slug: /cli/experimental-plugins
+---
+
+# Experimental Plugins
+
+These CLI plugins are functional but new, not published to npm, and not loaded by default - opt in
+with `--plugin <name>`. Expect rough edges, and verify against a test target (a test repo, a test
+itch.io channel) before pointing any of them at something real.
+
+## Deploy to a GitHub Release
+
+`@game-ci/github-release-deploy` attaches a built output to a GitHub Release.
+
+```bash
+GITHUB_TOKEN=... game-ci \
+  --plugin @game-ci/github-release-deploy \
+  deploy github-release ./build --repo owner/repo --tag v1.2.3
+```
+
+`buildPath` may be a single file (uploaded as-is, optionally renamed via `--assetName`) or a
+directory - every top-level file inside it is uploaded as a separate asset, named after itself.
+Re-running against the same tag is idempotent: an existing release for that tag is reused, and an
+asset that already exists on it is replaced rather than failing.
+
+| Option              | Description                                                           |
+| ------------------- | --------------------------------------------------------------------- |
+| `--repo`            | `owner/repo`. Defaults to `$GITHUB_REPOSITORY`.                       |
+| `--tag`             | Release tag. Required.                                                |
+| `--releaseNotes`    | Release body/description.                                             |
+| `--draft`           | Create the release as a draft.                                        |
+| `--prerelease`      | Mark the release as a prerelease.                                     |
+| `--assetName`       | Override the uploaded asset's file name (single-file buildPath only). |
+| `--targetCommitish` | Commit/branch to create the tag from, if it doesn't already exist.    |
+
+GitLab Release support isn't included in this first version.
+
+## Deploy to itch.io
+
+`@game-ci/itch-deploy` wraps itch.io's official `butler push` CLI.
+
+```bash
+BUTLER_API_KEY=... game-ci \
+  --plugin @game-ci/itch-deploy \
+  deploy itch ./build --user myuser --game mygame --channel windows
+```
+
+Requires `butler` already installed and on `PATH` (or pass `--butlerPath` explicitly - recommended
+for CI determinism). This plugin doesn't install butler for you.
+
+| Option          | Description                                                   |
+| --------------- | ------------------------------------------------------------- |
+| `--user`        | itch.io username or organization. Required.                   |
+| `--game`        | itch.io game slug. Required.                                  |
+| `--channel`     | Channel to push to, e.g. `windows`, `linux`, `web`. Required. |
+| `--butlerPath`  | Explicit path to the butler executable.                       |
+| `--userVersion` | Custom version string shown in itch.io's build history.       |
+| `--ignore`      | Comma-separated glob patterns excluded from the push.         |
+
+## Publish a Steam Workshop item
+
+`@game-ci/steam-workshop` uploads a Workshop item (a mod, map, or asset pack) via SteamCMD's
+`workshop_build_item.vdf` path - distinct from `@game-ci/steam-deploy`'s full-game upload.
+
+```bash
+STEAM_USERNAME=... STEAM_PASSWORD=... game-ci \
+  --plugin @game-ci/steam-workshop \
+  deploy steam-workshop ./my-mod --appId 480 --title "My Mod"
+```
+
+Omit `--publishedFileId` to publish a new item; pass it to update an existing one.
+
+## Sign and notarize a build
+
+`@game-ci/code-signing` signs (and, on macOS, notarizes and staples) a built player.
+
+```bash
+APPLE_ID=... APPLE_TEAM_ID=... APPLE_APP_SPECIFIC_PASSWORD=... game-ci \
+  --plugin @game-ci/code-signing \
+  sign ./build/Game.app --platform macos --identity "Developer ID Application: Studio Name (TEAM123)"
+```
+
+Windows signing goes through `signtool sign` instead, via `--platform windows` and either
+`--certificatePath` or `--certificateThumbprint`.
+
+## Pseudo-localization QA
+
+`@game-ci/pseudo-localization` injects pseudo-loc strings pre-translation, to catch UI
+overflow/truncation and missing-localization bugs before real translation work starts.
+
+```bash
+game-ci --plugin @game-ci/pseudo-localization pseudo-localize ./Localization
+```
+
+Reads a flat key→string localization table - `<projectPath>/<sourceLocale>.json` or `.csv` - and
+writes the pseudo-localized result to `<projectPath>/<outputLocale>.<same format>`. Engine-specific
+structured formats (e.g. Unity's binary StringTable assets) aren't supported yet.
+
+## Bevy engine support
+
+`@game-ci/bevy` detects a [Bevy](https://bevyengine.org/) project (a `bevy` dependency in
+`Cargo.toml`) and builds/tests it via `cargo build --release`/`cargo test --release`.
+
+```bash
+game-ci --plugin @game-ci/bevy build ./my-game
+game-ci --plugin @game-ci/bevy test ./my-game
+```
