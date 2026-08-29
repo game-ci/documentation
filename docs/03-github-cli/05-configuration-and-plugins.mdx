@@ -89,6 +89,7 @@ The CLI includes built-in plugins for:
 | Unity  | `ProjectSettings/ProjectVersion.txt` | Engine command options   |
 | Godot  | Godot project files                  | Engine command options   |
 | Unreal | `.uproject` files                    | Engine command options   |
+| Bevy   | `bevy` dependency in `Cargo.toml`    | Engine command options   |
 
 External plugins can add new engine support or replace command behavior without changing the CLI
 core.
@@ -137,14 +138,15 @@ itself; use the Orchestrator provider extension points when you are changing whe
 
 ## Plugin Catalog
 
-Beyond the built-in Unity/Godot/Unreal engine plugins and the built-in Orchestrator, a set of
+Beyond the built-in Unity/Godot/Unreal/Bevy engine plugins and the built-in Orchestrator, a set of
 plugins add engine support and cross-cutting capabilities.
 
 :::warning Every plugin below is experimental
 
-None of them are published to npm, and each one warns at runtime when used. Two of them
-(`steam-deploy`, `runtime-test-framework`) are implemented and loaded by default, but their options
-may still change without a major version bump. **The rest are structural drafts: the plugin shape is
+None of them are published to npm, and each one warns at runtime when used. Several of them
+(`steam-deploy`, `runtime-test-framework`, `itch-deploy`, `steam-workshop`, `github-release-deploy`,
+`code-signing`, `pseudo-localization`) are implemented and loaded by default, but their options may
+still change without a major version bump. **The rest are structural drafts: the plugin shape is
 real, but the domain logic is not written, so any command they claim will throw.** Load a draft only
 with an explicit `--plugin @game-ci/<name>` (or a `plugins:` entry in `.game-ci.yml`).
 
@@ -154,14 +156,14 @@ with an explicit `--plugin @game-ci/<name>` (or a `plugins:` entry in `.game-ci.
 | ---------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `@game-ci/steam-deploy`                  | Deploy command | **Implemented**, loaded by default. `game-ci deploy steam <buildPath>` - VDF generation, local/Docker SteamCMD.               |
 | `@game-ci/runtime-test-framework`        | Command        | **Implemented**, loaded by default. `game-ci test-runtime <buildPath>` - see [below](#runtime-test-framework).                |
+| `@game-ci/itch-deploy`                   | Deploy command | **Implemented**, loaded by default. Mirrors `steam-deploy`'s shape.                                                           |
+| `@game-ci/steam-workshop`                | Deploy command | **Implemented**, loaded by default. Mods/maps via `workshop_build_item.vdf`, distinct from a full-game upload.                |
+| `@game-ci/github-release-deploy`         | Deploy command | **Implemented**, loaded by default. Attaches artifacts to a GitHub/GitLab Release.                                            |
+| `@game-ci/code-signing`                  | Command        | **Implemented**, loaded by default.                                                                                           |
+| `@game-ci/pseudo-localization`           | Command        | **Implemented**, loaded by default.                                                                                           |
 | `@game-ci/gamemaker`                     | Engine         | Draft - registration shape only, build logic not implemented.                                                                 |
 | `@game-ci/rpg-maker`                     | Engine         | Draft.                                                                                                                        |
 | `@game-ci/renpy`                         | Engine         | Draft.                                                                                                                        |
-| `@game-ci/itch-deploy`                   | Deploy command | Draft - mirrors `steam-deploy`'s shape.                                                                                       |
-| `@game-ci/steam-workshop`                | Deploy command | Draft - mods/maps via `workshop_build_item.vdf`, distinct from a full-game upload.                                            |
-| `@game-ci/github-release-deploy`         | Deploy command | Draft - attaches artifacts to a GitHub/GitLab Release.                                                                        |
-| `@game-ci/code-signing`                  | Command        | Draft - command not yet registered in core either.                                                                            |
-| `@game-ci/pseudo-localization`           | Command        | Draft - command not yet registered in core either.                                                                            |
 | `@game-ci/save-data-compat`              | Command        | Draft - command not yet registered in core either.                                                                            |
 | `@game-ci/screen-capture`                | Command, GPU   | Draft - visual-regression comparison is real and tested (digest-based, not perceptual), the `capture` command is not.         |
 | `@game-ci/dedicated-server-provisioning` | Command        | Draft - docker-compose/systemd/firewall generation is real and tested, the `provision-server` command is not.                 |

@@ -11,8 +11,8 @@ custom engine methods, and provider-backed jobs. Lower-level engine and provider
 are loaded as plugins.
 
 Unity is the primary supported package in GameCI, but the CLI itself is not Unity-only. It ships
-with built-in engine detection and engine command implementations for Unity, Godot, and Unreal
-Engine. External plugins can add more engines, tests, custom commands, options, and remote
+with built-in engine detection and engine command implementations for Unity, Godot, Unreal
+Engine, and Bevy. External plugins can add more engines, tests, custom commands, options, and remote
 providers.
 
 Use this CLI when you want a stable command surface such as:
@@ -83,6 +83,7 @@ The built-in plugins provide:
 | Unity  | `ProjectSettings/ProjectVersion.txt` | Engine command options   | Supports custom static methods through `--build-method`.           |
 | Godot  | Godot project files                  | Engine command options   | Uses `barichello/godot-ci` by default.                             |
 | Unreal | `.uproject` files                    | Engine command options   | Requires a licensed Unreal-capable Docker image.                   |
+| Bevy   | `bevy` dependency in `Cargo.toml`    | Engine command options   | A regular Cargo dependency, not a separate build tool.             |
 | Other  | Plugin-defined                       | Plugin-defined commands  | Plugins can add build, test, provider, or custom command behavior. |
 
 Provider types such as local Docker, local system, AWS, Kubernetes, GitHub Actions dispatch, and

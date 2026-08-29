@@ -141,6 +141,11 @@ game-ci build ./my-godot-project \
 | `--output-path`   | `build/game`                    | Build output path.          |
 | `--custom-image`  | `barichello/godot-ci:<version>` | Godot-capable Docker image. |
 
+If the project has no `export_presets.cfg` (no export presets configured — common for projects that
+treat it like a machine-specific file, similar to `.env`), `game-ci build` falls back to
+`godot --headless --verbose --import` to validate that the project imports cleanly, instead of
+failing outright.
+
 The default image tag uses the detected Godot version when available, otherwise `4.3`.
 
 ### Choosing an image and a runner
