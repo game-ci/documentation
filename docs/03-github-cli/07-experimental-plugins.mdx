@@ -98,8 +98,20 @@ structured formats (e.g. Unity's binary StringTable assets) aren't supported yet
 you would for any other engine:
 
 ```bash
-game-ci build ./my-game --target x86_64-pc-windows-gnu
+game-ci build ./my-game
 game-ci test ./my-game
+```
+
+`--target` is only needed for cross-compilation (e.g. `--target x86_64-pc-windows-gnu` to build a
+Windows binary from a Linux runner) - omit it to build for the runner's own host toolchain, which is
+what most CI jobs want.
+
+Detection isn't specific to Bevy - `build`/`test` inspect the project directory for every engine
+this way. If you need to skip that (e.g. a project whose structure confuses auto-detection, or you
+just want to be explicit), pass `--engine=bevy` to force it:
+
+```bash
+game-ci build ./my-game --engine=bevy
 ```
 
 | Option          | Applies to  | Description                                                      |
