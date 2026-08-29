@@ -5,18 +5,16 @@ slug: /cli/experimental-plugins
 
 # Experimental Plugins
 
-These CLI plugins are functional but new, not published to npm, and not loaded by default - opt in
-with `--plugin <name>`. Expect rough edges, and verify against a test target (a test repo, a test
-itch.io channel) before pointing any of them at something real.
+These CLI plugins are functional but new. They're registered by default in every `game-ci` binary -
+no `--plugin` flag needed, and nothing extra to install - but expect rough edges, and verify against
+a test target (a test repo, a test itch.io channel) before pointing any of them at something real.
 
 ## Deploy to a GitHub Release
 
 `@game-ci/github-release-deploy` attaches a built output to a GitHub Release.
 
 ```bash
-GITHUB_TOKEN=... game-ci \
-  --plugin @game-ci/github-release-deploy \
-  deploy github-release ./build --repo owner/repo --tag v1.2.3
+GITHUB_TOKEN=... game-ci deploy github-release ./build --repo owner/repo --tag v1.2.3
 ```
 
 `buildPath` may be a single file (uploaded as-is, optionally renamed via `--assetName`) or a
@@ -41,9 +39,7 @@ GitLab Release support isn't included in this first version.
 `@game-ci/itch-deploy` wraps itch.io's official `butler push` CLI.
 
 ```bash
-BUTLER_API_KEY=... game-ci \
-  --plugin @game-ci/itch-deploy \
-  deploy itch ./build --user myuser --game mygame --channel windows
+BUTLER_API_KEY=... game-ci deploy itch ./build --user myuser --game mygame --channel windows
 ```
 
 Requires `butler` already installed and on `PATH` (or pass `--butlerPath` explicitly - recommended
@@ -64,9 +60,7 @@ for CI determinism). This plugin doesn't install butler for you.
 `workshop_build_item.vdf` path - distinct from `@game-ci/steam-deploy`'s full-game upload.
 
 ```bash
-STEAM_USERNAME=... STEAM_PASSWORD=... game-ci \
-  --plugin @game-ci/steam-workshop \
-  deploy steam-workshop ./my-mod --appId 480 --title "My Mod"
+STEAM_USERNAME=... STEAM_PASSWORD=... game-ci deploy steam-workshop ./my-mod --appId 480 --title "My Mod"
 ```
 
 Omit `--publishedFileId` to publish a new item; pass it to update an existing one.
@@ -77,7 +71,6 @@ Omit `--publishedFileId` to publish a new item; pass it to update an existing on
 
 ```bash
 APPLE_ID=... APPLE_TEAM_ID=... APPLE_APP_SPECIFIC_PASSWORD=... game-ci \
-  --plugin @game-ci/code-signing \
   sign ./build/Game.app --platform macos --identity "Developer ID Application: Studio Name (TEAM123)"
 ```
 
@@ -90,7 +83,7 @@ Windows signing goes through `signtool sign` instead, via `--platform windows` a
 overflow/truncation and missing-localization bugs before real translation work starts.
 
 ```bash
-game-ci --plugin @game-ci/pseudo-localization pseudo-localize ./Localization
+game-ci pseudo-localize ./Localization
 ```
 
 Reads a flat key→string localization table - `<projectPath>/<sourceLocale>.json` or `.csv` - and
@@ -99,10 +92,45 @@ structured formats (e.g. Unity's binary StringTable assets) aren't supported yet
 
 ## Bevy engine support
 
-`@game-ci/bevy` detects a [Bevy](https://bevyengine.org/) project (a `bevy` dependency in
-`Cargo.toml`) and builds/tests it via `cargo build --release`/`cargo test --release`.
+`@game-ci/bevy` detects a [Bevy](https://bevyengine.org/) project - a real `bevy` dependency in
+`Cargo.toml`, not just any Cargo project - and builds/tests it via `cargo build
+--release`/`cargo test --release`. Detection is automatic; point `build`/`test` at the project like
+you would for any other engine:
 
 ```bash
-game-ci --plugin @game-ci/bevy build ./my-game
-game-ci --plugin @game-ci/bevy test ./my-game
+game-ci build ./my-game --target x86_64-pc-windows-gnu
+game-ci test ./my-game
 ```
+
+| Option          | Applies to  | Description                                                      |
+| --------------- | ----------- | ------------------------------------------------------------------ |
+| `--target`      | build, test | Rust target triple. Builds for the host toolchain when omitted.   |
+| `--features`    | build, test | Comma-separated cargo features to enable.                         |
+| `--locked`      | build, test | Fail instead of updating `Cargo.lock`. Default `true`.            |
+| `--debug`       | build       | Build in debug mode instead of `--release`. Default `false`.      |
+| `--outputPath`  | build       | Directory to copy the built binary into.                          |
+
+Cross-compilation via `--target` assumes the target's toolchain and any required linkers are
+already installed (e.g. via `rustup target add`, or a `cross`-based custom Docker image) - this
+plugin doesn't set that up for you. Doesn't yet resolve workspace-inherited dependencies
+(`bevy.workspace = true`) for detection - a known gap for workspace-structured projects.
+
+## Planned plugins
+
+These are registered as structural drafts only - the command shape exists, but no domain logic is
+written yet, and invoking them throws. Not usable today; listed here so the roadmap is visible.
+
+| Plugin                              | What it will do                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `@game-ci/anti-cheat`                | Wrap a build with an anti-cheat SDK's own packaging step.                                 |
+| `@game-ci/dedicated-server-provisioning` | Provision/deploy a built dedicated server to hosting infrastructure.                  |
+| `@game-ci/dev-tunnel`                | Expose a local dev build through a public tunnel for remote playtesting.                  |
+| `@game-ci/gamemaker`                 | Build a GameMaker project via Igor (needs a real licensed GameMaker install to verify against). |
+| `@game-ci/renpy`                     | Build a Ren'Py visual novel project.                                                       |
+| `@game-ci/rpg-maker`                 | Build an RPG Maker project (no official CLI exists yet to verify a real invocation shape against). |
+| `@game-ci/save-data-compat`          | Validate save-data compatibility across engine/build versions.                            |
+| `@game-ci/screen-capture`            | Capture gameplay footage/screenshots during an automated test run (GPU-required).         |
+
+Interested in one of these? Open an issue on [game-ci/cli](https://github.com/game-ci/cli/issues) -
+the plugin interface is stable, so implementing the domain logic for any of these is a scoped,
+self-contained contribution.

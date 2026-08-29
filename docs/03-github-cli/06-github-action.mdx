@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: game-ci/cli@v0.1.14
+      - uses: game-ci/cli@v0.1.48
         with:
           args: build . --target-platform StandaloneLinux64
 ```
@@ -32,7 +32,7 @@ jobs:
 Run tests the same way:
 
 ```yaml
-- uses: game-ci/cli@v0.1.14
+- uses: game-ci/cli@v0.1.48
   with:
     args: test .
 ```
@@ -42,7 +42,7 @@ Run tests the same way:
 Leave `args` empty when later workflow steps should call `game-ci` directly.
 
 ```yaml
-- uses: game-ci/cli@v0.1.14
+- uses: game-ci/cli@v0.1.48
 
 - run: game-ci --help
 ```
@@ -55,32 +55,32 @@ control over quoting than a single `args` input provides.
 
 ## Version Selection
 
-When the action ref is a version tag such as `v0.1.14`, the action installs the matching CLI release.
+When the action ref is a version tag such as `v0.1.48`, the action installs the matching CLI release.
 When the action ref is a branch, such as `main`, it installs the latest CLI release unless you pass
 `version`.
 
 ```yaml
 - uses: game-ci/cli@main
   with:
-    version: v0.1.14
+    version: v0.1.48
     args: --help
 ```
 
-Pinning `uses: game-ci/cli@v0.1.14` is preferred for repeatable workflows.
+Pinning `uses: game-ci/cli@v0.1.48` is preferred for repeatable workflows.
 
 ## Inputs
 
 | Input               | Default | Description                                                                    |
 | ------------------- | ------- | ------------------------------------------------------------------------------ |
 | `args`              | empty   | Arguments passed to `game-ci`. Leave empty to install only.                    |
-| `version`           | empty   | CLI release to install, for example `v0.1.14`. Overrides action-ref detection. |
+| `version`           | empty   | CLI release to install, for example `v0.1.48`. Overrides action-ref detection. |
 | `working-directory` | `.`     | Directory where the `game-ci` command runs when `args` is set.                 |
 
 ## Orchestrated Jobs
 
-The action can run provider-backed jobs once the selected CLI release includes the built-in
-Orchestrator. The current `v0.1.14` release predates that integration, so use the dedicated
-Orchestrator action for provider-backed GitHub Actions jobs today:
+The Orchestrator is built into every `game-ci` release, but for provider-backed GitHub Actions jobs
+specifically, use the dedicated Orchestrator action - it wires up the provider-specific inputs this
+generic `args`-passthrough action doesn't have its own inputs for:
 
 ```yaml
 - uses: game-ci/orchestrator@v1.0.0
@@ -99,7 +99,7 @@ The action installs the released CLI binary for the current runner:
 | --------- | ----------------------------------------------- |
 | Linux     | `game-ci-linux-x64` or compatible release asset |
 | macOS     | `game-ci-macos-x64` or `game-ci-macos-arm64`    |
-| Windows   | `game-ci-windows-x64.exe`                       |
+| Windows   | `game-ci-windows-x64.zip` (extracted, with its `dist/` sibling) |
 
 Linux and macOS runners use the repository installer script. Windows runners download and verify the
 Windows release asset directly.
@@ -109,7 +109,7 @@ Windows release asset directly.
 Set `working-directory` when the project is not at the repository root:
 
 ```yaml
-- uses: game-ci/cli@v0.1.14
+- uses: game-ci/cli@v0.1.48
   with:
     working-directory: ./clients/unity
     args: build . --build-method Company.CI.RunValidation --target-platform StandaloneLinux64
