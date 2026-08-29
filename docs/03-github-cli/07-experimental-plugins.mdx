@@ -114,13 +114,13 @@ just want to be explicit), pass `--engine=bevy` to force it:
 game-ci build ./my-game --engine=bevy
 ```
 
-| Option          | Applies to  | Description                                                      |
-| --------------- | ----------- | ------------------------------------------------------------------ |
-| `--target`      | build, test | Rust target triple. Builds for the host toolchain when omitted.   |
-| `--features`    | build, test | Comma-separated cargo features to enable.                         |
-| `--locked`      | build, test | Fail instead of updating `Cargo.lock`. Default `true`.            |
-| `--debug`       | build       | Build in debug mode instead of `--release`. Default `false`.      |
-| `--outputPath`  | build       | Directory to copy the built binary into.                          |
+| Option         | Applies to  | Description                                                     |
+| -------------- | ----------- | --------------------------------------------------------------- |
+| `--target`     | build, test | Rust target triple. Builds for the host toolchain when omitted. |
+| `--features`   | build, test | Comma-separated cargo features to enable.                       |
+| `--locked`     | build, test | Fail instead of updating `Cargo.lock`. Default `true`.          |
+| `--debug`      | build       | Build in debug mode instead of `--release`. Default `false`.    |
+| `--outputPath` | build       | Directory to copy the built binary into.                        |
 
 Cross-compilation via `--target` assumes the target's toolchain and any required linkers are
 already installed (e.g. via `rustup target add`, or a `cross`-based custom Docker image) - this
@@ -132,16 +132,16 @@ plugin doesn't set that up for you. Doesn't yet resolve workspace-inherited depe
 These are registered as structural drafts only - the command shape exists, but no domain logic is
 written yet, and invoking them throws. Not usable today; listed here so the roadmap is visible.
 
-| Plugin                              | What it will do                                                                          |
-| ------------------------------------ | ------------------------------------------------------------------------------------------ |
-| `@game-ci/anti-cheat`                | Wrap a build with an anti-cheat SDK's own packaging step.                                 |
-| `@game-ci/dedicated-server-provisioning` | Provision/deploy a built dedicated server to hosting infrastructure.                  |
-| `@game-ci/dev-tunnel`                | Expose a local dev build through a public tunnel for remote playtesting.                  |
-| `@game-ci/gamemaker`                 | Build a GameMaker project via Igor (needs a real licensed GameMaker install to verify against). |
-| `@game-ci/renpy`                     | Build a Ren'Py visual novel project.                                                       |
-| `@game-ci/rpg-maker`                 | Build an RPG Maker project (no official CLI exists yet to verify a real invocation shape against). |
-| `@game-ci/save-data-compat`          | Validate save-data compatibility across engine/build versions.                            |
-| `@game-ci/screen-capture`            | Capture gameplay footage/screenshots during an automated test run (GPU-required).         |
+| Plugin                                   | What it will do                                                                                    |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `@game-ci/anti-cheat`                    | Wrap a build with an anti-cheat SDK's own packaging step.                                          |
+| `@game-ci/dedicated-server-provisioning` | Provision/deploy a built dedicated server to hosting infrastructure.                               |
+| `@game-ci/dev-tunnel`                    | Expose a local dev build through a public tunnel for remote playtesting.                           |
+| `@game-ci/gamemaker`                     | Build a GameMaker project via Igor (needs a real licensed GameMaker install to verify against).    |
+| `@game-ci/renpy`                         | Build a Ren'Py visual novel project.                                                               |
+| `@game-ci/rpg-maker`                     | Build an RPG Maker project (no official CLI exists yet to verify a real invocation shape against). |
+| `@game-ci/save-data-compat`              | Validate save-data compatibility across engine/build versions.                                     |
+| `@game-ci/screen-capture`                | Capture gameplay footage/screenshots during an automated test run (GPU-required).                  |
 
 Interested in one of these? Open an issue on [game-ci/cli](https://github.com/game-ci/cli/issues) -
 the plugin interface is stable, so implementing the domain logic for any of these is a scoped,
