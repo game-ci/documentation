@@ -10,6 +10,7 @@ jobs:
   aCatForCreatingThePullRequest:
     name: A cat for your effort!
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Action Cats
         uses: ruairidhwm/action-cats@1.0.2

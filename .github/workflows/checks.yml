@@ -8,6 +8,7 @@ jobs:
   codeFormatting:
     name: Code formatting
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: Read Node version from mise.toml
@@ -25,7 +26,7 @@ jobs:
         id: yarn-config
         run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
       - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -42,10 +43,24 @@ jobs:
         run: |
           case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
           yarn install --immutable
+      - name: Save yarn install cache (node_modules + cacheFolder + install-state)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+        timeout-minutes: 5
+        continue-on-error: true
       - run: yarn format:check
   codeStyles:
     name: Code styles
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: Read Node version from mise.toml
@@ -63,7 +78,7 @@ jobs:
         id: yarn-config
         run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
       - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -80,10 +95,24 @@ jobs:
         run: |
           case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
           yarn install --immutable
+      - name: Save yarn install cache (node_modules + cacheFolder + install-state)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+        timeout-minutes: 5
+        continue-on-error: true
       - run: yarn lint
   types:
     name: Types check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: Read Node version from mise.toml
@@ -101,7 +130,7 @@ jobs:
         id: yarn-config
         run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
       - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -118,10 +147,24 @@ jobs:
         run: |
           case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
           yarn install --immutable
+      - name: Save yarn install cache (node_modules + cacheFolder + install-state)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+        timeout-minutes: 5
+        continue-on-error: true
       - run: yarn typecheck
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Read Node version from mise.toml
@@ -139,7 +182,7 @@ jobs:
         id: yarn-config
         run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
       - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -156,6 +199,19 @@ jobs:
         run: |
           case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
           yarn install --immutable
+      - name: Save yarn install cache (node_modules + cacheFolder + install-state)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+        timeout-minutes: 5
+        continue-on-error: true
       - run: yarn test --coverage
       - run: bash <(curl -s https://codecov.io/bash)
         env:
@@ -163,6 +219,7 @@ jobs:
   e2e:
     name: E2E tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Read Node version from mise.toml
@@ -180,7 +237,7 @@ jobs:
         id: yarn-config
         run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
       - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -197,6 +254,19 @@ jobs:
         run: |
           case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
           yarn install --immutable
+      - name: Save yarn install cache (node_modules + cacheFolder + install-state)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key:
+            yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock')
+            }}
+        timeout-minutes: 5
+        continue-on-error: true
       - run: yarn build
       - run: npx playwright install --with-deps chromium
       - run: yarn test:e2e
