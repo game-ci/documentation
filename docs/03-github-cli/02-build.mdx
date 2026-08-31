@@ -49,6 +49,7 @@ Common Unity options:
 | `--custom-image`             | GameCI Unity editor image                      | Override the Docker image.                                                                                                                                                                                                                                                |
 | `--custom-parameters`        | empty                                          | Extra arguments passed to Unity.                                                                                                                                                                                                                                          |
 | `--docker-workspace-path`    | `/github/workspace`                            | Container mount path for the workspace.                                                                                                                                                                                                                                   |
+| `--container-os`             | `auto`                                         | `auto`, `linux`, or `windows`. Which Docker image tag, workdir, and entrypoint shape to use for local builds - see below.                                                                                                                                                 |
 | `--unity-email`, `-u`        | empty                                          | Unity account email.                                                                                                                                                                                                                                                      |
 | `--unity-password`, `-p`     | empty                                          | Unity account password.                                                                                                                                                                                                                                                   |
 | `--unity-serial`, `-s`       | empty                                          | Unity Pro or Plus serial.                                                                                                                                                                                                                                                 |
@@ -68,6 +69,17 @@ Common Unity options:
 On Linux and Windows, Unity builds run through Docker. On macOS, the CLI uses the host Unity
 installation path handled by the macOS builder setup. `--run-as-host-user` and
 `--git-config-extensions` are Linux-only; `--enable-gpu` is Windows-only.
+
+### Container OS Detection
+
+For local builds, the CLI needs to know whether the target container is Linux or Windows-based to
+pick the right image tag, workdir path, and entrypoint. By default (`--container-os auto`), it asks
+the Docker daemon directly (`docker version --format '{{.Server.Os}}'`) rather than assuming the
+container OS matches the host OS. This matters on Windows: Docker Desktop can run either Windows or
+Linux containers, and a Windows host running Docker Desktop in **Linux containers** mode still needs
+Linux-style image tags and paths - the container runtime is Linux regardless of the host. If the
+daemon can't be reached, the CLI falls back to the host OS. Pass `--container-os linux` or
+`--container-os windows` to skip detection and force one explicitly.
 
 ### Windows-Only-Editor Native Plugin Warning
 
