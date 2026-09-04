@@ -31,15 +31,39 @@ installation, so the command set you see depends on which package installed the 
 
 ## Install
 
-Standalone binaries do not require Node.js, Bun, or a package manager.
+Standalone binaries do not require Node.js, Bun, or a Node package manager such as npm or Yarn.
 
-### Linux / macOS
+Homebrew and Scoop are the recommended options for most people. They put `game-ci` on your `PATH`
+for you and handle upgrades and uninstall cleanly. The install scripts do not do either of those;
+they print `PATH` instructions you have to follow yourself.
+
+The install scripts remain fully supported. Use them for CI, containers, pinning an exact version
+with `GAME_CI_VERSION`, or any environment without Homebrew or Scoop.
+
+### Homebrew (macOS and Linux)
+
+```bash
+brew install game-ci/tap/game-ci
+```
+
+Upgrade with `brew upgrade game-ci`. The formula lives in the `game-ci/homebrew-tap` repository.
+
+### Scoop (Windows)
+
+```powershell
+scoop bucket add game-ci https://github.com/game-ci/scoop-bucket
+scoop install game-ci
+```
+
+Upgrade with `scoop update game-ci`. The manifest lives in the `game-ci/scoop-bucket` repository.
+
+### Install Script (Linux / macOS)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/game-ci/cli/main/install.sh | sh
 ```
 
-### Windows PowerShell
+### Install Script (Windows PowerShell)
 
 ```powershell
 irm https://raw.githubusercontent.com/game-ci/cli/main/install.ps1 | iex
@@ -52,7 +76,10 @@ irm https://raw.githubusercontent.com/game-ci/cli/main/install.ps1 | iex
 | `GAME_CI_VERSION` | Pin a release, for example `v0.1.0`.            | latest           |
 | `GAME_CI_INSTALL` | Install directory for the `game-ci` executable. | `~/.game-ci/bin` |
 
-After installation, make sure `~/.game-ci/bin` is on your `PATH`.
+These variables are read by the install scripts only. Homebrew and Scoop do not use them; upgrade
+through the package manager instead.
+
+After running an install script, make sure `~/.game-ci/bin` is on your `PATH`.
 
 ## From Source
 
