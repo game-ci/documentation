@@ -1,0 +1,121 @@
+---
+sidebar_position: 1
+slug: /cli/orchestrate-advanced/local-caching
+---
+
+# Local Caching
+
+The `local`/`local-system` provider strategy has its own filesystem-based cache for the Unity
+`Library` folder and Git LFS objects. It is separate from the cache path used by the `aws`, `k8s`,
+and `local-docker` provider strategies, which have their own pre-existing S3/rclone-backed caching
+and ignore all of the options below.
+
+```bash
+game-ci orchestrate ./my-unity-project \
+  --provider-strategy local \
+  --target-platform StandaloneLinux64 \
+  --local-cache-enabled \
+  --local-cache-mode move-directory
+```
+
+| Option                        | Default | Description                                                                                      |
+| ----------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `--local-cache-enabled`       | `false` | Enable local filesystem Library/LFS caching for the `local`/`local-system` provider.             |
+| `--local-cache-library`       | `true`  | Cache the engine `Library` folder locally (requires `--local-cache-enabled`).                    |
+| `--local-cache-lfs`           | `false` | Cache `.git/lfs` locally (requires `--local-cache-enabled`).                                     |
+| `--local-cache-root`          | empty   | Root directory for the local cache. Defaults to `RUNNER_TEMP/game-ci-cache` or `.game-ci/cache`. |
+| `--local-cache-fallback`      | `false` | Allow restoring from a fallback cache key when the exact key misses.                             |
+| `--local-cache-fallback-keys` | empty   | Comma-separated explicit fallback cache keys to try, in order.                                   |
+| `--local-cache-mode`          | `tar`   | Local cache save/restore mode: `tar`, `move-directory`, or `copy-directory`.                     |
+
+These options only affect the `local`/`local-system` provider strategy. `aws`, `k8s`, and
+`local-docker` use a separate, pre-existing Library/LFS caching path and ignore them entirely.
+
+## Choosing A Cache Mode
+
+| Mode             | Behavior                                                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `tar`            | Archive/extract the engine cache folder (`Library` for Unity). Portable, but pays an archive/extract cost every run.       |
+| `move-directory` | An O(1) same-volume move/rename swap of a per-runner `Library` backup into place. No copy, no compression — just a rename. |
+| `copy-directory` | Plain recursive directory copy, no archive step. Simpler than `tar`, still pays a full-copy cost.                          |
+
+`move-directory` is a destructive transfer rather than a shared cache copy: restore moves the
+cached directory into the workspace, and save moves it back. It requires the cache root and the
+project's `Library` folder to be on the same filesystem volume. A cross-volume rename fails; there
+is no automatic copy fallback. Use `copy-directory` when the paths may be on different volumes or
+when multiple builds need the same cache entry concurrently.
+
+Git LFS caching is independent of this mode and uses a tar archive when enabled.
+
+## Fallback Keys
+
+`--local-cache-fallback` (with optional `--local-cache-fallback-keys`) lets a run restore from a
+prior, non-exact cache key when the exact key misses — for example falling back to yesterday's
+`Library` cache on the first build of a new branch, rather than starting from an empty `Library` and
+paying a full reimport.
+
+The exact key is `{targetPlatform}-{unityVersion}-{branch}` with unsupported filename characters
+replaced by underscores. Explicit fallback keys are tried first in the order supplied. Automatic
+candidates then prefer the same platform and Unity version, followed by the same platform, then the
+same Unity version. Fallback restores are copied even in `move-directory` mode so the seed remains
+available.
+
+## Cache Root
+
+`--local-cache-root` defaults to `RUNNER_TEMP/game-ci-cache` when `RUNNER_TEMP` is set (matching
+GitHub Actions self-hosted runner conventions), otherwise `.game-ci/cache` relative to the working
+directory. Set it explicitly when your self-hosted runner's persistent cache volume lives somewhere
+else, or when `move-directory` mode needs to share a volume with the project checkout.
+
+## Cache Floor On Import Success
+
+By default, a failed build/test leaves the local cache untouched — only a successful run saves a
+new cache. `--local-cache-save-on-failure` opts into a more forgiving policy, based on a pattern
+designed to preserve useful import work: if asset import completed before a later,
+non-corruption failure (a crash, a license error, or a nonzero exit downstream of import),
+the `Library` the import produced is still valuable and gets banked as a cache "floor" — so the
+next run starts from a warm `Library` instead of an empty one, even though this run failed.
+
+```bash
+game-ci orchestrate ./my-unity-project \
+  --provider-strategy local \
+  --target-platform StandaloneLinux64 \
+  --local-cache-enabled \
+  --local-cache-save-on-failure
+```
+
+| Option                                      | Default           | Description                                                                                                                                                                                                                                                                 |
+| ------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--local-cache-save-on-failure`             | `false`           | On a failed build/test, attempt to bank the local cache as a floor if asset import had already completed. Requires `--local-cache-enabled`.                                                                                                                                 |
+| `--local-cache-floor-corruption-categories` | `COMPILE,PACKAGE` | Comma-separated failure categories treated as corruption-specific — these always block the floor save, regardless of import completion. Unrecognized entries are ignored (with a warning) and the built-in default is used if the override leaves no recognized categories. |
+
+This is off by default: banking a cache from a _failed_ run is a real behavior change beyond
+simply enabling caching, matching the same caution already applied to
+[`--enable-build-retry`](/docs/cli/orchestrate-advanced/build-retry).
+
+### How The Decision Is Made
+
+On failure, the same diagnostics the [build retry feature](/docs/cli/orchestrate-advanced/build-retry)
+already computes are reused — no separate detector. The run's log is classified into a failure
+category (`CRASH`, `LICENSE`, `COMPILE`, `PACKAGE`, `EXIT_NEG1`, `GENERIC`, ...) and checked for
+whether asset import completed (a log pattern match, or `Library/ArtifactDB`'s modification time
+advancing past a pre-run baseline). The floor is banked only when both hold:
+
+```text
+shouldBankAsFloor = importCompleted && !isCorruptionSpecificCategory(failureCategory)
+```
+
+- **Generic, process-level failures** (`CRASH`, `LICENSE`, `EXIT_NEG1`, `GENERIC`) — bankable if
+  import completed. This preserves the imported `Library`, subject to the diagnostic heuristic.
+- **Corruption-specific failures** (`COMPILE`, `PACKAGE` by default) — blocked unconditionally,
+  even if import completed. These indicate the `Library`/`PackageCache` content itself may be
+  broken, not just that something crashed after a clean import.
+
+Override which categories count as corruption-specific with
+`--local-cache-floor-corruption-categories` if your project's failure signatures differ from the
+built-in default — for example, narrowing it to just `COMPILE` if your `PACKAGE` failures are
+reliably unrelated to `Library` content, or widening it to also block `CRASH`. An unset or entirely
+unrecognized override falls back to the built-in `COMPILE,PACKAGE` default.
+
+The floor-save attempt never masks the original failure: if it fails or is skipped, the build's
+real error is still what gets thrown/reported.

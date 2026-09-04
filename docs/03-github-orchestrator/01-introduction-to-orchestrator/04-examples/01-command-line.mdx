@@ -1,8 +1,8 @@
 # Command Line
 
-Use the public `game-ci` CLI for command-line builds and other engine automation. Orchestrator is
-loaded as a provider plugin, so the user-facing command is `game-ci orchestrate` while
-provider-specific behavior stays in the Orchestrator package.
+Use the public `game-ci` CLI for command-line builds and other engine automation. Its built-in
+Orchestrator plugin provides `game-ci orchestrate`, while provider-specific behavior stays in the
+Orchestrator package.
 
 ## Install GameCI CLI
 
@@ -27,7 +27,6 @@ The standalone Orchestrator CLI can also be installed directly for provider deve
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator-plugin \
   orchestrate ./my-project \
   --provider-strategy local-docker \
   --target-platform StandaloneLinux64
@@ -37,7 +36,6 @@ game-ci \
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator-plugin \
   orchestrate ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
@@ -48,7 +46,6 @@ game-ci \
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator-plugin \
   orchestrate ./my-project \
   --provider-strategy k8s \
   --target-platform StandaloneLinux64 \
@@ -86,7 +83,6 @@ Avoid long CLI flags for credentials by using environment variables or the
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator-plugin \
   orchestrate ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64 \
@@ -97,5 +93,5 @@ game-ci \
 ## Further Reading
 
 - [GameCI CLI](/docs/cli) - public command-line interface
-- [Orchestrated jobs](/docs/cli/remote-builds) - provider plugin usage
+- [Orchestrated jobs](/docs/cli/remote-builds) - provider-backed execution
 - [Standalone Orchestrator CLI](../../cli/getting-started) - lower-level Orchestrator entry point

@@ -1,0 +1,155 @@
+---
+sidebar_position: 2
+slug: /cli/orchestrate-advanced/middleware
+---
+
+# Middleware And Hooks
+
+Middleware is the extensibility story for `game-ci orchestrate`: a composable, trigger-aware way to
+run your own commands or containers around pipeline phases, without forking a provider or writing a
+full plugin.
+
+Each middleware definition wraps a pipeline phase with `before`/`after` command or container blocks,
+and only activates when its trigger conditions match.
+
+## Loading Middleware
+
+Two ways to supply middleware definitions, and they combine:
+
+- **Inline YAML** via `--middleware-pipeline`, a YAML document (single object or array) passed
+  directly on the command line or through `.game-ci.yml`.
+- **Files** via `--middleware-files`, a comma-separated allowlist of base file names (no `.yml`/
+  `.yaml` extension) to load from a `game-ci/middleware/` directory relative to the working
+  directory. Only files whose base name is in the allowlist are loaded — the directory is not
+  loaded wholesale.
+
+```bash
+game-ci orchestrate ./my-unity-project \
+  --provider-strategy local \
+  --target-platform StandaloneLinux64 \
+  --middleware-files discord-notify,disk-space-guard
+```
+
+with `game-ci/middleware/discord-notify.yaml` in the project:
+
+```yaml
+name: discord-notify
+type: command
+priority: 100
+trigger:
+  phase: [build]
+  when: env.DISCORD_WEBHOOK_URL
+before:
+  commands: |
+    curl -s -X POST "$DISCORD_WEBHOOK_URL" -d '{"content":"Build starting..."}'
+after:
+  commands: |
+    curl -s -X POST "$DISCORD_WEBHOOK_URL" -d '{"content":"Build finished."}'
+```
+
+## Middleware Schema
+
+| Field          | Type                     | Default   | Description                                                                   |
+| -------------- | ------------------------ | --------- | ----------------------------------------------------------------------------- |
+| `name`         | string                   | `unnamed` | Identifies the middleware in logs and generated hook names.                   |
+| `description`  | string                   | —         | Free-text, informational only.                                                |
+| `type`         | `command` \| `container` | `command` | Resolves to a command hook or a container hook.                               |
+| `priority`     | number                   | `100`     | Ordering — see [Priority Ordering](#priority-ordering) below.                 |
+| `trigger`      | object                   | —         | See [Triggers](#triggers) below. Required.                                    |
+| `image`        | string                   | `ubuntu`  | Default container image for `type: container`, overridable per-phase.         |
+| `before`       | string or object         | —         | Commands to run before the phase. Shorthand string, or `{ commands, image }`. |
+| `after`        | string or object         | —         | Commands to run after the phase. Same shape as `before`.                      |
+| `allowFailure` | boolean                  | `false`   | Container middleware only. If `true`, a failing container hook is tolerated.  |
+| `secrets`      | array                    | `[]`      | Named secrets to resolve into environment variables for the hook.             |
+| `outputs`      | string[]                 | —         | Reserved for future output capture.                                           |
+
+At least one of `before`/`after` is expected — a middleware with neither has nothing to resolve to
+a hook.
+
+## Phases
+
+Middleware can trigger on four pipeline phases:
+
+| Phase        | Hook kind       | Wired into                                                           |
+| ------------ | --------------- | -------------------------------------------------------------------- |
+| `setup`      | command hooks   | Before/after the provider's environment setup step.                  |
+| `build`      | command hooks   | Before/after the actual engine build/test invocation.                |
+| `pre-build`  | container hooks | Before/after, run as a container step ahead of the build container.  |
+| `post-build` | container hooks | Before/after, run as a container step following the build container. |
+
+The supported type/phase pairs are `type: command` with `setup` or `build`, and `type: container`
+with `pre-build` or `post-build`. The `type` field is authoritative. A mismatched pair, an unknown
+phase, or one definition that mixes command and container phases is rejected with a configuration
+error rather than being silently omitted. List multiple compatible phases in `trigger.phase` if the
+same middleware should activate at more than one point.
+
+## Priority Ordering
+
+Middleware executes in a "wrapping" pattern around the phase it targets:
+
+- **`before` hooks run in ascending priority order** — lower priority numbers run earlier, so a
+  `priority: 10` middleware's `before` runs before a `priority: 100` middleware's `before`.
+- **`after` hooks run in descending priority order** — the reverse: the `priority: 100`
+  middleware's `after` runs before the `priority: 10` middleware's `after`.
+
+The net effect: the _outermost_ middleware (lowest priority number) has its `before` run first and
+its `after` run last, exactly like nested wrapping. Middleware definitions across inline YAML and
+files are all merged and sorted together by priority before any phase runs.
+
+## Triggers
+
+```yaml
+trigger:
+  phase: [build] # required — one or more of setup/build/pre-build/post-build
+  provider: [local, local-system] # optional — restrict to specific providerStrategy values
+  platform: [StandaloneLinux64] # optional — restrict to specific --target-platform values
+  when: "env.ENABLE_NOTIFY == 'true'" # optional — expression condition
+```
+
+All specified conditions must pass (AND logic) for the middleware to activate for a given phase.
+`provider` and `platform` accept a single string or an array. When omitted, a condition is treated
+as "matches anything."
+
+### `when` Expression Syntax
+
+`when` supports a small, deliberately limited expression grammar evaluated against `process.env` —
+not a general expression language:
+
+| Form                 | Meaning                                                               |
+| -------------------- | --------------------------------------------------------------------- |
+| `env.VAR == 'value'` | True when the environment variable equals the quoted value.           |
+| `env.VAR != 'value'` | True when the environment variable does not equal the quoted value.   |
+| `env.VAR`            | Truthy check — true when set, non-empty, and not the literal `false`. |
+| `!env.VAR`           | Falsy check — true when unset, empty, or the literal `false`.         |
+
+An expression that matches none of these forms logs a warning and defaults to `true`.
+
+## Command Vs Container Middleware
+
+- `type: command` middleware runs its `before`/`after` `commands` as shell commands on the host
+  running the pipeline step. Use it with `setup`/`build` phase hooks. Setting `allowFailure: true`
+  on command middleware is rejected because command hooks do not support that failure mode.
+- `type: container` middleware runs its `before`/`after` `commands` inside a container using
+  `image` (top-level default, or overridden per-phase). Use it with `pre-build`/`post-build` phase
+  hooks. Container hooks support `allowFailure` and can use tooling that is absent from the host.
+
+## Secrets
+
+```yaml
+secrets:
+  - name: DISCORD_WEBHOOK_URL
+```
+
+Each entry resolves its value from an explicit `value`, or falls back to `process.env[name]` /
+`process.env[UPPER_SNAKE_CASE(name)]`, and is exposed to the hook's commands as an environment
+variable. The normalized uppercase name is used for the environment variable when `name` is not
+already in environment-variable form.
+
+The `trigger.when` expression is evaluated against the process environment before these secret
+entries are hydrated. An explicit YAML `value` therefore cannot make a `when` condition true unless
+the same variable is already present in the process environment.
+
+Avoid placing secret values directly in middleware YAML: they remain plaintext in the config, and
+this middleware path does not automatically register them with GitHub Actions log masking. Prefer
+injecting values through your CI secret store or the runner environment, and never echo them from a
+hook.

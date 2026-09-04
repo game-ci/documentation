@@ -25,7 +25,7 @@ by the built-in build command, smoke tests, asset processing, or fully custom au
 benefits from Orchestrator providers, logs, hooks, storage, and cleanup.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     customJob: |
@@ -44,7 +44,6 @@ For command-line usage, pass the same YAML as `--custom-job`:
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator-plugin \
   orchestrate ./my-project \
   --provider-strategy local-docker \
   --custom-job '- name: smoke
@@ -107,7 +106,7 @@ submodules:
 ### Example
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     submoduleProfilePath: config/submodule-profiles/game/client/profile.yml
@@ -154,7 +153,7 @@ profile-dependent are cleared before the build:
 You can also provide explicit fallback keys with `localCacheFallbackKeys`.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     localCacheEnabled: true
@@ -166,36 +165,35 @@ You can also provide explicit fallback keys with `localCacheFallbackKeys`.
 
 `localCacheMode` controls how the local cache stores and restores the Unity Library:
 
-| Mode             | Behavior                 | Best for                                                              |
-| ---------------- | ------------------------ | --------------------------------------------------------------------- |
-| `move-directory` | Directory move / rename  | Default; O(1) atomic rename, fastest for large Libraries              |
-| `copy-directory` | Recursive directory copy | Shared seed caches that must remain available to other builds         |
-| `tar`            | Portable tar archive     | Distributing cache entries via the rclone/S3 built-in container hooks |
+| Mode             | Behavior                 | Best for                                                            |
+| ---------------- | ------------------------ | ------------------------------------------------------------------- |
+| `move-directory` | Directory move / rename  | O(1) same-volume rename for a cache key used by one build at a time |
+| `copy-directory` | Recursive directory copy | Shared seed caches that must remain available to other builds       |
+| `tar`            | Portable tar archive     | Default; works across filesystem volumes                            |
 
-`move-directory` (the default since [game-ci/orchestrator#41](https://github.com/game-ci/orchestrator/pull/41))
-is much faster than tar extraction for very large Libraries because it renames a directory rather
-than copying file contents. It works best when the cache root and workspace are on the same
-volume; if a rename fails across filesystem/volume boundaries (`EXDEV`), it automatically falls
-back to a copy instead of failing the build. If `localCacheFallback` restores a fallback key while
-`localCacheMode` is `move-directory`, the fallback is copied instead of moved so the shared
-fallback seed remains available to other branches.
+`move-directory` can be much faster than tar extraction for very large Libraries because it
+renames a directory rather than copying file contents. The cache root and workspace must be on the
+same volume; a cross-volume rename (`EXDEV`) fails rather than falling back to a copy. Restore moves
+the exact cache entry into the workspace and save moves it back, so do not share one exact key
+between concurrent builds. If `localCacheFallback` restores a fallback key, that fallback is copied
+instead of moved so the seed remains available to other branches.
 
 ### Inputs
 
-| Input                    | Default          | Description                                              |
-| ------------------------ | ---------------- | -------------------------------------------------------- |
-| `localCacheEnabled`      | `false`          | Enable filesystem caching                                |
-| `localCacheRoot`         | -                | Cache directory override                                 |
-| `localCacheLibrary`      | `true`           | Cache Unity Library folder                               |
-| `localCacheLfs`          | `true`           | Cache LFS objects                                        |
-| `localCacheFallback`     | `false`          | Try compatible local cache keys after exact-key miss     |
-| `localCacheFallbackKeys` | -                | Comma-separated explicit fallback keys                   |
-| `localCacheMode`         | `move-directory` | Cache mode: `move-directory`, `copy-directory`, or `tar` |
+| Input                    | Default | Description                                              |
+| ------------------------ | ------- | -------------------------------------------------------- |
+| `localCacheEnabled`      | `false` | Enable filesystem caching                                |
+| `localCacheRoot`         | -       | Cache directory override                                 |
+| `localCacheLibrary`      | `true`  | Cache Unity Library folder                               |
+| `localCacheLfs`          | `true`  | Cache LFS objects                                        |
+| `localCacheFallback`     | `false` | Try compatible local cache keys after exact-key miss     |
+| `localCacheFallbackKeys` | -       | Comma-separated explicit fallback keys                   |
+| `localCacheMode`         | `tar`   | Cache mode: `move-directory`, `copy-directory`, or `tar` |
 
 ### Example
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     localCacheEnabled: true
@@ -235,7 +233,7 @@ The agent name is derived from the executable filename (e.g. `elastic-git-storag
 ### Example
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     lfsTransferAgent: ./tools/elastic-git-storage
@@ -271,7 +269,7 @@ enable when your build pipeline depends on hooks running.
 
 ```yaml
 # Enable hooks but skip pre-commit
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     gitHooksEnabled: true

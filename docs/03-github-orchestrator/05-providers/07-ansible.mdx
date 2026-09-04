@@ -46,7 +46,7 @@ Or use a runner image that includes Ansible pre-installed.
 Set `providerStrategy: ansible` and supply the required inputs:
 
 ```yaml
-- uses: game-ci/unity-builder@main
+- uses: game-ci/orchestrator@main
   with:
     providerStrategy: ansible
     targetPlatform: StandaloneLinux64
@@ -195,7 +195,7 @@ For sensitive variables (license keys, credentials), use
    ```yaml
    - name: Write vault password
      run: echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault-pass
-   - uses: game-ci/unity-builder@main
+   - uses: game-ci/orchestrator@main
      with:
        providerStrategy: ansible
        ansibleVaultPassword: /tmp/vault-pass
@@ -224,7 +224,7 @@ jobs:
       - name: Write vault password
         run: echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault-pass
 
-      - uses: game-ci/unity-builder@main
+      - uses: game-ci/orchestrator@main
         with:
           providerStrategy: ansible
           targetPlatform: StandaloneLinux64

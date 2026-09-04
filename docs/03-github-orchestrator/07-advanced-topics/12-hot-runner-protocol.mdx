@@ -52,7 +52,7 @@ workspace delta.
 ### GitHub Runner Transport
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     runnerTransport: github
     runnerLabels: unity-2022,linux,hot
@@ -62,7 +62,7 @@ workspace delta.
 ### WebSocket Transport
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     runnerTransport: websocket
     runnerEndpoint: wss://build.example.com/runners
@@ -72,7 +72,7 @@ workspace delta.
 ### File Transport
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     runnerTransport: file
     runnerEndpoint: /mnt/shared/build-jobs/
@@ -91,7 +91,7 @@ Persistent mode saves editor startup time, keeps the Library folder warm, and le
 only changed assets when paired with incremental sync.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     editorMode: persistent
     runnerTransport: websocket
@@ -113,7 +113,7 @@ cache archive, Orchestrator sends the runner enough information to update the ex
 ### Git Delta
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     editorMode: persistent
     syncStrategy: git-delta
@@ -127,7 +127,7 @@ engine process reuse its warm state.
 Use direct input when a job should validate files that have not been pushed to git.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     editorMode: persistent
     syncStrategy: direct-input
