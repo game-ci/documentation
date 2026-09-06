@@ -71,7 +71,7 @@ jobs:
 Set `providerStrategy: github-actions` and supply the required inputs:
 
 ```yaml
-- uses: game-ci/unity-builder@main
+- uses: game-ci/orchestrator@main
   with:
     providerStrategy: github-actions
     targetPlatform: StandaloneLinux64
@@ -132,7 +132,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@main
+      - uses: game-ci/orchestrator@main
         with:
           providerStrategy: github-actions
           targetPlatform: ${{ matrix.targetPlatform }}

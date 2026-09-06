@@ -28,7 +28,7 @@ The standard job - runs the Unity Editor to produce a build artifact. This is wh
 about.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     targetPlatform: StandaloneLinux64
     providerStrategy: aws
@@ -48,7 +48,7 @@ The build job:
 Run Unity tests without producing a build. Use a custom `buildMethod` that runs tests and exits:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     targetPlatform: StandaloneLinux64
     buildMethod: MyNamespace.TestRunner.RunEditModeTests
@@ -71,7 +71,7 @@ Run any static C# method in the Unity Editor. Useful for:
 - Code generation
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     targetPlatform: StandaloneLinux64
     buildMethod: MyNamespace.Pipeline.ProcessAssets
@@ -88,7 +88,7 @@ Replace the entire build workflow with your own container steps. Useful for non-
 fully custom pipelines that still benefit from Orchestrator's cloud infrastructure.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     customJob: |
@@ -108,7 +108,7 @@ For long-running builds, Orchestrator can dispatch the job and return immediatel
 continues in the cloud. Progress is reported via GitHub Checks.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     targetPlatform: StandaloneLinux64
     providerStrategy: aws
@@ -137,7 +137,7 @@ The `remote-cli-pre-build` phase handles:
 You can inject additional pre-build steps:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     preBuildSteps: |
       - name: install-dependencies
@@ -156,7 +156,7 @@ The `remote-cli-post-build` phase handles:
 You can inject additional post-build steps:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     postBuildSteps: |
       - name: upload-to-steam

@@ -138,12 +138,38 @@ Platform that the build should target.
 Must be one of the [allowed values](https://docs.unity3d.com/ScriptReference/BuildTarget.html)
 listed in the Unity scripting manual.
 
-_**required:** `true`_
+_**required:** `true`_ _**example:** `StandaloneWindows64`_
+
+`targetPlatform` selects the Unity build target; it does not by itself prescribe `runs-on`.
+`unity-builder` supports Linux and Windows editor containers and the macOS host path. Many Mono
+targets can be cross-compiled — for example, a Linux runner can produce a Windows Mono player —
+while targets that need a platform SDK or native IL2CPP toolchain require a compatible host.
+
+Choose the runner OS together with the project's scripting backend and target requirements. A
+multi-platform workflow can use separate jobs or a matrix whose `runs-on` value matches each
+target/toolchain combination; see the
+[Advanced IL2CPP example](/docs/github/getting-started#advanced-il2cpp-example).
+
+**Mono vs IL2CPP** is configured in Unity Player Settings (`Project Settings > Player > Other
+Settings > Scripting Backend`), not through a `unity-builder` `scriptingBackend` input. The action
+uses the runner OS, target platform, Unity version, and project configuration to select an
+appropriate editor image/module. If a target's required toolchain is unavailable on the chosen
+runner, move that matrix entry to a compatible OS.
 
 #### unityVersion
 
 Version of Unity to use for building the project. Use "auto" to get from your
 ProjectSettings/ProjectVersion.txt
+
+The exact string from Unity Hub/the editor's own version display, including the release tag
+letter and build number - e.g. `2021.3.16f1`, `2022.3.7f1`, `6000.0.23f1`. Not just the numeric
+part (`2021.3.16` alone will not resolve).
+
+```yaml
+- uses: game-ci/unity-builder@v4
+  with:
+    unityVersion: 2021.3.16f1
+```
 
 _**required:** `false`_ _**default:** `auto`_
 

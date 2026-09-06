@@ -183,7 +183,7 @@ extensible_groups:
 Standard Unity Test Framework tests that run in the editor without entering play mode:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     testSuitePath: .game-ci/test-suites/pr-suite.yml
     testFilterRefs: smoke,ci
@@ -221,7 +221,7 @@ runs:
 Test results are output in machine-readable formats:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     testSuitePath: .game-ci/test-suites/pr-suite.yml
     testResultFormat: junit # junit, json, or both
@@ -238,7 +238,7 @@ for PR workflows, quarantines, branch-specific smoke tests, or community-maintai
 ### Inline injection
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     testSuitePath: .game-ci/test-suites/pr-suite.yml
     testFilterRefs: smoke
@@ -254,7 +254,7 @@ for PR workflows, quarantines, branch-specific smoke tests, or community-maintai
 ### File-based injection
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     testSuitePath: .game-ci/test-suites/pr-suite.yml
     testFilterInjectionPath: .game-ci/test-filters/nightly.yml

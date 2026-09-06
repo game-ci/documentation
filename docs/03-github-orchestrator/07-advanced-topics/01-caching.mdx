@@ -80,7 +80,7 @@ flowchart LR
 Set `cacheCheckpointInterval` to save the Library folder periodically while Unity is running:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -94,7 +94,7 @@ on the configured cache upload hook to push them after the build container stops
 Use `cacheSaveOnFailure` for builds that may exit non-zero because of OOMs, crashes, or assertions:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -121,7 +121,7 @@ Library folder is tens of gigabytes and checkpoint archives consume too much I/O
 Use `cacheRetentionDays` to automatically remove old cache entries from storage:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     cacheRetentionDays: 30
@@ -133,6 +133,11 @@ Use `cacheRetentionDays` to automatically remove old cache entries from storage:
 | `7`           | Short-lived feature branch caches       |
 | `30`          | Main and develop branch caches          |
 | `90`          | Release branch caches                   |
+
+When `childWorkspacesEnabled` is set, `cacheRetentionDays` also age-sweeps cached child workspaces
+under `childWorkspaceCacheRoot` — a cached child workspace is the same kind of disk-space liability
+as a local Library cache entry, so it shares the same retention setting rather than needing a
+separate one.
 
 You can vary retention by branch:
 
@@ -168,7 +173,7 @@ Set `maxRetainedWorkspaces` to control how many full workspaces are kept:
 | `> 0` | Keep at most N workspaces. Additional jobs fall back to standard caching. |
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     maxRetainedWorkspaces: 3
@@ -228,7 +233,7 @@ Use both when interrupted imports are common and import results need to survive 
 single Library archive:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   env:
     UNITY_ACCELERATOR_ENDPOINT: '127.0.0.1:10080'
   with:
@@ -336,6 +341,32 @@ clear error.
 Serialise output-emitting steps. If a job needs to emit several outputs from parallel
 sub-jobs, collect them into a single output-emitting step at the end.
 
+### Retained-workspace lock outliving a failed build
+
+`maxRetainedWorkspaces` locks are plain marker objects in the storage backend (S3 or rclone remote)
+with no TTL or liveness check — a lock is considered held for as long as the marker object exists,
+regardless of whether the process that created it is still running. A build that throws before it
+reaches its own cleanup step used to leave that marker behind permanently, shrinking the retained
+workspace pool by one on every crash until someone deleted the object by hand.
+
+Release the lock on every exit path, not just the success path — including the one a thrown error
+takes. Releasing an already-released (or never-acquired) lock should be a no-op, so the release call
+is safe to make unconditionally rather than only after confirming a lock is actually held.
+
+### Orphaned background cache-save lock from a killed process
+
+A background (detached, `copy-directory`) cache save writes a PID-stamped lock file before it starts
+and removes it on completion. If the process saving the cache is killed mid-copy (OOM, runner
+crash, forced job cancellation), the lock file survives it. A lock check that only runs reactively —
+triggered by a later save/restore call that happens to target the same cache key — never revisits a
+cache key this run doesn't touch, so that lock can outlive the process that created it indefinitely.
+
+Sweep lock files proactively at the start of a build, across every cache key under the cache root,
+not only the one this run is about to use. Treat a lock as stale when the PID it names is no longer
+alive. An incomplete or unparseable marker is kept for a five-minute grace period because the
+writer briefly stores `pending` before it can record the child PID. Permission errors during PID
+liveness checks are not treated as proof that the process is dead.
+
 ### Path-filter on the workflow entrypoint to skip docs-only commits
 
 Docs-only pushes (markdown changes, README updates) shouldn't trigger Unity CI runs. A
@@ -368,4 +399,4 @@ caching strategies above — fewer wasted builds means less cache churn.
 | `minCacheEntries`         | Minimum cache entries to keep during age-based GC (floor)  |
 | `skipCache`               | Skip cache restore entirely                                |
 | `useCompressionStrategy`  | Use LZ4 compression for cache archives                     |
-| `localCacheMode`          | One of `move-directory` (default), `copy-directory`, `tar` |
+| `localCacheMode`          | One of `tar` (default), `move-directory`, `copy-directory` |

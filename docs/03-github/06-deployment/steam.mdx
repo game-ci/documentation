@@ -165,3 +165,91 @@ The branch within steam that this build will be automatically put live on.
 Note that the `default` branch
 [has been observed to not work](https://github.com/game-ci/steam-deploy/issues/19) as a release
 branch, presumably because it is potentially dangerous.
+
+#### extraExclusions
+
+Comma-separated extra file-exclusion glob patterns for the primary depot, on top of the built-in
+defaults (`*.pdb`, `*.log`, `*.vdf`, and Unity's Burst debug/backup folders). Useful for anything
+Valve's [depot `FileExclusion`
+rules](https://partner.steamgames.com/doc/sdk/uploading#FileMapping_and_FileExclusion) need to
+strip that isn't already covered.
+
+```yaml
+- uses: game-ci/steam-deploy@v3
+  with:
+    extraExclusions: '*.tmp,Docs/*'
+    # ...
+```
+
+:::note
+
+Finer-grained depot control — multiple `FileMapping` blocks per depot, and `FileProperties`
+(`userconfig`/`versionedconfig`, for files a player modifies locally that updates shouldn't
+overwrite) — is implemented in [game-ci/cli](https://github.com/game-ci/cli) but not yet exposed as
+inputs on this action. Track [game-ci/steam-deploy#67](https://github.com/game-ci/steam-deploy/issues/67)
+for progress.
+
+:::
+
+### 6. Multiple Steam accounts or apps in one workflow
+
+You don't need anything special for this — `username`/`configVdf`/`appId` are all per-step, so just
+add one `game-ci/steam-deploy` step per account or app, each pointed at its own secrets:
+
+```yaml
+steps:
+  - uses: game-ci/steam-deploy@v3
+    with:
+      username: ${{ secrets.STEAM_USERNAME_APP1 }}
+      configVdf: ${{ secrets.STEAM_CONFIG_VDF_APP1 }}
+      appId: 111111
+      rootPath: build/app1
+
+  - uses: game-ci/steam-deploy@v3
+    with:
+      username: ${{ secrets.STEAM_USERNAME_APP2 }}
+      configVdf: ${{ secrets.STEAM_CONFIG_VDF_APP2 }}
+      appId: 222222
+      rootPath: build/app2
+```
+
+### 7. Bundling extra files with a build (e.g. the Steamworks SDK)
+
+Anything under the path(s) you point `rootPath`/`depot[X]Path` at gets uploaded as part of that
+depot — there's no separate "extra files" input. Copy whatever you need into the build output
+before the deploy step runs:
+
+```yaml
+- run: cp -r steamworks-sdk-files/ build/StandaloneWindows64/
+- uses: game-ci/steam-deploy@v3
+  with:
+    rootPath: build
+    depot1Path: StandaloneWindows64
+```
+
+Use [`extraExclusions`](#extraExclusions) if you need to keep specific files out instead.
+
+### 8. Avoiding the artifact upload/download round-trip
+
+`actions/upload-artifact` + `download-artifact` (as used in the example above) is only necessary
+when the build and deploy steps run in **different jobs** — jobs don't share a filesystem. If you
+build and deploy in the **same job**, the build output is already on disk when the deploy step
+runs, so skip the artifact steps entirely:
+
+```yaml
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: StandaloneWindows64
+      - uses: game-ci/steam-deploy@v3
+        with:
+          rootPath: build
+          depot1Path: StandaloneWindows64
+```
+
+Splitting build and deploy into separate jobs is only worth the artifact-transfer cost when you
+want to parallelize multiple platform builds ahead of a single deploy job, as in the [step 2
+example](#2-add-jobs-to-mainyml) above.

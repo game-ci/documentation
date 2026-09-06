@@ -72,7 +72,7 @@ can upload and process each category consistently.
 Declare output categories in your workflow or project configuration:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     targetPlatform: StandaloneLinux64
     outputTypes: build,test-results,metrics,images
@@ -149,7 +149,7 @@ automatically as part of the CloudFormation base stack. For other providers, ens
 and region are set in the environment.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     # storageProvider defaults to "s3"
@@ -163,7 +163,7 @@ and region are set in the environment.
 when you want to store caches and artifacts somewhere other than S3.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: k8s
     storageProvider: rclone

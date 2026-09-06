@@ -61,7 +61,7 @@ lifecycle:
 Use it as the provider strategy:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: config:./.game-ci/providers/local-shell.yml
     targetPlatform: StandaloneLinux64
@@ -98,7 +98,7 @@ providers:
 ```
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: config:./.game-ci/providers.yml#lab-windows
     targetPlatform: StandaloneWindows64

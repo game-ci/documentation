@@ -40,7 +40,7 @@ jobs:
           # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: aws
           targetPlatform: StandaloneLinux64
@@ -86,7 +86,7 @@ jobs:
           # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         id: build
         with:
           providerStrategy: aws
@@ -137,7 +137,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         id: build
         with:
           providerStrategy: k8s
@@ -184,7 +184,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: local-docker
           targetPlatform: StandaloneLinux64
@@ -199,7 +199,7 @@ For long builds, use async mode so the GitHub Action returns immediately. Monito
 GitHub Checks.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -241,7 +241,7 @@ jobs:
           # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: aws
           mode: garbage-collect
@@ -291,7 +291,7 @@ jobs:
           # For static keys fallback, use aws-access-key-id/aws-secret-access-key instead
           aws-region: eu-west-2
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: aws
           targetPlatform: ${{ matrix.targetPlatform }}
@@ -308,7 +308,7 @@ For large projects, keep the entire project folder cached between builds. Dramat
 rebuilds at the cost of more storage.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -326,7 +326,7 @@ See [Retained Workspaces](../../advanced-topics/caching#retained-workspaces) and
 Chain multiple container hooks to export builds to S3 and deploy to Steam in a single workflow.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
