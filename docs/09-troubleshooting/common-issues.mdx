@@ -402,32 +402,35 @@ Worker counts are the most effective dial for peak memory. Which mechanism you u
 Unity exposes the particular setting — there are three, and not every setting is reachable by all
 of them:
 
-| Setting                                           | How Unity exposes it | How to set it in CI                                                 |
-| ------------------------------------------------- | -------------------- | ------------------------------------------------------------------- |
-| IL2CPP compiler args (`IL2CPP_ADDITIONAL_ARGS`)   | Environment variable | [`dockerEnv`](/docs/github/builder#dockerenv)                       |
-| Job worker threads (`-job-worker-count`)          | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)         |
-| GC helper threads (`-gc-helper-count`)            | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)         |
-| Asset import workers (`desiredImportWorkerCount`) | Editor API only      | Editor script via [`buildMethod`](/docs/github/builder#buildmethod) |
-| IL2CPP code generation, Burst settings            | Editor API only      | Editor script via [`buildMethod`](/docs/github/builder#buildmethod) |
+| Setting                                           | How Unity exposes it | How to set it in CI                                             |
+| ------------------------------------------------- | -------------------- | --------------------------------------------------------------- |
+| IL2CPP compiler args (`IL2CPP_ADDITIONAL_ARGS`)   | Environment variable | [`dockerEnv`](/docs/github/builder#dockerenv)                   |
+| Job worker threads (`-job-worker-count`)          | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)     |
+| GC helper threads (`-gc-helper-count`)            | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)     |
+| Asset import workers (`desiredImportWorkerCount`) | Editor API only      | [`unitySettings`](#setting-any-unity-editor-or-project-setting) |
+| IL2CPP code generation, Burst settings            | Editor API only      | [`unitySettings`](#setting-any-unity-editor-or-project-setting) |
 
-The first two rows need no editor script at all:
+None of these require you to write an editor script:
 
 ```yaml
 - uses: game-ci/unity-builder@v6
   env:
     GAME_CI_DOCKER_ENV: |
       IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 2
   with:
     customParameters: -job-worker-count 2
 ```
 
-Asset import workers are the exception worth knowing about: Unity exposes **no command line
-argument and no environment variable** for them, only the
+Asset import workers are the case worth understanding: Unity exposes **no command line argument and
+no environment variable** for them, only the
 [`EditorUserSettings.desiredImportWorkerCount`](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/EditorUserSettings-desiredImportWorkerCount.html)
-scripting API. Setting those requires an editor script — that is a Unity constraint, not a GameCI
-one.
+scripting API. `unitySettings` applies that API for you — see
+[setting any Unity Editor or Project setting](#setting-any-unity-editor-or-project-setting).
 
-The pattern for the editor-script cases is to inject a worker count through
+If you would rather own the build method yourself, the manual pattern is to inject a worker count
+through
 [`customParameters`](/docs/github/builder#customparameters), then read it in a build method pointed
 at by [`buildMethod`](/docs/github/builder#buildmethod). This keeps the setting CI-only, so your
 committed Project Settings — and everyone's local builds — stay unchanged.
@@ -576,6 +579,70 @@ cannot set them.
 Reserved names are rejected: `dockerEnv` cannot overwrite the variables GameCI sets itself
 (`UNITY_LICENSE`, `PROJECT_PATH`, `BUILD_TARGET`, and similar). You will get a warning naming the
 collision rather than a silently broken build.
+
+:::
+
+### Setting any Unity Editor or Project setting
+
+Some Unity settings exist only as an Editor scripting API — no command line argument, no
+environment variable. Asset import worker counts are the common example. `unitySettings` applies
+those APIs for you, so you do not have to write and maintain a build method just to change a
+setting:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 4
+      EditorUserSettings.standbyImportWorkerCount = 2
+      EditorSettings.refreshImportMode = OutOfProcessPerQueue
+      PlayerSettings.SetIl2CppCodeGeneration(Standalone, OptimizeSize)
+      PlayerSettings.SetAdditionalIl2CppArgs("--maxcpucount=2")
+```
+
+Each line is one directive, in one of two forms:
+
+- **Assignment** — `Type.Member = value`, for properties and fields
+- **Invocation** — `Type.Method(argument, ...)`, for setter methods
+
+Directives are applied by reflection against Unity's own editor assemblies, so **any static
+settings API Unity exposes is reachable** — including ones added in Unity versions released after
+this feature. There is no fixed list of supported settings to check against.
+
+A few conveniences: enum values accept either a bare member (`OptimizeSize`) or a qualified one
+(`Il2CppCodeGeneration.OptimizeSize`); struct presets such as `NamedBuildTarget.Standalone` resolve
+the same way; string arguments take double quotes; and bare type names prefer Unity's own types, so
+`PlayerSettings` means Unity's even if your project defines a class with that name. Blank lines and
+lines starting with `#` or `//` are ignored, so you can annotate the block.
+
+#### Settings are applied CI-only
+
+These are applied at build time, in the CI checkout. Your committed Project Settings are not
+modified, so local development is unaffected — which is usually the point: CI wants fewer import
+workers and smaller code generation than a developer machine does.
+
+#### When a directive does not apply
+
+An unrecognised directive produces a warning and the build continues. This is deliberate: a setting
+that exists in one Unity version but not another should not break an otherwise valid build, which
+matters if you build a matrix of Unity versions.
+
+If you would rather know immediately, set `unitySettingsStrict`:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_UNITY_SETTINGS_STRICT: 'true'
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 4
+```
+
+Every directive is logged as it is applied, so the build log shows exactly what was set.
+
+:::note
+
+The applier is only added to your project when you actually provide a spec. If `unitySettings` is
+unset, nothing is copied in and the build is byte-for-byte what it was before.
 
 :::
 

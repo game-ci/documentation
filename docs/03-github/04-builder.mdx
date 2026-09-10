@@ -578,6 +578,44 @@ To pass a Unity editor command line argument instead, use
 
 _**required:** `false`_ _**default:** `""`_
 
+#### unitySettings
+
+Unity Editor, Project and Player settings to apply at build time, one directive per line.
+
+Some Unity settings exist only as an Editor scripting API — no command line argument and no
+environment variable — with asset import worker counts the common example. This applies those APIs
+for you, instead of requiring a hand-written build method:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 4
+      PlayerSettings.SetIl2CppCodeGeneration(Standalone, OptimizeSize)
+```
+
+Two forms are supported: assignment (`Type.Member = value`) for properties and fields, and
+invocation (`Type.Method(a, b)`) for setter methods. Directives are applied by reflection against
+Unity's editor assemblies, so any static settings API Unity exposes is reachable. Settings are
+applied to the CI checkout only — your committed Project Settings are unchanged.
+
+Unrecognised directives warn rather than fail; see
+[`unitySettingsStrict`](#unitysettingsstrict). Full details in
+[setting any Unity Editor or Project setting](/docs/troubleshooting/common-issues#setting-any-unity-editor-or-project-setting).
+
+_**required:** `false`_ _**default:** `""`_
+
+#### unitySettingsStrict
+
+Fail the build if any [`unitySettings`](#unitysettings) directive cannot be applied, instead of
+warning and continuing.
+
+The default is lenient so that a setting which exists in one Unity version but not another does not
+break an otherwise valid build — relevant when building a matrix of Unity versions. Set this when
+building with the wrong settings would be worse than not building at all.
+
+_**required:** `false`_ _**default:** `false`_
+
 #### dockerIsolationMode
 
 Isolation mode to use for the Docker container when running on Windows. Can be one of:
