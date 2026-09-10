@@ -560,14 +560,14 @@ line.
 
 Docker-based builds do not inherit the workflow environment — GameCI forwards a fixed set of
 variables into the container, so a variable set in the job's `env:` block is otherwise dropped at
-the container boundary. Use this for anything inside the build that reads the environment directly,
-such as Unity's own `IL2CPP_ADDITIONAL_ARGS`:
+the container boundary. Use this for anything inside the build that reads the environment directly:
 
 ```yaml
 - uses: game-ci/unity-builder@v6
   env:
     GAME_CI_DOCKER_ENV: |
-      IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
+      MY_CUSTOM_FLAG=someValue
+      BUILD_CHANNEL=nightly
 ```
 
 Names GameCI sets itself (`UNITY_LICENSE`, `PROJECT_PATH`, `BUILD_TARGET`, and similar) are

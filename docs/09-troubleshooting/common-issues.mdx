@@ -391,7 +391,15 @@ this again, since each project imports its own assets.
    the repository, so changing them affects local development too. The worked example below applies
    them at build time instead, so your local workflow is untouched.
 
-6. **Use a larger runner.** If peak memory genuinely exceeds the runner's capacity, use
+6. **Be careful with `IL2CPP_ADDITIONAL_ARGS`.** It is often suggested for this, but Unity passes
+   its contents
+   [straight to the C++ compiler](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/PlayerSettings.SetAdditionalIl2CppArgs.html)
+   with no interpretation — "valid compiler flags depend on the platform you are building for and
+   the C++ compiler used by IL2CPP on that platform". So it takes clang or MSVC flags, not
+   build-orchestration flags, and Unity documents no accepted list and marks the feature
+   experimental. Prefer the options above, which are documented and platform-independent.
+
+7. **Use a larger runner.** If peak memory genuinely exceeds the runner's capacity, use
    [GitHub-Hosted Larger Runners](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners),
    a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners),
    or [Orchestrator](/docs/github-orchestrator/introduction-to-orchestrator/game-ci-vs-orchestrator).
@@ -415,10 +423,9 @@ None of these require you to write an editor script:
 ```yaml
 - uses: game-ci/unity-builder@v6
   env:
-    GAME_CI_DOCKER_ENV: |
-      IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
     GAME_CI_UNITY_SETTINGS: |
       EditorUserSettings.desiredImportWorkerCount = 2
+      PlayerSettings.SetIl2CppCodeGeneration(Standalone, OptimizeSize)
   with:
     customParameters: -job-worker-count 2
 ```
@@ -470,11 +477,6 @@ namespace CI
             // command line or environment equivalent - hence the editor script.
             EditorUserSettings.desiredImportWorkerCount = workers;
             EditorUserSettings.standbyImportWorkerCount = Math.Min(workers, 2);
-
-            // IL2CPP compile parallelism. Equivalent to setting
-            // IL2CPP_ADDITIONAL_ARGS via dockerEnv - use whichever you prefer,
-            // not both.
-            PlayerSettings.SetAdditionalIl2CppArgs($"--maxcpucount={workers}");
 
             // Lowers peak memory considerably on large codebases.
             PlayerSettings.SetIl2CppCodeGeneration(
@@ -549,14 +551,14 @@ variables are set inside the container where Unity can read them normally:
 - uses: game-ci/unity-builder@v6
   env:
     GAME_CI_DOCKER_ENV: |
-      IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
       MY_CUSTOM_FLAG=someValue
+      BUILD_CHANNEL=nightly
 ```
 
 Read them in an editor script the usual way:
 
 ```csharp
-var args = Environment.GetEnvironmentVariable("IL2CPP_ADDITIONAL_ARGS");
+var channel = Environment.GetEnvironmentVariable("BUILD_CHANNEL");
 ```
 
 Alternatively, pass the value as a Unity editor command line argument via
@@ -597,7 +599,6 @@ setting:
       EditorUserSettings.standbyImportWorkerCount = 2
       EditorSettings.refreshImportMode = OutOfProcessPerQueue
       PlayerSettings.SetIl2CppCodeGeneration(Standalone, OptimizeSize)
-      PlayerSettings.SetAdditionalIl2CppArgs("--maxcpucount=2")
 ```
 
 Each line is one directive, in one of two forms:
@@ -668,8 +669,8 @@ CLI option, including ones the action has no matching input for:
   env:
     GAME_CI_DOCKER_MEMORY_LIMIT: 14g
     GAME_CI_DOCKER_SHM_SIZE: 2g
-    GAME_CI_DOCKER_ENV: |
-      IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 2
 ```
 
 Precedence is **explicit input wins over environment variable, which wins over the default**. So an
