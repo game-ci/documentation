@@ -512,9 +512,26 @@ set in `env:` is not visible to Unity.
 
 #### Solution
 
-Pass the value as a Unity editor command line argument via
-[`customParameters`](/docs/github/builder#customparameters) instead, and read it in an editor script
-with `Environment.GetCommandLineArgs()`:
+Forward the variable explicitly with `dockerEnv`. Each entry is a `NAME=value` pair, and the
+variables are set inside the container where Unity can read them normally:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_DOCKER_ENV: |
+      IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
+      MY_CUSTOM_FLAG=someValue
+```
+
+Read them in an editor script the usual way:
+
+```csharp
+var args = Environment.GetEnvironmentVariable("IL2CPP_ADDITIONAL_ARGS");
+```
+
+Alternatively, pass the value as a Unity editor command line argument via
+[`customParameters`](/docs/github/builder#customparameters) and read it with
+`Environment.GetCommandLineArgs()`:
 
 ```yaml
 - uses: game-ci/unity-builder@v6
@@ -522,13 +539,54 @@ with `Environment.GetCommandLineArgs()`:
     customParameters: -myCustomFlag someValue
 ```
 
-This reaches Unity reliably regardless of whether the build runs in a container.
+Use `customParameters` when Unity should receive a command line argument, and `dockerEnv` when
+something inside the build genuinely needs an environment variable — Unity's own toolchain
+variables like `IL2CPP_ADDITIONAL_ARGS` are read from the environment, so `customParameters`
+cannot set them.
 
 :::note
 
-This applies to Docker-based builds. When GameCI runs Unity directly on the host (rather than in a
-container), the process does inherit the surrounding environment — so behaviour can differ between
-the two, which is another reason to prefer `customParameters`.
+Reserved names are rejected: `dockerEnv` cannot overwrite the variables GameCI sets itself
+(`UNITY_LICENSE`, `PROJECT_PATH`, `BUILD_TARGET`, and similar). You will get a warning naming the
+collision rather than a silently broken build.
+
+:::
+
+### Setting any option with an environment variable
+
+Every GameCI CLI option can also be set with an environment variable, by upper-snake-casing the
+option name and prefixing it with `GAME_CI_`. These two are equivalent:
+
+```bash
+game-ci build --dockerMemoryLimit 14g
+```
+
+```bash
+GAME_CI_DOCKER_MEMORY_LIMIT=14g game-ci build
+```
+
+This matters most in workflows. The actions are thin wrappers that run the CLI as a normal child
+process, so it inherits the workflow environment — which means an `env:` block can reach **any**
+CLI option, including ones the action has no matching input for:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_DOCKER_MEMORY_LIMIT: 14g
+    GAME_CI_DOCKER_SHM_SIZE: 2g
+    GAME_CI_DOCKER_ENV: |
+      IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
+```
+
+Precedence is **explicit input wins over environment variable, which wins over the default**. So an
+action input you have already set is never silently overridden by the environment — `GAME_CI_*`
+only fills in what you left unset.
+
+:::caution
+
+`GAME_CI_` is a reserved prefix. A `GAME_CI_` variable that does not match a real option fails the
+build with `Unknown argument`, rather than being ignored — a typo tells you instead of quietly
+doing nothing. Do not use the prefix for your own unrelated variables.
 
 :::
 
