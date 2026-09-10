@@ -322,6 +322,133 @@ collectively consume a significant amount of disk space.
    [Orchestrator](/docs/github-orchestrator/introduction-to-orchestrator/game-ci-vs-orchestrator).
    This would give you more control over the resources and disk space.
 
+### Build runs out of memory (IL2CPP, Burst, or LLVM)
+
+#### Error
+
+Typically surfaces during IL2CPP compilation or Burst AOT compilation, often as an LLVM failure,
+a killed process, or a build that dies without a clear Unity error:
+
+```plaintext
+LLVM ERROR: out of memory
+```
+
+```plaintext
+Fatal error in Unity CIL Linker
+Burst compiler failed running
+```
+
+#### Explanation
+
+There are two separate memory ceilings involved, and it's worth knowing which one you've hit.
+
+**1. The container's memory limit.** GameCI assigns the Docker container a memory limit derived from
+the host's total memory. It does not hand the container everything the machine has:
+
+- **Linux:** 95% of total system memory
+- **Windows:** 80% of total system memory
+- **Other platforms:** 75% of total system memory
+
+On a standard GitHub-hosted runner (16 GB), a Windows build therefore gets roughly 12.8 GB, leaving
+about 3 GB unused. Raising [`dockerMemoryLimit`](/docs/github/builder#dockermemorylimit) reclaims
+that headroom.
+
+**2. The machine's actual memory.** If the build needs more than the runner physically has, no limit
+setting will help — you need a bigger machine or a smaller peak.
+
+Peak memory is driven heavily by _parallelism_. IL2CPP, Burst, and the asset importer all run
+concurrent workers by default, and each worker holds its own working set. Projects using DOTS/ECS
+with heavy Burst compilation are especially affected, because Burst AOT compiles a large amount of
+generated code at build time. Checking out more than one Unity project in the same job multiplies
+this again, since each project imports its own assets.
+
+#### Solution
+
+1. **Raise the container memory limit.** Especially worthwhile on Windows, where 20% of the runner's
+   memory is unused by default:
+
+   ```yaml
+   - uses: game-ci/unity-builder@v6
+     with:
+       dockerMemoryLimit: 15500m
+   ```
+
+2. **Reduce parallelism.** Fewer concurrent workers means a lower peak, at the cost of some wall
+   time. Unity's editor command line accepts arguments for this, which you can pass through
+   [`customParameters`](/docs/github/builder#customparameters):
+
+   ```yaml
+   with:
+     customParameters: -maxConcurrentImport 2
+   ```
+
+   Settings appropriate for a developer's workstation are frequently too aggressive for a CI
+   runner — it is normal and expected for these to differ between the two.
+
+3. **Reduce what IL2CPP has to do.** In Player Settings, setting **IL2CPP Code Generation** to
+   _Faster (smaller) builds_ (`Il2CppCodeGeneration.OptimizeSize`) meaningfully lowers both memory
+   use and build time on large codebases.
+
+4. **Review Burst AOT Settings.** For DOTS/ECS projects, Burst compilation during the build is
+   often the real memory consumer rather than IL2CPP itself. Project Settings → Burst AOT Settings
+   controls this.
+
+5. **Apply CI-only settings without changing your local project.** Project Settings are committed to
+   the repository, so changing them affects local development too. To avoid that, set them from an
+   editor script at build time and gate it behind a flag passed via `customParameters`, read with
+   `Environment.GetCommandLineArgs()`. Point GameCI at that script with
+   [`buildMethod`](/docs/github/builder#buildmethod).
+
+6. **Use a larger runner.** If peak memory genuinely exceeds the runner's capacity, use
+   [GitHub-Hosted Larger Runners](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners),
+   a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners),
+   or [Orchestrator](/docs/github-orchestrator/introduction-to-orchestrator/game-ci-vs-orchestrator).
+
+### Environment variables set in my workflow don't reach Unity
+
+#### Error
+
+An environment variable set in the workflow appears to be ignored inside the build — for example
+setting `IL2CPP_ADDITIONAL_ARGS` in `env:` has no effect on the build at all.
+
+#### Explanation
+
+Docker-based builds run Unity inside a container, and the container does not inherit the workflow's
+environment. GameCI forwards a specific, fixed set of variables into it, not everything present on
+the runner. Broadly, that set covers:
+
+- Build configuration set through the action's own inputs (`PROJECT_PATH`, `BUILD_TARGET`,
+  `BUILD_METHOD`, `CUSTOM_PARAMETERS`, `VERSION`, and similar)
+- Unity credentials (`UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD`, `UNITY_SERIAL`,
+  `UNITY_LICENSING_SERVER`)
+- Android signing and export variables (`ANDROID_KEYSTORE_*`, `ANDROID_EXPORT_TYPE`, and similar)
+- A subset of the standard `GITHUB_*` and `RUNNER_*` variables
+
+Anything outside that set is dropped at the container boundary. This is why an arbitrary variable
+set in `env:` is not visible to Unity.
+
+#### Solution
+
+Pass the value as a Unity editor command line argument via
+[`customParameters`](/docs/github/builder#customparameters) instead, and read it in an editor script
+with `Environment.GetCommandLineArgs()`:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  with:
+    customParameters: -myCustomFlag someValue
+```
+
+This reaches Unity reliably regardless of whether the build runs in a container.
+
+:::note
+
+This applies to Docker-based builds. When GameCI runs Unity directly on the host (rather than in a
+container), the process does inherit the surrounding environment — so behaviour can differ between
+the two, which is another reason to prefer `customParameters`.
+
+:::
+
 ### Failed to find a suitable OpenCL device for the GPU Lightmapper
 
 #### Error

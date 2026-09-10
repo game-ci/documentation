@@ -535,6 +535,18 @@ defaults to 75% of total system memory. To manually specify a value, use the for
 
 _**required:** `false`_ _**default:** `""`_
 
+#### dockerShmSize
+
+Size of `/dev/shm` (shared memory) to assign to the Docker container, using the format
+\<number\>\<unit\> where the unit is `m` or `g`.
+
+Unity 6.6 and newer request 1 GiB of shared memory and fail with
+`Insufficient shared memory available` against Docker's much smaller default, so GameCI passes
+`1025m` unless you specify otherwise. Pass a larger value if you see that error, or `0` to omit the
+flag entirely and use Docker's own default.
+
+_**required:** `false`_ _**default:** `"1025m"`_
+
 #### dockerIsolationMode
 
 Isolation mode to use for the Docker container when running on Windows. Can be one of:
