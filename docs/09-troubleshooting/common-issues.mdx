@@ -398,13 +398,36 @@ this again, since each project imports its own assets.
 
 #### Controlling import and IL2CPP worker parallelism
 
-Worker counts are the most effective dial for peak memory, but there is an important constraint on
-_how_ you set them: because
-[environment variables are not forwarded into the container](#environment-variables-set-in-my-workflow-dont-reach-unity),
-`IL2CPP_ADDITIONAL_ARGS` cannot be used to pass IL2CPP arguments. Set them from an editor script
-instead.
+Worker counts are the most effective dial for peak memory. Which mechanism you use depends on how
+Unity exposes the particular setting — there are three, and not every setting is reachable by all
+of them:
 
-The pattern is to inject a worker count through
+| Setting                                           | How Unity exposes it | How to set it in CI                                                 |
+| ------------------------------------------------- | -------------------- | ------------------------------------------------------------------- |
+| IL2CPP compiler args (`IL2CPP_ADDITIONAL_ARGS`)   | Environment variable | [`dockerEnv`](/docs/github/builder#dockerenv)                       |
+| Job worker threads (`-job-worker-count`)          | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)         |
+| GC helper threads (`-gc-helper-count`)            | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)         |
+| Asset import workers (`desiredImportWorkerCount`) | Editor API only      | Editor script via [`buildMethod`](/docs/github/builder#buildmethod) |
+| IL2CPP code generation, Burst settings            | Editor API only      | Editor script via [`buildMethod`](/docs/github/builder#buildmethod) |
+
+The first two rows need no editor script at all:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_DOCKER_ENV: |
+      IL2CPP_ADDITIONAL_ARGS=--maxcpucount=2
+  with:
+    customParameters: -job-worker-count 2
+```
+
+Asset import workers are the exception worth knowing about: Unity exposes **no command line
+argument and no environment variable** for them, only the
+[`EditorUserSettings.desiredImportWorkerCount`](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/EditorUserSettings-desiredImportWorkerCount.html)
+scripting API. Setting those requires an editor script — that is a Unity constraint, not a GameCI
+one.
+
+The pattern for the editor-script cases is to inject a worker count through
 [`customParameters`](/docs/github/builder#customparameters), then read it in a build method pointed
 at by [`buildMethod`](/docs/github/builder#buildmethod). This keeps the setting CI-only, so your
 committed Project Settings — and everyone's local builds — stay unchanged.
@@ -440,11 +463,14 @@ namespace CI
             var workers = GetIntArg("-ciWorkers", 2);
 
             // Asset import workers (Project Settings > Editor > Asset Pipeline).
-            EditorSettings.desiredImportWorkerCount = workers;
-            EditorSettings.standbyImportWorkerCount = Math.Min(workers, 2);
+            // These live on EditorUserSettings, not EditorSettings, and have no
+            // command line or environment equivalent - hence the editor script.
+            EditorUserSettings.desiredImportWorkerCount = workers;
+            EditorUserSettings.standbyImportWorkerCount = Math.Min(workers, 2);
 
-            // IL2CPP compile parallelism. IL2CPP_ADDITIONAL_ARGS is unavailable here,
-            // because environment variables do not reach inside the container.
+            // IL2CPP compile parallelism. Equivalent to setting
+            // IL2CPP_ADDITIONAL_ARGS via dockerEnv - use whichever you prefer,
+            // not both.
             PlayerSettings.SetAdditionalIl2CppArgs($"--maxcpucount={workers}");
 
             // Lowers peak memory considerably on large codebases.
@@ -481,9 +507,10 @@ namespace CI
 
 The `customParameters` and `buildMethod` plumbing shown here is stable: `customParameters` is passed
 through to Unity's command line and is readable via `Environment.GetCommandLineArgs()`, and
-`buildMethod` becomes Unity's `-executeMethod`. The specific `EditorSettings` and `PlayerSettings`
-API names, however, have changed across Unity versions — check them against the scripting reference
-for the version you build with, and adjust as needed.
+`buildMethod` becomes Unity's `-executeMethod`. The `EditorUserSettings` and `PlayerSettings` API
+names, however, have moved between classes and versions — check them against the scripting
+reference for the version you build with, and adjust as needed. Note that
+`SetAdditionalIl2CppArgs` is documented by Unity as experimental.
 
 :::
 
