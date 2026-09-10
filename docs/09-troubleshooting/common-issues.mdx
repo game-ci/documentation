@@ -373,17 +373,11 @@ this again, since each project imports its own assets.
        dockerMemoryLimit: 15500m
    ```
 
-2. **Reduce parallelism.** Fewer concurrent workers means a lower peak, at the cost of some wall
-   time. Unity's editor command line accepts arguments for this, which you can pass through
-   [`customParameters`](/docs/github/builder#customparameters):
-
-   ```yaml
-   with:
-     customParameters: -maxConcurrentImport 2
-   ```
-
-   Settings appropriate for a developer's workstation are frequently too aggressive for a CI
-   runner — it is normal and expected for these to differ between the two.
+2. **Reduce worker parallelism.** Fewer concurrent import and IL2CPP workers means a lower peak, at
+   the cost of some wall time. Settings appropriate for a developer's workstation are frequently too
+   aggressive for a CI runner — it is normal and expected for these to differ between the two. See
+   [Controlling import and IL2CPP worker parallelism](#controlling-import-and-il2cpp-worker-parallelism)
+   below for a worked example.
 
 3. **Reduce what IL2CPP has to do.** In Player Settings, setting **IL2CPP Code Generation** to
    _Faster (smaller) builds_ (`Il2CppCodeGeneration.OptimizeSize`) meaningfully lowers both memory
@@ -394,15 +388,104 @@ this again, since each project imports its own assets.
    controls this.
 
 5. **Apply CI-only settings without changing your local project.** Project Settings are committed to
-   the repository, so changing them affects local development too. To avoid that, set them from an
-   editor script at build time and gate it behind a flag passed via `customParameters`, read with
-   `Environment.GetCommandLineArgs()`. Point GameCI at that script with
-   [`buildMethod`](/docs/github/builder#buildmethod).
+   the repository, so changing them affects local development too. The worked example below applies
+   them at build time instead, so your local workflow is untouched.
 
 6. **Use a larger runner.** If peak memory genuinely exceeds the runner's capacity, use
    [GitHub-Hosted Larger Runners](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners),
    a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners),
    or [Orchestrator](/docs/github-orchestrator/introduction-to-orchestrator/game-ci-vs-orchestrator).
+
+#### Controlling import and IL2CPP worker parallelism
+
+Worker counts are the most effective dial for peak memory, but there is an important constraint on
+_how_ you set them: because
+[environment variables are not forwarded into the container](#environment-variables-set-in-my-workflow-dont-reach-unity),
+`IL2CPP_ADDITIONAL_ARGS` cannot be used to pass IL2CPP arguments. Set them from an editor script
+instead.
+
+The pattern is to inject a worker count through
+[`customParameters`](/docs/github/builder#customparameters), then read it in a build method pointed
+at by [`buildMethod`](/docs/github/builder#buildmethod). This keeps the setting CI-only, so your
+committed Project Settings — and everyone's local builds — stay unchanged.
+
+```yaml
+- name: Build Unity Project
+  uses: game-ci/unity-builder@v6
+  env:
+    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  with:
+    targetPlatform: StandaloneWindows64
+    dockerMemoryLimit: 15500m
+    buildMethod: CI.CiBuild.Build
+    customParameters: -ciWorkers 2
+```
+
+```csharp
+// Assets/Editor/CiBuild.cs
+using System;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
+
+namespace CI
+{
+    public static class CiBuild
+    {
+        public static void Build()
+        {
+            var workers = GetIntArg("-ciWorkers", 2);
+
+            // Asset import workers (Project Settings > Editor > Asset Pipeline).
+            EditorSettings.desiredImportWorkerCount = workers;
+            EditorSettings.standbyImportWorkerCount = Math.Min(workers, 2);
+
+            // IL2CPP compile parallelism. IL2CPP_ADDITIONAL_ARGS is unavailable here,
+            // because environment variables do not reach inside the container.
+            PlayerSettings.SetAdditionalIl2CppArgs($"--maxcpucount={workers}");
+
+            // Lowers peak memory considerably on large codebases.
+            PlayerSettings.SetIl2CppCodeGeneration(
+                NamedBuildTarget.Standalone, Il2CppCodeGeneration.OptimizeSize);
+
+            var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+            {
+                scenes = EditorBuildSettings.scenes
+                    .Where(scene => scene.enabled)
+                    .Select(scene => scene.path)
+                    .ToArray(),
+                locationPathName = "build/StandaloneWindows64/game.exe",
+                target = BuildTarget.StandaloneWindows64,
+            });
+
+            EditorApplication.Exit(report.summary.result == BuildResult.Succeeded ? 0 : 1);
+        }
+
+        static int GetIntArg(string name, int fallback)
+        {
+            var args = Environment.GetCommandLineArgs();
+            var index = Array.IndexOf(args, name);
+
+            return index >= 0 && index + 1 < args.Length && int.TryParse(args[index + 1], out var value)
+                ? value
+                : fallback;
+        }
+    }
+}
+```
+
+:::note
+
+The `customParameters` and `buildMethod` plumbing shown here is stable: `customParameters` is passed
+through to Unity's command line and is readable via `Environment.GetCommandLineArgs()`, and
+`buildMethod` becomes Unity's `-executeMethod`. The specific `EditorSettings` and `PlayerSettings`
+API names, however, have changed across Unity versions — check them against the scripting reference
+for the version you build with, and adjust as needed.
+
+:::
 
 ### Environment variables set in my workflow don't reach Unity
 
