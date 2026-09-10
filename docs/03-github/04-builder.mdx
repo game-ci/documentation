@@ -131,6 +131,12 @@ This simple addition could speed up your build by more than 50%.
 
 Below options can be specified under `with:` for the `unity-builder` action.
 
+Every option can also be set with an environment variable, by upper-snake-casing its name and
+prefixing it with `GAME_CI_` — `dockerMemoryLimit` becomes `GAME_CI_DOCKER_MEMORY_LIMIT`. An option
+you set under `with:` always takes precedence over the matching environment variable, so
+`GAME_CI_*` only fills in what you left unset. See
+[setting any option with an environment variable](/docs/troubleshooting/common-issues#setting-any-option-with-an-environment-variable).
+
 #### targetPlatform
 
 Platform that the build should target.
@@ -534,6 +540,81 @@ defaults to 75% of total system memory. To manually specify a value, use the for
 - `g`: Gigabytes (e.g., 4g = 4 gigabytes)
 
 _**required:** `false`_ _**default:** `""`_
+
+#### dockerShmSize
+
+Size of `/dev/shm` (shared memory) to assign to the Docker container, using the format
+\<number\>\<unit\> where the unit is `m` or `g`.
+
+Unity 6.6 and newer request 1 GiB of shared memory and fail with
+`Insufficient shared memory available` against Docker's much smaller default, so GameCI passes
+`1025m` unless you specify otherwise. Pass a larger value if you see that error, or `0` to omit the
+flag entirely and use Docker's own default.
+
+_**required:** `false`_ _**default:** `"1025m"`_
+
+#### dockerEnv
+
+Additional environment variables to set inside the Docker container, one `NAME=value` pair per
+line.
+
+Docker-based builds do not inherit the workflow environment — GameCI forwards a fixed set of
+variables into the container, so a variable set in the job's `env:` block is otherwise dropped at
+the container boundary. Use this for anything inside the build that reads the environment directly:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_DOCKER_ENV: |
+      MY_CUSTOM_FLAG=someValue
+      BUILD_CHANNEL=nightly
+```
+
+Names GameCI sets itself (`UNITY_LICENSE`, `PROJECT_PATH`, `BUILD_TARGET`, and similar) are
+reserved; attempting to overwrite one produces a warning naming the collision.
+
+To pass a Unity editor command line argument instead, use
+[`customParameters`](#customparameters).
+
+_**required:** `false`_ _**default:** `""`_
+
+#### unitySettings
+
+Unity Editor, Project and Player settings to apply at build time, one directive per line.
+
+Some Unity settings exist only as an Editor scripting API — no command line argument and no
+environment variable — with asset import worker counts the common example. This applies those APIs
+for you, instead of requiring a hand-written build method:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 4
+      PlayerSettings.SetIl2CppCodeGeneration(Standalone, OptimizeSize)
+```
+
+Two forms are supported: assignment (`Type.Member = value`) for properties and fields, and
+invocation (`Type.Method(a, b)`) for setter methods. Directives are applied by reflection against
+Unity's editor assemblies, so any static settings API Unity exposes is reachable. Settings are
+applied to the CI checkout only — your committed Project Settings are unchanged.
+
+Unrecognised directives warn rather than fail; see
+[`unitySettingsStrict`](#unitysettingsstrict). Full details in
+[setting any Unity Editor or Project setting](/docs/troubleshooting/common-issues#setting-any-unity-editor-or-project-setting).
+
+_**required:** `false`_ _**default:** `""`_
+
+#### unitySettingsStrict
+
+Fail the build if any [`unitySettings`](#unitysettings) directive cannot be applied, instead of
+warning and continuing.
+
+The default is lenient so that a setting which exists in one Unity version but not another does not
+break an otherwise valid build — relevant when building a matrix of Unity versions. Set this when
+building with the wrong settings would be worse than not building at all.
+
+_**required:** `false`_ _**default:** `false`_
 
 #### dockerIsolationMode
 

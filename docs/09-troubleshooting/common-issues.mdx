@@ -322,6 +322,369 @@ collectively consume a significant amount of disk space.
    [Orchestrator](/docs/github-orchestrator/introduction-to-orchestrator/game-ci-vs-orchestrator).
    This would give you more control over the resources and disk space.
 
+### Build runs out of memory (IL2CPP, Burst, or LLVM)
+
+#### Error
+
+Typically surfaces during IL2CPP compilation or Burst AOT compilation, often as an LLVM failure,
+a killed process, or a build that dies without a clear Unity error:
+
+```plaintext
+LLVM ERROR: out of memory
+```
+
+```plaintext
+Fatal error in Unity CIL Linker
+Burst compiler failed running
+```
+
+#### Explanation
+
+There are two separate memory ceilings involved, and it's worth knowing which one you've hit.
+
+**1. The container's memory limit.** GameCI assigns the Docker container a memory limit derived from
+the host's total memory. It does not hand the container everything the machine has:
+
+- **Linux:** 95% of total system memory
+- **Windows:** 80% of total system memory
+- **Other platforms:** 75% of total system memory
+
+On a standard GitHub-hosted runner (16 GB), a Windows build therefore gets roughly 12.8 GB, leaving
+about 3 GB unused. Raising [`dockerMemoryLimit`](/docs/github/builder#dockermemorylimit) reclaims
+that headroom.
+
+**2. The machine's actual memory.** If the build needs more than the runner physically has, no limit
+setting will help — you need a bigger machine or a smaller peak.
+
+Peak memory is driven heavily by _parallelism_. IL2CPP, Burst, and the asset importer all run
+concurrent workers by default, and each worker holds its own working set. Projects using DOTS/ECS
+with heavy Burst compilation are especially affected, because Burst AOT compiles a large amount of
+generated code at build time. Checking out more than one Unity project in the same job multiplies
+this again, since each project imports its own assets.
+
+#### Solution
+
+1. **Raise the container memory limit.** Especially worthwhile on Windows, where 20% of the runner's
+   memory is unused by default:
+
+   ```yaml
+   - uses: game-ci/unity-builder@v6
+     with:
+       dockerMemoryLimit: 15500m
+   ```
+
+2. **Reduce worker parallelism.** Fewer concurrent import and IL2CPP workers means a lower peak, at
+   the cost of some wall time. Settings appropriate for a developer's workstation are frequently too
+   aggressive for a CI runner — it is normal and expected for these to differ between the two. See
+   [Controlling import and IL2CPP worker parallelism](#controlling-import-and-il2cpp-worker-parallelism)
+   below for a worked example.
+
+3. **Reduce what IL2CPP has to do.** In Player Settings, setting **IL2CPP Code Generation** to
+   _Faster (smaller) builds_ (`Il2CppCodeGeneration.OptimizeSize`) meaningfully lowers both memory
+   use and build time on large codebases.
+
+4. **Review Burst AOT Settings.** For DOTS/ECS projects, Burst compilation during the build is
+   often the real memory consumer rather than IL2CPP itself. Project Settings → Burst AOT Settings
+   controls this.
+
+5. **Apply CI-only settings without changing your local project.** Project Settings are committed to
+   the repository, so changing them affects local development too. The worked example below applies
+   them at build time instead, so your local workflow is untouched.
+
+6. **Be careful with `IL2CPP_ADDITIONAL_ARGS`.** It is often suggested for this, but Unity passes
+   its contents
+   [straight to the C++ compiler](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/PlayerSettings.SetAdditionalIl2CppArgs.html)
+   with no interpretation — "valid compiler flags depend on the platform you are building for and
+   the C++ compiler used by IL2CPP on that platform". So it takes clang or MSVC flags, not
+   build-orchestration flags, and Unity documents no accepted list and marks the feature
+   experimental. Prefer the options above, which are documented and platform-independent.
+
+7. **Use a larger runner.** If peak memory genuinely exceeds the runner's capacity, use
+   [GitHub-Hosted Larger Runners](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners),
+   a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners),
+   or [Orchestrator](/docs/github-orchestrator/introduction-to-orchestrator/game-ci-vs-orchestrator).
+
+#### Controlling import and IL2CPP worker parallelism
+
+Worker counts are the most effective dial for peak memory. Which mechanism you use depends on how
+Unity exposes the particular setting — there are three, and not every setting is reachable by all
+of them:
+
+| Setting                                           | How Unity exposes it | How to set it in CI                                             |
+| ------------------------------------------------- | -------------------- | --------------------------------------------------------------- |
+| IL2CPP compiler args (`IL2CPP_ADDITIONAL_ARGS`)   | Environment variable | [`dockerEnv`](/docs/github/builder#dockerenv)                   |
+| Job worker threads (`-job-worker-count`)          | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)     |
+| GC helper threads (`-gc-helper-count`)            | Editor command line  | [`customParameters`](/docs/github/builder#customparameters)     |
+| Asset import workers (`desiredImportWorkerCount`) | Editor API only      | [`unitySettings`](#setting-any-unity-editor-or-project-setting) |
+| IL2CPP code generation, Burst settings            | Editor API only      | [`unitySettings`](#setting-any-unity-editor-or-project-setting) |
+
+None of these require you to write an editor script:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 2
+      PlayerSettings.SetIl2CppCodeGeneration(Standalone, OptimizeSize)
+  with:
+    customParameters: -job-worker-count 2
+```
+
+Asset import workers are the case worth understanding: Unity exposes **no command line argument and
+no environment variable** for them, only the
+[`EditorUserSettings.desiredImportWorkerCount`](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/EditorUserSettings-desiredImportWorkerCount.html)
+scripting API. `unitySettings` applies that API for you — see
+[setting any Unity Editor or Project setting](#setting-any-unity-editor-or-project-setting).
+
+If you would rather own the build method yourself, the manual pattern is to inject a worker count
+through
+[`customParameters`](/docs/github/builder#customparameters), then read it in a build method pointed
+at by [`buildMethod`](/docs/github/builder#buildmethod). This keeps the setting CI-only, so your
+committed Project Settings — and everyone's local builds — stay unchanged.
+
+```yaml
+- name: Build Unity Project
+  uses: game-ci/unity-builder@v6
+  env:
+    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  with:
+    targetPlatform: StandaloneWindows64
+    dockerMemoryLimit: 15500m
+    buildMethod: CI.CiBuild.Build
+    customParameters: -ciWorkers 2
+```
+
+```csharp
+// Assets/Editor/CiBuild.cs
+using System;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
+
+namespace CI
+{
+    public static class CiBuild
+    {
+        public static void Build()
+        {
+            var workers = GetIntArg("-ciWorkers", 2);
+
+            // Asset import workers (Project Settings > Editor > Asset Pipeline).
+            // These live on EditorUserSettings, not EditorSettings, and have no
+            // command line or environment equivalent - hence the editor script.
+            EditorUserSettings.desiredImportWorkerCount = workers;
+            EditorUserSettings.standbyImportWorkerCount = Math.Min(workers, 2);
+
+            // Lowers peak memory considerably on large codebases.
+            PlayerSettings.SetIl2CppCodeGeneration(
+                NamedBuildTarget.Standalone, Il2CppCodeGeneration.OptimizeSize);
+
+            var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+            {
+                scenes = EditorBuildSettings.scenes
+                    .Where(scene => scene.enabled)
+                    .Select(scene => scene.path)
+                    .ToArray(),
+                locationPathName = "build/StandaloneWindows64/game.exe",
+                target = BuildTarget.StandaloneWindows64,
+            });
+
+            EditorApplication.Exit(report.summary.result == BuildResult.Succeeded ? 0 : 1);
+        }
+
+        static int GetIntArg(string name, int fallback)
+        {
+            var args = Environment.GetCommandLineArgs();
+            var index = Array.IndexOf(args, name);
+
+            return index >= 0 && index + 1 < args.Length && int.TryParse(args[index + 1], out var value)
+                ? value
+                : fallback;
+        }
+    }
+}
+```
+
+:::note
+
+The `customParameters` and `buildMethod` plumbing shown here is stable: `customParameters` is passed
+through to Unity's command line and is readable via `Environment.GetCommandLineArgs()`, and
+`buildMethod` becomes Unity's `-executeMethod`. The `EditorUserSettings` and `PlayerSettings` API
+names, however, have moved between classes and versions — check them against the scripting
+reference for the version you build with, and adjust as needed. Note that
+`SetAdditionalIl2CppArgs` is documented by Unity as experimental.
+
+:::
+
+### Environment variables set in my workflow don't reach Unity
+
+#### Error
+
+An environment variable set in the workflow appears to be ignored inside the build — for example
+setting `IL2CPP_ADDITIONAL_ARGS` in `env:` has no effect on the build at all.
+
+#### Explanation
+
+Docker-based builds run Unity inside a container, and the container does not inherit the workflow's
+environment. GameCI forwards a specific, fixed set of variables into it, not everything present on
+the runner. Broadly, that set covers:
+
+- Build configuration set through the action's own inputs (`PROJECT_PATH`, `BUILD_TARGET`,
+  `BUILD_METHOD`, `CUSTOM_PARAMETERS`, `VERSION`, and similar)
+- Unity credentials (`UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD`, `UNITY_SERIAL`,
+  `UNITY_LICENSING_SERVER`)
+- Android signing and export variables (`ANDROID_KEYSTORE_*`, `ANDROID_EXPORT_TYPE`, and similar)
+- A subset of the standard `GITHUB_*` and `RUNNER_*` variables
+
+Anything outside that set is dropped at the container boundary. This is why an arbitrary variable
+set in `env:` is not visible to Unity.
+
+#### Solution
+
+Forward the variable explicitly with `dockerEnv`. Each entry is a `NAME=value` pair, and the
+variables are set inside the container where Unity can read them normally:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_DOCKER_ENV: |
+      MY_CUSTOM_FLAG=someValue
+      BUILD_CHANNEL=nightly
+```
+
+Read them in an editor script the usual way:
+
+```csharp
+var channel = Environment.GetEnvironmentVariable("BUILD_CHANNEL");
+```
+
+Alternatively, pass the value as a Unity editor command line argument via
+[`customParameters`](/docs/github/builder#customparameters) and read it with
+`Environment.GetCommandLineArgs()`:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  with:
+    customParameters: -myCustomFlag someValue
+```
+
+Use `customParameters` when Unity should receive a command line argument, and `dockerEnv` when
+something inside the build genuinely needs an environment variable — Unity's own toolchain
+variables like `IL2CPP_ADDITIONAL_ARGS` are read from the environment, so `customParameters`
+cannot set them.
+
+:::note
+
+Reserved names are rejected: `dockerEnv` cannot overwrite the variables GameCI sets itself
+(`UNITY_LICENSE`, `PROJECT_PATH`, `BUILD_TARGET`, and similar). You will get a warning naming the
+collision rather than a silently broken build.
+
+:::
+
+### Setting any Unity Editor or Project setting
+
+Some Unity settings exist only as an Editor scripting API — no command line argument, no
+environment variable. Asset import worker counts are the common example. `unitySettings` applies
+those APIs for you, so you do not have to write and maintain a build method just to change a
+setting:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 4
+      EditorUserSettings.standbyImportWorkerCount = 2
+      EditorSettings.refreshImportMode = OutOfProcessPerQueue
+      PlayerSettings.SetIl2CppCodeGeneration(Standalone, OptimizeSize)
+```
+
+Each line is one directive, in one of two forms:
+
+- **Assignment** — `Type.Member = value`, for properties and fields
+- **Invocation** — `Type.Method(argument, ...)`, for setter methods
+
+Directives are applied by reflection against Unity's own editor assemblies, so **any static
+settings API Unity exposes is reachable** — including ones added in Unity versions released after
+this feature. There is no fixed list of supported settings to check against.
+
+A few conveniences: enum values accept either a bare member (`OptimizeSize`) or a qualified one
+(`Il2CppCodeGeneration.OptimizeSize`); struct presets such as `NamedBuildTarget.Standalone` resolve
+the same way; string arguments take double quotes; and bare type names prefer Unity's own types, so
+`PlayerSettings` means Unity's even if your project defines a class with that name. Blank lines and
+lines starting with `#` or `//` are ignored, so you can annotate the block.
+
+#### Settings are applied CI-only
+
+These are applied at build time, in the CI checkout. Your committed Project Settings are not
+modified, so local development is unaffected — which is usually the point: CI wants fewer import
+workers and smaller code generation than a developer machine does.
+
+#### When a directive does not apply
+
+An unrecognised directive produces a warning and the build continues. This is deliberate: a setting
+that exists in one Unity version but not another should not break an otherwise valid build, which
+matters if you build a matrix of Unity versions.
+
+If you would rather know immediately, set `unitySettingsStrict`:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_UNITY_SETTINGS_STRICT: 'true'
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 4
+```
+
+Every directive is logged as it is applied, so the build log shows exactly what was set.
+
+:::note
+
+The applier is only added to your project when you actually provide a spec. If `unitySettings` is
+unset, nothing is copied in and the build is byte-for-byte what it was before.
+
+:::
+
+### Setting any option with an environment variable
+
+Every GameCI CLI option can also be set with an environment variable, by upper-snake-casing the
+option name and prefixing it with `GAME_CI_`. These two are equivalent:
+
+```bash
+game-ci build --dockerMemoryLimit 14g
+```
+
+```bash
+GAME_CI_DOCKER_MEMORY_LIMIT=14g game-ci build
+```
+
+This matters most in workflows. The actions are thin wrappers that run the CLI as a normal child
+process, so it inherits the workflow environment — which means an `env:` block can reach **any**
+CLI option, including ones the action has no matching input for:
+
+```yaml
+- uses: game-ci/unity-builder@v6
+  env:
+    GAME_CI_DOCKER_MEMORY_LIMIT: 14g
+    GAME_CI_DOCKER_SHM_SIZE: 2g
+    GAME_CI_UNITY_SETTINGS: |
+      EditorUserSettings.desiredImportWorkerCount = 2
+```
+
+Precedence is **explicit input wins over environment variable, which wins over the default**. So an
+action input you have already set is never silently overridden by the environment — `GAME_CI_*`
+only fills in what you left unset.
+
+:::caution
+
+`GAME_CI_` is a reserved prefix. A `GAME_CI_` variable that does not match a real option fails the
+build with `Unknown argument`, rather than being ignored — a typo tells you instead of quietly
+doing nothing. Do not use the prefix for your own unrelated variables.
+
+:::
+
 ### Failed to find a suitable OpenCL device for the GPU Lightmapper
 
 #### Error
