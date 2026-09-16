@@ -281,6 +281,34 @@ hosts — Windows' container-side scripts only implement the build flow, not the
 | `--docker` | `false` | Run the classic Docker/Hub-image-driven batchmode test flow instead of Unity's own `unity test` CLI.                   |
 | `--local`  | `false` | Only meaningful with `--docker`. Run the same batchmode test flow directly on this host instead of inside a container. |
 
+## Activate & Return License
+
+`game-ci build` and `game-ci test` already activate a license before running and return it
+afterward - most workflows never need `activate` or `return-license` directly. Reach for them when
+you need the two steps split apart, for example a long-lived self-hosted container that activates
+once and runs several separate `build`/`test` invocations against it, or recovering a license left
+active by an interrupted run.
+
+```bash
+game-ci activate [projectPath]
+game-ci return-license [projectPath]
+```
+
+Both accept the same Unity credential options as `build` (`--unity-email`, `--unity-password`,
+`--unity-serial`, `--unity-license`, `--unity-licensing-server` - see the table above). `activate`
+leaves the license active for a later step instead of returning it immediately; `return-license`
+returns a license left active this way.
+
+Unity's Personal-license seats are returnable, not just Professional/Plus: `return-license`
+resolves the correct return mechanism for the installed Unity Licensing Client automatically - a
+personal-license seat returned with `--return-ulf` (client command) where supported, or the older
+editor-based `-returnlicense` entitlement return otherwise. You do not need to choose between them
+yourself, and a Personal license does not need a serial to be returned.
+
+Neither command can be wired as a GitHub Action `post:` step from this repo's own composite
+actions (composite actions have no `post:` hook) - `return-license` is the command a wrapper action
+like `game-ci/unity-activate` invokes internally, or that you call directly for manual recovery.
+
 ## Versioning
 
 Unity builds support version generation.

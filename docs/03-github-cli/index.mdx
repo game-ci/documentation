@@ -149,16 +149,18 @@ game-ci build ./my-project --engine unity --engine-version 2022.3.20f1
 
 ## Command Names At A Glance
 
-| Command                | Where it exists             | Use it for                                                                 |
-| ---------------------- | --------------------------- | -------------------------------------------------------------------------- |
-| `game-ci build`        | Public GameCI CLI           | User-facing local or CI engine builds, including custom Unity methods.     |
-| `game-ci test`         | Public GameCI CLI           | Engine test workflows when the selected engine plugin provides test logic. |
-| `game-ci orchestrate`  | Public GameCI CLI           | Provider-backed jobs through Orchestrator or another provider plugin.      |
-| `game-ci remote run`   | Public GameCI CLI           | Compatibility alias for `game-ci orchestrate`.                             |
-| `game-ci remote build` | Public GameCI CLI           | Older compatibility alias for `game-ci orchestrate`.                       |
-| `game-ci orchestrate`  | Standalone Orchestrator CLI | Direct Orchestrator provider runs and provider debugging.                  |
-| `game-ci build`        | Standalone Orchestrator CLI | A narrow remote Orchestrator build shortcut, not the public CLI build API. |
-| `game-ci serve`        | Standalone Orchestrator CLI | JSON provider protocol mode for executable provider plugins.               |
+| Command                  | Where it exists             | Use it for                                                                 |
+| ------------------------ | --------------------------- | -------------------------------------------------------------------------- |
+| `game-ci build`          | Public GameCI CLI           | User-facing local or CI engine builds, including custom Unity methods.     |
+| `game-ci test`           | Public GameCI CLI           | Engine test workflows when the selected engine plugin provides test logic. |
+| `game-ci activate`       | Public GameCI CLI           | Activate a license and leave it active for a later step.                   |
+| `game-ci return-license` | Public GameCI CLI           | Return a license left active by `activate`.                                |
+| `game-ci orchestrate`    | Public GameCI CLI           | Provider-backed jobs through Orchestrator or another provider plugin.      |
+| `game-ci remote run`     | Public GameCI CLI           | Compatibility alias for `game-ci orchestrate`.                             |
+| `game-ci remote build`   | Public GameCI CLI           | Older compatibility alias for `game-ci orchestrate`.                       |
+| `game-ci orchestrate`    | Standalone Orchestrator CLI | Direct Orchestrator provider runs and provider debugging.                  |
+| `game-ci build`          | Standalone Orchestrator CLI | A narrow remote Orchestrator build shortcut, not the public CLI build API. |
+| `game-ci serve`          | Standalone Orchestrator CLI | JSON provider protocol mode for executable provider plugins.               |
 
 If you are reading public CLI docs, prefer `orchestrate` for provider-backed work. The same verb
 exists in the standalone Orchestrator package, but the package you install determines the option
