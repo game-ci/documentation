@@ -1,16 +1,32 @@
 # Returning a license
 
-Manually returning a license is **usually never necessary**, unless when running into an
-_unrecoverable error_ while having a license active.
+`unity-builder`, `unity-test-runner`, and `unity-activate` already return the license they
+activated once the job finishes - manually returning a license is **usually never necessary**,
+unless you're running into an _unrecoverable error_ while a license is still active, or you used
+`activate`-only without a matching return step.
 
-Also, Unity only allows returning professional licenses.
+Both Personal and Professional/Plus licenses are returnable - Unity moved Personal onto
+per-organization seats, so a Personal seat left active by an interrupted or activate-only run
+consumes a seat just like a Professional one does, and later runs on the same account fail with
+"no available seats" until it's returned.
 
-## Basic setup
+## Manual recovery
 
-You may use [Unity - Return license](https://github.com/marketplace/actions/unity-return-license) to
-return your license and free up a spot towards the maximum number of active licenses.
+If you need to return a license by hand - for example after an interrupted run left a seat
+active - use the `game-ci` CLI's `return-license` command:
 
-Add this step to your workflow:
+```bash
+game-ci return-license ./my-project
+```
+
+See [Activate & Return License](/docs/cli/build#activate--return-license) for the full command
+reference, including credentials and how the CLI picks the right return mechanism for your license
+type automatically.
+
+## Legacy: Unity - Return license Action
+
+Older workflows not using the `game-ci` CLI-backed actions may still use the standalone
+[Unity - Return license](https://github.com/marketplace/actions/unity-return-license) action:
 
 ```yaml
 # Return License
