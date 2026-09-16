@@ -1,9 +1,13 @@
 # Returning a license
 
-`unity-builder`, `unity-test-runner`, and `unity-activate` already return the license they
-activated once the job finishes - manually returning a license is **usually never necessary**,
-unless you're running into an _unrecoverable error_ while a license is still active, or you used
-`activate`-only without a matching return step.
+`unity-builder` and `unity-test-runner` already return the license they activated once the job
+finishes - manually returning a license is **usually never necessary** for those, unless you're
+running into an _unrecoverable error_ while a license is still active.
+
+`unity-activate` is different: it deliberately leaves the license active for a later step, and
+does not return it itself. Workflows using `unity-activate` on its own need a separate return
+step - either [`game-ci/unity-return-license@v2`](#legacy-unity---return-license-action) or the
+`game-ci return-license` CLI command below.
 
 Both Personal and Professional/Plus licenses are returnable - Unity moved Personal onto
 per-organization seats, so a Personal seat left active by an interrupted or activate-only run
