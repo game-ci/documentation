@@ -1,9 +1,28 @@
 # Returning a license
 
-Manually returning a license is **usually never necessary**, unless when running into an
-_unrecoverable error_ while having a license active.
+GameCI returns a license automatically at the end of a normal build or test job
+when it activated a seat for that job. Manually returning one is usually only
+needed after an interrupted job or a confirmed unavailable-seat error on a
+later run.
 
-Also, Unity only allows returning professional licenses.
+This applies to both serial licenses and Unity Personal entitlement seats when
+the Unity licensing client supports the selected activation method.
+
+## Return warnings
+
+Unity's licensing client can print authentication or licensing errors while a
+return has succeeded, and can use the same messages for permanent failures.
+Therefore, a `License return failed` message alone does **not** prove that a
+seat was leaked. Read the surrounding Unity licensing output for a successful
+return message or a specific cause.
+
+GameCI retries only an explicit licensing-client timeout during cleanup. It
+does not retry generic messages such as `Access token is unavailable`, because
+waiting and repeating the return has not been shown to fix those cases. Clearing
+the GitHub Actions cache does not affect Unity's server-side licensing state.
+
+If later runs report that no seats are available, release the stale activation
+in [Unity ID](https://id.unity.com/) or run the return action below.
 
 ## Basic setup
 
