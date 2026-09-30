@@ -5,8 +5,9 @@ when it activated a seat for that job. Manually returning one is usually only
 needed after an interrupted job or a confirmed unavailable-seat error on a
 later run.
 
-This applies to both serial licenses and Unity Personal entitlement seats when
-the Unity licensing client supports the selected activation method.
+Unity documents command-line return for serial and named-user licenses. Its
+documented Personal flow is to sign out of Unity Hub, so do not rely on a
+command-line cleanup step as the recovery mechanism for a Personal seat.
 
 ## Return warnings
 
@@ -22,12 +23,21 @@ waiting and repeating the return has not been shown to fix those cases. Clearing
 the GitHub Actions cache does not affect Unity's server-side licensing state.
 
 If later runs report that no seats are available, release the stale activation
-in [Unity ID](https://id.unity.com/) or run the return action below.
+in [Unity ID](https://id.unity.com/). This is also the recovery route when the
+machine that activated the license is unavailable or its machine binding has
+changed.
 
 ## Basic setup
 
-You may use [Unity - Return license](https://github.com/marketplace/actions/unity-return-license) to
-return your license and free up a spot towards the maximum number of active licenses.
+The normal GameCI build already performs its return in the same process and
+container that activated the license. Do not add a second return step to every
+hosted-runner build: a separately started Docker container has a different
+machine identity and Unity can reject its return.
+
+On a self-hosted runner, where the manual return runs on the same persistent
+machine that activated a serial license, you may use
+[Unity - Return license](https://github.com/marketplace/actions/unity-return-license)
+to release it.
 
 Add this step to your workflow:
 
