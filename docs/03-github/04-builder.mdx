@@ -116,14 +116,20 @@ before any unity steps.
 Example:
 
 ```yaml
-- uses: actions/cache@v3
+- uses: actions/cache@v4
   with:
     path: path/to/your/project/Library
-    key: Library-MyProjectName-TargetPlatform
+    key: Library-MyProjectName-TargetPlatform-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
     restore-keys: |
       Library-MyProjectName-
-      Library-
 ```
+
+Cache entries are immutable: a run can save a cache only when the exact `key` does not already
+exist. The content hash gives each relevant project state a new key, so a later run can save an
+updated `Library` instead of silently skipping the save because the old key already exists. The
+`restore-keys` values are only fallback prefixes used when the exact key misses; they do not update
+or overwrite the cache they restore. Keep the target platform in the key so that a platform does
+not restore another platform's `Library`.
 
 This simple addition could speed up your build by more than 50%.
 
@@ -852,11 +858,12 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: Library
-          key: Library-${{ matrix.targetPlatform }}
-          restore-keys: Library-
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
       - if: matrix.targetPlatform == 'Android'
         uses: jlumbroso/free-disk-space@v1.3.1
       - uses: game-ci/unity-builder@v4
