@@ -6,7 +6,7 @@
   "engines": {
     "npm": "please-use-yarn",
     "yarn": ">= 4.0.0",
-    "node": ">= 20.x"
+    "node": ">= 26"
   },
   "scripts": {
     "prepare": "husky",
@@ -76,7 +76,7 @@
     "tailwindcss": "^3.2.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
+    "@playwright/test": "^1.64.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^12",
     "@typescript/native-preview": "^7.0.0-dev.20260505.1",

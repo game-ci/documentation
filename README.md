@@ -35,16 +35,9 @@ You may also view the markdown files directly at the following links:
 
 Built with [Docusaurus 2](https://docusaurus.io/).
 
-This project has a hard dependency on Node20. You will need to make sure that you have the proper
-version of node installed to avoid errors.
-
-- [Install NodeJS v20 on Ubuntu](https://computingforgeeks.com/how-to-install-node-js-20-on-ubuntu/)
-- [Install NodeJS v20 using brew](https://apple.stackexchange.com/a/207883)
-
-This project relies on yarn for package management. You will need to install yarn in order to build
-and test the documentation site.
-
-- [Official yarn installation docs.](https://classic.yarnpkg.com/lang/en/docs/install)
+This project uses Node 26 and yarn 4, both pinned in `mise.toml`. With
+[mise](https://mise.jdx.dev/getting-started.html) installed, `mise install` in the repository root
+installs the exact versions.
 
 1.  Install project dependencies
 

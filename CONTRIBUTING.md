@@ -18,11 +18,9 @@ When fixing a bug it is fine to submit a pull request right away.
 
 You need the following tools to be installed.
 
-- [NodeJS](https://nodejs.org/) installed at v20.X.
-- [Yarn](https://yarnpkg.com/) at v1.22.4+.
-
-> **Tip:** _Use [nvm](https://github.com/nvm-sh/nvm) or [n](https://github.com/tj/n) or
-> [nodenv](https://github.com/nodenv/nodenv) to manage Node.js versions on your machine._
+- [mise](https://mise.jdx.dev/getting-started.html), which installs the [Node.js](https://nodejs.org/)
+  (v26) and [Yarn](https://yarnpkg.com/) (v4) versions pinned in `mise.toml` when you run
+  `mise install`.
 
 ### Plugins
 
