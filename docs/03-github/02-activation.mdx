@@ -81,10 +81,20 @@ Follow these steps if you are using the free version of Unity.
    - **`UNITY_EMAIL`**: Enter the email address associated with your Unity account
    - **`UNITY_PASSWORD`**: Enter the password for your Unity account
 
+6. **Do not return the Personal license in Unity Hub**: Recent Unity Hub versions (3.7.0 and later)
+   no longer show a **Return license** action for Personal licenses. You can skip this step after
+   copying the `.ulf` file. If a Personal seat is still active and blocking CI, follow
+   [Returning a license](/docs/github/returning-a-license) instead of looking for **Return license**
+   in the Hub.
+
 **GameCI does not acquire nor store your Unity email, password, or license file contents. They are
 required for activating the license during build and test steps.**
 
 ## Professional license
+
+If you activated Unity Plus or Pro on your local machine, return that license in Unity Hub before
+your first CI run so you do not use two seats at once. In `Unity Hub` > `Preferences` > `Licenses`,
+select your Professional license and choose **Return license**.
 
 1. Subscribe to Unity Plus or Unity Pro, and get your Serial Key from the
    [Unity Subscriptions page](https://id.unity.com/en/subscriptions)
