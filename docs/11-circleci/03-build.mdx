@@ -30,7 +30,7 @@ If your custom build method requires additional parameters, see
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -51,7 +51,7 @@ Your build's name. If left blank, the build will be named after the target platf
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -74,7 +74,7 @@ the Unity Editor
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -99,7 +99,7 @@ can be run directly from the GameCI dashboard.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -125,7 +125,7 @@ booleans. Environment variables are supported and will be expanded in runtime.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -155,7 +155,7 @@ more details.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -184,7 +184,7 @@ this error:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -206,7 +206,7 @@ the path to your Unity project. It should be the directory that has the "Assets"
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -229,7 +229,7 @@ returning the license in one job deactivates Unity in the others.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -250,7 +250,7 @@ Specify a custom step name to be shown in the CircleCI web app.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -272,7 +272,7 @@ CircleCI web app.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -293,7 +293,7 @@ Whether to fetch git submodules relating to the project repository.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -316,7 +316,7 @@ from the license file. See [activation](/docs/circleci/activation) for more deta
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -339,7 +339,7 @@ The name of the environment variable holding the password set in your
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -362,7 +362,7 @@ License. See [activation](/docs/circleci/activation) for more details.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -384,7 +384,7 @@ The name of the environment variable holding your Unity account email. See
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -414,7 +414,7 @@ This example shows how to build your project for several platforms using a Perso
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -462,7 +462,7 @@ workflows:
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/macos'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
             editor_version: '2021.3.2f1'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
           build-target: StandaloneWindows64
@@ -476,7 +476,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -537,7 +537,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -619,7 +619,7 @@ This example shows how to build your project for several platforms using a Pro L
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -667,7 +667,7 @@ workflows:
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/macos'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
             editor_version: '2021.3.2f1'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
           build-target: StandaloneOSX
@@ -681,7 +681,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -742,7 +742,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:

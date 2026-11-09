@@ -26,7 +26,7 @@ the [Executors](/docs/circleci/executors) section for more details.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -55,7 +55,7 @@ this error:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -77,7 +77,7 @@ the path of your Unity project. This should be the directory that has an "Assets
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -100,7 +100,7 @@ returning the license in one job deactivates Unity in the others.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -121,7 +121,7 @@ Specify a custom step name to be shown in the CircleCI web app.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -144,7 +144,7 @@ framework
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -167,7 +167,7 @@ from the license file. See [activation](/docs/circleci/activation) for more deta
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -190,7 +190,7 @@ The name of the environment variable holding the password set in your
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -214,7 +214,7 @@ for more details.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -236,7 +236,7 @@ The name of the environment variable holding your Unity account email. See
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-unity-project:
@@ -264,7 +264,7 @@ This example shows how to build your project for several platforms using a Perso
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -311,7 +311,7 @@ workflows:
           executor:
             name: 'unity/macos'
             editor_version: '2021.3.1f1'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
           test-platform: 'playmode'
           context: unity
@@ -325,7 +325,7 @@ This example shows how to build your project for several platforms using a Pro L
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -372,7 +372,7 @@ workflows:
           executor:
             name: 'unity/macos'
             editor_version: '2021.3.1f1'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
           test-platform: 'playmode'
           context: unity

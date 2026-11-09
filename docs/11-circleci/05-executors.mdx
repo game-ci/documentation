@@ -25,6 +25,9 @@ for **macOS IL2CPP builds**. As there are no GameCI images for macOS at the mome
 and Hub are installed in runtime, leading to longer build times. Should it become an issue, consider
 using [macos-runner](#macos-runner) instead.
 
+The executor runs on Apple silicon and installs the Apple silicon editor, available from Unity
+2021.2. Older editors such as 2020.3 can't be installed on it.
+
 #### editor_version
 
 Choose the Unity Editor version that you want to use to build your project. The options available
@@ -34,7 +37,7 @@ can be found on the Unity [archive](https://unity3d.com/get-unity/download/archi
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -60,7 +63,7 @@ the build.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -68,7 +71,9 @@ workflows:
       - unity/build:
           executor:
             name: 'unity/macos'
+            editor_version: '2022.3.33f1'
             resource_class: 'm4pro.large'
+          build-target: StandaloneOSX
 ```
 
 - _Options_: `m4pro.medium`, `m4pro.large`
@@ -85,7 +90,7 @@ execution environment.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -93,7 +98,9 @@ workflows:
       - unity/build:
           executor:
             name: 'unity/macos'
+            editor_version: '2022.3.33f1'
             xcode_version: '16.4.0'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `16.4.0`
@@ -122,7 +129,7 @@ can be found on the Unity [archive](https://unity3d.com/get-unity/download/archi
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -146,7 +153,7 @@ what this means, navigate to the beginning of this [sub-section](#macos-runner).
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -169,7 +176,7 @@ Enter the working directory of your runner agent. This will be where the job ste
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -204,7 +211,7 @@ can be found on the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -230,7 +237,7 @@ the build.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -238,7 +245,7 @@ workflows:
       - unity/build:
           executor:
             name: 'unity/macos'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
 ```
 
 - _Default_: `medium`
@@ -254,7 +261,7 @@ the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -294,7 +301,7 @@ can be found on the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -321,7 +328,7 @@ during the build.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -347,7 +354,7 @@ the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -386,7 +393,7 @@ can be found on the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -410,7 +417,7 @@ what this means, navigate to the beginning of [this section](#windows-runner).
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -433,7 +440,7 @@ Enter the working directory of your runner agent. This is be where the job steps
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
