@@ -5,8 +5,7 @@ toc_max_heading_level: 4
 # Activation
 
 The orb uses a Unity Editor instance to test and build your projects. Before each job, the orb
-activates Unity with your Unity account email, password and serial, then returns the license at the
-end of the job.
+activates Unity with your Unity account email, password and serial.
 
 Unity separates its licenses between `Personal` and `Professional`. The former applies to the _free_
 and the latter to the _Pro_ and _Plus_ versions. Based on your use case proceed to the
@@ -83,11 +82,9 @@ activation with `.alf` files, so the old personal license flow stopped working.
 - The `unity/create-activation-file` job was removed. Get a license file as described in
   [Personal license](#personal-license).
 - `unity-license-var-name` now defaults to `UNITY_LICENSE`. An existing `UNITY_ENCODED_LICENSE`
-  variable still works if you pass `unity-license-var-name: 'UNITY_ENCODED_LICENSE'`, but it must
-  contain a license file created as described above. Email and password are now required for
-  personal licenses too.
-- `return-license` now defaults to `true`, and `fetch-submodules` to `true` (1.x always fetched
-  submodules).
+  variable still works if you pass `unity-license-var-name: 'UNITY_ENCODED_LICENSE'`. Email and
+  password are now required for personal licenses too.
+- `fetch-submodules` now defaults to `true`, since 1.x always fetched submodules.
 - The `unity/macos` executor only accepts the `m4pro.medium` and `m4pro.large` resource classes,
   since CircleCI retired the M1 machines.
 

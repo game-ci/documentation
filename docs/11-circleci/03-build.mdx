@@ -221,8 +221,9 @@ workflows:
 
 #### return-license
 
-Whether to return the Unity license at the end of the job, even when the job fails. Keep it
-enabled so CI machines don't use up the activations allowed for your license.
+Whether to return the Unity license at the end of the job, even when the job fails. Don't enable it
+for jobs running in parallel with the same license: GameCI's Linux images share a machine ID, so
+returning the license in one job deactivates Unity in the others.
 
 ```yaml
 version: 2.1
@@ -234,10 +235,10 @@ workflows:
   build-unity-project:
     jobs:
       - unity/build:
-          return-license: false
+          return-license: true
 ```
 
-- _Default_: `true`
+- _Default_: `false`
 - _Required_: `false`
 - _Type_: `boolean`
 
