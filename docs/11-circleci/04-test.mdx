@@ -92,9 +92,8 @@ workflows:
 
 #### return-license
 
-Whether to manually return the Unity license after the test job is finished. This is usually
-unnecessary and only useful when running into an unrecoverable error while having a license active.
-Additionally, Unity only allows returning professional licenses.
+Whether to return the Unity license at the end of the job, even when the job fails. Keep it
+enabled so CI machines don't use up the activations allowed for your license.
 
 ```yaml
 version: 2.1
@@ -106,10 +105,10 @@ workflows:
   test-unity-project:
     jobs:
       - unity/test:
-          return-license: true
+          return-license: false
 ```
 
-- _Default_: `false`
+- _Default_: `true`
 - _Required_: `false`
 - _Type_: `boolean`
 
@@ -160,7 +159,7 @@ workflows:
 #### unity-license-var-name
 
 The name of the environment variable holding the license set in your
-[Context](/docs/circleci/activation#preparing-the-context). If you are testing your project using
+[Context](/docs/circleci/activation). If you are testing your project using
 the Unity Pro or Plus license, this is **not** required. See [Activation](/docs/circleci/activation)
 for more details.
 
@@ -174,17 +173,17 @@ workflows:
   test-unity-project:
     jobs:
       - unity/test:
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-license-var-name: 'UNITY_LICENSE'
 ```
 
-- _Default_: `UNITY_ENCODED_LICENSE`
+- _Default_: `UNITY_LICENSE`
 - _Required_: `False`
 - _Type_: `env_var_name`
 
 #### unity-password-var-name
 
 The name of the environment variable holding the password set in your
-[Context](/docs/circleci/activation#preparing-the-context). See
+[Context](/docs/circleci/activation). See
 [Activation](/docs/circleci/activation) for more details.
 
 ```yaml
@@ -207,7 +206,7 @@ workflows:
 #### unity-serial-var-name
 
 The name of the environment variable holding the serial set in your
-[Context](/docs/circleci/activation#preparing-the-context). If you are testing your project using
+[Context](/docs/circleci/activation). If you are testing your project using
 the Unity Personal license, this is **not** required. See [Activation](/docs/circleci/activation)
 for more details.
 
@@ -228,10 +227,10 @@ workflows:
 - _Required_: `False`
 - _Type_: `env_var_name`
 
-#### unity-username-var-name
+#### unity-email-var-name
 
-The name of the environment variable holding the username set in your
-[Context](/docs/circleci/activation#preparing-the-context). See
+The name of the environment variable holding the Unity account email set in your
+[Context](/docs/circleci/activation). See
 [Activation](/docs/circleci/activation) for more details.
 
 ```yaml
@@ -244,10 +243,10 @@ workflows:
   test-unity-project:
     jobs:
       - unity/test:
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
 ```
 
-- _Default_: `UNITY_USERNAME`
+- _Default_: `UNITY_EMAIL`
 - _Required_: `False`
 - _Type_: `env_var_name`
 
@@ -275,8 +274,8 @@ workflows:
       - unity/test:
           name: 'test-linux'
           step-name: 'Check if the tests run and results are uploaded'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -291,8 +290,8 @@ workflows:
       - unity/test:
           name: 'test-windows'
           step-name: 'Check if the tests run and results are uploaded'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/windows-2022'
@@ -307,8 +306,8 @@ workflows:
       - unity/test:
           name: 'test-osx'
           step-name: 'Check if the tests run and results are uploaded'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/macos'
@@ -337,7 +336,7 @@ workflows:
           name: 'test-linux'
           step-name: 'Check if the tests run and results are uploaded'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -353,7 +352,7 @@ workflows:
           name: 'test-windows'
           step-name: 'Check if the tests run and results are uploaded'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/windows-2022'
@@ -369,7 +368,7 @@ workflows:
           name: 'test-osx'
           step-name: 'Check if the tests run and results are uploaded'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/macos'

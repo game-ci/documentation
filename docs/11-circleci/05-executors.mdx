@@ -52,7 +52,7 @@ workflows:
 #### resource_class
 
 Choose the
-[resource class](https://circleci.com/docs/configuration-reference#macos-execution-environment) for
+[resource class](https://circleci.com/docs/guides/execute/using-macos/) for
 your execution environment. Try increasing it if your environment is running out of memory during
 the build.
 
@@ -68,16 +68,17 @@ workflows:
       - unity/build:
           executor:
             name: 'unity/macos'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
 ```
 
-- _Default_: `medium`
+- _Options_: `m4pro.medium`, `m4pro.large`
+- _Default_: `m4pro.medium`
 - _Required_: `False`
 - _Type_: `Enum`
 
 #### xcode_version
 
-Choose the [xcode version](https://circleci.com/docs/using-macos#supported-xcode-versions) for your
+Choose the [Xcode version](https://circleci.com/docs/guides/execute/using-macos/) for your
 execution environment.
 
 ```yaml
@@ -92,10 +93,10 @@ workflows:
       - unity/build:
           executor:
             name: 'unity/macos'
-            xcode_version: '14.0.0'
+            xcode_version: '16.4.0'
 ```
 
-- _Default_: `13.4.1`
+- _Default_: `16.4.0`
 - _Required_: `False`
 - _Type_: `String`
 
