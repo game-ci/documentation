@@ -4,8 +4,8 @@ toc_max_heading_level: 4
 
 # Activation
 
-The orb uses a Unity Editor instance to test and build your projects. These operations require the
-instance to be activated before each job you run.
+The orb uses a Unity Editor instance to test and build your projects. Before each job, the orb
+activates Unity with your Unity account email, password and serial.
 
 Unity separates its licenses between `Personal` and `Professional`. The former applies to the _free_
 and the latter to the _Pro_ and _Plus_ versions. Based on your use case proceed to the
@@ -17,91 +17,42 @@ Follow these steps if you are using Unity's _free_ version.
 
 > _**Note:** Do NOT follow the steps for the personal license if you have a professional license._
 
-#### Mental model
+Personal licenses have no serial key. The orb extracts it from your Unity license file (`.ulf`).
 
-1. Use the Unity Orb to create an activation file.
-2. Use the activation file to acquire a license file from the Unity website.
-3. Encode the license file and save it in a CircleCI Context.
+#### Getting the license file
 
-#### Acquiring an activation file
+1. Install [Unity Hub](https://unity.com/download) on your machine and log in with the Unity account
+   you want to use in CI.
+2. Go to `Unity Hub` ⇢ `Preferences` ⇢ `Licenses`, click `Add` and select **Get a free personal
+   license**. Even if a license is already listed, click `Add` to make sure the file gets created.
+3. Find the `Unity_lic.ulf` file:
+   - Windows: `C:\ProgramData\Unity\Unity_lic.ulf`
+   - Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
+   - Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
 
-Add the workflow below to a [project set up in CircleCI](https://circleci.com/docs/getting-started).
-As long as you can access it in the CircleCI web app and download its artifacts, it can be any
-project.
-
-```yaml
-version: 2.1
-
-orbs:
-  unity: game-ci/unity@x.y
-
-workflows:
-  create-unity-activation-file:
-    jobs:
-      - unity/create-activation-file
-```
-
-If you require an activation file for a specific version of the Unity Editor, you need to provide
-its version number as an argument. The available versions can be found on our
-[versions](/docs/docker/versions) page.
-
-```yaml
-version: 2.1
-
-orbs:
-  unity: game-ci/unity@x.y
-
-workflows:
-  create-unity-activation-file:
-    jobs:
-      - unity/create-activation-file:
-          editor_version: 2022.1.11f1
-```
-
-Commit and push the new workflow and navigate to your project in the CircleCI web app. Identify the
-pipeline triggered by your changes and open the `unity/create-activation-file` job. In the
-`ARTIFACTS` tab, you will encounter `Unity.alf`; this is your activation file. Download it and
-proceed to the following sub-section.
-
-#### Acquiring the license file
-
-1. Navigate to the [manual activation](https://license.unity3d.com/manual) page and upload the
-   `Unity.alf` activation file.
-2. Answer the prompted questions.
-3. Download the license file (Unity_v20XX.x.ulf).
-
-   :::warning License Activation UI Variations
-
-   If you don't have the activation option to generate a license file, search in our
-   [game-ci Discord community](https://discord.gg/KcF25qStJU) where we have documented the best
-   approaches you can use.
-
-   :::
-
-> _Note: It is fine if the version number in the file name does not match your exact Unity version._
+   The license isn't tied to an operating system: you can get it on Windows or macOS and use it in
+   Ubuntu jobs.
 
 #### Encoding the license
 
-Encode the contents of your `Unity_v20XX.x.ulf` file to base64. If you have the `base64` command
-line utility you can use:
+CircleCI environment variables work best on a single line, so encode the file to base64:
 
-```
-cat Unity_v20XX.x.ulf | base64 -w 0
+```bash
+# Linux
+base64 -w 0 Unity_lic.ulf
+# macOS
+base64 -i Unity_lic.ulf
 ```
 
 #### Configuring your Context
 
 1. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
-   `Create Context` and choose a name for your context (e.g. `myProjectContext`). Alternatively,
-   open an existing Context that you would like to use.
+   `Create Context` and choose a name for your context (e.g. `unity`). Alternatively, open an
+   existing Context that you would like to use.
 2. Create the following environment variables:
-   - `UNITY_ENCODED_LICENSE` - _(Paste the content from the
-     [Encoding the License](#encoding-the-license) section here)_
-   - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
+   - `UNITY_LICENSE` - _(Paste the encoded license from the previous step)_
+   - `UNITY_EMAIL` - _(Add the email address that you use to log in to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
-3. Remove or disable the job you included to acquire your activation file. It's no longer necessary.
-
-> _**Note:** When changing the Unity version, you may need to repeat the same process._
 
 ## Professional license
 
@@ -111,13 +62,31 @@ Follow these steps if you are using Unity's _Pro_ or _Plus_ version.
 
 1. Get your Serial Key from the [subscriptions page](https://id.unity.com/en/subscriptions).
 2. Navigate to [CircleCI](https://app.circleci.com/) ⇢ `Organization Settings` ⇢ `Contexts` ⇢
-   `Create Context` and choose a name for your context (e.g. `myProjectContext`). Alternatively,
-   open an existing Context that you would like to use.
+   `Create Context` and choose a name for your context (e.g. `unity`). Alternatively, open an
+   existing Context that you would like to use.
 3. Create the following environment variables:
    - `UNITY_SERIAL` - _(Paste the serial acquired in **step 1** here. It should look like this:
      `XX-XXXX-XXXX-XXXX-XXXX-XXXX`)_
-   - `UNITY_USERNAME` - _(Add the email address that you use to log in to Unity)_
+   - `UNITY_EMAIL` - _(Add the email address that you use to log in to Unity)_
    - `UNITY_PASSWORD` - _(Add the password that you use to log in to Unity)_
+
+**GameCI does not acquire nor store your Unity email, password, serial or license file. They are only
+used to activate Unity during your jobs.**
+
+## Upgrading from version 1.x
+
+Version 2 activates Unity the same way as the GitHub Actions. Unity no longer supports manual
+activation with `.alf` files, so the old personal license flow stopped working.
+
+- Rename `unity-username-var-name` to `unity-email-var-name`. Its default is now `UNITY_EMAIL`.
+- The `unity/create-activation-file` job was removed. Get a license file as described in
+  [Personal license](#personal-license).
+- `unity-license-var-name` now defaults to `UNITY_LICENSE`. An existing `UNITY_ENCODED_LICENSE`
+  variable still works if you pass `unity-license-var-name: 'UNITY_ENCODED_LICENSE'`. Email and
+  password are now required for personal licenses too.
+- `fetch-submodules` now defaults to `true`, since 1.x always fetched submodules.
+- The `unity/macos` executor only accepts the `m4pro.medium` and `m4pro.large` resource classes,
+  since CircleCI retired the M1 machines.
 
 ## Next steps
 
@@ -129,7 +98,7 @@ they will fail:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:

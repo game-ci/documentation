@@ -12,6 +12,9 @@ process of building your Unity project for multiple platforms.
 
 Below you will find information on each parameter that can be passed to the build job.
 
+Each example only shows the parameter it describes. A working job also needs its required
+parameters, `executor` and `build-target`, as shown in the [examples](#examples).
+
 #### build-method
 
 The command used to build your project. A valid `build-method` contains the path to a `static`
@@ -30,7 +33,7 @@ If your custom build method requires additional parameters, see
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -51,7 +54,7 @@ Your build's name. If left blank, the build will be named after the target platf
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -74,7 +77,7 @@ the Unity Editor
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -99,7 +102,7 @@ can be run directly from the GameCI dashboard.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -125,7 +128,7 @@ booleans. Environment variables are supported and will be expanded in runtime.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -155,7 +158,7 @@ more details.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -184,7 +187,7 @@ this error:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -206,7 +209,7 @@ the path to your Unity project. It should be the directory that has the "Assets"
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -221,15 +224,15 @@ workflows:
 
 #### return-license
 
-Whether to manually return the Unity license after the build job is finished. This is usually
-unnecessary and only useful when running into an unrecoverable error while having a license active.
-Additionally, Unity only allows returning professional licenses.
+Whether to return the Unity license at the end of the job, even when the job fails. Don't enable it
+for jobs running in parallel with the same license: GameCI's Linux images share a machine ID, so
+returning the license in one job deactivates Unity in the others.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -250,7 +253,7 @@ Specify a custom step name to be shown in the CircleCI web app.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -272,7 +275,7 @@ CircleCI web app.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -293,53 +296,53 @@ Whether to fetch git submodules relating to the project repository.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
     jobs:
       - unity/build:
-          fetch-submodules: true
+          fetch-submodules: false
 ```
 
-- _Default_: `false`
+- _Default_: `true`
 - _Required_: `false`
 - _Type_: `boolean`
 
 #### unity-license-var-name
 
-The name of the environment variable holding the license set in your
-[Context](/docs/circleci/activation#preparing-the-context). Only required when using a Personal
-License. See [activation](/docs/circleci/activation) for more details.
+The name of the environment variable holding the content of your Unity license file (`.ulf`), raw or
+base64-encoded. Only used with a Personal License, when no serial is set: the serial is extracted
+from the license file. See [activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
     jobs:
       - unity/build:
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
+          unity-license-var-name: 'UNITY_LICENSE'
 ```
 
-- _Default_: `UNITY_ENCODED_LICENSE`
+- _Default_: `UNITY_LICENSE`
 - _Required_: `false`
 - _Type_: `env_var_name`
 
 #### unity-password-var-name
 
 The name of the environment variable holding the password set in your
-[Context](/docs/circleci/activation#preparing-the-context). See
+[Context](/docs/circleci/activation). See
 [activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -355,14 +358,14 @@ workflows:
 #### unity-serial-var-name
 
 The name of the environment variable holding the serial set in your
-[Context](/docs/circleci/activation#preparing-the-context). Only required when using a Pro or Plus
+[Context](/docs/circleci/activation). Required when using a Pro or Plus
 License. See [activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -375,26 +378,25 @@ workflows:
 - _Required_: `false`
 - _Type_: `env_var_name`
 
-#### unity-username-var-name
+#### unity-email-var-name
 
-The name of the environment variable holding the username set in your
-[Context](/docs/circleci/activation#preparing-the-context). See
-[Activation](/docs/circleci/activation) for more details.
+The name of the environment variable holding your Unity account email. See
+[activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
     jobs:
       - unity/build:
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
 ```
 
-- _Default_: `UNITY_USERNAME`
+- _Default_: `UNITY_EMAIL`
 - _Required_: `false`
 - _Type_: `env_var_name`
 
@@ -415,7 +417,7 @@ This example shows how to build your project for several platforms using a Perso
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -424,8 +426,8 @@ workflows:
       - unity/build:
           name: 'build-linux64-il2cpp'
           step-name: 'Build StandaloneLinux64'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -441,8 +443,8 @@ workflows:
       - unity/build:
           name: 'build-Windows64-il2cpp'
           step-name: 'Build StandaloneWindows64 il2cpp'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/windows-2019'
@@ -458,15 +460,15 @@ workflows:
       - unity/build:
           name: 'build-osx-il2cpp'
           step-name: 'Build macOS IL2CPP'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/macos'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
             editor_version: '2021.3.2f1'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
-          build-target: StandaloneWindows64
+          build-target: StandaloneOSX
           compress: true
           context: unity
 ```
@@ -477,7 +479,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -486,8 +488,8 @@ workflows:
       - unity/build:
           name: 'build-linux64-mono'
           step-name: 'Build StandaloneLinux64'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -503,8 +505,8 @@ workflows:
       - unity/build:
           name: 'build-Windows64-mono'
           step-name: 'Build StandaloneWindows64'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -519,8 +521,8 @@ workflows:
       - unity/build:
           name: 'build-osx-mono'
           step-name: 'Build StandaloneOSX'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -538,7 +540,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -547,8 +549,8 @@ workflows:
       - unity/build:
           name: 'build-webgl'
           step-name: 'Build WebGL'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -564,8 +566,8 @@ workflows:
       - unity/build:
           name: 'build-android'
           step-name: 'Build Android'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -580,8 +582,8 @@ workflows:
       - unity/build:
           name: 'build-ios'
           step-name: 'Build iOS'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -596,8 +598,8 @@ workflows:
       - unity/build:
           name: 'build-tvOS'
           step-name: "Build Apple's tvOS"
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/windows-2019'
@@ -620,7 +622,7 @@ This example shows how to build your project for several platforms using a Pro L
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -630,7 +632,7 @@ workflows:
           name: 'build-linux64-il2cpp'
           step-name: 'Build StandaloneLinux64'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -647,7 +649,7 @@ workflows:
           name: 'build-Windows64-il2cpp'
           step-name: 'Build StandaloneWindows64 il2cpp'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/windows-2019'
@@ -664,11 +666,11 @@ workflows:
           name: 'build-osx-il2cpp'
           step-name: 'Build macOS IL2CPP'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/macos'
-            resource_class: 'large'
+            resource_class: 'm4pro.large'
             editor_version: '2021.3.2f1'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
           build-target: StandaloneOSX
@@ -682,7 +684,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -692,7 +694,7 @@ workflows:
           name: 'build-linux64-mono'
           step-name: 'Build StandaloneLinux64'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -709,7 +711,7 @@ workflows:
           name: 'build-Windows64-mono'
           step-name: 'Build StandaloneWindows64'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -725,7 +727,7 @@ workflows:
           name: 'build-osx-mono'
           step-name: 'Build StandaloneOSX'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -743,7 +745,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -753,7 +755,7 @@ workflows:
           name: 'build-webgl'
           step-name: 'Build WebGL'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -770,7 +772,7 @@ workflows:
           name: 'build-android'
           step-name: 'Build Android'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -786,7 +788,7 @@ workflows:
           name: 'build-ios'
           step-name: 'Build iOS'
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -802,7 +804,7 @@ workflows:
           name: 'build-tvOS'
           step-name: "Build Apple's tvOS"
           unity-serial-var-name: 'UNITY_SERIAL'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/windows-2019'

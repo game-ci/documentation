@@ -25,6 +25,9 @@ for **macOS IL2CPP builds**. As there are no GameCI images for macOS at the mome
 and Hub are installed in runtime, leading to longer build times. Should it become an issue, consider
 using [macos-runner](#macos-runner) instead.
 
+The executor runs on Apple silicon and installs the Apple silicon editor, available from Unity
+2021.2. Older editors such as 2020.3 can't be installed on it.
+
 #### editor_version
 
 Choose the Unity Editor version that you want to use to build your project. The options available
@@ -34,7 +37,7 @@ can be found on the Unity [archive](https://unity3d.com/get-unity/download/archi
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -43,6 +46,7 @@ workflows:
           executor:
             name: 'unity/macos'
             editor_version: '2021.3.2f1'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `N/A`
@@ -52,7 +56,7 @@ workflows:
 #### resource_class
 
 Choose the
-[resource class](https://circleci.com/docs/configuration-reference#macos-execution-environment) for
+[resource class](https://circleci.com/docs/guides/execute/using-macos/) for
 your execution environment. Try increasing it if your environment is running out of memory during
 the build.
 
@@ -60,7 +64,7 @@ the build.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -68,23 +72,26 @@ workflows:
       - unity/build:
           executor:
             name: 'unity/macos'
-            resource_class: 'large'
+            editor_version: '2022.3.33f1'
+            resource_class: 'm4pro.large'
+          build-target: StandaloneOSX
 ```
 
-- _Default_: `medium`
+- _Options_: `m4pro.medium`, `m4pro.large`
+- _Default_: `m4pro.medium`
 - _Required_: `False`
 - _Type_: `Enum`
 
 #### xcode_version
 
-Choose the [xcode version](https://circleci.com/docs/using-macos#supported-xcode-versions) for your
+Choose the [Xcode version](https://circleci.com/docs/guides/execute/using-macos/) for your
 execution environment.
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -92,10 +99,12 @@ workflows:
       - unity/build:
           executor:
             name: 'unity/macos'
-            xcode_version: '14.0.0'
+            editor_version: '2022.3.33f1'
+            xcode_version: '16.4.0'
+          build-target: StandaloneOSX
 ```
 
-- _Default_: `13.4.1`
+- _Default_: `16.4.0`
 - _Required_: `False`
 - _Type_: `String`
 
@@ -121,7 +130,7 @@ can be found on the Unity [archive](https://unity3d.com/get-unity/download/archi
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -130,6 +139,8 @@ workflows:
           executor:
             name: 'unity/macos-runner'
             editor_version: '2021.3.2f1'
+            resource_class: 'my-namespace/my-macos-runner'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `N/A`
@@ -145,7 +156,7 @@ what this means, navigate to the beginning of this [sub-section](#macos-runner).
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -154,6 +165,8 @@ workflows:
           executor:
             name: 'unity/macos-runner'
             resource_class: 'my_runner_resource_class'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `N/A`
@@ -168,7 +181,7 @@ Enter the working directory of your runner agent. This will be where the job ste
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -177,6 +190,9 @@ workflows:
           executor:
             name: 'unity/macos-runner'
             working_directory: '/var/opt/circleci/unity_working_dir'
+            editor_version: '2022.3.33f1'
+            resource_class: 'my-namespace/my-macos-runner'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `/var/opt/circleci/workdir`
@@ -203,7 +219,7 @@ can be found on the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -212,6 +228,8 @@ workflows:
           executor:
             name: 'unity/ubuntu'
             editor_version: '2021.3.2f1'
+            target_platform: 'linux-il2cpp'
+          build-target: StandaloneLinux64
 ```
 
 - _Default_: `N/A`
@@ -229,15 +247,18 @@ the build.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
     jobs:
       - unity/build:
           executor:
-            name: 'unity/macos'
+            name: 'unity/ubuntu'
             resource_class: 'large'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneLinux64
 ```
 
 - _Default_: `medium`
@@ -253,15 +274,17 @@ the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
     jobs:
       - unity/build:
           executor:
-            name: 'unity/macos'
+            name: 'unity/ubuntu'
             target_platform: 'linux-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneLinux64
 ```
 
 - _Default_: `N/A`
@@ -293,7 +316,7 @@ can be found on the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -304,6 +327,8 @@ workflows:
             ## or name: "unity/windows-2019"
             ## or name: "unity/windows-2019-cuda"
             editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -320,7 +345,7 @@ during the build.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -330,7 +355,10 @@ workflows:
             name: 'unity/windows-2022'
             ## or name: "unity/windows-2019"
             ## or name: "unity/windows-2019-cuda"
-            resource_class: 'xlarge'
+            size: 'xlarge'
+            target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `large`
@@ -346,7 +374,7 @@ the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -357,6 +385,8 @@ workflows:
             ## or name: "unity/windows-2019"
             ## or name: "unity/windows-2019-cuda"
             target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -385,7 +415,7 @@ can be found on the [versions](/docs/docker/versions) page.
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -394,6 +424,9 @@ workflows:
           executor:
             name: 'unity/windows-runner'
             editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+            resource_class: 'my-namespace/my-windows-runner'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -409,7 +442,7 @@ what this means, navigate to the beginning of [this section](#windows-runner).
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -418,6 +451,9 @@ workflows:
           executor:
             name: 'unity/windows-runner'
             resource_class: 'my_runner_resource_class'
+            target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -432,7 +468,7 @@ Enter the working directory of your runner agent. This is be where the job steps
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -441,6 +477,10 @@ workflows:
           executor:
             name: 'unity/windows-runner'
             working_directory: 'C:\Users\circleci\AppData\Local\Temp\Unity_Working_Dir'
+            target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+            resource_class: 'my-namespace/my-windows-runner'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `C:\Users\circleci\AppData\Local\Temp\Workdir`

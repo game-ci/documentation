@@ -48,13 +48,13 @@ will fail. For more details, head to the [Activation](/docs/circleci/activation)
 Create a `.circleci/config.yml` file in the root of your repository and follow these steps:
 
 1. Import the [Unity Orb](https://circleci.com/developer/orbs/orb/game-ci/unity) and fix it to a
-   `minor` version (e.g. `1.1`) to avoid receiving updates with breaking changes:
+   `major` version (e.g. `2`) to avoid receiving updates with breaking changes:
 
 ```yaml
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 ```
 
 2. Include a [build job](/docs/circleci/build) in your workflow and modify the
@@ -64,7 +64,7 @@ orbs:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   build-unity-project:
@@ -72,8 +72,8 @@ workflows:
       - unity/build:
           name: 'build-linux64-il2cpp'
           step-name: 'Build StandaloneLinux64'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -92,7 +92,7 @@ workflows:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-and-build-unity-project:
@@ -100,8 +100,8 @@ workflows:
       - unity/test:
           name: 'test-linux'
           step-name: 'Check if tests run and results are uploaded'
-          unity-license-var-name: 'UNITY_ENCODED_LICENSE'
-          unity-username-var-name: 'UNITY_USERNAME'
+          unity-license-var-name: 'UNITY_LICENSE'
+          unity-email-var-name: 'UNITY_EMAIL'
           unity-password-var-name: 'UNITY_PASSWORD'
           executor:
             name: 'unity/ubuntu'
@@ -121,7 +121,7 @@ build job to prevent it from running in case of failure:
 version: 2.1
 
 orbs:
-  unity: game-ci/unity@x.y
+  unity: game-ci/unity@2
 
 workflows:
   test-and-build-unity-project:
