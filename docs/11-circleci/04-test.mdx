@@ -159,10 +159,9 @@ workflows:
 
 #### unity-license-var-name
 
-The name of the environment variable holding the license set in your
-[Context](/docs/circleci/activation). If you are testing your project using
-the Unity Pro or Plus license, this is **not** required. See [Activation](/docs/circleci/activation)
-for more details.
+The name of the environment variable holding the content of your Unity license file (`.ulf`), raw or
+base64-encoded. Only used with a Personal License, when no serial is set: the serial is extracted
+from the license file. See [activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
@@ -230,9 +229,8 @@ workflows:
 
 #### unity-email-var-name
 
-The name of the environment variable holding the Unity account email set in your
-[Context](/docs/circleci/activation). See
-[Activation](/docs/circleci/activation) for more details.
+The name of the environment variable holding your Unity account email. See
+[activation](/docs/circleci/activation) for more details.
 
 ```yaml
 version: 2.1
