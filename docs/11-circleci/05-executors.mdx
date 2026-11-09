@@ -46,6 +46,7 @@ workflows:
           executor:
             name: 'unity/macos'
             editor_version: '2021.3.2f1'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `N/A`
@@ -138,6 +139,8 @@ workflows:
           executor:
             name: 'unity/macos-runner'
             editor_version: '2021.3.2f1'
+            resource_class: 'my-namespace/my-macos-runner'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `N/A`
@@ -162,6 +165,8 @@ workflows:
           executor:
             name: 'unity/macos-runner'
             resource_class: 'my_runner_resource_class'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `N/A`
@@ -185,6 +190,9 @@ workflows:
           executor:
             name: 'unity/macos-runner'
             working_directory: '/var/opt/circleci/unity_working_dir'
+            editor_version: '2022.3.33f1'
+            resource_class: 'my-namespace/my-macos-runner'
+          build-target: StandaloneOSX
 ```
 
 - _Default_: `/var/opt/circleci/workdir`
@@ -220,6 +228,8 @@ workflows:
           executor:
             name: 'unity/ubuntu'
             editor_version: '2021.3.2f1'
+            target_platform: 'linux-il2cpp'
+          build-target: StandaloneLinux64
 ```
 
 - _Default_: `N/A`
@@ -244,8 +254,11 @@ workflows:
     jobs:
       - unity/build:
           executor:
-            name: 'unity/macos'
-            resource_class: 'm4pro.large'
+            name: 'unity/ubuntu'
+            resource_class: 'large'
+            target_platform: 'linux-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneLinux64
 ```
 
 - _Default_: `medium`
@@ -268,8 +281,10 @@ workflows:
     jobs:
       - unity/build:
           executor:
-            name: 'unity/macos'
+            name: 'unity/ubuntu'
             target_platform: 'linux-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneLinux64
 ```
 
 - _Default_: `N/A`
@@ -312,6 +327,8 @@ workflows:
             ## or name: "unity/windows-2019"
             ## or name: "unity/windows-2019-cuda"
             editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -338,7 +355,10 @@ workflows:
             name: 'unity/windows-2022'
             ## or name: "unity/windows-2019"
             ## or name: "unity/windows-2019-cuda"
-            resource_class: 'xlarge'
+            size: 'xlarge'
+            target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `large`
@@ -365,6 +385,8 @@ workflows:
             ## or name: "unity/windows-2019"
             ## or name: "unity/windows-2019-cuda"
             target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -402,6 +424,9 @@ workflows:
           executor:
             name: 'unity/windows-runner'
             editor_version: '2021.3.2f1'
+            target_platform: 'windows-il2cpp'
+            resource_class: 'my-namespace/my-windows-runner'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -426,6 +451,9 @@ workflows:
           executor:
             name: 'unity/windows-runner'
             resource_class: 'my_runner_resource_class'
+            target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `N/A`
@@ -449,6 +477,10 @@ workflows:
           executor:
             name: 'unity/windows-runner'
             working_directory: 'C:\Users\circleci\AppData\Local\Temp\Unity_Working_Dir'
+            target_platform: 'windows-il2cpp'
+            editor_version: '2022.3.33f1'
+            resource_class: 'my-namespace/my-windows-runner'
+          build-target: StandaloneWindows64
 ```
 
 - _Default_: `C:\Users\circleci\AppData\Local\Temp\Workdir`

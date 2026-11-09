@@ -12,6 +12,9 @@ process of building your Unity project for multiple platforms.
 
 Below you will find information on each parameter that can be passed to the build job.
 
+Each example only shows the parameter it describes. A working job also needs its required
+parameters, `executor` and `build-target`, as shown in the [examples](#examples).
+
 #### build-method
 
 The command used to build your project. A valid `build-method` contains the path to a `static`
@@ -465,7 +468,7 @@ workflows:
             resource_class: 'm4pro.large'
             editor_version: '2021.3.2f1'
           project-path: 'Unity2D-Demo-Game-CI-CD/src'
-          build-target: StandaloneWindows64
+          build-target: StandaloneOSX
           compress: true
           context: unity
 ```
