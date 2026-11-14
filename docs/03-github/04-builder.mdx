@@ -138,7 +138,7 @@ This simple addition could speed up your build by more than 50%.
 ### Incremental build cache
 
 Unity also keeps a machine-level
-[incremental build cache](https://docs.unity3d.com/Manual/incremental-build-pipeline.html) outside
+[incremental build cache](https://docs.unity3d.com/6000.1/Documentation/Manual/incremental-build-pipeline.html) outside
 the project, which reuses parts of earlier builds such as libIL2CPP artifacts. To further speed up
 subsequent builds, you can cache it as well.
 
@@ -157,8 +157,9 @@ On Ubuntu runners, Unity runs in a container whose home directory is
 As with the `Library` cache, a key that never changes is saved only once, so the commit SHA gives
 each commit a new key while `restore-keys` restores the most recent one.
 
-On Windows runners, the builder already points this cache at `Library/bee_cache` inside your
-project, so the `Library` cache above includes it.
+On Windows runners, the builder points this cache at `Library/bee_cache` in the root of your
+repository (the workspace), not in `projectPath`. When your project sits at the repository root, the
+`Library` cache above already includes it; otherwise, cache `Library/bee_cache` as well.
 
 ## Configuration options
 

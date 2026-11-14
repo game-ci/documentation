@@ -303,7 +303,7 @@ Note that caching in this manner only applies to testing Unity **Projects**, not
 ### Incremental build cache
 
 Unity also keeps a machine-level
-[incremental build cache](https://docs.unity3d.com/Manual/incremental-build-pipeline.html) outside
+[incremental build cache](https://docs.unity3d.com/6000.1/Documentation/Manual/incremental-build-pipeline.html) outside
 the project, which reuses parts of earlier player builds such as libIL2CPP artifacts. If your tests
 build a player (for example with `testMode: Standalone`), you can cache it as well to speed up
 subsequent runs.
