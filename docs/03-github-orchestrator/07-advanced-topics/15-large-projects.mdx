@@ -1,0 +1,253 @@
+---
+sidebar_position: 15
+---
+
+# Large Projects
+
+Orchestrator includes specific support for Unity projects at extreme scale - repositories exceeding
+100 GB, asset counts above 500,000 files, and Library folders that dwarf the source tree itself.
+
+## Overview
+
+Standard CI assumptions break down at this scale:
+
+- **Clone times** - A 100 GB repository with Git LFS takes 15–45 minutes to clone cold, consuming
+  most of a build budget before Unity opens.
+- **Library folder sizes** - Import caches for large projects routinely reach 30–80 GB. Tarring,
+  uploading, downloading, and extracting this on every build is impractical.
+- **LFS bandwidth** - Pulling all LFS objects for every build exhausts quotas and slows pipelines.
+  Most builds need only a fraction of the asset set.
+- **Cache inflation** - GitHub Actions cache and similar systems impose size limits (typically 10 GB
+  per entry) that Library folders quickly exceed.
+- **CI timeouts** - Default job timeouts of 6 hours are insufficient for cold clones followed by
+  full imports on large projects.
+
+Orchestrator addresses these costs with child workspaces, optional move-centric local caching,
+custom LFS transfer-agent integration, incremental sync, and submodule profile filtering.
+
+## Two-Level Workspace Architecture
+
+Orchestrator manages workspaces at two levels:
+
+**Root workspace** - A long-lived source workspace used to derive cached children. Its exact Git LFS
+contents depend on the configured Git/LFS workflow and transfer agent.
+
+**Child workspaces** - Named workspaces derived from the root. A child can retain its own engine
+cache folder and be reused by subsequent builds assigned the same name.
+
+```
+root-workspace/
+  .git/          ← full history, minimal LFS
+  Assets/        ← source files only
+  Packages/
+
+child-workspaces/
+  StandaloneLinux64/
+    Assets/      ← LFS-hydrated for this target
+    Library/     ← warm, 40 GB, retained
+  StandaloneWindows64/
+    Assets/
+    Library/     ← warm, separate cache, retained
+  WebGL/
+    Assets/
+    Library/
+```
+
+The orchestrator manages this layout when `childWorkspacesEnabled: true` is set. You must provide a
+stable `childWorkspaceName`; using the matrix target keeps platforms isolated. Children are cached
+under `childWorkspaceCacheRoot`, created on first use, and reused by later builds with the same
+name. Only `syncStrategy: git-delta` limits synchronization to Git changes.
+
+```yaml
+- uses: game-ci/orchestrator@v1.0.0
+  with:
+    childWorkspacesEnabled: true
+    childWorkspaceName: ${{ matrix.targetPlatform }}
+    childWorkspaceCacheRoot: /mnt/build-storage/my-game/workspaces
+    targetPlatform: StandaloneLinux64
+```
+
+`childWorkspacePreserveGit` (default `true`) keeps `.git` in the cached child workspace so
+incremental sync strategies (see [Incremental Sync](#incremental-sync) below) keep working across
+builds. `childWorkspaceSeparateLibrary` (default `true`) caches each engine cache folder (e.g.
+`Library`) independently from the rest of the workspace, so it restores and saves on its own move
+rather than moving with the whole workspace.
+
+## Move-Centric Caching
+
+Traditional caching copies files: archive → upload → download → extract. For a 50 GB Library folder
+this is a substantial I/O operation even with a cache hit.
+
+Orchestrator uses atomic folder moves on local storage instead. On NTFS and ext4, moving a directory
+is an O(1) metadata operation regardless of how many files it contains. A 50 GB Library folder moves
+in milliseconds.
+
+```yaml
+- uses: game-ci/orchestrator@v1.0.0
+  with:
+    localCacheEnabled: true
+    localCacheRoot: /mnt/build-storage/cache
+    localCacheMode: move-directory
+```
+
+The cache lifecycle for a Library folder:
+
+1. Build starts - move Library from cache to workspace (instant)
+2. Unity runs - Library is warm, only changed assets reimport
+3. Build ends - move Library back to cache (instant)
+4. Next build - Library is already warm at cache location
+
+This eliminates the archive/upload/download/extract cycle entirely for builds running on retained
+storage. Remote cache fallback (S3, GCS, Azure Blob via rclone) is a separate mechanism (see
+[Storage](storage)) for cold runners that do not have local cache access.
+
+| `localCacheMode` | Library Restore/Save Time         | Suitable For                                        |
+| ---------------- | --------------------------------- | --------------------------------------------------- |
+| `move-directory` | Milliseconds (same-volume rename) | Retained storage and one build at a time per key    |
+| `copy-directory` | Seconds-minutes (size-dependent)  | Cache root on a different volume than the workspace |
+| `tar`            | Minutes (archive + extract)       | Portable default                                    |
+
+`move-directory` requires the cache root and the workspace to be on the same filesystem volume — a
+same-volume rename is what makes the move O(1). A cross-volume rename fails at the OS level, so
+point `localCacheRoot` at a path on the same drive as the workspace, or use `copy-directory` when
+that cannot be guaranteed. Fallback-key restores (see
+[Fallback Keys](build-services#fallback-keys)) are always copied rather than moved, regardless of
+`localCacheMode`, so the original cache entry is left intact for other builds.
+
+## Custom LFS Transfer Agents
+
+Orchestrator supports alternative LFS transfer agents via the `lfsTransferAgent` input. A transfer
+agent is a binary that Git invokes in place of the standard LFS client. The agent — not
+Orchestrator — defines its transfer, filtering, and storage behavior.
+
+```yaml
+- uses: game-ci/orchestrator@v1.0.0
+  with:
+    lfsTransferAgent: elastic-git-storage
+    lfsTransferAgentArgs: '--verbose'
+    lfsStoragePaths: '/mnt/fast-lfs;/mnt/archive-lfs'
+```
+
+`lfsStoragePaths` is a semicolon-separated list passed to the agent as the
+`LFS_STORAGE_PATHS` environment variable. Orchestrator does not interpret these values as repository
+path filters; consult the selected agent's documentation for their meaning.
+
+To use a custom agent, provide the agent binary path:
+
+```yaml
+- uses: game-ci/orchestrator@v1.0.0
+  with:
+    lfsTransferAgent: /usr/local/bin/my-lfs-agent
+    lfsTransferAgentArgs: '--threads 8 --cache /mnt/lfs-cache'
+```
+
+## Submodule Profiles
+
+Monorepos with many submodules suffer initialization overhead proportional to the number of active
+submodules. A project with 30 submodules where any given build target needs 8 wastes time and
+bandwidth initializing the other 22.
+
+Submodule profiles define exactly which submodules to initialize for a given build context. See the
+[Monorepo Support](monorepo-support) page for full profile format and configuration.
+
+For large projects, the key practice is keeping each build target's profile minimal:
+
+```yaml
+primary_submodule: CoreFramework
+submodules:
+  - name: CoreFramework
+    branch: main
+  - name: RenderPipeline
+    branch: main
+  - name: OptionalCinematicTools
+    branch: empty # skipped for standard builds
+  - name: Plugins*
+    branch: main
+```
+
+Profile initialization is atomic - skipped submodules are never touched, so build time scales with
+the active submodule set rather than the total repository size.
+
+## Incremental Sync
+
+For projects where even a targeted LFS pull is expensive, incremental sync avoids full re-clones
+entirely. See [Standalone Streaming Hot Runner](hot-runner-protocol#incremental-sync) for the full
+runner and sync model.
+
+The two strategies most relevant to large projects:
+
+**git-delta** - The runner tracks its last sync commit SHA. On job dispatch it receives the target
+SHA, diffs the two, and checks out only the changed files. Assets that have not changed are not
+touched, and their Library import state remains valid.
+
+**storage-pull** - For assets that live outside git (too large for LFS, or managed by a separate
+pipeline), the runner pulls only the changed files from a generic storage remote. This combines with
+git-delta so that code changes and asset changes are both handled incrementally.
+
+```yaml
+- uses: game-ci/orchestrator@v1.0.0
+  with:
+    syncStrategy: git-delta
+    childWorkspacesEnabled: true
+```
+
+Together, retained child workspaces and git-delta sync deliver the minimal possible import work on
+every build: Unity sees only the files that actually changed.
+
+## Build Performance Tips
+
+**Parallelise platform builds.** Use a GitHub Actions matrix across platform targets. Each target
+maintains its own child workspace and Library folder, so builds do not interfere.
+
+```yaml
+strategy:
+  matrix:
+    targetPlatform:
+      - StandaloneLinux64
+      - StandaloneWindows64
+      - WebGL
+```
+
+**Warm the cache before the sprint.** At the start of a sprint cycle, run a full import on each
+target platform during off-hours. Retained workspaces mean subsequent PR builds start with warm
+Library folders.
+
+**Design LFS layout for the selected agent.** Grouping assets by build target can help agents that
+support selective hydration, but that filtering is agent-specific rather than an Orchestrator
+guarantee.
+
+**Reserve timeouts generously.** There is no orchestrator-level build timeout input — set
+`timeout-minutes` on the GitHub Actions job itself to account for cold-start scenarios, even when
+warm builds are expected. The first build after a runner restart will be cold. Separately,
+`gcTimeoutMinutes` forces a garbage-collection pass if a build overruns that many minutes (see
+[Build Reliability](build-reliability)) — it is a cache-hygiene safety net, not a job timeout.
+
+```yaml
+jobs:
+  build:
+    timeout-minutes: 360
+    steps:
+      - uses: game-ci/orchestrator@v1.0.0
+        with:
+          targetPlatform: StandaloneLinux64
+```
+
+**Monitor Library folder health.** Occasional full reimports are necessary when Unity upgrades or
+large-scale asset reorganizations occur. Schedule these explicitly rather than discovering them
+mid-sprint when a runner's Library becomes stale.
+
+## Inputs Reference
+
+| Input                           | Description                                                           |
+| ------------------------------- | --------------------------------------------------------------------- |
+| `childWorkspacesEnabled`        | Enable per-build-target child workspaces (`true` / `false`)           |
+| `childWorkspaceName`            | Cache slot name for this child workspace, usually the target platform |
+| `childWorkspaceCacheRoot`       | Base path for cached child workspaces                                 |
+| `childWorkspacePreserveGit`     | Keep `.git` in the cached child workspace (default `true`)            |
+| `childWorkspaceSeparateLibrary` | Cache each engine cache folder independently (default `true`)         |
+| `localCacheEnabled`             | Enable the local filesystem cache (`true` / `false`)                  |
+| `localCacheRoot`                | Local filesystem path for the move-centric Library cache              |
+| `localCacheMode`                | Restore/save strategy; `tar` is the default                           |
+| `lfsTransferAgent`              | Name or path of a custom LFS transfer agent binary                    |
+| `lfsTransferAgentArgs`          | Additional arguments passed to the LFS transfer agent                 |
+| `lfsStoragePaths`               | Semicolon-separated storage values passed to the custom LFS agent     |

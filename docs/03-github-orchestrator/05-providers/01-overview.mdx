@@ -1,0 +1,75 @@
+# Provider Types
+
+Provider types are the execution backends Orchestrator can target. They are not the same thing as
+engine plugins: engine plugins describe how to run a Unity, Godot, Unreal, or custom-engine
+workload, while provider types describe where that workload runs.
+
+A **provider type** is the backend that Orchestrator uses to run your jobs. You choose a provider
+type by setting the `providerStrategy` parameter.
+
+```mermaid
+graph LR
+    aws["<b>aws</b><br/>Fargate<br/>Fully managed<br/><i>Cloud scaling</i><br/><i>No servers</i>"]
+    k8s["<b>k8s</b><br/>Cluster<br/>Bring your own cluster<br/><i>Cloud scaling</i><br/><i>Flexible</i>"]
+    ld["<b>local-docker</b><br/>Container<br/>No cloud needed<br/><i>Local builds</i><br/><i>Docker required</i>"]
+    local["<b>local</b><br/>Direct<br/>No container needed<br/><i>Local builds</i><br/><i>Simplest setup</i>"]
+```
+
+## Built-in Providers
+
+These providers ship with Orchestrator and are maintained by the Game CI team.
+
+| Provider       | `providerStrategy` | Description                                                                   |
+| -------------- | ------------------ | ----------------------------------------------------------------------------- |
+| AWS Fargate    | `aws`              | Runs jobs on AWS Fargate (ECS). Fully managed, no servers to maintain.        |
+| Kubernetes     | `k8s`              | Runs jobs on any Kubernetes cluster. Flexible but requires a running cluster. |
+| Local Docker   | `local-docker`     | Runs jobs in Docker containers on the local machine.                          |
+| Local (direct) | `local`            | Runs jobs directly on the local machine without containers.                   |
+
+Each provider has its own page with setup instructions:
+
+- [AWS Fargate](aws)
+- [Kubernetes](kubernetes)
+- [Local Docker](local-docker)
+- [Local](local)
+
+## Dispatch Providers
+
+Route builds to external CI systems instead of running them directly.
+
+- [GitHub Actions Dispatch](github-actions-dispatch) - trigger a GitHub Actions workflow
+- [GitLab CI Dispatch](gitlab-ci-dispatch) - trigger a GitLab CI pipeline
+
+## Experimental Providers
+
+These providers are under active development. APIs and behavior may change between releases.
+
+- [GCP Cloud Run](gcp-cloud-run) - serverless containers on Google Cloud
+- [Azure ACI](azure-aci) - serverless containers on Azure
+
+## Additional Providers
+
+- [Ansible](ansible) - provision and run builds via Ansible playbooks
+- [Remote PowerShell](remote-powershell) - execute builds on remote Windows machines
+
+## Custom Providers
+
+Extend Orchestrator with your own provider when the built-in provider types do not match your
+infrastructure. Choose the smallest extension surface that fits the job:
+
+| Extension path          | Use when                                                                 |
+| ----------------------- | ------------------------------------------------------------------------ |
+| Config-defined provider | YAML or JSON can call the scripts, CLIs, APIs, or lab machines you need. |
+| CLI provider protocol   | You want to write provider logic in any language as an executable.       |
+| TypeScript provider     | You want a full provider module with direct Orchestrator types.          |
+
+Start with [Config-Defined Providers](config-defined-providers) if a configuration file plus shell
+commands is enough. Use [CLI Provider Protocol](cli-provider-protocol) for a provider executable, or
+[Custom Providers](custom-providers) for TypeScript and JavaScript provider modules.
+
+## Community Providers
+
+Third-party providers shared by the Game CI community.
+
+See the [Community Providers](community-providers) page for the current list and how to submit your
+own.

@@ -60,7 +60,6 @@ The activation process for Unity Personal licenses is as follows:
 2. **Log in to Unity Hub**: Use the Unity account linked to your CI setup to log in. Ensure you're
    using the correct account to activate the intended license.
 3. **Activate Your License**: Manually activate by navigating to:
-
    - `Unity Hub` > `Preferences` > `Licenses` and click the `Add` button
    - Select **Get a free personal license**.
 
@@ -75,9 +74,16 @@ The activation process for Unity Personal licenses is as follows:
      alt="Unity Hub interface showing the Preferences window with the Licenses tab selected and the Add button highlighted"
    />
 
+   :::warning Personal License UI Variations
+
+   If you don't have the activation option to generate a `.ulf` license file, search in our
+   [game-ci Discord community](https://discord.gg/KcF25qStJU) where we have documented the best
+   approaches you can use.
+
+   :::
+
 4. **Locate the `.ulf` file**: Depending on your operating system, the Unity license file will be
    located in one of these paths:
-
    - Windows: `C:\ProgramData\Unity\Unity_lic.ulf`
    - Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
    - Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
@@ -108,7 +114,12 @@ If you have trouble locating the `.ulf` file, follow these steps:
    On Windows using Powershell:
 
    ```powershell
-   Get-Content Unity_lic.ulf | Select-String -Pattern 'DeveloperData' | ForEach-Object { $_ -replace '.*Value="([^"]+)".*', '$1' } | [System.Convert]::FromBase64String($_)
+   Get-Content .\Unity_lic.ulf |
+   Select-String -Pattern 'DeveloperData' |
+   ForEach-Object {
+    $b64 = $_ -replace '.*Value="([^"]+)".*', '$1'
+    [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
+   }
    ```
 
 :::info Expected Serial Format

@@ -226,8 +226,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
-          key:
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
             hashFiles(matrix.projectPath) }}
           restore-keys: |
             Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
@@ -288,8 +287,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
-          key:
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
             hashFiles(matrix.projectPath) }}
           restore-keys: |
             Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
@@ -333,8 +331,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
-          key:
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
             hashFiles(matrix.projectPath) }}
           restore-keys: |
             Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
