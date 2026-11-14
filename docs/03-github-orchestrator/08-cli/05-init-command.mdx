@@ -1,0 +1,69 @@
+---
+sidebar_position: 5
+---
+
+# Init Command
+
+Generate CI/CD workflow files for your game project.
+
+## Usage
+
+```bash
+game-ci init [options]
+```
+
+## Options
+
+| Option            | Default             | Description                                  |
+| ----------------- | ------------------- | -------------------------------------------- |
+| `--provider`      | `local`             | Cloud provider (`local`, `aws`, `k8s`, etc.) |
+| `--platform`      | `StandaloneLinux64` | Target build platform                        |
+| `--workflow-type` | `ci`                | Workflow type: `ci`, `cd`, or `async`        |
+| `--ci-provider`   | `github`            | CI provider: `github` or `gitlab`            |
+| `--output-dir`    | `.`                 | Project root directory                       |
+| `--engine`        | `unity`             | Game engine                                  |
+
+## Examples
+
+Generate a GitHub Actions CI workflow for AWS builds:
+
+```bash
+game-ci init --provider aws --platform StandaloneLinux64
+# Creates .github/workflows/game-ci-ci.yml
+```
+
+Generate a CD workflow with artifact uploads:
+
+```bash
+game-ci init --workflow-type cd --provider k8s
+# Creates .github/workflows/game-ci-cd.yml
+```
+
+Generate an async build workflow:
+
+```bash
+game-ci init --workflow-type async --provider aws
+# Creates .github/workflows/game-ci-async.yml
+```
+
+Generate a GitLab CI configuration:
+
+```bash
+game-ci init --ci-provider gitlab --platform StandaloneLinux64
+# Creates .gitlab-ci.yml
+```
+
+## Generated Workflow Types
+
+### CI (`--workflow-type ci`)
+
+Builds on push to `main` and on pull requests. Includes Unity activation with secrets.
+
+### CD (`--workflow-type cd`)
+
+Builds on version tags (`v*`) and uploads build artifacts. Suitable for release pipelines.
+
+### Async (`--workflow-type async`)
+
+Dispatches builds asynchronously using `asyncWorkflow: true`. The GitHub Action returns immediately
+while the build runs on the cloud provider.

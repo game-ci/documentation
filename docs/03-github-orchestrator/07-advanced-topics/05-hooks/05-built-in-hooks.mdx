@@ -1,0 +1,46 @@
+# Built-In Hooks
+
+Orchestrator ships with pre-built container hooks for common tasks. Use them by name with the
+`containerHookFiles` parameter.
+
+```yaml
+containerHookFiles: aws-s3-upload-build
+```
+
+## 📦 AWS S3
+
+| Hook Name             | Description                               |
+| --------------------- | ----------------------------------------- |
+| `aws-s3-upload-build` | Upload build artifacts to S3.             |
+| `aws-s3-pull-build`   | Pull cached build artifacts from S3.      |
+| `aws-s3-upload-cache` | Upload Unity Library and LFS cache to S3. |
+| `aws-s3-pull-cache`   | Pull Unity Library and LFS cache from S3. |
+
+Requires AWS credentials configured. Respects `useCompressionStrategy` for LZ4 compression.
+
+## 📂 Rclone
+
+| Hook Name             | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `rclone-upload-build` | Upload build artifacts via rclone.             |
+| `rclone-pull-build`   | Pull cached build artifacts via rclone.        |
+| `rclone-upload-cache` | Upload Unity Library and LFS cache via rclone. |
+| `rclone-pull-cache`   | Pull Unity Library and LFS cache via rclone.   |
+
+Requires `storageProvider: rclone` and `rcloneRemote` to be configured. Uses the `rclone/rclone`
+Docker image. Respects `useCompressionStrategy` for LZ4 compression.
+
+## 🎮 Steam
+
+| Hook Name              | Description                                   |
+| ---------------------- | --------------------------------------------- |
+| `steam-deploy-client`  | Deploy a client build to Steam via SteamCMD.  |
+| `steam-deploy-project` | Deploy a project build to Steam via SteamCMD. |
+
+Uses the `steamcmd/steamcmd` Docker image. Requires the following secrets to be configured:
+
+- `STEAM_USERNAME`, `STEAM_PASSWORD`
+- `STEAM_APPID`
+- `STEAM_SSFN_FILE_NAME`, `STEAM_SSFN_FILE_CONTENTS`
+- `STEAM_CONFIG_VDF_1` through `STEAM_CONFIG_VDF_4`
+- `BUILD_GUID_TARGET`, `RELEASE_BRANCH`

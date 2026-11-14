@@ -16,6 +16,11 @@ export function useAuthenticatedEndpoint(endpoint: string, payload: { [key: stri
       body: JSON.stringify(payload),
     });
 
-    return response.json();
+    const body = await response.json();
+    if (!response.ok) {
+      const detail = body.error ? `${body.message}: ${body.error}` : body.message;
+      throw new Error(detail || `Request failed (${response.status})`);
+    }
+    return body;
   };
 }

@@ -130,7 +130,7 @@ the [`packageMode`](#packagemode) configuration option to `true`.
 
 When testing a Unity package that has dependencies inside a scoped registry, you can set the
 [`scopedRegistryUrl`](#scopedRegistryUrl) and [`registryScopes`](#registryScopes) to ensure those
-depedencies can be resolved.
+dependencies can be resolved.
 
 ```yaml
 - uses: game-ci/unity-test-runner@v4
@@ -142,7 +142,7 @@ depedencies can be resolved.
 #### Authentication with a private scoped registry
 
 If your package has dependencies that are hosted in a private UPM registry, then testing it is
-similar to tesing a project. Setup the [`scopedRegistryUrl`](#scopedRegistryUrl) and
+similar to testing a project. Setup the [`scopedRegistryUrl`](#scopedRegistryUrl) and
 [`registryScopes`](#registryScopes) as usual, but also include a `UPM_REGISTRY_TOKEN` when defining
 your Unity License.
 
@@ -244,7 +244,7 @@ To do this, it is recommended to use the official Github Actions
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
-- uses: actions/upload-artifact@v3
+- uses: actions/upload-artifact@v4
   if: always()
   with:
     name: Test results
@@ -264,7 +264,7 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 ```
 
 ```yaml
-- uses: actions/upload-artifact@v3
+- uses: actions/upload-artifact@v4
   if: always()
   with:
     name: Test results
@@ -278,7 +278,7 @@ read by the step's `outputs.coveragePath`. These coverage options can be configu
 test and by default will create an XML and HTML web page reports.
 
 ```yaml
-- uses: actions/upload-artifact@v3
+- uses: actions/upload-artifact@v4
   if: always()
   with:
     name: Coverage results
@@ -384,6 +384,17 @@ Path where the test results should be stored.
 In this folder a folder will be created for every test mode.
 
 _**required:** `false`_ _**default:** `artifacts`_
+
+#### coverageEnabled
+
+Whether to pass `-enableCodeCoverage` to the Unity editor at all. Code coverage instrumentation is
+on by default, matching earlier behavior, but it has been the root cause of crashes and compile
+errors on some Unity versions (obsolete-API-as-error issues in `com.unity.testtools.codecoverage`,
+and a PlayMode SIGSEGV on Unity 6). If your tests hang, crash, or fail to compile only when coverage
+is enabled, set this to `false` to isolate the issue - the run will still complete, just without
+coverage results.
+
+_**required:** `false`_ _**default:** `true`_
 
 #### coverageOptions
 
@@ -631,12 +642,12 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
@@ -685,12 +696,12 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}

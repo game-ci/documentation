@@ -3,7 +3,10 @@
   top: 99px; /* height of the collapse-item-header + the parent tr > td sticky */
   background-color: rgb(255, 255, 255);
   z-index: 2;
-  box-shadow: 0 0 25px rgba(255,255,255,1), 0 0 15px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,1);
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 1),
+    0 0 15px rgba(255, 255, 255, 1),
+    0 0 20px rgba(255, 255, 255, 1);
   clip-path: inset(-25px 0 0 0);
 }
 
@@ -15,7 +18,6 @@
   height: 0;
   overflow: hidden;
 }
-
 
 .tableRow {
   width: 100%;

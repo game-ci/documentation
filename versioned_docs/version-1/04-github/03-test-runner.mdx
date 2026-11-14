@@ -62,13 +62,13 @@ That is all you need to test your project.
 To be able to access the test results, they need to be uploaded as artifacts.
 
 To do this it is recommended to use Github Actions official
-[upload artifact action](https://github.com/marketplace/actions/upload-artifact) after any test
-action.
+[upload artifact action](https://github.com/marketplace/actions/upload-a-build-artifact) after any
+test action.
 
 By default, Test Runner outputs its results to a folder named `artifacts`.
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v4
   with:
     name: Test results
     path: artifacts
@@ -87,7 +87,7 @@ You can specify a different `artifactsPath` in the test runner and reference thi
 ```
 
 ```yaml
-- uses: actions/upload-artifact@v1
+- uses: actions/upload-artifact@v4
   with:
     name: Test results
     path: ${{ steps.myTestStep.outputs.artifactsPath }}
@@ -233,7 +233,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}

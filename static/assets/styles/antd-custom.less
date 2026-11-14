@@ -1,4 +1,4 @@
-@import "../../node_modules/antd/dist/antd.less";
+@import '../../node_modules/antd/dist/antd.less';
 
 //
 // Brand
@@ -10,7 +10,10 @@
 
 html {
   --brand-primary: @brand-primary;
-  --brand-primary-brighter: saturate(lighten(@brand-primary, 10%), 10%); // needed for primary color on secondary background
+  --brand-primary-brighter: saturate(
+    lighten(@brand-primary, 10%),
+    10%
+  ); // needed for primary color on secondary background
   --brand-secondary: @brand-secondary;
   --brand-tertiary: @brand-tertiary;
 }
@@ -38,8 +41,8 @@ html {
 @heading-color: @brand-secondary;
 @text-color: fade(@brand-secondary, 85%);
 @text-color-secondary: fade(@brand-secondary, 45%);
-@heading-1-size: ceil(@font-size-base * 2.30);
-@heading-2-size: ceil(@font-size-base * 2.00);
+@heading-1-size: ceil(@font-size-base * 2.3);
+@heading-2-size: ceil(@font-size-base * 2);
 @heading-3-size: ceil(@font-size-base * 1.71);
 @heading-4-size: ceil(@font-size-base * 1.42);
 @heading-5-size: ceil(@font-size-base * 1.14);

@@ -34,8 +34,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: Library
-          key:
-            Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**',
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**',
             'ProjectSettings/**') }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
@@ -47,7 +46,7 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           versioning: Semantic
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
