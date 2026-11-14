@@ -4,11 +4,9 @@ import TabItem from '@theme/TabItem';
 # Getting Started
 
 Orchestrator lets you run engine builds through the provider target that fits your workflow: cloud,
-on-premise, local Docker, or your local machine. Unity is the primary built-in package in
-`game-ci/unity-builder`; the public `game-ci` CLI also includes built-in configurations for other
-engines, and the plugin API can add new engine providers. Orchestrator works as an optional plugin
-for `game-ci/unity-builder` in GitHub Actions and as a provider implementation for the public
-`game-ci` CLI.
+on-premise, local Docker, or your local machine. In GitHub Actions, `game-ci/orchestrator` wraps
+Unity Builder and adds provider-backed execution. The public `game-ci` CLI includes built-in engine
+and Orchestrator plugins, and its plugin API can add more.
 
 ## Prerequisites
 
@@ -35,7 +33,7 @@ Set up your AWS credentials as GitHub secrets (`AWS_ROLE_ARN` for OIDC or `AWS_A
     role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
     aws-region: eu-west-2
 
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -52,7 +50,7 @@ See the [AWS provider page](../providers/aws) for full setup.
 Base64-encode your kubeconfig and store it as a GitHub secret (`KUBE_CONFIG`):
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: k8s
     targetPlatform: StandaloneLinux64
@@ -72,7 +70,7 @@ Requires Docker and a self-hosted GitHub Actions runner:
 
 ```yaml
 # runs-on: self-hosted
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local-docker
     targetPlatform: StandaloneLinux64
@@ -88,13 +86,14 @@ See [Provider Types](../providers/overview) for the full list and detailed setup
 
 ## GitHub Actions
 
-When you set `providerStrategy` in `game-ci/unity-builder`, the orchestrator activates
-automatically. No separate install step is needed.
+Use the `game-ci/orchestrator` action when a workflow needs `providerStrategy` or another
+Orchestrator input. It invokes Unity Builder as part of the action; no separate builder step is
+needed.
 
 ### Basic example
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -113,7 +112,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -126,8 +125,7 @@ jobs:
 
 ## Command Line
 
-For command-line builds, use the public [GameCI CLI](/docs/cli) and load Orchestrator as a provider
-plugin.
+For command-line builds, use the public [GameCI CLI](/docs/cli). Orchestrator is built in.
 
 ### 1. Install GameCI CLI
 
@@ -151,7 +149,6 @@ export AWS_SECRET_ACCESS_KEY="..."
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator-plugin \
   orchestrate ./my-project \
   --provider-strategy aws \
   --target-platform StandaloneLinux64

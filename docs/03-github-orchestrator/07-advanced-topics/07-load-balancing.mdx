@@ -47,7 +47,7 @@ automatically. Three mechanisms work together:
 The most common pattern: prefer your self-hosted runner, but offload to the cloud when it's busy.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local-docker
     fallbackProviderStrategy: aws
@@ -66,7 +66,7 @@ to the best available provider and returns immediately - the GitHub runner is fr
 regardless of which provider handles the build.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local-docker
     fallbackProviderStrategy: aws
@@ -87,7 +87,7 @@ Enable `retryOnFallback` to automatically retry on the alternate provider when t
 This is useful for long builds where transient cloud failures are common.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     fallbackProviderStrategy: local-docker
@@ -104,7 +104,7 @@ Cloud providers sometimes take a long time to provision infrastructure. Set `pro
 swap to the alternate provider if startup takes too long.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: k8s
     fallbackProviderStrategy: aws
@@ -126,7 +126,7 @@ The built-in load balancing is designed to never block a build:
 Use the outputs to track which provider was selected and why:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   id: build
   with:
     providerStrategy: local-docker
@@ -177,7 +177,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: ${{ matrix.provider }}
           targetPlatform: ${{ matrix.targetPlatform }}
@@ -210,7 +210,7 @@ jobs:
             echo "memory=3072" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: ${{ steps.provider.outputs.strategy }}
           targetPlatform: StandaloneLinux64
@@ -253,7 +253,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: ${{ needs.check-runner.outputs.provider }}
           targetPlatform: StandaloneLinux64
@@ -327,7 +327,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         if: steps.check.outputs.idle != '0'
         with:
           providerStrategy: local-docker
@@ -359,7 +359,7 @@ jobs:
           ref: ${{ inputs.ref }}
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: aws
           targetPlatform: ${{ inputs.targetPlatform }}
@@ -406,7 +406,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: ${{ inputs.providerStrategy }}
           targetPlatform: ${{ inputs.targetPlatform }}
@@ -492,7 +492,7 @@ jobs:
         with:
           lfs: true
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: ${{ matrix.provider }}
           targetPlatform: ${{ matrix.targetPlatform }}

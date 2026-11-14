@@ -73,12 +73,11 @@ Orchestrator is not meant to replace the simple path. It exists for projects whe
 import cost, cache reuse, workspace size, runner availability, hardware needs, or infrastructure
 consistency have become real engineering problems.
 
-:::info Built into Unity Builder
+:::info GitHub Action
 
-For GitHub Actions, Orchestrator is available through
-[`game-ci/unity-builder`](https://github.com/game-ci/unity-builder). It activates when you choose a
-non-local `providerStrategy` or enable Orchestrator-backed services. You do not need a separate
-standalone install for normal GitHub Actions usage.
+For GitHub Actions, use [`game-ci/orchestrator`](https://github.com/game-ci/orchestrator). The action
+wraps Unity Builder and exposes the provider and service inputs documented in this section. The
+standalone CLI is not required for normal GitHub Actions usage.
 
 The standalone [`@game-ci/orchestrator`](https://github.com/game-ci/orchestrator) CLI remains useful
 for provider development, debugging, and direct backend usage.

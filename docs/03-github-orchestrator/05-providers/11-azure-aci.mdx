@@ -12,7 +12,7 @@ This provider is experimental. APIs and behavior may change between releases.
 
 ```mermaid
 graph LR
-    Runner["GitHub Actions Runner<br/>unity-builder<br/>providerStrategy: azure-aci<br/>azureStorageType:<br/>azure-files / blob-copy /<br/>azure-files-nfs / in-memory"]
+    Runner["GitHub Actions Runner<br/>game-ci/orchestrator<br/>providerStrategy: azure-aci<br/>azureStorageType:<br/>azure-files / blob-copy /<br/>azure-files-nfs / in-memory"]
     API["Container Instances API"]
     Container["Container: unity-build<br/>Image: unityci<br/>Storage: ..."]
     Runner -->|Azure CLI| API --> Container
@@ -72,7 +72,7 @@ Set `azureStorageType` to control how the build accesses large files.
 ### Azure Files - SMB mount (default)
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: azure-aci
     azureResourceGroup: my-rg
@@ -83,7 +83,7 @@ Set `azureStorageType` to control how the build accesses large files.
 ### NFS - better POSIX performance
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: azure-aci
     azureResourceGroup: my-rg
@@ -96,7 +96,7 @@ Set `azureStorageType` to control how the build accesses large files.
 ### Blob copy - simple artifact upload/download
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: azure-aci
     azureResourceGroup: my-rg

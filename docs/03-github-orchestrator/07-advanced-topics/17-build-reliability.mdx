@@ -9,6 +9,9 @@ persistent runners, Windows filesystem issues with cross-platform repositories, 
 management. All features are opt-in via action inputs and fail gracefully - a reliability check that
 encounters an error logs a warning rather than failing the build.
 
+Preflight tests catch many common failures before expensive builds run — see
+[Preflight Tests](./13-preflight-tests.mdx).
+
 This page also covers operational reliability features that keep provider runs observable and clean:
 log streaming, stale resource cleanup, and automatic garbage collection.
 
@@ -34,7 +37,7 @@ Enable verbose diagnostics with `orchestratorDebug: true` when investigating pro
 resource allocation, environment variables, disk usage, or cache behavior.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     orchestratorDebug: true
@@ -57,7 +60,7 @@ flowchart LR
 Run garbage collection from GitHub Actions:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     mode: garbage-collect
@@ -75,7 +78,7 @@ of the `constantGarbageCollection` setting. This prevents resource leaks from lo
 builds.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     gcTimeoutMinutes: 120 # Force GC if build exceeds 2 hours
     garbageMaxAge: 24
@@ -89,7 +92,7 @@ By default, Orchestrator keeps the 2 most recent cache snapshots per folder. Use
 to adjust how many tar archives are retained:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     maxCacheEntries: 5 # Keep 5 most recent cache snapshots per folder
 ```
@@ -103,7 +106,7 @@ to set a floor — the GC will never remove entries below this count, even if th
 threshold:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     cacheRetentionDays: 30
     minCacheEntries: 1 # Always keep at least 1 cache entry per key
@@ -141,7 +144,7 @@ The integrity check runs three validations in sequence:
 ### Configuration
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     gitIntegrityCheck: 'true'
 ```
@@ -159,7 +162,7 @@ This is a last-resort recovery. It works because the orchestrator's checkout ste
 the repository from the remote after re-initialization.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     gitIntegrityCheck: 'true'
     gitAutoRecover: 'true' # this is the default when gitIntegrityCheck is enabled
@@ -168,7 +171,7 @@ the repository from the remote after re-initialization.
 To run integrity checks without automatic recovery (report-only mode), disable it explicitly:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     gitIntegrityCheck: 'true'
     gitAutoRecover: 'false'
@@ -200,7 +203,7 @@ cross-platform contributions.
 ### Solution
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     cleanReservedFilenames: 'true'
 ```
@@ -228,7 +231,7 @@ Enable `unityProcessCleanup` on Windows self-hosted runners to clean up stale Un
 the local build starts:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     unityProcessCleanup: 'true'
 ```
@@ -307,7 +310,7 @@ managed with a count-based retention policy.
 ### Configuration
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     buildArchiveEnabled: 'true'
     buildArchivePath: '/mnt/build-archives'
@@ -374,7 +377,7 @@ This is applied automatically and does not require any configuration.
 For self-hosted runners with persistent workspaces:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     gitIntegrityCheck: 'true'
     gitAutoRecover: 'true'
@@ -390,7 +393,7 @@ since the workspace is created fresh each time. Reserved filename cleanup is sti
 repository contains cross-platform contributions:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     cleanReservedFilenames: 'true'
 ```

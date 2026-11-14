@@ -11,7 +11,7 @@ Runs the build workflow inside a Docker container on the local machine. No cloud
 ### GitHub Actions (self-hosted runner)
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local-docker
     targetPlatform: StandaloneLinux64
@@ -33,7 +33,7 @@ Inject config files into the Docker container workspace using `configFiles`. Fil
 `game-ci-config/` in the workspace before the container starts:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local-docker
     configFiles: |

@@ -22,16 +22,16 @@ diagnostic paths in the future.
 
 ## Quick Start
 
-Add `collectUnityLogs: true` to your existing `unity-builder` (or `unity-orchestrator`) step.
-Everything else is automatic:
+Add `collectUnityLogs: true` to your `game-ci/orchestrator` step:
 
 ```yaml
 - name: Build with Unity
-  uses: game-ci/unity-builder@v4
+  uses: game-ci/orchestrator@v1.0.0
   with:
     targetPlatform: StandaloneLinux64
     collectUnityLogs: true
     streamUnityLogs: true # optional — live tail Editor.log to GHA log
+    streamUnityLogPaths: '' # optional comma-separated override
 
 - name: Upload Unity diagnostic logs
   if: always()
@@ -226,9 +226,8 @@ with `[UnityLogs] Editor.log:` so the streamed lines stay greppable in a busy GH
 
 ## Inputs
 
-These inputs are accepted by `game-ci/unity-builder` (which forwards to the Orchestrator plugin)
-and by `game-ci/unity-orchestrator` directly. They also work as `--collectUnityLogs` etc. flags on
-the standalone `game-ci` CLI.
+These inputs are accepted by `game-ci/orchestrator`. They also work as
+`--collectUnityLogs`-style flags on the standalone Orchestrator CLI.
 
 | Input                       | Default | Description                                              |
 | --------------------------- | ------- | -------------------------------------------------------- |
@@ -251,7 +250,7 @@ After the build, the Orchestrator emits two GitHub Actions outputs:
 
 ```yaml
 - id: build
-  uses: game-ci/unity-builder@v4
+  uses: game-ci/orchestrator@v1.0.0
   with:
     targetPlatform: StandaloneLinux64
     collectUnityLogs: true

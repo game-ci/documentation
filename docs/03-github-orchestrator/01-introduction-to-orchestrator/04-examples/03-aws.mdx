@@ -28,7 +28,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: aws
           targetPlatform: StandaloneLinux64
@@ -74,7 +74,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         id: build
         with:
           providerStrategy: aws
@@ -92,7 +92,7 @@ jobs:
 Specify CPU/memory and export build artifacts to S3.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   id: aws-build
   with:
     providerStrategy: aws
@@ -124,7 +124,7 @@ AWS Fargate only accepts specific combinations (`1024 = 1 vCPU`, memory in MB):
 For long builds, use async mode so the GitHub Action returns immediately. Monitor via GitHub Checks.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -138,7 +138,7 @@ For long builds, use async mode so the GitHub Action returns immediately. Monito
 Keep the entire project cached between builds for dramatically faster rebuilds.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -153,7 +153,7 @@ Keep the entire project cached between builds for dramatically faster rebuilds.
 Chain container hooks to export to S3 and deploy to Steam in one step.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     targetPlatform: StandaloneLinux64
@@ -189,7 +189,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
 
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/orchestrator@v1.0.0
         with:
           providerStrategy: aws
           mode: garbage-collect

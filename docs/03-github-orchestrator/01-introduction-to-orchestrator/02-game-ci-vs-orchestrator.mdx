@@ -18,6 +18,13 @@ execution, and game-specific performance features. Those benefits are not limite
 setups; a single host with multiple runners, multiple projects, or expensive cache reuse can also
 benefit.
 
+This split is a deliberate architectural line, not just a feature gap: core `game-ci`
+`build`/`test`/`activate` stay thin, engine-invocation wrappers on purpose, so they stay easy to
+read and safe to depend on. Anything beyond invoking the engine once — caching, retry/recovery,
+extensibility hooks, wrapping the engine's own process launch — is Orchestrator's job. See the
+CLI's own [Orchestrate: advanced topics](/docs/cli/orchestrate-advanced) for the `game-ci
+orchestrate`-side surface (local caching, middleware, build retry, the engine launch wrapper).
+
 ```mermaid
 flowchart LR
   subgraph foundation["Standard GameCI foundation"]

@@ -25,7 +25,7 @@ by the built-in build command, smoke tests, asset processing, or fully custom au
 benefits from Orchestrator providers, logs, hooks, storage, and cleanup.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: aws
     customJob: |
@@ -44,7 +44,6 @@ For command-line usage, pass the same YAML as `--custom-job`:
 
 ```bash
 game-ci \
-  --plugin @game-ci/orchestrator-plugin \
   orchestrate ./my-project \
   --provider-strategy local-docker \
   --custom-job '- name: smoke
@@ -107,7 +106,7 @@ submodules:
 ### Example
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     submoduleProfilePath: config/submodule-profiles/game/client/profile.yml
@@ -154,7 +153,7 @@ profile-dependent are cleared before the build:
 You can also provide explicit fallback keys with `localCacheFallbackKeys`.
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     localCacheEnabled: true
@@ -166,17 +165,18 @@ You can also provide explicit fallback keys with `localCacheFallbackKeys`.
 
 `localCacheMode` controls how the local cache stores and restores the Unity Library:
 
-| Mode             | Behavior                 | Best for                                                      |
-| ---------------- | ------------------------ | ------------------------------------------------------------- |
-| `tar`            | Portable tar archive     | Default; works across platforms and filesystems               |
-| `copy-directory` | Recursive directory copy | Shared seed caches that must remain available to other builds |
-| `move-directory` | Directory move / rename  | Same-volume Windows self-hosted runners with large Libraries  |
+| Mode             | Behavior                 | Best for                                                            |
+| ---------------- | ------------------------ | ------------------------------------------------------------------- |
+| `move-directory` | Directory move / rename  | O(1) same-volume rename for a cache key used by one build at a time |
+| `copy-directory` | Recursive directory copy | Shared seed caches that must remain available to other builds       |
+| `tar`            | Portable tar archive     | Default; works across filesystem volumes                            |
 
-`move-directory` can be much faster than tar extraction for very large Libraries because NTFS can
-rename a directory on the same volume without copying file contents. Use it only when the cache root
-and workspace are on the same volume and the workflow saves the Library back after the build. If
-`localCacheFallback` restores a fallback key while `localCacheMode` is `move-directory`, the
-fallback is copied instead of moved so the shared fallback seed remains available to other branches.
+`move-directory` can be much faster than tar extraction for very large Libraries because it
+renames a directory rather than copying file contents. The cache root and workspace must be on the
+same volume; a cross-volume rename (`EXDEV`) fails rather than falling back to a copy. Restore moves
+the exact cache entry into the workspace and save moves it back, so do not share one exact key
+between concurrent builds. If `localCacheFallback` restores a fallback key, that fallback is copied
+instead of moved so the seed remains available to other branches.
 
 ### Inputs
 
@@ -188,12 +188,12 @@ fallback is copied instead of moved so the shared fallback seed remains availabl
 | `localCacheLfs`          | `true`  | Cache LFS objects                                        |
 | `localCacheFallback`     | `false` | Try compatible local cache keys after exact-key miss     |
 | `localCacheFallbackKeys` | -       | Comma-separated explicit fallback keys                   |
-| `localCacheMode`         | `tar`   | Cache mode: `tar`, `copy-directory`, or `move-directory` |
+| `localCacheMode`         | `tar`   | Cache mode: `move-directory`, `copy-directory`, or `tar` |
 
 ### Example
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     localCacheEnabled: true
@@ -233,7 +233,7 @@ The agent name is derived from the executable filename (e.g. `elastic-git-storag
 ### Example
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     lfsTransferAgent: ./tools/elastic-git-storage
@@ -269,7 +269,7 @@ enable when your build pipeline depends on hooks running.
 
 ```yaml
 # Enable hooks but skip pre-commit
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: local
     gitHooksEnabled: true

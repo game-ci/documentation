@@ -30,7 +30,7 @@ vCPU or GB suffix.
 ## Example Workflow
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   id: k8s-unity-build
   with:
     providerStrategy: k8s
@@ -64,7 +64,7 @@ Inject arbitrary config files into K8s build containers using `configFiles`. Fil
 read-only at `/game-ci/config/` via a Kubernetes ConfigMap:
 
 ```yaml
-- uses: game-ci/unity-builder@v4
+- uses: game-ci/orchestrator@v1.0.0
   with:
     providerStrategy: k8s
     configFiles: |
