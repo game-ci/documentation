@@ -222,6 +222,30 @@ workflows:
 - _Required_: `false`
 - _Type_: `string`
 
+#### persist-to-workspace
+
+Whether to persist the build output to the
+[workspace](https://circleci.com/docs/workspaces/), so that later jobs in the same workflow can use
+it with `attach_workspace`. When [compress](#compress) is `true`, the `<build-target>.tar.gz`
+archive is persisted; otherwise the `Builds/<build-target>` folder is.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@2
+
+workflows:
+  build-unity-project:
+    jobs:
+      - unity/build:
+          persist-to-workspace: true
+```
+
+- _Default_: `false`
+- _Required_: `false`
+- _Type_: `boolean`
+
 #### return-license
 
 Whether to return the Unity license at the end of the job, even when the job fails. Don't enable it

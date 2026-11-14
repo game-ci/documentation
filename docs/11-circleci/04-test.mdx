@@ -20,6 +20,31 @@ Below you will find information on each parameter that can be passed to the test
 Each example only shows the parameter it describes. A working job also needs the required
 `executor` parameter, as shown in the [examples](#examples).
 
+#### custom-parameters
+
+Additional parameters for the Unity CLI, for example to filter which tests run with the
+[Unity Test Framework's command line arguments](https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/reference-command-line.html).
+
+The parameters must be separated by space and must be in the format `-key value` or `-key` for
+booleans. Environment variables are supported and will be expanded in runtime.
+
+```yaml
+version: 2.1
+
+orbs:
+  unity: game-ci/unity@2
+
+workflows:
+  test-unity-project:
+    jobs:
+      - unity/test:
+          custom-parameters: '-testFilter "MyNamespace.MyTests" -testCategory "Unit"'
+```
+
+- _Default_: `N/A`
+- _Required_: `false`
+- _Type_: `string`
+
 #### executor
 
 The executor on which you want to run your test job on. Each executor has its set of parameters. See
