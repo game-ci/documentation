@@ -26,8 +26,9 @@ will be cheaper and faster.
 This executor uses the
 [macOS cloud executor](https://circleci.com/docs/configuration-reference#macos) and it's recommended
 for **macOS IL2CPP builds**. As there are no GameCI images for macOS at the moment, the Unity Editor
-and Hub are installed in runtime, leading to longer build times. Should it become an issue, consider
-using [macos-runner](#macos-runner) instead.
+is installed at runtime with the [Unity CLI](https://docs.unity.com/en-us/unity-cli/use-unity-cli),
+leading to longer build times. Should it become an issue, consider using
+[macos-runner](#macos-runner) instead.
 
 The executor runs on Apple silicon and installs the Apple silicon editor, available from Unity
 2021.2. Older editors such as 2020.3 can't be installed on it.
