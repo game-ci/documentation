@@ -87,6 +87,12 @@ activation with `.alf` files, so the old personal license flow stopped working.
 - `fetch-submodules` now defaults to `true`, since 1.x always fetched submodules.
 - The `unity/macos` executor only accepts the `m4pro.medium` and `m4pro.large` resource classes,
   since CircleCI retired the M1 machines.
+- On macOS, the Editor is now installed with the
+  [Unity CLI](https://docs.unity.com/en-us/unity-cli/use-unity-cli) instead of the Unity Hub (from
+  orb 2.0.1). `UNITY_HUB_PATH` is no longer exported; custom steps that ran
+  `"$UNITY_HUB_PATH" -- --headless install-modules ...` should run
+  `"$UNITY_CLI_PATH" install-modules -e <version> -m <module>` instead. See Unity's
+  [migration guide](https://docs.unity.com/en-us/unity-cli/reference/migrate-hub-cli).
 
 ## Next steps
 
