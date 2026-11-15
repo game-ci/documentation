@@ -670,6 +670,16 @@ build. MacOS only.
 
 _**required:** `false`_ _**default:** `false`_
 
+#### linux64RemoveExecutableExtension
+
+When building for `StandaloneLinux64`, removes the default `.x86_64` file extension from the built
+executable. Set to `true` to restore the extensionless output of `v4` and earlier.
+
+Available from `v5`. From `v5` onwards the executable keeps Unity's default `.x86_64` extension
+unless this is set to `true`.
+
+_**required:** `false`_ _**default:** `false`_
+
 ## Outputs
 
 Below are outputs that can be accessed by using `${{ steps.myBuildStep.outputs.outputName }}`, where
