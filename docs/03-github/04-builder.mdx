@@ -109,6 +109,8 @@ Builds can now be downloaded as Artifacts in the Actions tab.
 
 ## Caching
 
+### Library cache
+
 In order to make builds run faster, you can cache Library files from previous builds. To do so
 simply add Github Actions official [cache action](https://github.com/marketplace/actions/cache)
 before any unity steps.
@@ -132,6 +134,37 @@ or overwrite the cache they restore. Keep the target platform in the key so that
 not restore another platform's `Library`.
 
 This simple addition could speed up your build by more than 50%.
+
+### Incremental build cache
+
+Unity also keeps a machine-level
+[incremental build cache](https://docs.unity3d.com/6000.1/Documentation/Manual/incremental-build-pipeline.html) outside
+the project, which reuses parts of earlier builds such as libIL2CPP artifacts. To further speed up
+subsequent builds, you can cache it as well.
+
+On Ubuntu runners, Unity runs in a container. With `unity-builder@v4` and `@v5`, the container's home
+directory is `${{ runner.temp }}/_github_home` on the runner, so the cache lives there:
+
+```yaml
+- uses: actions/cache@v4
+  with:
+    path: ${{ runner.temp }}/_github_home/.cache/unity3d/bee
+    key: IncrementalBuildCache-MyProjectName-TargetPlatform-${{ github.sha }}
+    restore-keys: |
+      IncrementalBuildCache-MyProjectName-TargetPlatform-
+```
+
+As with the `Library` cache, a key that never changes is saved only once, so the commit SHA gives
+each commit a new key while `restore-keys` restores the most recent one.
+
+From `unity-builder@v6`, the container's home is the runner's own home directory, so use
+`~/.cache/unity3d/bee` as the `path` instead.
+
+On Windows runners, `@v4` and `@v5` point this cache at `Library/bee_cache` in the root of your
+repository (the workspace), not in `projectPath`. When your project sits at the repository root, the
+`Library` cache above already includes it; otherwise, cache `Library/bee_cache` as well. `@v6`
+does not set this location on Windows, so the cache stays inside the container and is not kept
+between runs.
 
 ## Configuration options
 
