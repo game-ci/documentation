@@ -3,6 +3,7 @@ import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import UnityVersion from '@site/src/components/docs/versions/unity-version';
 import MajorEditorVersion from './major-editor-version';
 import type { StatusFilter } from './image-versions';
+import { EditorVersionGroups, type CiJob } from './editor-version-groups';
 
 interface Props {
   selectedRepoVersion: string | undefined;
@@ -19,7 +20,7 @@ const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props
     .orderBy('editorVersionInfo.patch', 'desc')
     .where('repoVersionInfo.version', '==', selectedRepoVersion || '__none__');
 
-  const { status, data } = useFirestoreCollectionData<{ [key: string]: any }>(ciJobs);
+  const { status, data } = useFirestoreCollectionData<CiJob>(ciJobs);
 
   if (!selectedRepoVersion) return null;
   const isLoading = status === 'loading';
@@ -27,7 +28,8 @@ const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props
   const loading = <p>Fetching versions...</p>;
 
   // Apply filters
-  let filtered = isLoading ? [] : [...data];
+  const listed = isLoading ? [] : data.filter(EditorVersionGroups.isListed);
+  let filtered = listed;
 
   // Status filter
   if (statusFilter !== 'all') {
@@ -52,50 +54,7 @@ const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props
   }
 
   const failures = filtered.filter((version) => version.status === 'failed');
-
-  const versions = {};
-
-  if (filtered.length > 0) {
-    // Sorting the data based on the version numbers to maintain the version order
-    filtered.sort((a, b) => {
-      const infoA = a.editorVersionInfo;
-      const infoB = b.editorVersionInfo;
-
-      const { major: majorA, minor: minorA, patch: patchA } = infoA;
-      const { major: majorB, minor: minorB, patch: patchB } = infoB;
-
-      if (majorA > majorB) return -1;
-      if (majorA < majorB) return 1;
-
-      if (minorA > minorB) return -1;
-      if (minorA < minorB) return 1;
-
-      let patchANumber = 0;
-      for (const [index, currentValue] of patchA.split('f').entries()) {
-        patchANumber += 10 ** (9 - 3 * index) * Number.parseInt(currentValue, 10);
-      }
-      let patchBNumber = 0;
-      for (const [index, currentValue] of patchB.split('f').entries()) {
-        patchBNumber += 10 ** (9 - 3 * index) * Number.parseInt(currentValue, 10);
-      }
-
-      return patchBNumber - patchANumber;
-    });
-
-    // Sort versions into organized array by major version number
-    filtered.map((version) => {
-      if (Number.parseInt(version.editorVersionInfo.major, 10) <= 2017) return version;
-
-      if (!versions[version.editorVersionInfo.major])
-        versions[version.editorVersionInfo.major] = [];
-
-      versions[version.editorVersionInfo.major] = [
-        ...versions[version.editorVersionInfo.major],
-        version,
-      ];
-      return version;
-    });
-  }
+  const groups = EditorVersionGroups.byMajor(filtered);
 
   const hasFilters = searchQuery || statusFilter !== 'all';
 
@@ -103,7 +62,7 @@ const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props
     <main>
       {hasFilters && !isLoading && (
         <p style={{ opacity: 0.6, fontSize: '0.85em' }}>
-          Showing {filtered.length} of {data.length} versions
+          Showing {filtered.length} of {listed.length} versions
         </p>
       )}
 
@@ -119,11 +78,9 @@ const UnityVersions = ({ selectedRepoVersion, searchQuery, statusFilter }: Props
       <div className="mt-4">
         {isLoading
           ? loading
-          : Object.keys(versions)
-              .reverse()
-              .map((major) => (
-                <MajorEditorVersion key={major} versionString={major} versions={versions[major]} />
-              ))}
+          : groups.map(({ major, jobs }) => (
+              <MajorEditorVersion key={major} versionString={major} versions={jobs} />
+            ))}
       </div>
     </main>
   );
