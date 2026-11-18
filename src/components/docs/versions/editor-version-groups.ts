@@ -25,8 +25,11 @@ const newestFirst = (a: CiJob, b: CiJob): number => {
   const infoA = a.editorVersionInfo;
   const infoB = b.editorVersionInfo;
 
-  if (infoA.major !== infoB.major) return Number(infoB.major) - Number(infoA.major);
-  if (infoA.minor !== infoB.minor) return Number(infoB.minor) - Number(infoA.minor);
+  const byMajor = Number(infoB.major) - Number(infoA.major);
+  if (byMajor !== 0) return byMajor;
+
+  const byMinor = Number(infoB.minor) - Number(infoA.minor);
+  if (byMinor !== 0) return byMinor;
 
   return patchRank(infoB.patch) - patchRank(infoA.patch);
 };
@@ -43,7 +46,9 @@ const byMajor = (jobs: ReadonlyArray<CiJob>): EditorVersionGroup[] => {
     const major = String(job.editorVersionInfo.major);
     if (Number.parseInt(major, 10) <= NEWEST_UNLISTED_MAJOR) continue;
 
-    groups.set(major, [...(groups.get(major) ?? []), job]);
+    const group = groups.get(major);
+    if (group) group.push(job);
+    else groups.set(major, [job]);
   }
 
   return [...groups].map(([major, grouped]) => ({ major, jobs: grouped }));

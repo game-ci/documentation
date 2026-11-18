@@ -29,6 +29,19 @@ describe('EditorVersionGroups.byMajor', () => {
     ]);
   });
 
+  it('orders versions whose numbers arrive as strings like their numeric twins', () => {
+    const stringly = (minor: string, patch: string): CiJob => ({
+      NO_ID_FIELD: `editor-6000.${minor}.${patch}-string`,
+      status: 'completed',
+      editorVersionInfo: { major: '6000', minor, patch },
+    });
+    const jobs = [job(6000, 0, '1f1'), stringly('1', '1f1'), stringly('0', '2f1')];
+
+    expect(idsPerMajor(jobs)).toEqual([
+      ['6000', ['editor-6000.1.1f1-string', 'editor-6000.0.2f1-string', 'editor-6000.0.1f1']],
+    ]);
+  });
+
   it('leaves out a major whose jobs are all deprecated', () => {
     const jobs = [job(6000, 0, '1f1', 'created'), job(2021, 3, '1f1', 'deprecated')];
 
