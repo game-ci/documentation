@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styles from './unity-version.module.scss';
 import UnityVersion from './unity-version';
+import type { CiJob } from './editor-version-groups';
 
 interface Props {
   versionString: string;
-  versions: Array<Object>;
+  versions: ReadonlyArray<CiJob>;
 }
 export default function MajorEditorVersion({ versionString, versions }: Props) {
   const [enabled, setEnabled] = useState(false);
@@ -29,7 +30,7 @@ export default function MajorEditorVersion({ versionString, versions }: Props) {
       </button>
 
       <div className={styles.content}>
-        {enabled && versions.map((v) => <UnityVersion data={v} />)}
+        {enabled && versions.map((v) => <UnityVersion key={v.NO_ID_FIELD} data={v} />)}
       </div>
     </div>
   );
