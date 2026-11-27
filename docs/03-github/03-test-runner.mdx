@@ -590,6 +590,17 @@ Self-Hosted runners generally will want to set this to `true`.
 
 _**required:** `false`_ _**default:** `false`_
 
+#### runAsHostUserReuseExisting
+
+Only used together with `runAsHostUser`. By default, the container creates a group and user with
+the host's GID and UID, and fails if the image already has one. Ubuntu 24.04 based images (editor
+image version `4` and later) ship an `ubuntu` user and group at `1000`, which is also the usual
+UID/GID of a self-hosted runner's account, so the job stops with
+`groupadd: group 'ubuntu' already exists`. Set this to `true` to run as the existing group and user
+instead. Requires a release of [game-ci/cli](https://github.com/game-ci/cli) that supports it.
+
+_**required:** `false`_ _**default:** `false`_
+
 #### chownFilesTo
 
 User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build
