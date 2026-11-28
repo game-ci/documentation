@@ -503,6 +503,20 @@ permission errors without requiring the runner agent to run as root. This option
 on Github Hosted runners as the systems are automatically wiped each run so we default to `false`.
 Self-Hosted runners generally will want to set this to `true`.
 
+The container runs as a user with the UID and GID that own the project. A user or group the image
+already has with that ID is reused, and one it doesn't have is created. For example, Ubuntu 24.04
+based images (editor image version `4` and later) ship an `ubuntu` user and group at `1000`, the
+usual UID/GID of a self-hosted runner's account.
+
+The run stops before Unity starts, with an error naming the account, when the image's user with the
+project's UID is a system account (UID `1`-`999`, such as `www-data`) or has no login shell (such
+as `nobody`, which is how files appear under rootless Docker or user namespace remapping).
+
+This needs `unity-builder@v6` and a [game-ci/cli](https://github.com/game-ci/cli) release after
+`v0.1.77`, which the default `cliVersion: latest` picks up. `@v4`, `@v5` and earlier CLI releases
+fail on any UID/GID the image already has, including `ubuntu`, with
+`groupadd: group 'ubuntu' already exists`.
+
 _**required:** `false`_ _**default:** `false`_
 
 #### chownFilesTo
