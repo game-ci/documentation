@@ -588,12 +588,19 @@ permission errors without requiring the runner agent to run as root. This option
 on Github Hosted runners as the systems are automatically wiped each run so we default to `false`.
 Self-Hosted runners generally will want to set this to `true`.
 
-The container runs as a user with the UID and GID that own the project. If the image already has
-them, it reuses that user and group. For example, Ubuntu 24.04 based images (editor image version
-`4` and later) ship an `ubuntu` user at `1000`, the usual UID/GID of a self-hosted runner's account.
-A project owned by a system account (UID `1`-`999`, such as `www-data`) fails with an error naming
-that account instead. Older releases of [game-ci/cli](https://github.com/game-ci/cli) fail on any
-existing UID/GID, including `ubuntu`, with `groupadd: group 'ubuntu' already exists`.
+The container runs as a user with the UID and GID that own the project. A user or group the image
+already has with that ID is reused, and one it doesn't have is created. For example, Ubuntu 24.04
+based images (editor image version `4` and later) ship an `ubuntu` user and group at `1000`, the
+usual UID/GID of a self-hosted runner's account.
+
+The run stops before Unity starts, with an error naming the account, when the image's user with the
+project's UID is a system account (UID `1`-`999`, such as `www-data`) or has no login shell (such
+as `nobody`, which is how files appear under rootless Docker or user namespace remapping).
+
+This needs `unity-test-runner` `v4.4.0` or later and a [game-ci/cli](https://github.com/game-ci/cli)
+release after `v0.1.77`, which the default `cliVersion: latest` picks up. Earlier versions of either
+fail on any UID/GID the image already has, including `ubuntu`, with
+`groupadd: group 'ubuntu' already exists`.
 
 _**required:** `false`_ _**default:** `false`_
 
